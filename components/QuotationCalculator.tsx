@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import {
   CalcMode, ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
   childRatio, computeProfit, currencyRate, leaderRowTotal, roundUpTo,
@@ -13,6 +15,8 @@ const childModes: ChildMode[] = ["50%","60%","65%","70%","75%","80%","85%","90%"
 const profitModes: ProfitMode[] = ["固定金额", "按成本加价率", "按售价毛利率"];
 const travelerTypes = ["成人不含领队","成人含领队","小孩含床不含领队","小孩含床含领队","小孩不含床不含领队","小孩不含床含领队"] as const;
 type TravelerType = typeof travelerTypes[number];
+type QuoteStatus = "draft"|"ready"|"sent"|"revised"|"confirmed"|"lost"|"archived";
+type CalculatorProps = { workspaceMode?: boolean; quotationId?: string; initialQuotation?: any };
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 const money = (n: number) => new Intl.NumberFormat("en-MY", { style: "currency", currency: "MYR", minimumFractionDigits: 2 }).format(Number.isFinite(n) ? n : 0).replace("MYR", "RM");
@@ -33,7 +37,16 @@ const defaultLeaderRows: LeaderCostRow[] = [
   { id: uid(), item: "其他", unitPrice: 0, qty: 1, currency: "RM", note: "" },
 ];
 
-export default function QuotationCalculator() {
+export default function QuotationCalculator({workspaceMode=false,quotationId,initialQuotation}:CalculatorProps) {
+  const router = useRouter();
+  const [quoteTitle, setQuoteTitle] = useState("New Tour Quotation");
+  const [destination, setDestination] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [status, setStatus] = useState<QuoteStatus>("draft");
+  const [tourGroupId, setTourGroupId] = useState("");
+  const [tourGroups, setTourGroups] = useState<any[]>([]);
+  const [saveMessage, setSaveMessage] = useState("");
+  const [saving, setSaving] = useState(false);
   const [tourCode, setTourCode] = useState("Jorjien");
   const [businessType, setBusinessType] = useState("私人/家庭团");
   const [op, setOp] = useState("Jess");
@@ -63,23 +76,38 @@ export default function QuotationCalculator() {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    const load = async () => {
+      const supabase = createClient();
+      const { data } = await supabase.from("tour_groups").select("id,name,destination,business_type").order("name");
+      setTourGroups(data || []);
+    };
+    load();
+
     try {
-      const raw = localStorage.getItem("happy-quotation-v1");
-      if (raw) {
-        const s = JSON.parse(raw);
-        Object.entries(s).forEach(([k, v]) => {
-          const setters: Record<string, (x: any) => void> = {
-            tourCode:setTourCode,businessType:setBusinessType,op:setOp,supplier:setSupplier,pax:setPax,mainCurrency:setMainCurrency,mainRate:setMainRate,
-            travelerRows:setTravelerRows,leaderRows:setLeaderRows,profitMode:setProfitMode,profitRate:setProfitRate,minProfit:setMinProfit,maxProfit:setMaxProfit,
-            fixedProfit:setFixedProfit,roundUnit:setRoundUnit,childBedMode:setChildBedMode,childBedManual:setChildBedManual,childBedCurrency:setChildBedCurrency,
-            childNoBedMode:setChildNoBedMode,childNoBedManual:setChildNoBedManual,childNoBedCurrency:setChildNoBedCurrency,selectedType:setSelectedType,manualQuote:setManualQuote
-          };
-          setters[k]?.(v);
-        });
+      const source = initialQuotation?.quotation_data || (!workspaceMode ? JSON.parse(localStorage.getItem("happy-quotation-v1") || "{}") : {});
+      if (initialQuotation) {
+        setQuoteTitle(initialQuotation.title || "Quotation");
+        setDestination(initialQuotation.destination || "");
+        setCustomerName(initialQuotation.customer_name || "");
+        setStatus(initialQuotation.status || "draft");
+        setTourGroupId(initialQuotation.tour_group_id || "");
+        setTourCode(initialQuotation.tour_code || "");
+        setBusinessType(initialQuotation.business_type || "");
+        setSupplier(initialQuotation.supplier || "");
+        setPax(Number(initialQuotation.pax) || 1);
       }
+      Object.entries(source).forEach(([k, v]) => {
+        const setters: Record<string, (x: any) => void> = {
+          tourCode:setTourCode,businessType:setBusinessType,op:setOp,supplier:setSupplier,pax:setPax,mainCurrency:setMainCurrency,mainRate:setMainRate,
+          travelerRows:setTravelerRows,leaderRows:setLeaderRows,profitMode:setProfitMode,profitRate:setProfitRate,minProfit:setMinProfit,maxProfit:setMaxProfit,
+          fixedProfit:setFixedProfit,roundUnit:setRoundUnit,childBedMode:setChildBedMode,childBedManual:setChildBedManual,childBedCurrency:setChildBedCurrency,
+          childNoBedMode:setChildNoBedMode,childNoBedManual:setChildNoBedManual,childNoBedCurrency:setChildNoBedCurrency,selectedType:setSelectedType,manualQuote:setManualQuote
+        };
+        setters[k]?.(v);
+      });
     } catch {}
     setHydrated(true);
-  }, []);
+  }, [initialQuotation, workspaceMode]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -138,6 +166,54 @@ export default function QuotationCalculator() {
   const removeTraveler = (id:string) => setTravelerRows(rows => rows.length > 1 ? rows.filter(r=>r.id!==id):rows);
   const setLeader = (id:string, patch:Partial<LeaderCostRow>) => setLeaderRows(rows => rows.map(r => r.id===id?{...r,...patch}:r));
 
+  const saveQuotation = async () => {
+    setSaving(true);
+    setSaveMessage("");
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setSaveMessage("Session expired. Please login again.");
+      setSaving(false);
+      return;
+    }
+
+    const quotationData = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote};
+    const payload = {
+      owner_id: user.id,
+      tour_group_id: tourGroupId || null,
+      tour_code: tourCode,
+      title: quoteTitle || tourCode || "Untitled Quotation",
+      destination: destination || null,
+      business_type: businessType || null,
+      customer_name: customerName || null,
+      supplier: supplier || null,
+      pax,
+      status,
+      total_cost: selected.cost,
+      selling_price: finalQuote,
+      profit: finalProfit,
+      margin: finalMargin,
+      quotation_data: quotationData,
+    };
+
+    if (quotationId) {
+      const { error } = await supabase.from("quotations").update(payload).eq("id",quotationId);
+      if (error) setSaveMessage(error.message);
+      else { setSaveMessage("Saved"); router.refresh(); }
+    } else {
+      const d = new Date();
+      const code = `QT-${String(d.getFullYear()).slice(-2)}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
+      const { data, error } = await supabase.from("quotations").insert({...payload,quotation_no:code}).select("id").single();
+      if (error) setSaveMessage(error.message);
+      else if (data) {
+        setSaveMessage("Saved");
+        router.replace("/quotations/"+data.id);
+        router.refresh();
+      }
+    }
+    setSaving(false);
+  };
+
   const resetAll = () => {
     if (!confirm("确认重置全部报价资料？")) return;
     localStorage.removeItem("happy-quotation-v1");
@@ -158,6 +234,7 @@ export default function QuotationCalculator() {
         <p>Quotation Calculator · Vercel Edition</p>
       </div>
       <div className="top-actions no-print">
+        {workspaceMode && <button className="btn primary" onClick={saveQuotation} disabled={saving}>{saving?"Saving...":"Save Quotation"}</button>}
         <button className="btn ghost" onClick={()=>window.print()}>打印 / PDF</button>
         <button className="btn danger" onClick={resetAll}>重置</button>
       </div>
@@ -169,6 +246,17 @@ export default function QuotationCalculator() {
       <Summary label="系统建议售价" value={money(selected.suggested)} />
       <Summary label="最终报价" value={money(finalQuote)} strong />
     </section>
+
+    {workspaceMode && <section className="quote-meta-panel">
+      <div className="quote-meta-grid">
+        <Field label="Quotation Title"><input value={quoteTitle} onChange={e=>setQuoteTitle(e.target.value)} placeholder="例如：江西 8D7N · HT Group" /></Field>
+        <Field label="Destination"><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder="China / Japan / Thailand" /></Field>
+        <Field label="Customer"><input value={customerName} onChange={e=>setCustomerName(e.target.value)} placeholder="Customer / Company" /></Field>
+        <Field label="Tour Group"><select value={tourGroupId} onChange={e=>setTourGroupId(e.target.value)}><option value="">Unclassified</option>{tourGroups.map((g:any)=><option key={g.id} value={g.id}>{g.name}</option>)}</select></Field>
+        <Field label="Status"><select value={status} onChange={e=>setStatus(e.target.value as QuoteStatus)}><option value="draft">Draft</option><option value="ready">Ready</option><option value="sent">Sent</option><option value="revised">Revised</option><option value="confirmed">Confirmed</option><option value="lost">Lost</option><option value="archived">Archived</option></select></Field>
+      </div>
+      {saveMessage && <div className="save-message">{saveMessage}</div>}
+    </section>}
 
     <Section title="① 基本资料 & 利润设置">
       <div className="form-grid six">
