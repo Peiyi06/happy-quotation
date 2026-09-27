@@ -1,8 +1,53 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { internalDb, internalToken } from "@/lib/internalSession";
+import {
+  ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
+  childRatio, computeProfit, currencyRate, leaderRowTotal, travelerRowPerPax
+} from "@/lib/calculations";
 
 const money=(n:number)=>new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR",minimumFractionDigits:2}).format(n||0).replace("MYR","RM");
+
+function buildMatrix(q:any){
+  const s=q?.quotation_data||{};
+  const pax=Math.max(1,Number(s.pax||q?.pax)||1);
+  const mainCurrency=(s.mainCurrency||"RMB") as Currency;
+  const mainRate=Number(s.mainRate)||0;
+  const travelerRows=(Array.isArray(s.travelerRows)?s.travelerRows:[]) as TravelerCostRow[];
+  const leaderRows=(Array.isArray(s.leaderRows)?s.leaderRows:[]) as LeaderCostRow[];
+  const profitMode=(s.profitMode||"按成本加价率") as ProfitMode;
+  const profitRate=Number(s.profitRate)||0;
+  const minProfit=Number(s.minProfit)||0;
+  const maxProfit=s.maxProfit===""||s.maxProfit==null?"":Number(s.maxProfit);
+  const fixedProfit=s.fixedProfit===""||s.fixedProfit==null?"":Number(s.fixedProfit);
+
+  const travelerPerPax=travelerRows.reduce((sum,row)=>sum+travelerRowPerPax(row,pax,mainCurrency,mainRate),0);
+  const leaderTotal=leaderRows.reduce((sum,row)=>sum+leaderRowTotal(row,mainCurrency,mainRate),0);
+  const leaderPerPax=leaderTotal/pax;
+
+  const ratioEligible=travelerRows.filter(r=>r.childRatioApplicable).reduce((sum,row)=>sum+travelerRowPerPax(row,pax,mainCurrency,mainRate),0);
+  const ratioExcluded=travelerRows.filter(r=>!r.childRatioApplicable).reduce((sum,row)=>sum+travelerRowPerPax(row,pax,mainCurrency,mainRate),0);
+
+  const childCost=(mode:ChildMode,manual:number,currency:Currency)=>{
+    const ratio=childRatio(mode);
+    if(ratio===null) return (Number(manual)||0)*currencyRate(currency,mainCurrency,mainRate);
+    return ratioEligible*ratio+ratioExcluded;
+  };
+
+  const childBed=childCost((s.childBedMode||"手动成本") as ChildMode,Number(s.childBedManual)||0,(s.childBedCurrency||"RM") as Currency);
+  const childNoBed=childCost((s.childNoBedMode||"手动成本") as ChildMode,Number(s.childNoBedManual)||0,(s.childNoBedCurrency||"RM") as Currency);
+
+  const make=(cost:number)=>{
+    const profit=computeProfit(cost,profitMode,profitRate,minProfit,maxProfit,fixedProfit);
+    return {cost,profit,selling:cost+profit};
+  };
+
+  return [
+    ["成人",make(travelerPerPax),make(travelerPerPax+leaderPerPax)],
+    ["小孩含床",make(childBed),make(childBed+leaderPerPax)],
+    ["小孩不含床",make(childNoBed),make(childNoBed+leaderPerPax)]
+  ] as const;
+}
 
 export default async function QuotationDetailPage({params}:{params:Promise<{id:string}>}){
   const {id}=await params;
@@ -13,6 +58,8 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
   if(error||!data||!data.id) notFound();
 
   const margin=Number(data.margin||0);
+  const matrix=buildMatrix(data);
+
   return <div>
     <div className="page-head quote-detail-head">
       <div>
@@ -37,6 +84,34 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
       <div className="dash-card"><span>Profit</span><b>{money(Number(data.profit))}</b></div>
       <div className="dash-card"><span>Margin</span><b>{(margin*100).toFixed(1)}%</b></div>
       <div className="dash-card"><span>Pax</span><b>{data.pax||0}</b></div>
+    </section>
+
+    <section className="panel">
+      <div className="panel-head"><h2>最终报价矩阵</h2></div>
+      <div className="matrix-wrap">
+        <table className="matrix detail-matrix">
+          <thead><tr>
+            <th>旅客类型</th>
+            <th>不含领队成本</th>
+            <th>不含领队利润</th>
+            <th>不含领队建议售价</th>
+            <th>含领队成本</th>
+            <th>含领队利润</th>
+            <th>含领队建议售价</th>
+          </tr></thead>
+          <tbody>
+            {matrix.map(([label,a,b])=><tr key={label}>
+              <td className="label-cell">{label}</td>
+              <td>{money(a.cost)}</td>
+              <td>{money(a.profit)}</td>
+              <td className="sale">{money(a.selling)}</td>
+              <td>{money(b.cost)}</td>
+              <td>{money(b.profit)}</td>
+              <td className="sale">{money(b.selling)}</td>
+            </tr>)}
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <section className="panel">
