@@ -46,7 +46,7 @@ function buildMatrix(q:any){
   return {
     hasLeader,
     rows:[
-      ["成人",make(travelerPerPax),make(travelerPerPax+leaderPerPax)],
+      ["成人（双人一房）",make(travelerPerPax),make(travelerPerPax+leaderPerPax)],
       ["小孩含床",make(childBed),make(childBed+leaderPerPax)],
       ["小孩不含床",make(childNoBed),make(childNoBed+leaderPerPax)]
     ] as const
@@ -62,6 +62,14 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
   if(error||!data||!data.id) notFound();
 
   const margin=Number(data.margin||0);
+  const qd=data.quotation_data||{};
+  const singleRoomAmount=qd.singleRoomAmount===""||qd.singleRoomAmount==null?null:Number(qd.singleRoomAmount);
+  const singleRoomCurrency=(qd.singleRoomCurrency||"RM") as Currency;
+  const mainCurrency=(qd.mainCurrency||"RMB") as Currency;
+  const mainRate=Number(qd.mainRate)||0;
+  const singleRoomSupplement=singleRoomAmount==null?null:singleRoomAmount*currencyRate(singleRoomCurrency,mainCurrency,mainRate);
+  const adultSellingPrice=Number(data.selling_price)||0;
+  const singleRoomSellingPrice=singleRoomSupplement==null?null:adultSellingPrice+singleRoomSupplement;
   const matrixData=buildMatrix(data);
   const matrix=matrixData.rows;
   const hasLeader=matrixData.hasLeader;
@@ -79,10 +87,17 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
       </div>
     </div>
 
-    <section className="quote-result-hero">
-      <span>Final Selling Price</span>
-      <strong>{money(Number(data.selling_price))}</strong>
-      <small>最终对客报价</small>
+    <section className="final-price-grid">
+      <div className="quote-result-hero">
+        <span>成人价格 · Twin Sharing</span>
+        <strong>{money(adultSellingPrice)}</strong>
+        <small>成人默认双人一房</small>
+      </div>
+      <div className="quote-result-hero">
+        <span>单人房价格 · Single Room</span>
+        <strong>{singleRoomSellingPrice==null?"—":money(singleRoomSellingPrice)}</strong>
+        <small>{singleRoomSupplement==null?"尚未填写单人房差":`含单人房差 ${money(singleRoomSupplement)}`}</small>
+      </div>
     </section>
 
     <section className="dashboard-cards quote-detail-cards">
