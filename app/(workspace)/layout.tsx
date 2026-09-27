@@ -19,6 +19,7 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
           <Link href="/quotations/new">＋ New Quotation</Link>
           <Link href="/quotations">My Quotations</Link>
           <Link href="/tour-groups">Tour Groups</Link>
+          {user.role === "manager" && <Link href="/trash">Trash</Link>}
           {user.role === "manager" && <Link href="/team">Staff Accounts</Link>}
         </nav>
         <WorkspaceUserMenu name={user.name} role={user.role} />
