@@ -19,7 +19,8 @@ export default function LoginForm() {
 
     const loginName = username.trim().toLowerCase();
     const email = loginName + "@happyexpress.internal";
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const authPassword = password + "HE!";
+    const { error } = await supabase.auth.signInWithPassword({ email, password: authPassword });
 
     if (error) {
       setMessage("Login name or password is incorrect.");
