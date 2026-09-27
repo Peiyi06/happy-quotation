@@ -7,9 +7,7 @@ import { createClient } from "@/utils/supabase/client";
 export default function LoginForm() {
   const supabase = createClient();
   const router = useRouter();
-  const [mode, setMode] = useState<"login"|"signup">("login");
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,21 +17,15 @@ export default function LoginForm() {
     setLoading(true);
     setMessage("");
 
-    if (mode === "login") {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setMessage(error.message);
-      else {
-        router.push("/dashboard");
-        router.refresh();
-      }
+    const loginName = username.trim().toLowerCase();
+    const email = loginName + "@happyexpress.internal";
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      setMessage("Login name or password is incorrect.");
     } else {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: fullName } }
-      });
-      if (error) setMessage(error.message);
-      else setMessage("账号已创建。若系统要求邮箱验证，请先完成验证再登录。");
+      router.push("/dashboard");
+      router.refresh();
     }
     setLoading(false);
   }
@@ -46,18 +38,23 @@ export default function LoginForm() {
         <p>内部报价、利润与团型管理系统</p>
       </div>
       <form className="auth-card" onSubmit={submit}>
-        <div className="auth-switch">
-          <button type="button" className={mode==="login"?"active":""} onClick={()=>setMode("login")}>Login</button>
-          <button type="button" className={mode==="signup"?"active":""} onClick={()=>setMode("signup")}>Create Account</button>
+        <div className="auth-title">
+          <h2>Staff Login</h2>
+          <p>仅限 Happy Express Travel 内部员工</p>
         </div>
-        {mode==="signup" && (
-          <label className="field"><span>姓名</span><input required value={fullName} onChange={e=>setFullName(e.target.value)} /></label>
-        )}
-        <label className="field"><span>Email</span><input type="email" required value={email} onChange={e=>setEmail(e.target.value)} /></label>
-        <label className="field"><span>Password</span><input type="password" minLength={6} required value={password} onChange={e=>setPassword(e.target.value)} /></label>
+        <label className="field">
+          <span>Login Name</span>
+          <input autoComplete="username" required value={username} onChange={e=>setUsername(e.target.value)} placeholder="例如：jess" />
+        </label>
+        <label className="field">
+          <span>Password</span>
+          <input autoComplete="current-password" type="password" required value={password} onChange={e=>setPassword(e.target.value)} />
+        </label>
         {message && <div className="auth-message">{message}</div>}
-        <button className="btn primary auth-submit" disabled={loading}>{loading ? "Please wait..." : mode==="login" ? "Login" : "Create Account"}</button>
-        <p className="auth-note">第一个注册账号会自动成为 Manager，其后的新账号默认是 Sales。</p>
+        <button className="btn primary auth-submit" disabled={loading}>
+          {loading ? "Signing in..." : "Login"}
+        </button>
+        <p className="auth-note">员工账号由 Manager 在系统内部建立，外部无法自行注册。</p>
       </form>
     </div>
   );
