@@ -58,6 +58,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [mainRate, setMainRate] = useState(0.62);
   const [travelerRows, setTravelerRows] = useState<TravelerCostRow[]>(defaultTravelerRows);
   const [leaderRows, setLeaderRows] = useState<LeaderCostRow[]>(defaultLeaderRows);
+  const [leaderOpen, setLeaderOpen] = useState(false);
 
   const [profitMode, setProfitMode] = useState<ProfitMode>("按成本加价率");
   const [profitRate, setProfitRate] = useState(0.15);
@@ -104,7 +105,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       Object.entries(source).forEach(([k, v]) => {
         const setters: Record<string, (x: any) => void> = {
           tourCode:setTourCode,businessType:setBusinessType,op:setOp,supplier:setSupplier,pax:setPax,mainCurrency:setMainCurrency,mainRate:setMainRate,
-          travelerRows:setTravelerRows,leaderRows:setLeaderRows,profitMode:setProfitMode,profitRate:setProfitRate,minProfit:setMinProfit,maxProfit:setMaxProfit,
+          travelerRows:setTravelerRows,leaderRows:setLeaderRows,leaderOpen:setLeaderOpen,profitMode:setProfitMode,profitRate:setProfitRate,minProfit:setMinProfit,maxProfit:setMaxProfit,
           fixedProfit:setFixedProfit,roundUnit:setRoundUnit,childBedMode:setChildBedMode,childBedManual:setChildBedManual,childBedCurrency:setChildBedCurrency,
           childNoBedMode:setChildNoBedMode,childNoBedManual:setChildNoBedManual,childNoBedCurrency:setChildNoBedCurrency,selectedType:setSelectedType,manualQuote:setManualQuote
         };
@@ -116,14 +117,14 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
   useEffect(() => {
     if (!hydrated) return;
-    const state = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote};
+    const state = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,leaderOpen,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote};
     localStorage.setItem("happy-quotation-v1", JSON.stringify(state));
-  }, [hydrated,tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote]);
+  }, [hydrated,tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,leaderOpen,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote]);
 
   const currentSnapshot = JSON.stringify({
     quoteTitle,destination,customerName,status,tourGroupId,
     tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
-    travelerRows,leaderRows,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
+    travelerRows,leaderRows,leaderOpen,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
     childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,
     selectedType,manualQuote
   });
@@ -223,7 +224,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setSaving(true);
     setSaveMessage("");
 
-    const quotationData = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote};
+    const quotationData = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,leaderOpen,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote};
     const payload = {
       tour_group_id: tourGroupId || "",
       tour_code: tourCode,
@@ -326,6 +327,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       { id: uid(), item: "Bonus", unitPrice: 0, qty: 1, currency: "RM", note: "" },
       { id: uid(), item: "其他", unitPrice: 0, qty: 1, currency: "RM", note: "" }
     ]);
+    setLeaderOpen(false);
 
     setProfitMode("按成本加价率");
     setProfitRate(0.15);
@@ -423,16 +425,21 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     </Section>
 
     <div className="two-col">
-      <Section title="②B 领队成本（没有可留空）">
-        <div className="table-wrap"><table><thead><tr><th>项目</th><th>单价</th><th>数量 / 天数</th><th>币种</th><th>总成本</th><th>每人分摊</th><th>备注</th></tr></thead>
+      <section className="section leader-toggle-section">
+        <div className="section-head leader-toggle-head">
+          <button className={"btn leader-toggle-btn "+(leaderOpen?"active":"")} onClick={()=>setLeaderOpen(v=>!v)}>
+            领队陪同
+          </button>
+        </div>
+        {leaderOpen && <div className="table-wrap"><table><thead><tr><th>项目</th><th>单价</th><th>数量 / 天数</th><th>币种</th><th>总成本</th><th>每人分摊</th><th>备注</th></tr></thead>
         <tbody>{leaderRows.map(r=>{const total=leaderRowTotal(r,mainCurrency,mainRate);return <tr key={r.id}>
           <td><input value={r.item} onChange={e=>setLeader(r.id,{item:e.target.value})}/></td>
           <td><input type="number" value={r.unitPrice} onChange={e=>setLeader(r.id,{unitPrice:e.target.value===""?"":Number(e.target.value)})}/></td>
           <td><input type="number" value={r.qty} onChange={e=>setLeader(r.id,{qty:e.target.value===""?"":Number(e.target.value)})}/></td>
           <td><select value={r.currency} onChange={e=>setLeader(r.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c}>{c}</option>)}</select></td>
           <td>{money(total)}</td><td>{money(total/Math.max(1,pax))}</td><td><input value={r.note} onChange={e=>setLeader(r.id,{note:e.target.value})}/></td>
-        </tr>})}</tbody></table></div>
-      </Section>
+        </tr>})}</tbody></table></div>}
+      </section>
 
       <Section title="③ 儿童成本设置">
         <div className="child-grid">
