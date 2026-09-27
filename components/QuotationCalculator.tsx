@@ -17,6 +17,15 @@ type TravelerType = typeof travelerTypes[number];
 type QuoteStatus = "draft"|"ready"|"sent"|"revised"|"confirmed"|"lost"|"archived";
 type CalculatorProps = { workspaceMode?: boolean; quotationId?: string; initialQuotation?: any };
 
+const travelerTypeLabel = (type: TravelerType) => ({
+  "成人不含领队":"成人（双人一房）",
+  "成人含领队":"成人（双人一房）",
+  "小孩含床不含领队":"小孩加床",
+  "小孩含床含领队":"小孩加床",
+  "小孩不含床不含领队":"小孩不加床",
+  "小孩不含床含领队":"小孩不加床",
+} as Record<TravelerType,string>)[type];
+
 const uid = () => Math.random().toString(36).slice(2, 10);
 const money = (n: number) => new Intl.NumberFormat("en-MY", { style: "currency", currency: "MYR", minimumFractionDigits: 2 }).format(Number.isFinite(n) ? n : 0).replace("MYR", "RM");
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
@@ -478,8 +487,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
   const matrix = [
     ["成人（双人一房）", calc.adultNoLeader, calc.adultLeader],
-    ["小孩含床", calc.childBedNoLeader, calc.childBedLeader],
-    ["小孩不含床", calc.childNoBedNoLeader, calc.childNoBedLeader],
+    ["小孩加床", calc.childBedNoLeader, calc.childBedLeader],
+    ["小孩不加床", calc.childNoBedNoLeader, calc.childNoBedLeader],
   ] as const;
 
   return <main className="app-shell">
@@ -621,15 +630,15 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
       <Section title="③ 儿童成本设置">
         <div className="child-grid">
-          <ChildCard title="小孩含床" mode={childBedMode} setMode={setChildBedMode} manual={childBedManual} setManual={setChildBedManual} currency={childBedCurrency} setCurrency={setChildBedCurrency} />
-          <ChildCard title="小孩不含床" mode={childNoBedMode} setMode={setChildNoBedMode} manual={childNoBedManual} setManual={setChildNoBedManual} currency={childNoBedCurrency} setCurrency={setChildNoBedCurrency} />
+          <ChildCard title="小孩加床｜与2位成人同房 + 1张加床" mode={childBedMode} setMode={setChildBedMode} manual={childBedManual} setManual={setChildBedManual} currency={childBedCurrency} setCurrency={setChildBedCurrency} />
+          <ChildCard title="小孩不加床｜与2位成人同房，不另加床" mode={childNoBedMode} setMode={setChildNoBedMode} manual={childNoBedManual} setManual={setChildNoBedManual} currency={childNoBedCurrency} setCurrency={setChildNoBedCurrency} />
         </div>
       </Section>
     </div>
 
     <Section title="④ 对客报价">
       <div className="quote-panel">
-        <Field label="旅客类型"><select value={effectiveSelectedType} onChange={e=>{setSelectedType(e.target.value as TravelerType);setManualQuote("")}}>{travelerTypes.filter(x=>hasLeader || x.includes("不含领队")).map(x=><option key={x}>{x}</option>)}</select></Field>
+        <Field label="旅客类型"><select value={effectiveSelectedType} onChange={e=>{setSelectedType(e.target.value as TravelerType);setManualQuote("")}}>{travelerTypes.filter(x=>hasLeader || x.includes("不含领队")).map(x=><option key={x} value={x}>{travelerTypeLabel(x)}</option>)}</select></Field>
         <Metric label="成本" value={money(selected.cost)} />
         <Metric label="系统建议价" value={money(selected.suggested)} />
         <Field label="手动最终报价"><input type="number" value={manualQuote} onChange={e=>setManualQuote(e.target.value===""?"":Number(e.target.value))} placeholder={`自动取整 ${roundUnit}`} /></Field>
