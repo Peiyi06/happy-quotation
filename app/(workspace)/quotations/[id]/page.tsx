@@ -121,6 +121,7 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
       <div className="detail-grid">
         <Detail label="Customer" value={data.customer_name||"—"}/>
         <Detail label="Destination" value={data.destination||"—"}/>
+        <Detail label="Departure Date" value={data.departure_date?new Date(data.departure_date+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
         <Detail label="Business Type" value={data.business_type||"—"}/>
         <Detail label="Tour Code" value={data.tour_code||"—"}/>
         <Detail label="Supplier" value={data.supplier||"—"}/>
