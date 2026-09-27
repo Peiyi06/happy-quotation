@@ -217,7 +217,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const finalQuote = manualQuote === "" ? roundUpTo(selected.suggested, roundUnit) : Number(manualQuote);
   const finalProfit = finalQuote - selected.cost;
   const finalMargin = finalQuote ? finalProfit / finalQuote : 0;
-  const hasLeader = leaderOpen && leaderRows.some(r => (Number(r.unitPrice)||0) > 0 && (Number(r.qty)||0) > 0);
+  const hasLeader = leaderRows.some(r => (Number(r.unitPrice)||0) > 0 && (Number(r.qty)||0) > 0);
 
   useEffect(() => {
     if (!hasLeader && selectedType.includes("含领队")) {
