@@ -2,10 +2,8 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
 
 export default function LoginForm() {
-  const supabase = createClient();
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -16,14 +14,14 @@ export default function LoginForm() {
     e.preventDefault();
     setLoading(true);
     setMessage("");
-
-    const loginName = username.trim().toLowerCase();
-    const email = loginName + "@happyexpress.internal";
-    const authPassword = password + "HE!";
-    const { error } = await supabase.auth.signInWithPassword({ email, password: authPassword });
-
-    if (error) {
-      setMessage("Login name or password is incorrect.");
+    const res = await fetch("/api/internal-login", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body:JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setMessage(data.error || "Login failed.");
     } else {
       router.push("/dashboard");
       router.refresh();
@@ -44,7 +42,7 @@ export default function LoginForm() {
           <p>仅限 Happy Express Travel 内部员工</p>
         </div>
         <label className="field">
-          <span>Login Name</span>
+          <span>Username</span>
           <input autoComplete="username" required value={username} onChange={e=>setUsername(e.target.value)} placeholder="例如：jess" />
         </label>
         <label className="field">
@@ -55,7 +53,7 @@ export default function LoginForm() {
         <button className="btn primary auth-submit" disabled={loading}>
           {loading ? "Signing in..." : "Login"}
         </button>
-        <p className="auth-note">员工账号由 Manager 在系统内部建立，外部无法自行注册。</p>
+        <p className="auth-note">员工账号只由 Manager 在系统内部建立。</p>
       </form>
     </div>
   );
