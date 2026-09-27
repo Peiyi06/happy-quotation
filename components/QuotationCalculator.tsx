@@ -41,6 +41,17 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [quoteTitle, setQuoteTitle] = useState("New Tour Quotation");
   const [destination, setDestination] = useState("");
   const [departureDate, setDepartureDate] = useState("");
+  const [returnDate, setReturnDate] = useState("");
+  const [outboundFlightNo, setOutboundFlightNo] = useState("");
+  const [outboundFlightDate, setOutboundFlightDate] = useState("");
+  const [outboundDepartureTime, setOutboundDepartureTime] = useState("");
+  const [outboundArrivalTime, setOutboundArrivalTime] = useState("");
+  const [outboundNextDay, setOutboundNextDay] = useState(false);
+  const [returnFlightNo, setReturnFlightNo] = useState("");
+  const [returnFlightDate, setReturnFlightDate] = useState("");
+  const [returnDepartureTime, setReturnDepartureTime] = useState("");
+  const [returnArrivalTime, setReturnArrivalTime] = useState("");
+  const [returnNextDay, setReturnNextDay] = useState(false);
   const [customerName, setCustomerName] = useState("");
   const [status, setStatus] = useState<QuoteStatus>("draft");
   const [tourGroupId, setTourGroupId] = useState("");
@@ -96,6 +107,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         setQuoteTitle(initialQuotation.title || "Quotation");
         setDestination(initialQuotation.destination || "");
         setDepartureDate(initialQuotation.departure_date || "");
+        setReturnDate(initialQuotation.return_date || "");
         setCustomerName(initialQuotation.customer_name || "");
         setStatus(initialQuotation.status || "draft");
         setTourGroupId(initialQuotation.tour_group_id || "");
@@ -107,6 +119,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       Object.entries(source).forEach(([k, v]) => {
         const setters: Record<string, (x: any) => void> = {
           tourCode:setTourCode,businessType:setBusinessType,op:setOp,supplier:setSupplier,pax:setPax,mainCurrency:setMainCurrency,mainRate:setMainRate,
+          outboundFlightNo:setOutboundFlightNo,outboundFlightDate:setOutboundFlightDate,outboundDepartureTime:setOutboundDepartureTime,outboundArrivalTime:setOutboundArrivalTime,outboundNextDay:setOutboundNextDay,
+          returnFlightNo:setReturnFlightNo,returnFlightDate:setReturnFlightDate,returnDepartureTime:setReturnDepartureTime,returnArrivalTime:setReturnArrivalTime,returnNextDay:setReturnNextDay,
           travelerRows:setTravelerRows,leaderRows:setLeaderRows,leaderOpen:setLeaderOpen,profitMode:setProfitMode,profitRate:setProfitRate,minProfit:setMinProfit,maxProfit:setMaxProfit,
           fixedProfit:setFixedProfit,roundUnit:setRoundUnit,childBedMode:setChildBedMode,childBedManual:setChildBedManual,childBedCurrency:setChildBedCurrency,
           childNoBedMode:setChildNoBedMode,childNoBedManual:setChildNoBedManual,childNoBedCurrency:setChildNoBedCurrency,selectedType:setSelectedType,manualQuote:setManualQuote
@@ -119,17 +133,62 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
   useEffect(() => {
     if (!hydrated) return;
-    const state = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,leaderOpen,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote};
+    const state = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
+      outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
+      returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
+      travelerRows,leaderRows,leaderOpen,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote};
     localStorage.setItem("happy-quotation-v1", JSON.stringify(state));
-  }, [hydrated,tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,leaderOpen,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote]);
+  }, [hydrated,tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
+  outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
+  returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
+  travelerRows,leaderRows,leaderOpen,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote]);
 
   const currentSnapshot = JSON.stringify({
-    quoteTitle,destination,departureDate,customerName,status,tourGroupId,
+    quoteTitle,destination,departureDate,returnDate,customerName,status,tourGroupId,
+    outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
+    returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
     tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
     travelerRows,leaderRows,leaderOpen,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
     childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,
     selectedType,manualQuote
   });
+
+  const itinerarySummary = useMemo(() => {
+    const addDays = (date:string, days:number) => {
+      if (!date) return "";
+      const d = new Date(date + "T00:00:00");
+      d.setDate(d.getDate() + days);
+      return d.toISOString().slice(0,10);
+    };
+    const diffDays = (start:string, end:string) => {
+      if (!start || !end) return 0;
+      const a = new Date(start + "T00:00:00").getTime();
+      const b = new Date(end + "T00:00:00").getTime();
+      return Math.round((b-a)/86400000);
+    };
+    const arrivalReturnDate = returnFlightDate ? addDays(returnFlightDate, returnNextDay ? 1 : 0) : "";
+    const days = departureDate && arrivalReturnDate ? diffDays(departureDate, arrivalReturnDate) + 1 : 0;
+
+    let nights = 0;
+    if (outboundFlightDate && returnFlightDate) {
+      let hotelStart = outboundFlightDate;
+      if (outboundNextDay) {
+        const arrivalMinutes = outboundArrivalTime ? Number(outboundArrivalTime.slice(0,2))*60 + Number(outboundArrivalTime.slice(3,5)) : 9999;
+        hotelStart = arrivalMinutes <= 180 ? outboundFlightDate : addDays(outboundFlightDate,1);
+      }
+      nights = Math.max(0, diffDays(hotelStart, returnFlightDate));
+    }
+    return {
+      returnDate: arrivalReturnDate,
+      days,
+      nights,
+      label: days ? `${days}D${nights}N` : ""
+    };
+  }, [departureDate,outboundFlightDate,outboundArrivalTime,outboundNextDay,returnFlightDate,returnNextDay]);
+
+  useEffect(() => {
+    setReturnDate(itinerarySummary.returnDate);
+  }, [itinerarySummary.returnDate]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -251,13 +310,18 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setSaving(true);
     setSaveMessage("");
 
-    const quotationData = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,leaderOpen,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType:effectiveSelectedType,manualQuote};
+    const quotationData = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
+      outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
+      returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
+      itineraryDays:itinerarySummary.days,itineraryNights:itinerarySummary.nights,itineraryLabel:itinerarySummary.label,
+      travelerRows,leaderRows,leaderOpen,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType:effectiveSelectedType,manualQuote};
     const payload = {
       tour_group_id: tourGroupId || "",
       tour_code: tourCode,
       title: quoteTitle || tourCode || "Untitled Quotation",
       destination: destination || "",
       departure_date: departureDate || "",
+      return_date: returnDate || "",
       business_type: businessType || "",
       customer_name: customerName || "",
       supplier: supplier || "",
@@ -330,6 +394,17 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setQuoteTitle("New Tour Quotation");
     setDestination("");
     setDepartureDate("");
+    setReturnDate("");
+    setOutboundFlightNo("");
+    setOutboundFlightDate("");
+    setOutboundDepartureTime("");
+    setOutboundArrivalTime("");
+    setOutboundNextDay(false);
+    setReturnFlightNo("");
+    setReturnFlightDate("");
+    setReturnDepartureTime("");
+    setReturnArrivalTime("");
+    setReturnNextDay(false);
     setCustomerName("");
     setStatus("draft");
     setTourGroupId("");
@@ -412,10 +487,49 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         <Field label="Quotation Title"><input value={quoteTitle} onChange={e=>setQuoteTitle(e.target.value)} placeholder="例如：江西 8D7N · HT Group" /></Field>
         <Field label="Destination"><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder="China / Japan / Thailand" /></Field>
         <Field label="Departure Date"><input type="date" value={departureDate} onChange={e=>setDepartureDate(e.target.value)} /></Field>
+        <Field label="Return Date"><input type="date" value={returnDate} readOnly /></Field>
         <Field label="Customer"><input value={customerName} onChange={e=>setCustomerName(e.target.value)} placeholder="Customer / Company" /></Field>
         <Field label="Tour Group"><select value={tourGroupId} onChange={e=>setTourGroupId(e.target.value)}><option value="">Unclassified</option>{tourGroups.map((g:any)=><option key={g.id} value={g.id}>{g.name}</option>)}</select></Field>
         <Field label="Status"><select value={status} onChange={e=>setStatus(e.target.value as QuoteStatus)}><option value="draft">Draft</option><option value="ready">Ready</option><option value="sent">Sent</option><option value="revised">Revised</option><option value="confirmed">Confirmed</option><option value="lost">Lost</option><option value="archived">Archived</option></select></Field>
       </div>
+
+      <div className="flight-info-card">
+        <div className="flight-info-head">
+          <div>
+            <span className="page-kicker">FLIGHT INFORMATION</span>
+            <h3>航班信息</h3>
+          </div>
+          {itinerarySummary.label && <div className="itinerary-pill">
+            <strong>{itinerarySummary.days}天{itinerarySummary.nights}晚</strong>
+            <span>{itinerarySummary.label}</span>
+          </div>}
+        </div>
+
+        <div className="flight-pair-grid">
+          <div className="flight-block">
+            <h4>Departure Flight</h4>
+            <div className="flight-fields">
+              <Field label="Airline / Flight No."><input value={outboundFlightNo} onChange={e=>setOutboundFlightNo(e.target.value.toUpperCase())} placeholder="CZ1234" /></Field>
+              <Field label="Flight Date"><input type="date" value={outboundFlightDate} onChange={e=>{setOutboundFlightDate(e.target.value); if(!departureDate) setDepartureDate(e.target.value);}} /></Field>
+              <Field label="Departure Time"><input type="time" value={outboundDepartureTime} onChange={e=>setOutboundDepartureTime(e.target.value)} /></Field>
+              <Field label="Arrival Time"><input type="time" value={outboundArrivalTime} onChange={e=>setOutboundArrivalTime(e.target.value)} /></Field>
+              <label className="next-day-toggle"><input type="checkbox" checked={outboundNextDay} onChange={e=>setOutboundNextDay(e.target.checked)} /><span>+1 Next Day</span></label>
+            </div>
+          </div>
+
+          <div className="flight-block">
+            <h4>Return Flight</h4>
+            <div className="flight-fields">
+              <Field label="Airline / Flight No."><input value={returnFlightNo} onChange={e=>setReturnFlightNo(e.target.value.toUpperCase())} placeholder="CZ1235" /></Field>
+              <Field label="Flight Date"><input type="date" value={returnFlightDate} onChange={e=>setReturnFlightDate(e.target.value)} /></Field>
+              <Field label="Departure Time"><input type="time" value={returnDepartureTime} onChange={e=>setReturnDepartureTime(e.target.value)} /></Field>
+              <Field label="Arrival Time"><input type="time" value={returnArrivalTime} onChange={e=>setReturnArrivalTime(e.target.value)} /></Field>
+              <label className="next-day-toggle"><input type="checkbox" checked={returnNextDay} onChange={e=>setReturnNextDay(e.target.checked)} /><span>+1 Next Day</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {saveMessage && <div className="save-message">{saveMessage}</div>}
     </section>}
 
