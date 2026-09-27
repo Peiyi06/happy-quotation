@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { internalDb, internalToken } from "@/lib/internalSession";
+import QuotationRowActions from "@/components/QuotationRowActions";
 
 const money=(n:number)=>new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR"}).format(n||0).replace("MYR","RM");
 
@@ -30,9 +31,9 @@ export default async function QuotationsPage({ searchParams }:{searchParams:Prom
       <button className="btn">Filter</button>
     </form>
     <section className="panel">
-      <div className="data-table-wrap"><table className="data-table"><thead><tr><th>Quote No</th><th>Tour</th><th>Group</th><th>Customer</th><th>Pax</th><th>Status</th><th>Selling</th><th>Margin</th><th>Updated</th></tr></thead><tbody>
-        {quotes.map((x:any)=><tr key={x.id}><td><Link href={"/quotations/"+x.id}>{x.quotation_no}</Link></td><td><strong>{x.title}</strong><small>{x.destination||""}</small></td><td>{x.tour_group_name||"Unclassified"}</td><td>{x.customer_name||"—"}</td><td>{x.pax}</td><td><span className={"status status-"+x.status}>{x.status}</span></td><td>{money(Number(x.selling_price))}</td><td>{(Number(x.margin)*100).toFixed(1)}%</td><td>{new Date(x.updated_at).toLocaleDateString("en-MY")}</td></tr>)}
-        {!quotes.length&&<tr><td colSpan={9} className="empty">没有符合条件的报价。</td></tr>}
+      <div className="data-table-wrap"><table className="data-table"><thead><tr><th>Quote No</th><th>Tour</th><th>Group</th><th>Customer</th><th>Pax</th><th>Status</th><th>Selling</th><th>Margin</th><th>Updated</th><th>Action</th></tr></thead><tbody>
+        {quotes.map((x:any)=><tr key={x.id}><td><Link href={"/quotations/"+x.id}>{x.quotation_no}</Link></td><td><strong>{x.title}</strong><small>{x.destination||""}</small></td><td>{x.tour_group_name||"Unclassified"}</td><td>{x.customer_name||"—"}</td><td>{x.pax}</td><td><span className={"status status-"+x.status}>{x.status}</span></td><td>{money(Number(x.selling_price))}</td><td>{(Number(x.margin)*100).toFixed(1)}%</td><td>{new Date(x.updated_at).toLocaleDateString("en-MY")}</td><td><QuotationRowActions id={x.id}/></td></tr>)}
+        {!quotes.length&&<tr><td colSpan={10} className="empty">没有符合条件的报价。</td></tr>}
       </tbody></table></div>
     </section>
   </div>;
