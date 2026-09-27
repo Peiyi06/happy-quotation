@@ -201,6 +201,10 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     };
   }, [pax,travelerRows,leaderRows,mainCurrency,mainRate,profitMode,profitRate,minProfit,maxProfit,fixedProfit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency]);
 
+  const effectiveSelectedType = (!hasLeader && selectedType.includes("含领队"))
+    ? selectedType.replace("含领队","不含领队") as TravelerType
+    : selectedType;
+
   const selected = ({
     "成人不含领队": calc.adultNoLeader,
     "成人含领队": calc.adultLeader,
@@ -208,11 +212,21 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     "小孩含床含领队": calc.childBedLeader,
     "小孩不含床不含领队": calc.childNoBedNoLeader,
     "小孩不含床含领队": calc.childNoBedLeader,
-  } as Record<TravelerType, {cost:number;profit:number;suggested:number}>)[selectedType];
+  } as Record<TravelerType, {cost:number;profit:number;suggested:number}>)[effectiveSelectedType];
 
   const finalQuote = manualQuote === "" ? roundUpTo(selected.suggested, roundUnit) : Number(manualQuote);
   const finalProfit = finalQuote - selected.cost;
   const finalMargin = finalQuote ? finalProfit / finalQuote : 0;
+  const hasLeader = leaderOpen && leaderRows.some(r => (Number(r.unitPrice)||0) > 0 && (Number(r.qty)||0) > 0);
+
+  useEffect(() => {
+    if (!hasLeader && selectedType.includes("含领队")) {
+      const noLeaderType = selectedType.replace("含领队","不含领队") as TravelerType;
+      setSelectedType(noLeaderType);
+      setManualQuote("");
+    }
+  }, [hasLeader, selectedType]);
+
 
   const setTraveler = (id:string, patch:Partial<TravelerCostRow>) => setTravelerRows(rows => rows.map(r => r.id === id ? {...r,...patch}:r));
   const addTraveler = () => setTravelerRows(rows => [...rows,{id:uid(),item:"",mode:"每人",unitPrice:"",qty:1,currency:"RM",childRatioApplicable:false,note:""}]);
@@ -224,7 +238,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setSaving(true);
     setSaveMessage("");
 
-    const quotationData = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,leaderOpen,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote};
+    const quotationData = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,leaderOpen,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType:effectiveSelectedType,manualQuote};
     const payload = {
       tour_group_id: tourGroupId || "",
       tour_code: tourCode,
@@ -451,7 +465,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
     <Section title="④ 对客报价">
       <div className="quote-panel">
-        <Field label="旅客类型"><select value={selectedType} onChange={e=>{setSelectedType(e.target.value as TravelerType);setManualQuote("")}}>{travelerTypes.map(x=><option key={x}>{x}</option>)}</select></Field>
+        <Field label="旅客类型"><select value={effectiveSelectedType} onChange={e=>{setSelectedType(e.target.value as TravelerType);setManualQuote("")}}>{travelerTypes.filter(x=>hasLeader || !x.includes("含领队")).map(x=><option key={x}>{x}</option>)}</select></Field>
         <Metric label="成本" value={money(selected.cost)} />
         <Metric label="系统建议价" value={money(selected.suggested)} />
         <Field label="手动最终报价"><input type="number" value={manualQuote} onChange={e=>setManualQuote(e.target.value===""?"":Number(e.target.value))} placeholder={`自动取整 ${roundUnit}`} /></Field>
@@ -462,8 +476,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     </Section>
 
     <Section title="最终报价矩阵">
-      <div className="matrix-wrap"><table className="matrix"><thead><tr><th>旅客类型</th><th>不含领队成本</th><th>不含领队利润</th><th>不含领队建议售价</th><th>含领队成本</th><th>含领队利润</th><th>含领队建议售价</th></tr></thead><tbody>
-        {matrix.map(([label,a,b])=><tr key={label}><td className="label-cell">{label}</td><td>{money(a.cost)}</td><td>{money(a.profit)}</td><td className="sale">{money(a.suggested)}</td><td>{money(b.cost)}</td><td>{money(b.profit)}</td><td className="sale">{money(b.suggested)}</td></tr>)}
+      <div className="matrix-wrap"><table className="matrix"><thead><tr><th>旅客类型</th><th>不含领队成本</th><th>不含领队利润</th><th>不含领队建议售价</th>{hasLeader&&<><th>含领队成本</th><th>含领队利润</th><th>含领队建议售价</th></>}</tr></thead><tbody>
+        {matrix.map(([label,a,b])=><tr key={label}><td className="label-cell">{label}</td><td>{money(a.cost)}</td><td>{money(a.profit)}</td><td className="sale">{money(a.suggested)}</td>{hasLeader&&<><td>{money(b.cost)}</td><td>{money(b.profit)}</td><td className="sale">{money(b.suggested)}</td></>}</tr>)}
       </tbody></table></div>
     </Section>
 
