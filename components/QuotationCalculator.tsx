@@ -216,12 +216,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setSaving(false);
   };
 
-  const resetAll = () => {
-    if (!confirm("确认重置全部报价资料？")) return;
-    localStorage.removeItem("happy-quotation-v1");
-    location.reload();
-  };
-
   const matrix = [
     ["成人", calc.adultNoLeader, calc.adultLeader],
     ["小孩含床", calc.childBedNoLeader, calc.childBedLeader],
@@ -238,7 +232,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <div className="top-actions no-print">
         {workspaceMode && <button className="btn primary" onClick={saveQuotation} disabled={saving}>{saving?"Saving...":"Save Quotation"}</button>}
         <button className="btn ghost" onClick={()=>window.print()}>打印 / PDF</button>
-        <button className="btn danger" onClick={resetAll}>重置</button>
       </div>
     </header>
 
