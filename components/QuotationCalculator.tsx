@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
 import {
   CalcMode, ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
   childRatio, computeProfit, currencyRate, leaderRowTotal, roundUpTo,
@@ -77,9 +76,12 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
   useEffect(() => {
     const load = async () => {
-      const supabase = createClient();
-      const { data } = await supabase.from("tour_groups").select("id,name,destination,business_type").order("name");
-      setTourGroups(data || []);
+      try {
+        const res = await fetch("/api/internal-groups", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        setTourGroups(Array.isArray(data.groups) ? data.groups : []);
+      } catch {}
     };
     load();
 
@@ -169,24 +171,16 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const saveQuotation = async () => {
     setSaving(true);
     setSaveMessage("");
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      setSaveMessage("Session expired. Please login again.");
-      setSaving(false);
-      return;
-    }
 
     const quotationData = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote};
     const payload = {
-      owner_id: user.id,
-      tour_group_id: tourGroupId || null,
+      tour_group_id: tourGroupId || "",
       tour_code: tourCode,
       title: quoteTitle || tourCode || "Untitled Quotation",
-      destination: destination || null,
-      business_type: businessType || null,
-      customer_name: customerName || null,
-      supplier: supplier || null,
+      destination: destination || "",
+      business_type: businessType || "",
+      customer_name: customerName || "",
+      supplier: supplier || "",
       pax,
       status,
       total_cost: selected.cost,
@@ -196,20 +190,28 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       quotation_data: quotationData,
     };
 
-    if (quotationId) {
-      const { error } = await supabase.from("quotations").update(payload).eq("id",quotationId);
-      if (error) setSaveMessage(error.message);
-      else { setSaveMessage("Saved"); router.refresh(); }
-    } else {
-      const d = new Date();
-      const code = `QT-${String(d.getFullYear()).slice(-2)}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
-      const { data, error } = await supabase.from("quotations").insert({...payload,quotation_no:code}).select("id").single();
-      if (error) setSaveMessage(error.message);
-      else if (data) {
+    try {
+      const res = await fetch("/api/internal-quotations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: quotationId || null, payload }),
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data?.ok) {
+        if (res.status === 401) {
+          setSaveMessage("Session expired. Please login again.");
+          setTimeout(() => router.push("/login"), 700);
+        } else {
+          setSaveMessage(data?.error || "Unable to save quotation.");
+        }
+      } else {
         setSaveMessage("Saved");
-        router.replace("/quotations/"+data.id);
+        if (!quotationId && data.id) router.replace("/quotations/" + data.id);
         router.refresh();
       }
+    } catch {
+      setSaveMessage("Unable to save quotation. Please try again.");
     }
     setSaving(false);
   };
@@ -331,7 +333,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </tbody></table></div>
     </Section>
 
-    <footer>数据会自动保存在此浏览器 Local Storage。其他非主要币种若未设为「主要币种」，汇率会显示 —，避免静默误算。</footer>
+    <footer>{workspaceMode ? "报价保存后会同步至公司云端数据库，可在 Quotation Library 重新打开及修改。" : "数据会自动保存在此浏览器 Local Storage。"} 其他非主要币种若未设为「主要币种」，汇率会显示 —，避免静默误算。</footer>
   </main>
 }
 
