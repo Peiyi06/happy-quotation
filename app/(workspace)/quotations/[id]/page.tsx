@@ -24,7 +24,7 @@ function buildMatrix(q:any){
   const travelerPerPax=travelerRows.reduce((sum,row)=>sum+travelerRowPerPax(row,pax,mainCurrency,mainRate),0);
   const leaderTotal=leaderRows.reduce((sum,row)=>sum+leaderRowTotal(row,mainCurrency,mainRate),0);
   const leaderPerPax=leaderTotal/pax;
-  const hasLeader=Boolean(s.hasLeader ?? (s.leaderOpen && leaderRows.some((r:any)=>(Number(r.unitPrice)||0)>0 && (Number(r.qty)||0)>0)));
+  const hasLeader=Boolean(s.hasLeader ?? leaderRows.some((r:any)=>(Number(r.unitPrice)||0)>0 && (Number(r.qty)||0)>0));
 
   const ratioEligible=travelerRows.filter(r=>r.childRatioApplicable).reduce((sum,row)=>sum+travelerRowPerPax(row,pax,mainCurrency,mainRate),0);
   const ratioExcluded=travelerRows.filter(r=>!r.childRatioApplicable).reduce((sum,row)=>sum+travelerRowPerPax(row,pax,mainCurrency,mainRate),0);
