@@ -226,3 +226,7 @@
 .single-room-section .section-head{margin-bottom:14px}
 .single-room-grid{display:grid;grid-template-columns:minmax(220px,1fr) minmax(160px,.55fr);gap:14px;max-width:560px}
 @media(max-width:700px){.single-room-grid{grid-template-columns:1fr;max-width:none}}
+
+.final-price-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:18px}
+.final-price-grid .quote-result-hero{margin-bottom:0}
+@media(max-width:760px){.final-price-grid{grid-template-columns:1fr}}
