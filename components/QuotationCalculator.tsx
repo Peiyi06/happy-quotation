@@ -40,6 +40,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const router = useRouter();
   const [quoteTitle, setQuoteTitle] = useState("New Tour Quotation");
   const [destination, setDestination] = useState("");
+  const [departureDate, setDepartureDate] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [status, setStatus] = useState<QuoteStatus>("draft");
   const [tourGroupId, setTourGroupId] = useState("");
@@ -94,6 +95,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       if (initialQuotation) {
         setQuoteTitle(initialQuotation.title || "Quotation");
         setDestination(initialQuotation.destination || "");
+        setDepartureDate(initialQuotation.departure_date || "");
         setCustomerName(initialQuotation.customer_name || "");
         setStatus(initialQuotation.status || "draft");
         setTourGroupId(initialQuotation.tour_group_id || "");
@@ -122,7 +124,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   }, [hydrated,tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,leaderOpen,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote]);
 
   const currentSnapshot = JSON.stringify({
-    quoteTitle,destination,customerName,status,tourGroupId,
+    quoteTitle,destination,departureDate,customerName,status,tourGroupId,
     tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
     travelerRows,leaderRows,leaderOpen,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
     childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,
@@ -244,6 +246,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       tour_code: tourCode,
       title: quoteTitle || tourCode || "Untitled Quotation",
       destination: destination || "",
+      departure_date: departureDate || "",
       business_type: businessType || "",
       customer_name: customerName || "",
       supplier: supplier || "",
@@ -315,6 +318,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
     setQuoteTitle("New Tour Quotation");
     setDestination("");
+    setDepartureDate("");
     setCustomerName("");
     setStatus("draft");
     setTourGroupId("");
@@ -396,6 +400,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <div className="quote-meta-grid">
         <Field label="Quotation Title"><input value={quoteTitle} onChange={e=>setQuoteTitle(e.target.value)} placeholder="例如：江西 8D7N · HT Group" /></Field>
         <Field label="Destination"><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder="China / Japan / Thailand" /></Field>
+        <Field label="Departure Date"><input type="date" value={departureDate} onChange={e=>setDepartureDate(e.target.value)} /></Field>
         <Field label="Customer"><input value={customerName} onChange={e=>setCustomerName(e.target.value)} placeholder="Customer / Company" /></Field>
         <Field label="Tour Group"><select value={tourGroupId} onChange={e=>setTourGroupId(e.target.value)}><option value="">Unclassified</option>{tourGroups.map((g:any)=><option key={g.id} value={g.id}>{g.name}</option>)}</select></Field>
         <Field label="Status"><select value={status} onChange={e=>setStatus(e.target.value as QuoteStatus)}><option value="draft">Draft</option><option value="ready">Ready</option><option value="sent">Sent</option><option value="revised">Revised</option><option value="confirmed">Confirmed</option><option value="lost">Lost</option><option value="archived">Archived</option></select></Field>
