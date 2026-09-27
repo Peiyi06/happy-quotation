@@ -212,3 +212,7 @@
 .quote-meta-panel input[readonly]{background:#fff2c8;color:inherit;opacity:1;cursor:default}
 @media(max-width:1100px){.flight-pair-grid{grid-template-columns:1fr}}
 @media(max-width:700px){.flight-fields{grid-template-columns:1fr}.next-day-toggle{padding-top:0}.flight-info-head{align-items:flex-start;flex-direction:column}}
+
+.time-input-wrap{position:relative}
+.time-input-wrap input{padding-right:54px}
+.time-meridiem{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;letter-spacing:.04em;color:var(--navy2);background:#eef4f8;border:1px solid #d5e0e8;border-radius:999px;padding:4px 7px;pointer-events:none}
