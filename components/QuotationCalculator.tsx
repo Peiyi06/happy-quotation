@@ -22,7 +22,10 @@ const money = (n: number) => new Intl.NumberFormat("en-MY", { style: "currency",
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
 const defaultTravelerRows: TravelerCostRow[] = [
-  { id: uid(), item: "", mode: "每人", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" },
+  { id: uid(), item: "地接报价", mode: "每人", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: true, note: "" },
+  { id: uid(), item: "小费", mode: "每人每天", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" },
+  { id: uid(), item: "旅游保险", mode: "每人", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" },
+  { id: uid(), item: "机场接送", mode: "整团", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" },
 ];
 
 const defaultLeaderRows: LeaderCostRow[] = [
@@ -310,7 +313,10 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setMainRate(0.62);
 
     setTravelerRows([
-      { id: uid(), item: "", mode: "每人", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" }
+      { id: uid(), item: "地接报价", mode: "每人", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: true, note: "" },
+      { id: uid(), item: "小费", mode: "每人每天", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" },
+      { id: uid(), item: "旅游保险", mode: "每人", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" },
+      { id: uid(), item: "机场接送", mode: "整团", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" }
     ]);
 
     setLeaderRows([
