@@ -216,6 +216,56 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setSaving(false);
   };
 
+  const resetAll = () => {
+    if (!confirm("确认重置当前报价？未保存的修改会被清空。")) return;
+
+    setQuoteTitle("New Tour Quotation");
+    setDestination("");
+    setCustomerName("");
+    setStatus("draft");
+    setTourGroupId("");
+
+    setTourCode("");
+    setBusinessType("");
+    setOp("");
+    setSupplier("");
+    setPax(1);
+    setMainCurrency("RMB");
+    setMainRate(0.62);
+
+    setTravelerRows([
+      { id: uid(), item: "", mode: "每人", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" }
+    ]);
+
+    setLeaderRows([
+      { id: uid(), item: "机票", unitPrice: 0, qty: 1, currency: "RM", note: "" },
+      { id: uid(), item: "单房", unitPrice: 0, qty: 1, currency: "RM", note: "" },
+      { id: uid(), item: "工钱", unitPrice: 0, qty: 1, currency: "RM", note: "" },
+      { id: uid(), item: "Bonus", unitPrice: 0, qty: 1, currency: "RM", note: "" },
+      { id: uid(), item: "其他", unitPrice: 0, qty: 1, currency: "RM", note: "" }
+    ]);
+
+    setProfitMode("按成本加价率");
+    setProfitRate(0.15);
+    setMinProfit("");
+    setMaxProfit("");
+    setFixedProfit("");
+    setRoundUnit(50);
+
+    setChildBedMode("手动成本");
+    setChildBedManual(0);
+    setChildBedCurrency("RM");
+    setChildNoBedMode("手动成本");
+    setChildNoBedManual(0);
+    setChildNoBedCurrency("RM");
+
+    setSelectedType("成人不含领队");
+    setManualQuote("");
+    setSaveMessage("");
+
+    localStorage.removeItem("happy-quotation-v1");
+  };
+
   const matrix = [
     ["成人", calc.adultNoLeader, calc.adultLeader],
     ["小孩含床", calc.childBedNoLeader, calc.childBedLeader],
@@ -232,6 +282,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <div className="top-actions no-print">
         {workspaceMode && <button className="btn primary" onClick={saveQuotation} disabled={saving}>{saving?"Saving...":"Save Quotation"}</button>}
         <button className="btn ghost" onClick={()=>window.print()}>打印 / PDF</button>
+        <button className="btn danger" onClick={resetAll}>重置</button>
       </div>
     </header>
 
