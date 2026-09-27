@@ -47,8 +47,8 @@ function buildMatrix(q:any){
     hasLeader,
     rows:[
       ["成人（双人一房）",make(travelerPerPax),make(travelerPerPax+leaderPerPax)],
-      ["小孩含床",make(childBed),make(childBed+leaderPerPax)],
-      ["小孩不含床",make(childNoBed),make(childNoBed+leaderPerPax)]
+      ["小孩加床",make(childBed),make(childBed+leaderPerPax)],
+      ["小孩不加床",make(childNoBed),make(childNoBed+leaderPerPax)]
     ] as const
   };
 }
