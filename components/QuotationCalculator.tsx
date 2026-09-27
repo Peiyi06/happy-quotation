@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   CalcMode, ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
@@ -46,6 +46,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [tourGroups, setTourGroups] = useState<any[]>([]);
   const [saveMessage, setSaveMessage] = useState("");
   const [saving, setSaving] = useState(false);
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
+  const baselineRef = useRef("");
   const [tourCode, setTourCode] = useState("Jorjien");
   const [businessType, setBusinessType] = useState("私人/家庭团");
   const [op, setOp] = useState("Jess");
@@ -117,6 +120,54 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     localStorage.setItem("happy-quotation-v1", JSON.stringify(state));
   }, [hydrated,tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote]);
 
+  const currentSnapshot = JSON.stringify({
+    quoteTitle,destination,customerName,status,tourGroupId,
+    tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
+    travelerRows,leaderRows,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
+    childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,
+    selectedType,manualQuote
+  });
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!baselineRef.current) {
+      baselineRef.current = currentSnapshot;
+      setIsDirty(false);
+      return;
+    }
+    setIsDirty(currentSnapshot !== baselineRef.current);
+  }, [hydrated,currentSnapshot]);
+
+  useEffect(() => {
+    const beforeUnload = (event: BeforeUnloadEvent) => {
+      if (!isDirty) return;
+      event.preventDefault();
+      event.returnValue = "";
+    };
+
+    const guardNavigation = (event: MouseEvent) => {
+      if (!isDirty || pendingHref) return;
+      const target = event.target as HTMLElement | null;
+      const anchor = target?.closest("a") as HTMLAnchorElement | null;
+      if (!anchor || anchor.target === "_blank" || anchor.hasAttribute("download")) return;
+
+      const url = new URL(anchor.href, window.location.href);
+      if (url.origin !== window.location.origin) return;
+      if (url.pathname === window.location.pathname && url.search === window.location.search) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      setPendingHref(url.pathname + url.search + url.hash);
+    };
+
+    window.addEventListener("beforeunload", beforeUnload);
+    document.addEventListener("click", guardNavigation, true);
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnload);
+      document.removeEventListener("click", guardNavigation, true);
+    };
+  }, [isDirty,pendingHref]);
+
   const calc = useMemo(() => {
     const safePax = Math.max(1, Number(pax) || 1);
     const travelerPerPax = travelerRows.reduce((s,r) => s + travelerRowPerPax(r,safePax,mainCurrency,mainRate), 0);
@@ -168,7 +219,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const removeTraveler = (id:string) => setTravelerRows(rows => rows.length > 1 ? rows.filter(r=>r.id!==id):rows);
   const setLeader = (id:string, patch:Partial<LeaderCostRow>) => setLeaderRows(rows => rows.map(r => r.id===id?{...r,...patch}:r));
 
-  const saveQuotation = async () => {
+  const saveQuotation = async (): Promise<boolean> => {
     setSaving(true);
     setSaveMessage("");
 
@@ -202,18 +253,46 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         if (res.status === 401) {
           setSaveMessage("Session expired. Please login again.");
           setTimeout(() => router.push("/login"), 700);
+          setSaving(false);
+          return false;
         } else {
           setSaveMessage(data?.error || "Unable to save quotation.");
+          setSaving(false);
+          return false;
         }
       } else {
         setSaveMessage("Saved");
+        baselineRef.current = currentSnapshot;
+        setIsDirty(false);
         if (!quotationId && data.id) router.replace("/quotations/" + data.id);
         router.refresh();
       }
     } catch {
       setSaveMessage("Unable to save quotation. Please try again.");
+      setSaving(false);
+      return false;
     }
     setSaving(false);
+    return true;
+  };
+
+  const saveAndLeave = async () => {
+    const href = pendingHref;
+    if (!href) return;
+    const ok = await saveQuotation();
+    if (ok) {
+      setPendingHref(null);
+      window.location.href = href;
+    }
+  };
+
+  const leaveWithoutSaving = () => {
+    const href = pendingHref;
+    if (!href) return;
+    baselineRef.current = currentSnapshot;
+    setIsDirty(false);
+    setPendingHref(null);
+    window.location.href = href;
   };
 
   const resetAll = () => {
@@ -280,7 +359,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         <p>Quotation Calculator · Vercel Edition</p>
       </div>
       <div className="top-actions no-print">
-        {workspaceMode && <button className="btn primary" onClick={saveQuotation} disabled={saving}>{saving?"Saving...":"Save Quotation"}</button>}
+        {workspaceMode && isDirty && <span className="unsaved-badge">Unsaved changes</span>}
+        {workspaceMode && <button className="btn primary" onClick={()=>void saveQuotation()} disabled={saving}>{saving?"Saving...":"Save Quotation"}</button>}
         <button className="btn ghost" onClick={()=>window.print()}>打印 / PDF</button>
         <button className="btn danger" onClick={resetAll}>重置</button>
       </div>
@@ -376,6 +456,21 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         {matrix.map(([label,a,b])=><tr key={label}><td className="label-cell">{label}</td><td>{money(a.cost)}</td><td>{money(a.profit)}</td><td className="sale">{money(a.suggested)}</td><td>{money(b.cost)}</td><td>{money(b.profit)}</td><td className="sale">{money(b.suggested)}</td></tr>)}
       </tbody></table></div>
     </Section>
+
+    {pendingHref && <div className="unsaved-overlay no-print" role="dialog" aria-modal="true">
+      <div className="unsaved-dialog">
+        <div className="unsaved-icon">!</div>
+        <div>
+          <h3>当前报价尚未存档</h3>
+          <p>你已经修改了这张报价。离开之前要先保存吗？</p>
+        </div>
+        <div className="unsaved-actions">
+          <button className="btn primary" onClick={saveAndLeave} disabled={saving}>{saving?"Saving...":"Save & Continue"}</button>
+          <button className="btn leave-btn" onClick={leaveWithoutSaving} disabled={saving}>Leave Without Saving</button>
+          <button className="btn" onClick={()=>setPendingHref(null)} disabled={saving}>Cancel</button>
+        </div>
+      </div>
+    </div>}
 
     <footer>{workspaceMode ? "报价保存后会同步至公司云端数据库，可在 Quotation Library 重新打开及修改。" : "数据会自动保存在此浏览器 Local Storage。"} 其他非主要币种若未设为「主要币种」，汇率会显示 —，避免静默误算。</footer>
   </main>
