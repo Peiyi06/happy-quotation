@@ -511,8 +511,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             <div className="flight-fields">
               <Field label="Airline / Flight No."><input value={outboundFlightNo} onChange={e=>setOutboundFlightNo(e.target.value.toUpperCase())} placeholder="CZ1234" /></Field>
               <Field label="Departure Flight Date"><input type="date" value={outboundFlightDate} onChange={e=>{setOutboundFlightDate(e.target.value); if(!departureDate) setDepartureDate(e.target.value);}} /></Field>
-              <Field label="Departure Time"><input type="time" value={outboundDepartureTime} onChange={e=>setOutboundDepartureTime(e.target.value)} /></Field>
-              <Field label="Arrival Time"><input type="time" value={outboundArrivalTime} onChange={e=>setOutboundArrivalTime(e.target.value)} /></Field>
+              <TimeField label="Departure Time" value={outboundDepartureTime} setValue={setOutboundDepartureTime} />
+              <TimeField label="Arrival Time" value={outboundArrivalTime} setValue={setOutboundArrivalTime} />
               <label className="next-day-toggle"><input type="checkbox" checked={outboundNextDay} onChange={e=>setOutboundNextDay(e.target.checked)} /><span>+1 Next Day</span></label>
             </div>
           </div>
@@ -522,8 +522,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             <div className="flight-fields">
               <Field label="Airline / Flight No."><input value={returnFlightNo} onChange={e=>setReturnFlightNo(e.target.value.toUpperCase())} placeholder="CZ1235" /></Field>
               <Field label="Return Flight Date"><input type="date" value={returnFlightDate} onChange={e=>setReturnFlightDate(e.target.value)} /></Field>
-              <Field label="Departure Time"><input type="time" value={returnDepartureTime} onChange={e=>setReturnDepartureTime(e.target.value)} /></Field>
-              <Field label="Arrival Time"><input type="time" value={returnArrivalTime} onChange={e=>setReturnArrivalTime(e.target.value)} /></Field>
+              <TimeField label="Departure Time" value={returnDepartureTime} setValue={setReturnDepartureTime} />
+              <TimeField label="Arrival Time" value={returnArrivalTime} setValue={setReturnArrivalTime} />
               <label className="next-day-toggle"><input type="checkbox" checked={returnNextDay} onChange={e=>setReturnNextDay(e.target.checked)} /><span>+1 Next Day</span></label>
             </div>
           </div>
@@ -632,6 +632,39 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
 function Section({title,children,action}:{title:string;children:React.ReactNode;action?:React.ReactNode}){return <section className="section"><div className="section-head"><h2>{title}</h2>{action}</div>{children}</section>}
 function Field({label,children}:{label:string;children:React.ReactNode}){return <label className="field"><span>{label}</span>{children}</label>}
+function TimeField({label,value,setValue}:{label:string;value:string;setValue:(v:string)=>void}){
+  const normalize=(raw:string)=>{
+    const digits=raw.replace(/\D/g,"").slice(0,4);
+    if(digits.length<=2) return digits;
+    return digits.slice(0,2)+":"+digits.slice(2);
+  };
+  const valid=(v:string)=>{
+    if(!/^\d{2}:\d{2}$/.test(v)) return v;
+    const [h,m]=v.split(":").map(Number);
+    if(h>23||m>59) return "";
+    return v;
+  };
+  const meridiem=(()=>{
+    if(!/^\d{2}:\d{2}$/.test(value)) return "";
+    const h=Number(value.slice(0,2));
+    return h<12?"AM":"PM";
+  })();
+  return <label className="field time-field">
+    <span>{label}</span>
+    <div className="time-input-wrap">
+      <input
+        inputMode="numeric"
+        maxLength={5}
+        placeholder="HH:MM"
+        value={value}
+        onChange={e=>setValue(normalize(e.target.value))}
+        onBlur={e=>setValue(valid(e.target.value))}
+      />
+      {meridiem&&<b className="time-meridiem">{meridiem}</b>}
+    </div>
+  </label>;
+}
+
 function Summary({label,value,strong}:{label:string;value:string;strong?:boolean}){return <div className={`summary-card ${strong?"strong":""}`}><span>{label}</span><b>{value}</b></div>}
 function Metric({label,value,strong}:{label:string;value:string;strong?:boolean}){return <div className={`metric ${strong?"strong":""}`}><span>{label}</span><b>{value}</b></div>}
 function ChildCard({title,mode,setMode,manual,setManual,currency,setCurrency}:{title:string;mode:ChildMode;setMode:(v:ChildMode)=>void;manual:number;setManual:(v:number)=>void;currency:Currency;setCurrency:(v:Currency)=>void}){
