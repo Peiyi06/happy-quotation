@@ -216,3 +216,8 @@
 .time-input-wrap{position:relative}
 .time-input-wrap input{padding-right:54px}
 .time-meridiem{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;letter-spacing:.04em;color:var(--navy2);background:#eef4f8;border:1px solid #d5e0e8;border-radius:999px;padding:4px 7px;pointer-events:none}
+
+.flight-day-status{align-self:end;min-height:46px;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:12px;font-weight:800;border:1px solid var(--line);padding:0 12px}
+.flight-day-status.next{background:#fff3cd;color:#7a5c0b;border-color:#edd48b}
+.flight-day-status.same{background:#eef7f1;color:#2d6b45;border-color:#cbe3d3}
+.flight-day-status.pending{background:#f4f6f8;color:var(--muted)}
