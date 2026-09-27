@@ -477,7 +477,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   };
 
   const matrix = [
-    ["成人", calc.adultNoLeader, calc.adultLeader],
+    ["成人（双人一房）", calc.adultNoLeader, calc.adultLeader],
     ["小孩含床", calc.childBedNoLeader, calc.childBedLeader],
     ["小孩不含床", calc.childNoBedNoLeader, calc.childNoBedLeader],
   ] as const;
