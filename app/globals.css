@@ -189,3 +189,10 @@
 .detail-item strong{display:block;color:var(--navy2);font-size:15px;word-break:break-word}
 @media(max-width:900px){.detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.quote-result-hero strong{font-size:34px}}
 @media(max-width:600px){.detail-grid{grid-template-columns:1fr}.detail-actions{width:100%}.detail-actions .btn{flex:1;text-align:center}.quote-result-hero{padding:22px}.quote-result-hero strong{font-size:30px}}
+
+.leader-toggle-section{padding:18px 20px}
+.leader-toggle-head{margin-bottom:0}
+.leader-toggle-section:has(.leader-toggle-btn.active) .leader-toggle-head{margin-bottom:16px}
+.leader-toggle-btn{background:#eef4f8;color:var(--navy2);border:1px solid #cfdae4;min-width:140px}
+.leader-toggle-btn:hover{background:#e3edf4}
+.leader-toggle-btn.active{background:var(--navy);color:white;border-color:var(--navy)}
