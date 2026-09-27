@@ -22,17 +22,14 @@ const money = (n: number) => new Intl.NumberFormat("en-MY", { style: "currency",
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
 const defaultTravelerRows: TravelerCostRow[] = [
-  { id: uid(), item: "地接/承运", mode: "每人", unitPrice: 2750, qty: 1, currency: "RMB", childRatioApplicable: true, note: "" },
-  { id: uid(), item: "保险", mode: "每人", unitPrice: 150, qty: 1, currency: "RM", childRatioApplicable: false, note: "10天／64岁以下" },
-  { id: uid(), item: "车费", mode: "整团", unitPrice: 5400, qty: 1, currency: "RM", childRatioApplicable: false, note: "新山-Changi Bus" },
-  { id: uid(), item: "小费", mode: "每人每天", unitPrice: 25, qty: 8, currency: "RMB", childRatioApplicable: false, note: "" },
+  { id: uid(), item: "", mode: "每人", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" },
 ];
 
 const defaultLeaderRows: LeaderCostRow[] = [
-  { id: uid(), item: "机票", unitPrice: 2000, qty: 1, currency: "RM", note: "" },
-  { id: uid(), item: "单房", unitPrice: 1000, qty: 1, currency: "RMB", note: "与客人同价" },
-  { id: uid(), item: "工钱", unitPrice: 150, qty: 8, currency: "RM", note: "" },
-  { id: uid(), item: "Bonus", unitPrice: 200, qty: 1, currency: "RM", note: "" },
+  { id: uid(), item: "机票", unitPrice: 0, qty: 1, currency: "RM", note: "" },
+  { id: uid(), item: "单房", unitPrice: 0, qty: 1, currency: "RM", note: "" },
+  { id: uid(), item: "工钱", unitPrice: 0, qty: 1, currency: "RM", note: "" },
+  { id: uid(), item: "Bonus", unitPrice: 0, qty: 1, currency: "RM", note: "" },
   { id: uid(), item: "其他", unitPrice: 0, qty: 1, currency: "RM", note: "" },
 ];
 
@@ -49,11 +46,11 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [pendingHref, setPendingHref] = useState<string | null>(null);
   const [isDirty, setIsDirty] = useState(false);
   const baselineRef = useRef("");
-  const [tourCode, setTourCode] = useState("Jorjien");
-  const [businessType, setBusinessType] = useState("私人/家庭团");
-  const [op, setOp] = useState("Jess");
-  const [supplier, setSupplier] = useState("李亮华Leo");
-  const [pax, setPax] = useState(16);
+  const [tourCode, setTourCode] = useState("");
+  const [businessType, setBusinessType] = useState("");
+  const [op, setOp] = useState("");
+  const [supplier, setSupplier] = useState("");
+  const [pax, setPax] = useState(1);
   const [mainCurrency, setMainCurrency] = useState<Currency>("RMB");
   const [mainRate, setMainRate] = useState(0.62);
   const [travelerRows, setTravelerRows] = useState<TravelerCostRow[]>(defaultTravelerRows);
@@ -67,10 +64,10 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [roundUnit, setRoundUnit] = useState(50);
 
   const [childBedMode, setChildBedMode] = useState<ChildMode>("手动成本");
-  const [childBedManual, setChildBedManual] = useState(500);
-  const [childBedCurrency, setChildBedCurrency] = useState<Currency>("RMB");
+  const [childBedManual, setChildBedManual] = useState(0);
+  const [childBedCurrency, setChildBedCurrency] = useState<Currency>("RM");
   const [childNoBedMode, setChildNoBedMode] = useState<ChildMode>("手动成本");
-  const [childNoBedManual, setChildNoBedManual] = useState(300);
+  const [childNoBedManual, setChildNoBedManual] = useState(0);
   const [childNoBedCurrency, setChildNoBedCurrency] = useState<Currency>("RM");
 
   const [selectedType, setSelectedType] = useState<TravelerType>("成人不含领队");
