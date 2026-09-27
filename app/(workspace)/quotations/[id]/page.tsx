@@ -24,6 +24,7 @@ function buildMatrix(q:any){
   const travelerPerPax=travelerRows.reduce((sum,row)=>sum+travelerRowPerPax(row,pax,mainCurrency,mainRate),0);
   const leaderTotal=leaderRows.reduce((sum,row)=>sum+leaderRowTotal(row,mainCurrency,mainRate),0);
   const leaderPerPax=leaderTotal/pax;
+  const hasLeader=Boolean(s.hasLeader ?? (s.leaderOpen && leaderRows.some((r:any)=>(Number(r.unitPrice)||0)>0 && (Number(r.qty)||0)>0)));
 
   const ratioEligible=travelerRows.filter(r=>r.childRatioApplicable).reduce((sum,row)=>sum+travelerRowPerPax(row,pax,mainCurrency,mainRate),0);
   const ratioExcluded=travelerRows.filter(r=>!r.childRatioApplicable).reduce((sum,row)=>sum+travelerRowPerPax(row,pax,mainCurrency,mainRate),0);
@@ -42,11 +43,14 @@ function buildMatrix(q:any){
     return {cost,profit,selling:cost+profit};
   };
 
-  return [
-    ["成人",make(travelerPerPax),make(travelerPerPax+leaderPerPax)],
-    ["小孩含床",make(childBed),make(childBed+leaderPerPax)],
-    ["小孩不含床",make(childNoBed),make(childNoBed+leaderPerPax)]
-  ] as const;
+  return {
+    hasLeader,
+    rows:[
+      ["成人",make(travelerPerPax),make(travelerPerPax+leaderPerPax)],
+      ["小孩含床",make(childBed),make(childBed+leaderPerPax)],
+      ["小孩不含床",make(childNoBed),make(childNoBed+leaderPerPax)]
+    ] as const
+  };
 }
 
 export default async function QuotationDetailPage({params}:{params:Promise<{id:string}>}){
@@ -58,7 +62,9 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
   if(error||!data||!data.id) notFound();
 
   const margin=Number(data.margin||0);
-  const matrix=buildMatrix(data);
+  const matrixData=buildMatrix(data);
+  const matrix=matrixData.rows;
+  const hasLeader=matrixData.hasLeader;
 
   return <div>
     <div className="page-head quote-detail-head">
@@ -95,9 +101,7 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
             <th>不含领队成本</th>
             <th>不含领队利润</th>
             <th>不含领队建议售价</th>
-            <th>含领队成本</th>
-            <th>含领队利润</th>
-            <th>含领队建议售价</th>
+            {hasLeader&&<><th>含领队成本</th><th>含领队利润</th><th>含领队建议售价</th></>}
           </tr></thead>
           <tbody>
             {matrix.map(([label,a,b])=><tr key={label}>
@@ -105,9 +109,7 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
               <td>{money(a.cost)}</td>
               <td>{money(a.profit)}</td>
               <td className="sale">{money(a.selling)}</td>
-              <td>{money(b.cost)}</td>
-              <td>{money(b.profit)}</td>
-              <td className="sale">{money(b.selling)}</td>
+              {hasLeader&&<><td>{money(b.cost)}</td><td>{money(b.profit)}</td><td className="sale">{money(b.selling)}</td></>}
             </tr>)}
           </tbody>
         </table>
