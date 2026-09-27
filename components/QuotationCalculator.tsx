@@ -71,6 +71,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [travelerRows, setTravelerRows] = useState<TravelerCostRow[]>(defaultTravelerRows);
   const [leaderRows, setLeaderRows] = useState<LeaderCostRow[]>(defaultLeaderRows);
   const [leaderOpen, setLeaderOpen] = useState(false);
+  const [singleRoomAmount, setSingleRoomAmount] = useState<number | "">("");
+  const [singleRoomCurrency, setSingleRoomCurrency] = useState<Currency>("RM");
 
   const [profitMode, setProfitMode] = useState<ProfitMode>("按成本加价率");
   const [profitRate, setProfitRate] = useState(0.15);
@@ -139,7 +141,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           tourCode:setTourCode,businessType:setBusinessType,op:setOp,supplier:setSupplier,pax:setPax,mainCurrency:setMainCurrency,mainRate:setMainRate,
           outboundFlightNo:setOutboundFlightNo,outboundFlightDate:setOutboundFlightDate,outboundDepartureTime:setOutboundDepartureTime,outboundArrivalTime:setOutboundArrivalTime,outboundNextDay:setOutboundNextDay,
           returnFlightNo:setReturnFlightNo,returnFlightDate:setReturnFlightDate,returnDepartureTime:setReturnDepartureTime,returnArrivalTime:setReturnArrivalTime,returnNextDay:setReturnNextDay,
-          travelerRows:setTravelerRows,leaderRows:setLeaderRows,leaderOpen:setLeaderOpen,profitMode:setProfitMode,profitRate:setProfitRate,minProfit:setMinProfit,maxProfit:setMaxProfit,
+          travelerRows:setTravelerRows,leaderRows:setLeaderRows,leaderOpen:setLeaderOpen,singleRoomAmount:setSingleRoomAmount,singleRoomCurrency:setSingleRoomCurrency,profitMode:setProfitMode,profitRate:setProfitRate,minProfit:setMinProfit,maxProfit:setMaxProfit,
           fixedProfit:setFixedProfit,roundUnit:setRoundUnit,childBedMode:setChildBedMode,childBedManual:setChildBedManual,childBedCurrency:setChildBedCurrency,
           childNoBedMode:setChildNoBedMode,childNoBedManual:setChildNoBedManual,childNoBedCurrency:setChildNoBedCurrency,selectedType:setSelectedType,manualQuote:setManualQuote
         };
@@ -154,19 +156,19 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     const state = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
       outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
       returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
-      travelerRows,leaderRows,leaderOpen,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote};
+      travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote};
     localStorage.setItem("happy-quotation-v1", JSON.stringify(state));
   }, [hydrated,tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
   outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
   returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
-  travelerRows,leaderRows,leaderOpen,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote]);
+  travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote]);
 
   const currentSnapshot = JSON.stringify({
     quoteTitle,destination,departureDate,returnDate,customerName,status,tourGroupId,
     outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
     returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
     tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
-    travelerRows,leaderRows,leaderOpen,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
+    travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
     childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,
     selectedType,manualQuote
   });
@@ -332,7 +334,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
       returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
       itineraryDays:itinerarySummary.days,itineraryNights:itinerarySummary.nights,itineraryLabel:itinerarySummary.label,
-      travelerRows,leaderRows,leaderOpen,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType:effectiveSelectedType,manualQuote};
+      travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType:effectiveSelectedType,manualQuote};
     const payload = {
       tour_group_id: tourGroupId || "",
       tour_code: tourCode,
@@ -450,6 +452,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       { id: uid(), item: "其他", unitPrice: 0, qty: 1, currency: "RM", note: "" }
     ]);
     setLeaderOpen(false);
+    setSingleRoomAmount("");
+    setSingleRoomCurrency("RM");
 
     setProfitMode("按成本加价率");
     setProfitRate(0.15);
@@ -589,6 +593,14 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           <td className="row-actions no-print"><button onClick={()=>duplicateTraveler(r.id)}>复制</button><button onClick={()=>removeTraveler(r.id)}>删除</button></td>
         </tr>})}</tbody></table></div>
     </Section>
+
+    <section className="section single-room-section">
+      <div className="section-head"><h2>单人房</h2></div>
+      <div className="single-room-grid">
+        <Field label="手动填写数额"><input type="number" min="0" value={singleRoomAmount} onChange={e=>setSingleRoomAmount(e.target.value===""?"":Number(e.target.value))} placeholder="0.00" /></Field>
+        <Field label="币种"><select value={singleRoomCurrency} onChange={e=>setSingleRoomCurrency(e.target.value as Currency)}>{currencies.map(cur=><option key={cur}>{cur}</option>)}</select></Field>
+      </div>
+    </section>
 
     <div className="two-col">
       <section className="section leader-toggle-section">
