@@ -645,8 +645,10 @@ function TimeField({label,value,setValue}:{label:string;value:string;setValue:(v
     return v;
   };
   const meridiem=(()=>{
-    if(!/^\d{2}:\d{2}$/.test(value)) return "";
-    const h=Number(value.slice(0,2));
+    const hourMatch=value.match(/^(\d{2})/);
+    if(!hourMatch) return "";
+    const h=Number(hourMatch[1]);
+    if(h>23) return "";
     return h<12?"AM":"PM";
   })();
   return <label className="field time-field">
