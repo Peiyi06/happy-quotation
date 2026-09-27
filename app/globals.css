@@ -196,3 +196,19 @@
 .leader-toggle-btn{background:#eef4f8;color:var(--navy2);border:1px solid #cfdae4;min-width:140px}
 .leader-toggle-btn:hover{background:#e3edf4}
 .leader-toggle-btn.active{background:var(--navy);color:white;border-color:var(--navy)}
+
+.flight-info-card{margin-top:18px;padding-top:20px;border-top:1px solid var(--line)}
+.flight-info-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:16px}
+.flight-info-head h3{margin:2px 0 0;font-size:20px;color:var(--navy2)}
+.flight-pair-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.flight-block{background:#f8fbfd;border:1px solid var(--line);border-radius:14px;padding:16px}
+.flight-block h4{margin:0 0 14px;color:var(--navy2);font-size:15px}
+.flight-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.next-day-toggle{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--navy2);padding-top:26px}
+.next-day-toggle input{width:18px;height:18px}
+.itinerary-pill{flex:0 0 auto;display:flex;align-items:center;gap:10px;background:var(--navy);color:white;border-radius:999px;padding:10px 14px}
+.itinerary-pill strong{font-size:14px}
+.itinerary-pill span{font-size:12px;color:#d8e5ef}
+.quote-meta-panel input[readonly]{background:#eef3f6;color:#607384}
+@media(max-width:1100px){.flight-pair-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.flight-fields{grid-template-columns:1fr}.next-day-toggle{padding-top:0}.flight-info-head{align-items:flex-start;flex-direction:column}}
