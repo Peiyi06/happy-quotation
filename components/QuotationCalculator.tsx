@@ -1,0 +1,256 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import {
+  CalcMode, ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
+  childRatio, computeProfit, currencyRate, leaderRowTotal, roundUpTo,
+  travelerRowPerPax, travelerRowTotal
+} from "@/lib/calculations";
+
+const calcModes: CalcMode[] = ["每人", "每人每天", "整团", "整团每天"];
+const currencies: Currency[] = ["RM", "RMB", "USD", "JPY", "KRW", "THB", "VND", "其他"];
+const childModes: ChildMode[] = ["50%","60%","65%","70%","75%","80%","85%","90%","95%","100%","手动成本"];
+const profitModes: ProfitMode[] = ["固定金额", "按成本加价率", "按售价毛利率"];
+const travelerTypes = ["成人不含领队","成人含领队","小孩含床不含领队","小孩含床含领队","小孩不含床不含领队","小孩不含床含领队"] as const;
+type TravelerType = typeof travelerTypes[number];
+
+const uid = () => Math.random().toString(36).slice(2, 10);
+const money = (n: number) => new Intl.NumberFormat("en-MY", { style: "currency", currency: "MYR", minimumFractionDigits: 2 }).format(Number.isFinite(n) ? n : 0).replace("MYR", "RM");
+const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
+
+const defaultTravelerRows: TravelerCostRow[] = [
+  { id: uid(), item: "地接/承运", mode: "每人", unitPrice: 2750, qty: 1, currency: "RMB", childRatioApplicable: true, note: "" },
+  { id: uid(), item: "保险", mode: "每人", unitPrice: 150, qty: 1, currency: "RM", childRatioApplicable: false, note: "10天／64岁以下" },
+  { id: uid(), item: "车费", mode: "整团", unitPrice: 5400, qty: 1, currency: "RM", childRatioApplicable: false, note: "新山-Changi Bus" },
+  { id: uid(), item: "小费", mode: "每人每天", unitPrice: 25, qty: 8, currency: "RMB", childRatioApplicable: false, note: "" },
+];
+
+const defaultLeaderRows: LeaderCostRow[] = [
+  { id: uid(), item: "机票", unitPrice: 2000, qty: 1, currency: "RM", note: "" },
+  { id: uid(), item: "单房", unitPrice: 1000, qty: 1, currency: "RMB", note: "与客人同价" },
+  { id: uid(), item: "工钱", unitPrice: 150, qty: 8, currency: "RM", note: "" },
+  { id: uid(), item: "Bonus", unitPrice: 200, qty: 1, currency: "RM", note: "" },
+  { id: uid(), item: "其他", unitPrice: 0, qty: 1, currency: "RM", note: "" },
+];
+
+export default function QuotationCalculator() {
+  const [tourCode, setTourCode] = useState("Jorjien");
+  const [businessType, setBusinessType] = useState("私人/家庭团");
+  const [op, setOp] = useState("Jess");
+  const [supplier, setSupplier] = useState("李亮华Leo");
+  const [pax, setPax] = useState(16);
+  const [mainCurrency, setMainCurrency] = useState<Currency>("RMB");
+  const [mainRate, setMainRate] = useState(0.62);
+  const [travelerRows, setTravelerRows] = useState<TravelerCostRow[]>(defaultTravelerRows);
+  const [leaderRows, setLeaderRows] = useState<LeaderCostRow[]>(defaultLeaderRows);
+
+  const [profitMode, setProfitMode] = useState<ProfitMode>("按成本加价率");
+  const [profitRate, setProfitRate] = useState(0.15);
+  const [minProfit, setMinProfit] = useState<number | "">("");
+  const [maxProfit, setMaxProfit] = useState<number | "">("");
+  const [fixedProfit, setFixedProfit] = useState<number | "">("");
+  const [roundUnit, setRoundUnit] = useState(50);
+
+  const [childBedMode, setChildBedMode] = useState<ChildMode>("手动成本");
+  const [childBedManual, setChildBedManual] = useState(500);
+  const [childBedCurrency, setChildBedCurrency] = useState<Currency>("RMB");
+  const [childNoBedMode, setChildNoBedMode] = useState<ChildMode>("手动成本");
+  const [childNoBedManual, setChildNoBedManual] = useState(300);
+  const [childNoBedCurrency, setChildNoBedCurrency] = useState<Currency>("RM");
+
+  const [selectedType, setSelectedType] = useState<TravelerType>("成人不含领队");
+  const [manualQuote, setManualQuote] = useState<number | "">("");
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("happy-quotation-v1");
+      if (raw) {
+        const s = JSON.parse(raw);
+        Object.entries(s).forEach(([k, v]) => {
+          const setters: Record<string, (x: any) => void> = {
+            tourCode:setTourCode,businessType:setBusinessType,op:setOp,supplier:setSupplier,pax:setPax,mainCurrency:setMainCurrency,mainRate:setMainRate,
+            travelerRows:setTravelerRows,leaderRows:setLeaderRows,profitMode:setProfitMode,profitRate:setProfitRate,minProfit:setMinProfit,maxProfit:setMaxProfit,
+            fixedProfit:setFixedProfit,roundUnit:setRoundUnit,childBedMode:setChildBedMode,childBedManual:setChildBedManual,childBedCurrency:setChildBedCurrency,
+            childNoBedMode:setChildNoBedMode,childNoBedManual:setChildNoBedManual,childNoBedCurrency:setChildNoBedCurrency,selectedType:setSelectedType,manualQuote:setManualQuote
+          };
+          setters[k]?.(v);
+        });
+      }
+    } catch {}
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const state = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote};
+    localStorage.setItem("happy-quotation-v1", JSON.stringify(state));
+  }, [hydrated,tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,travelerRows,leaderRows,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote]);
+
+  const calc = useMemo(() => {
+    const safePax = Math.max(1, Number(pax) || 1);
+    const travelerPerPax = travelerRows.reduce((s,r) => s + travelerRowPerPax(r,safePax,mainCurrency,mainRate), 0);
+    const leaderTotal = leaderRows.reduce((s,r) => s + leaderRowTotal(r,mainCurrency,mainRate), 0);
+    const leaderPerPax = leaderTotal / safePax;
+
+    const ratioEligible = travelerRows.filter(r => r.childRatioApplicable).reduce((s,r)=>s+travelerRowPerPax(r,safePax,mainCurrency,mainRate),0);
+    const ratioExcluded = travelerRows.filter(r => !r.childRatioApplicable).reduce((s,r)=>s+travelerRowPerPax(r,safePax,mainCurrency,mainRate),0);
+
+    const childCost = (mode: ChildMode, manual: number, curr: Currency) => {
+      const ratio = childRatio(mode);
+      if (ratio === null) return (Number(manual)||0) * currencyRate(curr,mainCurrency,mainRate);
+      return ratioEligible * ratio + ratioExcluded;
+    };
+
+    const childBed = childCost(childBedMode, childBedManual, childBedCurrency);
+    const childNoBed = childCost(childNoBedMode, childNoBedManual, childNoBedCurrency);
+    const make = (cost:number) => {
+      const profit = computeProfit(cost,profitMode,profitRate,Number(minProfit)||0,maxProfit,fixedProfit);
+      return {cost,profit,suggested:cost+profit};
+    };
+    return {
+      travelerPerPax, leaderTotal, leaderPerPax,
+      adultNoLeader: make(travelerPerPax),
+      adultLeader: make(travelerPerPax + leaderPerPax),
+      childBedNoLeader: make(childBed),
+      childBedLeader: make(childBed + leaderPerPax),
+      childNoBedNoLeader: make(childNoBed),
+      childNoBedLeader: make(childNoBed + leaderPerPax),
+    };
+  }, [pax,travelerRows,leaderRows,mainCurrency,mainRate,profitMode,profitRate,minProfit,maxProfit,fixedProfit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency]);
+
+  const selected = ({
+    "成人不含领队": calc.adultNoLeader,
+    "成人含领队": calc.adultLeader,
+    "小孩含床不含领队": calc.childBedNoLeader,
+    "小孩含床含领队": calc.childBedLeader,
+    "小孩不含床不含领队": calc.childNoBedNoLeader,
+    "小孩不含床含领队": calc.childNoBedLeader,
+  } as Record<TravelerType, {cost:number;profit:number;suggested:number}>)[selectedType];
+
+  const finalQuote = manualQuote === "" ? roundUpTo(selected.suggested, roundUnit) : Number(manualQuote);
+  const finalProfit = finalQuote - selected.cost;
+  const finalMargin = finalQuote ? finalProfit / finalQuote : 0;
+
+  const setTraveler = (id:string, patch:Partial<TravelerCostRow>) => setTravelerRows(rows => rows.map(r => r.id === id ? {...r,...patch}:r));
+  const addTraveler = () => setTravelerRows(rows => [...rows,{id:uid(),item:"",mode:"每人",unitPrice:"",qty:1,currency:"RM",childRatioApplicable:false,note:""}]);
+  const duplicateTraveler = (id:string) => setTravelerRows(rows => { const r=rows.find(x=>x.id===id); return r ? [...rows,{...r,id:uid(),item:r.item ? `${r.item} Copy` : ""}] : rows; });
+  const removeTraveler = (id:string) => setTravelerRows(rows => rows.length > 1 ? rows.filter(r=>r.id!==id):rows);
+  const setLeader = (id:string, patch:Partial<LeaderCostRow>) => setLeaderRows(rows => rows.map(r => r.id===id?{...r,...patch}:r));
+
+  const resetAll = () => {
+    if (!confirm("确认重置全部报价资料？")) return;
+    localStorage.removeItem("happy-quotation-v1");
+    location.reload();
+  };
+
+  const matrix = [
+    ["成人", calc.adultNoLeader, calc.adultLeader],
+    ["小孩含床", calc.childBedNoLeader, calc.childBedLeader],
+    ["小孩不含床", calc.childNoBedNoLeader, calc.childNoBedLeader],
+  ] as const;
+
+  return <main className="app-shell">
+    <header className="topbar">
+      <div>
+        <div className="eyebrow">HAPPY EXPRESS TRAVEL</div>
+        <h1>旅游报价计算器</h1>
+        <p>Quotation Calculator · Vercel Edition</p>
+      </div>
+      <div className="top-actions no-print">
+        <button className="btn ghost" onClick={()=>window.print()}>打印 / PDF</button>
+        <button className="btn danger" onClick={resetAll}>重置</button>
+      </div>
+    </header>
+
+    <section className="summary-grid">
+      <Summary label="旅客成本 / 人" value={money(calc.travelerPerPax)} />
+      <Summary label="领队分摊 / 人" value={money(calc.leaderPerPax)} />
+      <Summary label="系统建议售价" value={money(selected.suggested)} />
+      <Summary label="最终报价" value={money(finalQuote)} strong />
+    </section>
+
+    <Section title="① 基本资料 & 利润设置">
+      <div className="form-grid six">
+        <Field label="Tour Code"><input value={tourCode} onChange={e=>setTourCode(e.target.value)} /></Field>
+        <Field label="业务类型"><input value={businessType} onChange={e=>setBusinessType(e.target.value)} /></Field>
+        <Field label="OP"><input value={op} onChange={e=>setOp(e.target.value)} /></Field>
+        <Field label="Supplier"><input value={supplier} onChange={e=>setSupplier(e.target.value)} /></Field>
+        <Field label="人数"><input type="number" min="1" value={pax} onChange={e=>setPax(Number(e.target.value)||1)} /></Field>
+        <Field label="主要币种"><select value={mainCurrency} onChange={e=>setMainCurrency(e.target.value as Currency)}>{currencies.map(c=><option key={c}>{c}</option>)}</select></Field>
+        <Field label="主要汇率 → RM"><input type="number" step="0.0001" value={mainRate} onChange={e=>setMainRate(Number(e.target.value)||0)} /></Field>
+        <Field label="利润方式"><select value={profitMode} onChange={e=>setProfitMode(e.target.value as ProfitMode)}>{profitModes.map(x=><option key={x}>{x}</option>)}</select></Field>
+        <Field label="利润率"><input type="number" step="0.01" value={profitRate} onChange={e=>setProfitRate(Number(e.target.value)||0)} /></Field>
+        <Field label="最低毛利 / 人"><input type="number" value={minProfit} onChange={e=>setMinProfit(e.target.value===""?"":Number(e.target.value))} placeholder="可留空" /></Field>
+        <Field label="最高毛利 / 人"><input type="number" value={maxProfit} onChange={e=>setMaxProfit(e.target.value===""?"":Number(e.target.value))} placeholder="可留空" /></Field>
+        <Field label="固定利润 / 人"><input type="number" value={fixedProfit} onChange={e=>setFixedProfit(e.target.value===""?"":Number(e.target.value))} placeholder="固定金额模式" /></Field>
+        <Field label="报价取整"><input type="number" min="1" value={roundUnit} onChange={e=>setRoundUnit(Number(e.target.value)||1)} /></Field>
+      </div>
+    </Section>
+
+    <Section title="② 旅客成本输入" action={<button className="btn primary no-print" onClick={addTraveler}>＋ Add Cost Row</button>}>
+      <div className="table-wrap"><table><thead><tr><th>成本项目</th><th>计算方式</th><th>单价</th><th>数量 / 天数</th><th>币种</th><th>汇率</th><th>总成本</th><th>每人成本</th><th>儿童比例</th><th>备注</th><th className="no-print">操作</th></tr></thead>
+      <tbody>{travelerRows.map(r=>{
+        const rate=currencyRate(r.currency,mainCurrency,mainRate); const total=travelerRowTotal(r,pax,mainCurrency,mainRate); const pp=travelerRowPerPax(r,pax,mainCurrency,mainRate);
+        return <tr key={r.id}>
+          <td><input value={r.item} onChange={e=>setTraveler(r.id,{item:e.target.value})}/></td>
+          <td><select value={r.mode} onChange={e=>setTraveler(r.id,{mode:e.target.value as CalcMode})}>{calcModes.map(x=><option key={x}>{x}</option>)}</select></td>
+          <td><input type="number" value={r.unitPrice} onChange={e=>setTraveler(r.id,{unitPrice:e.target.value===""?"":Number(e.target.value)})}/></td>
+          <td><input type="number" value={r.qty} onChange={e=>setTraveler(r.id,{qty:e.target.value===""?"":Number(e.target.value)})}/></td>
+          <td><select value={r.currency} onChange={e=>setTraveler(r.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c}>{c}</option>)}</select></td>
+          <td className={rate===0?"warn":""}>{rate || "—"}</td><td>{money(total)}</td><td>{money(pp)}</td>
+          <td><select value={r.childRatioApplicable?"是":"否"} onChange={e=>setTraveler(r.id,{childRatioApplicable:e.target.value==="是"})}><option>是</option><option>否</option></select></td>
+          <td><input value={r.note} onChange={e=>setTraveler(r.id,{note:e.target.value})}/></td>
+          <td className="row-actions no-print"><button onClick={()=>duplicateTraveler(r.id)}>复制</button><button onClick={()=>removeTraveler(r.id)}>删除</button></td>
+        </tr>})}</tbody></table></div>
+    </Section>
+
+    <div className="two-col">
+      <Section title="②B 领队成本（没有可留空）">
+        <div className="table-wrap"><table><thead><tr><th>项目</th><th>单价</th><th>数量 / 天数</th><th>币种</th><th>总成本</th><th>每人分摊</th><th>备注</th></tr></thead>
+        <tbody>{leaderRows.map(r=>{const total=leaderRowTotal(r,mainCurrency,mainRate);return <tr key={r.id}>
+          <td><input value={r.item} onChange={e=>setLeader(r.id,{item:e.target.value})}/></td>
+          <td><input type="number" value={r.unitPrice} onChange={e=>setLeader(r.id,{unitPrice:e.target.value===""?"":Number(e.target.value)})}/></td>
+          <td><input type="number" value={r.qty} onChange={e=>setLeader(r.id,{qty:e.target.value===""?"":Number(e.target.value)})}/></td>
+          <td><select value={r.currency} onChange={e=>setLeader(r.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c}>{c}</option>)}</select></td>
+          <td>{money(total)}</td><td>{money(total/Math.max(1,pax))}</td><td><input value={r.note} onChange={e=>setLeader(r.id,{note:e.target.value})}/></td>
+        </tr>})}</tbody></table></div>
+      </Section>
+
+      <Section title="③ 儿童成本设置">
+        <div className="child-grid">
+          <ChildCard title="小孩含床" mode={childBedMode} setMode={setChildBedMode} manual={childBedManual} setManual={setChildBedManual} currency={childBedCurrency} setCurrency={setChildBedCurrency} />
+          <ChildCard title="小孩不含床" mode={childNoBedMode} setMode={setChildNoBedMode} manual={childNoBedManual} setManual={setChildNoBedManual} currency={childNoBedCurrency} setCurrency={setChildNoBedCurrency} />
+        </div>
+      </Section>
+    </div>
+
+    <Section title="④ 对客报价">
+      <div className="quote-panel">
+        <Field label="旅客类型"><select value={selectedType} onChange={e=>{setSelectedType(e.target.value as TravelerType);setManualQuote("")}}>{travelerTypes.map(x=><option key={x}>{x}</option>)}</select></Field>
+        <Metric label="成本" value={money(selected.cost)} />
+        <Metric label="系统建议价" value={money(selected.suggested)} />
+        <Field label="手动最终报价"><input type="number" value={manualQuote} onChange={e=>setManualQuote(e.target.value===""?"":Number(e.target.value))} placeholder={`自动取整 ${roundUnit}`} /></Field>
+        <Metric label="最终报价" value={money(finalQuote)} strong />
+        <Metric label="最终毛利" value={money(finalProfit)} />
+        <Metric label="毛利率" value={pct(finalMargin)} />
+      </div>
+    </Section>
+
+    <Section title="最终报价矩阵">
+      <div className="matrix-wrap"><table className="matrix"><thead><tr><th>旅客类型</th><th>不含领队成本</th><th>不含领队利润</th><th>不含领队建议售价</th><th>含领队成本</th><th>含领队利润</th><th>含领队建议售价</th></tr></thead><tbody>
+        {matrix.map(([label,a,b])=><tr key={label}><td className="label-cell">{label}</td><td>{money(a.cost)}</td><td>{money(a.profit)}</td><td className="sale">{money(a.suggested)}</td><td>{money(b.cost)}</td><td>{money(b.profit)}</td><td className="sale">{money(b.suggested)}</td></tr>)}
+      </tbody></table></div>
+    </Section>
+
+    <footer>数据会自动保存在此浏览器 Local Storage。其他非主要币种若未设为「主要币种」，汇率会显示 —，避免静默误算。</footer>
+  </main>
+}
+
+function Section({title,children,action}:{title:string;children:React.ReactNode;action?:React.ReactNode}){return <section className="section"><div className="section-head"><h2>{title}</h2>{action}</div>{children}</section>}
+function Field({label,children}:{label:string;children:React.ReactNode}){return <label className="field"><span>{label}</span>{children}</label>}
+function Summary({label,value,strong}:{label:string;value:string;strong?:boolean}){return <div className={`summary-card ${strong?"strong":""}`}><span>{label}</span><b>{value}</b></div>}
+function Metric({label,value,strong}:{label:string;value:string;strong?:boolean}){return <div className={`metric ${strong?"strong":""}`}><span>{label}</span><b>{value}</b></div>}
+function ChildCard({title,mode,setMode,manual,setManual,currency,setCurrency}:{title:string;mode:ChildMode;setMode:(v:ChildMode)=>void;manual:number;setManual:(v:number)=>void;currency:Currency;setCurrency:(v:Currency)=>void}){
+  return <div className="child-card"><h3>{title}</h3><Field label="计算模式"><select value={mode} onChange={e=>setMode(e.target.value as ChildMode)}>{childModes.map(x=><option key={x}>{x}</option>)}</select></Field>{mode==="手动成本"&&<><Field label="手动成本 / 人"><input type="number" value={manual} onChange={e=>setManual(Number(e.target.value)||0)}/></Field><Field label="币种"><select value={currency} onChange={e=>setCurrency(e.target.value as Currency)}>{currencies.map(c=><option key={c}>{c}</option>)}</select></Field></>}</div>
+}
