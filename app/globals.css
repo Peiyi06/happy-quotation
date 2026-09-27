@@ -163,3 +163,6 @@
     flex-direction:column;
   }
 }
+
+.danger-link{border:0;background:transparent;color:var(--red);font-weight:700;cursor:pointer;padding:6px 4px}
+.danger-link:disabled{opacity:.55;cursor:not-allowed}
