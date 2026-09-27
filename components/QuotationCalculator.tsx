@@ -205,8 +205,19 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
   const hasLeader = leaderRows.some(r => (Number(r.unitPrice)||0) > 0 && (Number(r.qty)||0) > 0);
 
-  const effectiveSelectedType = (!hasLeader && selectedType.includes("含领队"))
-    ? selectedType.replace("含领队","不含领队") as TravelerType
+  const toNoLeaderType = (type: TravelerType): TravelerType => ({
+    "成人含领队":"成人不含领队",
+    "小孩含床含领队":"小孩含床不含领队",
+    "小孩不含床含领队":"小孩不含床不含领队",
+    "成人不含领队":"成人不含领队",
+    "小孩含床不含领队":"小孩含床不含领队",
+    "小孩不含床不含领队":"小孩不含床不含领队",
+  } as Record<TravelerType,TravelerType>)[type];
+
+  const isLeaderType = (type: TravelerType) => !type.includes("不含领队");
+
+  const effectiveSelectedType = (!hasLeader && isLeaderType(selectedType))
+    ? toNoLeaderType(selectedType)
     : selectedType;
 
   const selected = ({
@@ -223,9 +234,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const finalMargin = finalQuote ? finalProfit / finalQuote : 0;
 
   useEffect(() => {
-    if (!hasLeader && selectedType.includes("含领队")) {
-      const noLeaderType = selectedType.replace("含领队","不含领队") as TravelerType;
-      setSelectedType(noLeaderType);
+    if (!hasLeader && isLeaderType(selectedType)) {
+      setSelectedType(toNoLeaderType(selectedType));
       setManualQuote("");
     }
   }, [hasLeader, selectedType]);
@@ -471,7 +481,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
     <Section title="④ 对客报价">
       <div className="quote-panel">
-        <Field label="旅客类型"><select value={effectiveSelectedType} onChange={e=>{setSelectedType(e.target.value as TravelerType);setManualQuote("")}}>{travelerTypes.filter(x=>hasLeader || !x.includes("含领队")).map(x=><option key={x}>{x}</option>)}</select></Field>
+        <Field label="旅客类型"><select value={effectiveSelectedType} onChange={e=>{setSelectedType(e.target.value as TravelerType);setManualQuote("")}}>{travelerTypes.filter(x=>hasLeader || x.includes("不含领队")).map(x=><option key={x}>{x}</option>)}</select></Field>
         <Metric label="成本" value={money(selected.cost)} />
         <Metric label="系统建议价" value={money(selected.suggested)} />
         <Field label="手动最终报价"><input type="number" value={manualQuote} onChange={e=>setManualQuote(e.target.value===""?"":Number(e.target.value))} placeholder={`自动取整 ${roundUnit}`} /></Field>
