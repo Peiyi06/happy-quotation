@@ -30,3 +30,7 @@ Open http://localhost:3000
 
 ## Important currency behavior
 RM uses rate 1. The selected `主要币种` uses the entered main rate. Other currencies intentionally calculate as rate 0 / warning until they are selected as the main currency, matching the safe behavior of the current Sheet logic rather than guessing exchange rates.
+
+
+## Internal staff authentication
+This app uses the internal username/password staff session workflow for Manager and Sales access.
