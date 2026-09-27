@@ -487,7 +487,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         <Field label="Quotation Title"><input value={quoteTitle} onChange={e=>setQuoteTitle(e.target.value)} placeholder="例如：江西 8D7N · HT Group" /></Field>
         <Field label="Destination"><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder="China / Japan / Thailand" /></Field>
         <Field label="Departure Date"><input type="date" value={departureDate} onChange={e=>setDepartureDate(e.target.value)} /></Field>
-        <Field label="Return Date"><input type="date" value={returnDate} readOnly /></Field>
+        <Field label="Return Date (Arrival)"><input type="date" value={returnDate} readOnly /></Field>
         <Field label="Customer"><input value={customerName} onChange={e=>setCustomerName(e.target.value)} placeholder="Customer / Company" /></Field>
         <Field label="Tour Group"><select value={tourGroupId} onChange={e=>setTourGroupId(e.target.value)}><option value="">Unclassified</option>{tourGroups.map((g:any)=><option key={g.id} value={g.id}>{g.name}</option>)}</select></Field>
         <Field label="Status"><select value={status} onChange={e=>setStatus(e.target.value as QuoteStatus)}><option value="draft">Draft</option><option value="ready">Ready</option><option value="sent">Sent</option><option value="revised">Revised</option><option value="confirmed">Confirmed</option><option value="lost">Lost</option><option value="archived">Archived</option></select></Field>
@@ -510,7 +510,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             <h4>Departure Flight</h4>
             <div className="flight-fields">
               <Field label="Airline / Flight No."><input value={outboundFlightNo} onChange={e=>setOutboundFlightNo(e.target.value.toUpperCase())} placeholder="CZ1234" /></Field>
-              <Field label="Flight Date"><input type="date" value={outboundFlightDate} onChange={e=>{setOutboundFlightDate(e.target.value); if(!departureDate) setDepartureDate(e.target.value);}} /></Field>
+              <Field label="Departure Flight Date"><input type="date" value={outboundFlightDate} onChange={e=>{setOutboundFlightDate(e.target.value); if(!departureDate) setDepartureDate(e.target.value);}} /></Field>
               <Field label="Departure Time"><input type="time" value={outboundDepartureTime} onChange={e=>setOutboundDepartureTime(e.target.value)} /></Field>
               <Field label="Arrival Time"><input type="time" value={outboundArrivalTime} onChange={e=>setOutboundArrivalTime(e.target.value)} /></Field>
               <label className="next-day-toggle"><input type="checkbox" checked={outboundNextDay} onChange={e=>setOutboundNextDay(e.target.checked)} /><span>+1 Next Day</span></label>
@@ -521,7 +521,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             <h4>Return Flight</h4>
             <div className="flight-fields">
               <Field label="Airline / Flight No."><input value={returnFlightNo} onChange={e=>setReturnFlightNo(e.target.value.toUpperCase())} placeholder="CZ1235" /></Field>
-              <Field label="Flight Date"><input type="date" value={returnFlightDate} onChange={e=>setReturnFlightDate(e.target.value)} /></Field>
+              <Field label="Return Flight Date"><input type="date" value={returnFlightDate} onChange={e=>setReturnFlightDate(e.target.value)} /></Field>
               <Field label="Departure Time"><input type="time" value={returnDepartureTime} onChange={e=>setReturnDepartureTime(e.target.value)} /></Field>
               <Field label="Arrival Time"><input type="time" value={returnArrivalTime} onChange={e=>setReturnArrivalTime(e.target.value)} /></Field>
               <label className="next-day-toggle"><input type="checkbox" checked={returnNextDay} onChange={e=>setReturnNextDay(e.target.checked)} /><span>+1 Next Day</span></label>
