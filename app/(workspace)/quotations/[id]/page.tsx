@@ -43,8 +43,18 @@ function buildMatrix(q:any){
     return {cost,profit,selling:cost+profit};
   };
 
+  const includedItems = [
+    { key:"小费", label:"小费" },
+    { key:"旅游保险", label:"旅游保险" },
+    { key:"机场接送", label:"机场接送" }
+  ].filter(item => travelerRows.some(row =>
+    row.item === item.key &&
+    travelerRowPerPax(row,pax,mainCurrency,mainRate) > 0
+  )).map(item => item.label);
+
   return {
     hasLeader,
+    includedItems,
     rows:[
       ["成人（双人一房）",make(travelerPerPax),make(travelerPerPax+leaderPerPax)],
       ["小孩加床",make(childBed),make(childBed+leaderPerPax)],
@@ -73,6 +83,7 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
   const matrixData=buildMatrix(data);
   const matrix=matrixData.rows;
   const hasLeader=matrixData.hasLeader;
+  const includedItems=matrixData.includedItems;
 
   return <div>
     <div className="page-head quote-detail-head">
@@ -130,6 +141,16 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
         </table>
       </div>
     </section>
+
+    {includedItems.length>0 && <section className="panel package-includes-panel">
+      <div className="panel-head"><h2>Package Includes｜配套包含</h2></div>
+      <div className="package-includes-list">
+        {includedItems.map((item:string)=><div className="package-include-item" key={item}>
+          <span className="package-check">✓</span>
+          <strong>包含 {item}</strong>
+        </div>)}
+      </div>
+    </section>}
 
     <section className="panel">
       <div className="panel-head"><h2>Quotation Information</h2></div>
