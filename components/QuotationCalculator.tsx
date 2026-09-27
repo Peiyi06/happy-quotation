@@ -203,6 +203,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     };
   }, [pax,travelerRows,leaderRows,mainCurrency,mainRate,profitMode,profitRate,minProfit,maxProfit,fixedProfit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency]);
 
+  const hasLeader = leaderRows.some(r => (Number(r.unitPrice)||0) > 0 && (Number(r.qty)||0) > 0);
+
   const effectiveSelectedType = (!hasLeader && selectedType.includes("含领队"))
     ? selectedType.replace("含领队","不含领队") as TravelerType
     : selectedType;
@@ -219,7 +221,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const finalQuote = manualQuote === "" ? roundUpTo(selected.suggested, roundUnit) : Number(manualQuote);
   const finalProfit = finalQuote - selected.cost;
   const finalMargin = finalQuote ? finalProfit / finalQuote : 0;
-  const hasLeader = leaderRows.some(r => (Number(r.unitPrice)||0) > 0 && (Number(r.qty)||0) > 0);
 
   useEffect(() => {
     if (!hasLeader && selectedType.includes("含领队")) {
