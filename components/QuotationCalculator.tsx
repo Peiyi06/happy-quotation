@@ -90,6 +90,24 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [manualQuote, setManualQuote] = useState<number | "">("");
   const [hydrated, setHydrated] = useState(false);
 
+  const inferNextDay = (departure:string, arrival:string) => {
+    if (!/^\d{2}:\d{2}$/.test(departure) || !/^\d{2}:\d{2}$/.test(arrival)) return false;
+    const [dh,dm]=departure.split(":").map(Number);
+    const [ah,am]=arrival.split(":").map(Number);
+    const departureMinutes=dh*60+dm;
+    const arrivalMinutes=ah*60+am;
+    return arrivalMinutes < departureMinutes;
+  };
+
+  useEffect(() => {
+    setOutboundNextDay(inferNextDay(outboundDepartureTime,outboundArrivalTime));
+  }, [outboundDepartureTime,outboundArrivalTime]);
+
+  useEffect(() => {
+    setReturnNextDay(inferNextDay(returnDepartureTime,returnArrivalTime));
+  }, [returnDepartureTime,returnArrivalTime]);
+
+
   useEffect(() => {
     const load = async () => {
       try {
@@ -513,7 +531,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
               <Field label="Departure Flight Date"><input type="date" value={outboundFlightDate} onChange={e=>{setOutboundFlightDate(e.target.value); if(!departureDate) setDepartureDate(e.target.value);}} /></Field>
               <TimeField label="Departure Time" value={outboundDepartureTime} setValue={setOutboundDepartureTime} />
               <TimeField label="Arrival Time" value={outboundArrivalTime} setValue={setOutboundArrivalTime} />
-              <label className="next-day-toggle"><input type="checkbox" checked={outboundNextDay} onChange={e=>setOutboundNextDay(e.target.checked)} /><span>+1 Next Day</span></label>
+              <div className={"flight-day-status "+(outboundDepartureTime&&outboundArrivalTime?(outboundNextDay?"next":"same"):"pending")}>
+                <span>{outboundDepartureTime&&outboundArrivalTime?(outboundNextDay?"+1 Next Day":"Same Day"):"Waiting for time"}</span>
+              </div>
             </div>
           </div>
 
@@ -524,7 +544,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
               <Field label="Return Flight Date"><input type="date" value={returnFlightDate} onChange={e=>setReturnFlightDate(e.target.value)} /></Field>
               <TimeField label="Departure Time" value={returnDepartureTime} setValue={setReturnDepartureTime} />
               <TimeField label="Arrival Time" value={returnArrivalTime} setValue={setReturnArrivalTime} />
-              <label className="next-day-toggle"><input type="checkbox" checked={returnNextDay} onChange={e=>setReturnNextDay(e.target.checked)} /><span>+1 Next Day</span></label>
+              <div className={"flight-day-status "+(returnDepartureTime&&returnArrivalTime?(returnNextDay?"next":"same"):"pending")}>
+                <span>{returnDepartureTime&&returnArrivalTime?(returnNextDay?"+1 Next Day":"Same Day"):"Waiting for time"}</span>
+              </div>
             </div>
           </div>
         </div>
