@@ -221,3 +221,8 @@
 .flight-day-status.next{background:#fff3cd;color:#7a5c0b;border-color:#edd48b}
 .flight-day-status.same{background:#eef7f1;color:#2d6b45;border-color:#cbe3d3}
 .flight-day-status.pending{background:#f4f6f8;color:var(--muted)}
+
+.single-room-section{padding-top:22px;padding-bottom:22px}
+.single-room-section .section-head{margin-bottom:14px}
+.single-room-grid{display:grid;grid-template-columns:minmax(220px,1fr) minmax(160px,.55fr);gap:14px;max-width:560px}
+@media(max-width:700px){.single-room-grid{grid-template-columns:1fr;max-width:none}}
