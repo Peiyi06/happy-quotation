@@ -166,3 +166,12 @@
 
 .danger-link{border:0;background:transparent;color:var(--red);font-weight:700;cursor:pointer;padding:6px 4px}
 .danger-link:disabled{opacity:.55;cursor:not-allowed}
+
+.unsaved-badge{display:inline-flex;align-items:center;align-self:center;border-radius:999px;padding:7px 10px;background:#fff3cd;color:#775b10;font-size:12px;font-weight:800;border:1px solid #eed690}
+.unsaved-overlay{position:fixed;inset:0;background:rgba(17,34,51,.34);backdrop-filter:blur(3px);display:grid;place-items:center;z-index:1000;padding:20px}
+.unsaved-dialog{width:min(520px,100%);background:white;border-radius:18px;border:1px solid var(--line);box-shadow:0 24px 70px rgba(15,35,55,.26);padding:24px;display:grid;grid-template-columns:48px 1fr;gap:16px}
+.unsaved-icon{width:44px;height:44px;border-radius:12px;background:#fff3cd;color:#805f12;display:grid;place-items:center;font-size:24px;font-weight:900}
+.unsaved-dialog h3{margin:2px 0 6px;color:var(--navy2);font-size:20px}
+.unsaved-dialog p{margin:0;color:var(--muted);line-height:1.55}
+.unsaved-actions{grid-column:1/-1;display:flex;gap:10px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap}
+.leave-btn{background:#fff4f2;color:var(--red);border:1px solid #f2c7c2}
