@@ -78,6 +78,8 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
   const itineraryLabel=qd.itineraryLabel||"";
   const flightTotalPrice=qd.flightTotalPrice===""||qd.flightTotalPrice==null?null:Number(qd.flightTotalPrice);
   const flightPriceCurrency=(qd.flightPriceCurrency||"RM") as Currency;
+  const flightPax=Number(qd.pax||data.pax)||0;
+  const flightTicketType=flightPax>=1&&flightPax<=9?"FIT Ticket｜散票":flightPax>=10&&flightPax<=200?"GIT｜团体票":flightPax>200?"Manual Review｜需人工确认":"—";
   const singleRoomAmount=qd.singleRoomAmount===""||qd.singleRoomAmount==null?null:Number(qd.singleRoomAmount);
   const singleRoomCurrency=(qd.singleRoomCurrency||"RM") as Currency;
   const mainCurrency=(qd.mainCurrency||"RMB") as Currency;
@@ -162,6 +164,7 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
         <Detail label="Departure Date" value={data.departure_date?new Date(data.departure_date+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
         <Detail label="Return Date (Arrival)" value={data.return_date?new Date(data.return_date+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
         <Detail label="Flight Total Price｜航班总报价" value={flightTotalPrice==null?"—":`${flightPriceCurrency} ${flightTotalPrice.toLocaleString("en-MY",{minimumFractionDigits:2,maximumFractionDigits:2})}`}/>
+        <Detail label="Ticket Type｜机票类型" value={flightTicketType}/>
       </div>
 
       <div className="quote-flight-grid">
