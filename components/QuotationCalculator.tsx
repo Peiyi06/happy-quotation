@@ -29,6 +29,11 @@ const travelerTypeLabel = (type: TravelerType) => ({
 const uid = () => Math.random().toString(36).slice(2, 10);
 const money = (n: number) => new Intl.NumberFormat("en-MY", { style: "currency", currency: "MYR", minimumFractionDigits: 2 }).format(Number.isFinite(n) ? n : 0).replace("MYR", "RM");
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
+const formatDisplayDate = (date:string) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return "";
+  const [y,m,d] = date.split("-");
+  return `${d}/${m}/${y}`;
+};
 
 const defaultTravelerRows: TravelerCostRow[] = [
   { id: uid(), item: "地接报价", mode: "每人", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: true, note: "" },
@@ -536,8 +541,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <div className="quote-meta-grid">
         <Field label="Quotation Title"><input value={quoteTitle} onChange={e=>setQuoteTitle(e.target.value)} placeholder="例如：江西 8D7N · HT Group" /></Field>
         <Field label="Destination"><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder="China / Japan / Thailand" /></Field>
-        <Field label="Departure Date"><input type="date" value={departureDate} readOnly /></Field>
-        <Field label="Return Date (Arrival)"><input type="date" value={returnDate} readOnly /></Field>
+        <Field label="Departure Date"><input type="text" value={formatDisplayDate(departureDate)} readOnly placeholder="—" /></Field>
+        <Field label="Return Date (Arrival)"><input type="text" value={formatDisplayDate(returnDate)} readOnly placeholder="—" /></Field>
         <Field label="Customer"><input value={customerName} onChange={e=>setCustomerName(e.target.value)} placeholder="Customer / Company" /></Field>
         <Field label="Tour Group"><select value={tourGroupId} onChange={e=>setTourGroupId(e.target.value)}><option value="">Unclassified</option>{tourGroups.map((g:any)=><option key={g.id} value={g.id}>{g.name}</option>)}</select></Field>
         <Field label="Status"><select value={status} onChange={e=>setStatus(e.target.value as QuoteStatus)}><option value="draft">Draft</option><option value="ready">Ready</option><option value="sent">Sent</option><option value="revised">Revised</option><option value="confirmed">Confirmed</option><option value="lost">Lost</option><option value="archived">Archived</option></select></Field>
