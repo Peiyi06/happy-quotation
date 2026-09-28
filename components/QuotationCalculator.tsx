@@ -195,14 +195,17 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const itinerarySummary = useMemo(() => {
     const addDays = (date:string, days:number) => {
       if (!date) return "";
-      const d = new Date(date + "T00:00:00");
-      d.setDate(d.getDate() + days);
+      const [year,month,day] = date.split("-").map(Number);
+      const d = new Date(Date.UTC(year, month - 1, day));
+      d.setUTCDate(d.getUTCDate() + days);
       return d.toISOString().slice(0,10);
     };
     const diffDays = (start:string, end:string) => {
       if (!start || !end) return 0;
-      const a = new Date(start + "T00:00:00").getTime();
-      const b = new Date(end + "T00:00:00").getTime();
+      const [sy,sm,sd] = start.split("-").map(Number);
+      const [ey,em,ed] = end.split("-").map(Number);
+      const a = Date.UTC(sy, sm - 1, sd);
+      const b = Date.UTC(ey, em - 1, ed);
       return Math.round((b-a)/86400000);
     };
     const arrivalReturnDate = returnFlightDate ? addDays(returnFlightDate, returnNextDay ? 1 : 0) : "";
