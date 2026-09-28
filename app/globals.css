@@ -253,21 +253,29 @@
 .ticket-type-auto.review{background:#fff3cd;border-color:#edd48b}
 .ticket-type-auto.pending{background:#f4f6f8}
 
-.new-quote-menu{position:relative}
-.new-quote-menu>summary{list-style:none;cursor:pointer}
-.new-quote-menu>summary::-webkit-details-marker{display:none}
-.new-quote-options{position:absolute;right:0;top:calc(100% + 8px);z-index:40;width:290px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 38px rgba(22,47,70,.16)}
-.new-quote-option{display:flex;flex-direction:column;gap:3px;padding:11px 12px;border-radius:10px;text-decoration:none}
-.new-quote-option strong{font-size:13px;color:var(--navy2)}
-.new-quote-option span{font-size:11px;color:var(--muted)}
-.new-quote-option.active:hover{background:#f3f7fa}
-.new-quote-option.disabled{opacity:.55;cursor:not-allowed;background:#f7f8f9}
-.new-quote-menu.compact{position:relative}
-.sidebar-new-quote{display:block;padding:10px 12px;border-radius:10px;color:inherit;font:inherit;font-weight:600}
-.new-quote-menu.compact[open] .sidebar-new-quote{background:rgba(255,255,255,.08)}
-.new-quote-menu.compact .new-quote-options{position:static;width:auto;margin-top:6px;padding:6px;background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08);box-shadow:none}
-.new-quote-menu.compact .new-quote-option{padding:9px 10px}
-.new-quote-menu.compact .new-quote-option strong{color:#fff;font-size:12px}
-.new-quote-menu.compact .new-quote-option span{color:rgba(255,255,255,.6)}
-.new-quote-menu.compact .new-quote-option.active:hover{background:rgba(255,255,255,.08)}
-.new-quote-menu.compact .new-quote-option.disabled{background:rgba(255,255,255,.03)}
+
+.sidebar-new-quote{width:100%;border:0;background:transparent;text-align:left;padding:10px 12px;border-radius:10px;color:inherit;font:inherit;font-weight:600;cursor:pointer}
+.sidebar-new-quote:hover{background:rgba(255,255,255,.08)}
+
+.quotation-type-overlay{position:fixed;inset:0;z-index:100;background:rgba(14,30,45,.42);backdrop-filter:blur(4px);display:grid;place-items:center;padding:24px}
+.quotation-type-modal{width:min(980px,100%);background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 30px 80px rgba(15,34,50,.22);padding:26px}
+.quotation-type-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:22px}
+.quotation-type-head h2{margin:4px 0 6px;font-size:28px;color:var(--navy2)}
+.quotation-type-head p{margin:0;color:var(--muted)}
+.quotation-type-close{width:38px;height:38px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--navy2);font-size:24px;line-height:1;cursor:pointer}
+.quotation-type-close:hover{background:#f5f7f9}
+
+.quotation-type-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.quotation-type-card{min-height:230px;border:1px solid var(--line);border-radius:18px;background:#fff;padding:20px;text-decoration:none;display:flex;flex-direction:column;justify-content:space-between;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.quotation-type-card.available{border-color:#d8c59b}
+.quotation-type-card.available:hover{transform:translateY(-3px);border-color:#c3a46e;box-shadow:0 14px 30px rgba(24,49,69,.10)}
+.quotation-type-card.coming{background:#f8fafb}
+.quotation-type-card-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.quotation-type-index{font-size:12px;font-weight:800;letter-spacing:.12em;color:#c3a46e}
+.quotation-type-status{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 8px;background:#fff}
+.quotation-type-status.available{color:#2f6f48;border-color:#cfe4d6;background:#f1f8f3}
+.quotation-type-card h3{margin:0 0 7px;font-size:21px;color:var(--navy2)}
+.quotation-type-card p{margin:0;color:var(--muted);font-size:13px}
+.quotation-type-enter{font-size:12px;font-weight:800;color:#9f7b38;letter-spacing:.02em}
+.quotation-type-enter.muted{color:#9aa6af}
+@media(max-width:820px){.quotation-type-grid{grid-template-columns:1fr}.quotation-type-card{min-height:170px}.quotation-type-modal{padding:20px}}
