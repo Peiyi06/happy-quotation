@@ -61,6 +61,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [returnDepartureTime, setReturnDepartureTime] = useState("");
   const [returnArrivalTime, setReturnArrivalTime] = useState("");
   const [returnNextDay, setReturnNextDay] = useState(false);
+  const [flightTotalPrice, setFlightTotalPrice] = useState<number | "">("");
+  const [flightPriceCurrency, setFlightPriceCurrency] = useState<Currency>("RM");
   const [customerName, setCustomerName] = useState("");
   const [status, setStatus] = useState<QuoteStatus>("draft");
   const [tourGroupId, setTourGroupId] = useState("");
@@ -149,7 +151,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         const setters: Record<string, (x: any) => void> = {
           tourCode:setTourCode,businessType:setBusinessType,op:setOp,supplier:setSupplier,pax:setPax,mainCurrency:setMainCurrency,mainRate:setMainRate,
           outboundFlightNo:setOutboundFlightNo,outboundFlightDate:setOutboundFlightDate,outboundDepartureTime:setOutboundDepartureTime,outboundArrivalTime:setOutboundArrivalTime,outboundNextDay:setOutboundNextDay,
-          returnFlightNo:setReturnFlightNo,returnFlightDate:setReturnFlightDate,returnDepartureTime:setReturnDepartureTime,returnArrivalTime:setReturnArrivalTime,returnNextDay:setReturnNextDay,
+          returnFlightNo:setReturnFlightNo,returnFlightDate:setReturnFlightDate,returnDepartureTime:setReturnDepartureTime,returnArrivalTime:setReturnArrivalTime,returnNextDay:setReturnNextDay,flightTotalPrice:setFlightTotalPrice,flightPriceCurrency:setFlightPriceCurrency,
           travelerRows:setTravelerRows,leaderRows:setLeaderRows,leaderOpen:setLeaderOpen,singleRoomAmount:setSingleRoomAmount,singleRoomCurrency:setSingleRoomCurrency,profitMode:setProfitMode,profitRate:setProfitRate,minProfit:setMinProfit,maxProfit:setMaxProfit,
           fixedProfit:setFixedProfit,roundUnit:setRoundUnit,childBedMode:setChildBedMode,childBedManual:setChildBedManual,childBedCurrency:setChildBedCurrency,
           childNoBedMode:setChildNoBedMode,childNoBedManual:setChildNoBedManual,childNoBedCurrency:setChildNoBedCurrency,selectedType:setSelectedType,manualQuote:setManualQuote
@@ -164,18 +166,18 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     if (!hydrated) return;
     const state = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
       outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
-      returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
+      returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,flightTotalPrice,flightPriceCurrency,
       travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote};
     localStorage.setItem("happy-quotation-v1", JSON.stringify(state));
   }, [hydrated,tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
   outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
-  returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
+  returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,flightTotalPrice,flightPriceCurrency,
   travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote]);
 
   const currentSnapshot = JSON.stringify({
     quoteTitle,destination,departureDate,returnDate,customerName,status,tourGroupId,
     outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
-    returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
+    returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,flightTotalPrice,flightPriceCurrency,
     tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
     travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
     childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,
@@ -341,7 +343,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
     const quotationData = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
       outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
-      returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
+      returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,flightTotalPrice,flightPriceCurrency,
       itineraryDays:itinerarySummary.days,itineraryNights:itinerarySummary.nights,itineraryLabel:itinerarySummary.label,
       travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType:effectiveSelectedType,manualQuote};
     const payload = {
@@ -434,6 +436,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setReturnDepartureTime("");
     setReturnArrivalTime("");
     setReturnNextDay(false);
+    setFlightTotalPrice("");
+    setFlightPriceCurrency("RM");
     setCustomerName("");
     setStatus("draft");
     setTourGroupId("");
@@ -562,6 +566,15 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="flight-total-price-row">
+          <Field label="Flight Total Price｜航班总报价">
+            <input type="number" min="0" value={flightTotalPrice} onChange={e=>setFlightTotalPrice(e.target.value===""?"":Number(e.target.value))} placeholder="0.00" />
+          </Field>
+          <Field label="Currency｜币种">
+            <select value={flightPriceCurrency} onChange={e=>setFlightPriceCurrency(e.target.value as Currency)}>{currencies.map(cur=><option key={cur}>{cur}</option>)}</select>
+          </Field>
         </div>
       </div>
 
