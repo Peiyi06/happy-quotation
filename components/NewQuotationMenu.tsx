@@ -1,21 +1,76 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
-  return <details className={"new-quote-menu "+(compact?"compact":"")}>
-    <summary className={compact?"sidebar-new-quote":"btn primary"}>＋ New Quotation</summary>
-    <div className="new-quote-options">
-      <Link href="/quotations/new" className="new-quote-option active">
-        <strong>Outbound Quotation</strong>
-        <span>Overseas tour quotation</span>
-      </Link>
-      <div className="new-quote-option disabled" aria-disabled="true">
-        <strong>Inbound Quotation</strong>
-        <span>Coming Soon · Setup</span>
+  const [open,setOpen]=useState(false);
+
+  useEffect(()=>{
+    if(!open) return;
+    const onKey=(e:KeyboardEvent)=>{ if(e.key==="Escape") setOpen(false); };
+    window.addEventListener("keydown",onKey);
+    return ()=>window.removeEventListener("keydown",onKey);
+  },[open]);
+
+  return <>
+    <button
+      type="button"
+      className={compact?"sidebar-new-quote":"btn primary"}
+      onClick={()=>setOpen(true)}
+    >
+      ＋ New Quotation
+    </button>
+
+    {open && <div className="quotation-type-overlay" onMouseDown={()=>setOpen(false)}>
+      <div className="quotation-type-modal" onMouseDown={e=>e.stopPropagation()}>
+        <div className="quotation-type-head">
+          <div>
+            <span className="page-kicker">NEW QUOTATION</span>
+            <h2>Select Quotation Type</h2>
+            <p>请选择要建立的报价类型。</p>
+          </div>
+          <button type="button" className="quotation-type-close" onClick={()=>setOpen(false)} aria-label="Close">×</button>
+        </div>
+
+        <div className="quotation-type-grid">
+          <Link href="/quotations/new" className="quotation-type-card available" onClick={()=>setOpen(false)}>
+            <div className="quotation-type-card-top">
+              <span className="quotation-type-index">01</span>
+              <span className="quotation-type-status available">Available</span>
+            </div>
+            <div>
+              <h3>Outbound Quotation</h3>
+              <p>Overseas Tour Quotation</p>
+            </div>
+            <span className="quotation-type-enter">Create Quotation →</span>
+          </Link>
+
+          <div className="quotation-type-card coming" aria-disabled="true">
+            <div className="quotation-type-card-top">
+              <span className="quotation-type-index">02</span>
+              <span className="quotation-type-status">Coming Soon</span>
+            </div>
+            <div>
+              <h3>Inbound Quotation</h3>
+              <p>Incoming Tour Quotation</p>
+            </div>
+            <span className="quotation-type-enter muted">Setup</span>
+          </div>
+
+          <div className="quotation-type-card coming" aria-disabled="true">
+            <div className="quotation-type-card-top">
+              <span className="quotation-type-index">03</span>
+              <span className="quotation-type-status">Coming Soon</span>
+            </div>
+            <div>
+              <h3>Island Quotation</h3>
+              <p>Island & Resort Quotation</p>
+            </div>
+            <span className="quotation-type-enter muted">Setup</span>
+          </div>
+        </div>
       </div>
-      <div className="new-quote-option disabled" aria-disabled="true">
-        <strong>Island Quotation</strong>
-        <span>Coming Soon · Setup</span>
-      </div>
-    </div>
-  </details>;
+    </div>}
+  </>;
 }
