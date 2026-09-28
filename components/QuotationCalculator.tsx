@@ -229,6 +229,10 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   }, [departureDate,outboundFlightDate,outboundArrivalTime,outboundNextDay,returnFlightDate,returnNextDay]);
 
   useEffect(() => {
+    setDepartureDate(outboundFlightDate);
+  }, [outboundFlightDate]);
+
+  useEffect(() => {
     setReturnDate(itinerarySummary.returnDate);
   }, [itinerarySummary.returnDate]);
 
@@ -532,7 +536,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <div className="quote-meta-grid">
         <Field label="Quotation Title"><input value={quoteTitle} onChange={e=>setQuoteTitle(e.target.value)} placeholder="例如：江西 8D7N · HT Group" /></Field>
         <Field label="Destination"><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder="China / Japan / Thailand" /></Field>
-        <Field label="Departure Date"><input type="date" value={departureDate} onChange={e=>setDepartureDate(e.target.value)} /></Field>
+        <Field label="Departure Date"><input type="date" value={departureDate} readOnly /></Field>
         <Field label="Return Date (Arrival)"><input type="date" value={returnDate} readOnly /></Field>
         <Field label="Customer"><input value={customerName} onChange={e=>setCustomerName(e.target.value)} placeholder="Customer / Company" /></Field>
         <Field label="Tour Group"><select value={tourGroupId} onChange={e=>setTourGroupId(e.target.value)}><option value="">Unclassified</option>{tourGroups.map((g:any)=><option key={g.id} value={g.id}>{g.name}</option>)}</select></Field>
@@ -556,7 +560,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             <h4>Departure Flight</h4>
             <div className="flight-fields">
               <Field label="Airline / Flight No."><input value={outboundFlightNo} onChange={e=>setOutboundFlightNo(e.target.value.toUpperCase())} placeholder="CZ1234" /></Field>
-              <Field label="Departure Flight Date"><input type="date" value={outboundFlightDate} onChange={e=>{setOutboundFlightDate(e.target.value); if(!departureDate) setDepartureDate(e.target.value);}} /></Field>
+              <Field label="Departure Flight Date"><input type="date" value={outboundFlightDate} onChange={e=>{setOutboundFlightDate(e.target.value); setDepartureDate(e.target.value);}} /></Field>
               <TimeField label="Departure Time" value={outboundDepartureTime} setValue={setOutboundDepartureTime} />
               <TimeField label="Arrival Time" value={outboundArrivalTime} setValue={setOutboundArrivalTime} />
               <div className={"flight-day-status "+(outboundDepartureTime&&outboundArrivalTime?(outboundNextDay?"next":"same"):"pending")}>
