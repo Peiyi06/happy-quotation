@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { internalUser } from "@/lib/internalSession";
 import WorkspaceUserMenu from "@/components/WorkspaceUserMenu";
+import NewQuotationMenu from "@/components/NewQuotationMenu";
 
 export default async function WorkspaceLayout({ children }: { children: React.ReactNode }) {
   const user = await internalUser();
@@ -16,7 +17,7 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
         </div>
         <nav className="sidebar-nav">
           <Link href="/dashboard">Dashboard</Link>
-          <Link href="/quotations/new">＋ New Quotation</Link>
+          <NewQuotationMenu compact />
           <Link href="/quotations">My Quotations</Link>
           <Link href="/tour-groups">Tour Groups</Link>
           {user.role === "manager" && <Link href="/trash">Trash</Link>}
