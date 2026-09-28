@@ -40,7 +40,7 @@ export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
               <span className="quotation-type-status available">Available</span>
             </div>
             <div>
-              <h3>Outbound Quotation</h3>
+              <h3>Outbound</h3>
               <p>Overseas Tour Quotation</p>
             </div>
             <span className="quotation-type-enter">Create Quotation →</span>
@@ -52,7 +52,7 @@ export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
               <span className="quotation-type-status">Coming Soon</span>
             </div>
             <div>
-              <h3>Inbound Quotation</h3>
+              <h3>Inbound</h3>
               <p>Incoming Tour Quotation</p>
             </div>
             <span className="quotation-type-enter muted">Setup</span>
@@ -64,7 +64,7 @@ export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
               <span className="quotation-type-status">Coming Soon</span>
             </div>
             <div>
-              <h3>Island Quotation</h3>
+              <h3>Island</h3>
               <p>Island & Resort Quotation</p>
             </div>
             <span className="quotation-type-enter muted">Setup</span>
