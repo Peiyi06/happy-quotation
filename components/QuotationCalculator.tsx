@@ -587,7 +587,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             <span>Ticket Type｜机票类型</span>
             <div className={"ticket-type-auto "+flightTicketType.state}>
               <strong>{flightTicketType.label}</strong>
-              <small>Auto determined by Pax</small>
             </div>
           </div>
         </div>
