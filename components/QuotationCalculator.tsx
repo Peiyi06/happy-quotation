@@ -519,8 +519,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     <header className="topbar">
       <div>
         <div className="eyebrow">HAPPY EXPRESS TRAVEL</div>
-        <h1>旅游报价计算器</h1>
-        <p>Quotation Calculator · Vercel Edition</p>
+        <h1>Outbound Quotation</h1>
+        <p>Outbound Tour Quotation Calculator</p>
       </div>
       <div className="top-actions no-print">
         {workspaceMode && isDirty && <span className="unsaved-badge">Unsaved changes</span>}
