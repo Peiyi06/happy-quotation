@@ -252,3 +252,22 @@
 .ticket-type-auto.git{background:#eef3fb;border-color:#c9d7ee}
 .ticket-type-auto.review{background:#fff3cd;border-color:#edd48b}
 .ticket-type-auto.pending{background:#f4f6f8}
+
+.new-quote-menu{position:relative}
+.new-quote-menu>summary{list-style:none;cursor:pointer}
+.new-quote-menu>summary::-webkit-details-marker{display:none}
+.new-quote-options{position:absolute;right:0;top:calc(100% + 8px);z-index:40;width:290px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 38px rgba(22,47,70,.16)}
+.new-quote-option{display:flex;flex-direction:column;gap:3px;padding:11px 12px;border-radius:10px;text-decoration:none}
+.new-quote-option strong{font-size:13px;color:var(--navy2)}
+.new-quote-option span{font-size:11px;color:var(--muted)}
+.new-quote-option.active:hover{background:#f3f7fa}
+.new-quote-option.disabled{opacity:.55;cursor:not-allowed;background:#f7f8f9}
+.new-quote-menu.compact{position:relative}
+.sidebar-new-quote{display:block;padding:10px 12px;border-radius:10px;color:inherit;font:inherit;font-weight:600}
+.new-quote-menu.compact[open] .sidebar-new-quote{background:rgba(255,255,255,.08)}
+.new-quote-menu.compact .new-quote-options{position:static;width:auto;margin-top:6px;padding:6px;background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08);box-shadow:none}
+.new-quote-menu.compact .new-quote-option{padding:9px 10px}
+.new-quote-menu.compact .new-quote-option strong{color:#fff;font-size:12px}
+.new-quote-menu.compact .new-quote-option span{color:rgba(255,255,255,.6)}
+.new-quote-menu.compact .new-quote-option.active:hover{background:rgba(255,255,255,.08)}
+.new-quote-menu.compact .new-quote-option.disabled{background:rgba(255,255,255,.03)}
