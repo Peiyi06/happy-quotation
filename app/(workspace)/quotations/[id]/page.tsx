@@ -63,6 +63,19 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
 
   const margin=Number(data.margin||0);
   const qd=data.quotation_data||{};
+  const outboundFlightNo=qd.outboundFlightNo||"";
+  const outboundFlightDate=qd.outboundFlightDate||"";
+  const outboundDepartureTime=qd.outboundDepartureTime||"";
+  const outboundArrivalTime=qd.outboundArrivalTime||"";
+  const outboundNextDay=Boolean(qd.outboundNextDay);
+  const returnFlightNo=qd.returnFlightNo||"";
+  const returnFlightDate=qd.returnFlightDate||"";
+  const returnDepartureTime=qd.returnDepartureTime||"";
+  const returnArrivalTime=qd.returnArrivalTime||"";
+  const returnNextDay=Boolean(qd.returnNextDay);
+  const itineraryDays=Number(qd.itineraryDays)||0;
+  const itineraryNights=Number(qd.itineraryNights)||0;
+  const itineraryLabel=qd.itineraryLabel||"";
   const singleRoomAmount=qd.singleRoomAmount===""||qd.singleRoomAmount==null?null:Number(qd.singleRoomAmount);
   const singleRoomCurrency=(qd.singleRoomCurrency||"RM") as Currency;
   const mainCurrency=(qd.mainCurrency||"RMB") as Currency;
@@ -130,6 +143,48 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
         </table>
       </div>
     </section>
+
+    {(outboundFlightNo||returnFlightNo||outboundFlightDate||returnFlightDate) && <section className="panel quote-flight-panel">
+      <div className="panel-head quote-flight-head">
+        <div>
+          <h2>航班信息</h2>
+          <span>Flight Information</span>
+        </div>
+        {itineraryLabel && <div className="itinerary-pill">
+          <strong>{itineraryDays}天{itineraryNights}晚</strong>
+          <span>{itineraryLabel}</span>
+        </div>}
+      </div>
+
+      <div className="quote-flight-summary">
+        <Detail label="Departure Date" value={data.departure_date?new Date(data.departure_date+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
+        <Detail label="Return Date (Arrival)" value={data.return_date?new Date(data.return_date+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
+      </div>
+
+      <div className="quote-flight-grid">
+        <div className="quote-flight-card">
+          <h3>Departure Flight</h3>
+          <div className="quote-flight-details">
+            <Detail label="Airline / Flight No." value={outboundFlightNo||"—"}/>
+            <Detail label="Flight Date" value={outboundFlightDate?new Date(outboundFlightDate+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
+            <Detail label="Departure Time" value={outboundDepartureTime||"—"}/>
+            <Detail label="Arrival Time" value={outboundArrivalTime||"—"}/>
+            <Detail label="Arrival Day" value={outboundDepartureTime&&outboundArrivalTime?(outboundNextDay?"+1 Next Day":"Same Day"):"—"}/>
+          </div>
+        </div>
+
+        <div className="quote-flight-card">
+          <h3>Return Flight</h3>
+          <div className="quote-flight-details">
+            <Detail label="Airline / Flight No." value={returnFlightNo||"—"}/>
+            <Detail label="Flight Date" value={returnFlightDate?new Date(returnFlightDate+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
+            <Detail label="Departure Time" value={returnDepartureTime||"—"}/>
+            <Detail label="Arrival Time" value={returnArrivalTime||"—"}/>
+            <Detail label="Arrival Day" value={returnDepartureTime&&returnArrivalTime?(returnNextDay?"+1 Next Day":"Same Day"):"—"}/>
+          </div>
+        </div>
+      </div>
+    </section>}
 
     <section className="panel">
       <div className="panel-head"><h2>Quotation Information</h2></div>
