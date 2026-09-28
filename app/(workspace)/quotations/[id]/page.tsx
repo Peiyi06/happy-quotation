@@ -115,6 +115,11 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
         <strong>{singleRoomSellingPrice==null?"—":money(singleRoomSellingPrice)}</strong>
         <small>{singleRoomSupplement==null?"尚未填写单人房差":`含单人房差 ${money(singleRoomSupplement)}`}</small>
       </div>
+      <div className="quote-result-hero">
+        <span>航班总报价 · Flight</span>
+        <strong>{flightTotalPrice==null?"—":`${flightPriceCurrency} ${flightTotalPrice.toLocaleString("en-MY",{minimumFractionDigits:2,maximumFractionDigits:2})}`}</strong>
+        <small>{flightTicketType}</small>
+      </div>
     </section>
 
     <section className="dashboard-cards quote-detail-cards">
