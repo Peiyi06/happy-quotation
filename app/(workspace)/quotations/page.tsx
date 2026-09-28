@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { internalDb, internalToken } from "@/lib/internalSession";
 import QuotationRowActions from "@/components/QuotationRowActions";
+import NewQuotationMenu from "@/components/NewQuotationMenu";
 
 const money=(n:number)=>new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR"}).format(n||0).replace("MYR","RM");
 
@@ -20,7 +21,7 @@ export default async function QuotationsPage({ searchParams }:{searchParams:Prom
   return <div>
     <div className="page-head">
       <div><span className="page-kicker">QUOTATIONS</span><h1>Quotation Library</h1><p>按团型、目的地、客户和状态管理历史报价。</p></div>
-      <Link className="btn primary" href="/quotations/new">＋ New Quotation</Link>
+      <NewQuotationMenu />
     </div>
     <form className="filter-bar">
       <input name="q" defaultValue={sp.q||""} placeholder="Search quote / tour / customer" />
