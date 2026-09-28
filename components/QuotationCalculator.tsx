@@ -103,6 +103,14 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [manualQuote, setManualQuote] = useState<number | "">("");
   const [hydrated, setHydrated] = useState(false);
 
+  const flightTicketType = useMemo(() => {
+    const count = Number(pax) || 0;
+    if (count >= 1 && count <= 9) return { code:"FIT", label:"FIT Ticket｜散票", state:"fit" };
+    if (count >= 10 && count <= 200) return { code:"GIT", label:"GIT｜团体票", state:"git" };
+    if (count > 200) return { code:"REVIEW", label:"Manual Review｜需人工确认", state:"review" };
+    return { code:"", label:"—", state:"pending" };
+  }, [pax]);
+
   const inferNextDay = (departure:string, arrival:string) => {
     if (!/^\d{2}:\d{2}$/.test(departure) || !/^\d{2}:\d{2}$/.test(arrival)) return false;
     const [dh,dm]=departure.split(":").map(Number);
@@ -343,7 +351,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
     const quotationData = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
       outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
-      returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,flightTotalPrice,flightPriceCurrency,
+      returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,flightTotalPrice,flightPriceCurrency,flightTicketType:flightTicketType.code,
       itineraryDays:itinerarySummary.days,itineraryNights:itinerarySummary.nights,itineraryLabel:itinerarySummary.label,
       travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType:effectiveSelectedType,manualQuote};
     const payload = {
@@ -575,6 +583,13 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           <Field label="Currency｜币种">
             <select value={flightPriceCurrency} onChange={e=>setFlightPriceCurrency(e.target.value as Currency)}>{currencies.map(cur=><option key={cur}>{cur}</option>)}</select>
           </Field>
+          <div className="field">
+            <span>Ticket Type｜机票类型</span>
+            <div className={"ticket-type-auto "+flightTicketType.state}>
+              <strong>{flightTicketType.label}</strong>
+              <small>Auto determined by Pax</small>
+            </div>
+          </div>
         </div>
       </div>
 
