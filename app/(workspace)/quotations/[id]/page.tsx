@@ -144,7 +144,7 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
       </div>
     </section>
 
-    {(outboundFlightNo||returnFlightNo||outboundFlightDate||returnFlightDate) && <section className="panel quote-flight-panel">
+    <section className="panel quote-flight-panel">
       <div className="panel-head quote-flight-head">
         <div>
           <h2>航班信息</h2>
@@ -184,7 +184,7 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
           </div>
         </div>
       </div>
-    </section>}
+    </section>
 
     <section className="panel">
       <div className="panel-head"><h2>Quotation Information</h2></div>
