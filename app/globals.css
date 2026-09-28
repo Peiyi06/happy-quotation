@@ -230,3 +230,14 @@
 .final-price-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:18px}
 .final-price-grid .quote-result-hero{margin-bottom:0}
 @media(max-width:760px){.final-price-grid{grid-template-columns:1fr}}
+
+.quote-flight-head{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.quote-flight-head>div:first-child span{display:block;margin-top:3px;color:var(--muted);font-size:12px}
+.quote-flight-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.quote-flight-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.quote-flight-card{border:1px solid var(--line);background:#f8fbfd;border-radius:14px;padding:16px}
+.quote-flight-card h3{margin:0 0 14px;color:var(--navy2);font-size:16px}
+.quote-flight-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.quote-flight-card .detail-item{background:white}
+@media(max-width:900px){.quote-flight-grid,.quote-flight-summary{grid-template-columns:1fr}}
+@media(max-width:620px){.quote-flight-details{grid-template-columns:1fr}.quote-flight-head{align-items:flex-start;flex-direction:column}}
