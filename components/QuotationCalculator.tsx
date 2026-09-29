@@ -15,7 +15,7 @@ const profitModes: ProfitMode[] = ["固定金额", "按成本加价率", "按售
 const travelerTypes = ["成人不含领队","成人含领队","小孩含床不含领队","小孩含床含领队","小孩不含床不含领队","小孩不含床含领队"] as const;
 type TravelerType = typeof travelerTypes[number];
 type QuoteStatus = "draft"|"ready"|"sent"|"revised"|"confirmed"|"lost"|"archived";
-type CalculatorProps = { workspaceMode?: boolean; quotationId?: string; initialQuotation?: any };
+type CalculatorProps = { workspaceMode?: boolean; quotationId?: string; initialQuotation?: any; currentStaffId?: string; currentStaffName?: string };
 
 const travelerTypeLabel = (type: TravelerType) => ({
   "成人不含领队":"成人（双人一房）",
@@ -50,7 +50,7 @@ const defaultLeaderRows: LeaderCostRow[] = [
   { id: uid(), item: "其他", unitPrice: 0, qty: 1, currency: "RM", note: "" },
 ];
 
-export default function QuotationCalculator({workspaceMode=false,quotationId,initialQuotation}:CalculatorProps) {
+export default function QuotationCalculator({workspaceMode=false,quotationId,initialQuotation,currentStaffId="",currentStaffName=""}:CalculatorProps) {
   const router = useRouter();
   const [quoteTitle, setQuoteTitle] = useState("New Tour Quotation");
   const [destination, setDestination] = useState("");
@@ -79,7 +79,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const baselineRef = useRef("");
   const [tourCode, setTourCode] = useState("");
   const [businessType, setBusinessType] = useState("");
-  const [op, setOp] = useState("");
+  const [op, setOp] = useState(currentStaffName);
   const [supplier, setSupplier] = useState("");
   const [pax, setPax] = useState(1);
   const [mainCurrency, setMainCurrency] = useState<Currency>("RMB");
@@ -361,7 +361,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setSaving(true);
     setSaveMessage("");
 
-    const quotationData = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
+    const quotationData = {tourCode,businessType,op:op || currentStaffName,opStaffId:initialQuotation?.quotation_data?.opStaffId || initialQuotation?.owner_id || currentStaffId,supplier,pax,mainCurrency,mainRate,
       outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
       returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,flightTotalPrice,flightPriceCurrency,flightTicketType:flightTicketType.code,
       itineraryDays:itinerarySummary.days,itineraryNights:itinerarySummary.nights,itineraryLabel:itinerarySummary.label,
@@ -464,7 +464,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
     setTourCode("");
     setBusinessType("");
-    setOp("");
+    setOp(currentStaffName);
     setSupplier("");
     setPax(1);
     setMainCurrency("RMB");
@@ -611,7 +611,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <div className="form-grid six">
         <Field label="Tour Code"><input value={tourCode} onChange={e=>setTourCode(e.target.value)} /></Field>
         <Field label="业务类型"><input value={businessType} onChange={e=>setBusinessType(e.target.value)} /></Field>
-        <Field label="OP"><input value={op} onChange={e=>setOp(e.target.value)} /></Field>
+        <Field label="OP"><input value={op || currentStaffName} readOnly /></Field>
         <Field label="Supplier"><input value={supplier} onChange={e=>setSupplier(e.target.value)} /></Field>
         <Field label="人数"><input type="number" min="1" value={pax} onChange={e=>setPax(Number(e.target.value)||1)} /></Field>
         <Field label="主要币种"><select value={mainCurrency} onChange={e=>setMainCurrency(e.target.value as Currency)}>{currencies.map(c=><option key={c}>{c}</option>)}</select></Field>
