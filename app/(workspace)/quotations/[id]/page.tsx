@@ -63,16 +63,36 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
 
   const margin=Number(data.margin||0);
   const qd=data.quotation_data||{};
+  const outboundFromAirport=qd.outboundFromAirport||"";
+  const outboundToAirport=qd.outboundToAirport||"";
   const outboundFlightNo=qd.outboundFlightNo||"";
   const outboundFlightDate=qd.outboundFlightDate||"";
   const outboundDepartureTime=qd.outboundDepartureTime||"";
   const outboundArrivalTime=qd.outboundArrivalTime||"";
   const outboundNextDay=Boolean(qd.outboundNextDay);
+  const outboundTransitOpen=Boolean(qd.outboundTransitOpen);
+  const outboundTransitFromAirport=qd.outboundTransitFromAirport||"";
+  const outboundTransitToAirport=qd.outboundTransitToAirport||"";
+  const outboundTransitFlightNo=qd.outboundTransitFlightNo||"";
+  const outboundTransitFlightDate=qd.outboundTransitFlightDate||"";
+  const outboundTransitDepartureTime=qd.outboundTransitDepartureTime||"";
+  const outboundTransitArrivalTime=qd.outboundTransitArrivalTime||"";
+  const outboundTransitNextDay=Boolean(qd.outboundTransitNextDay);
+  const returnFromAirport=qd.returnFromAirport||"";
+  const returnToAirport=qd.returnToAirport||"";
   const returnFlightNo=qd.returnFlightNo||"";
   const returnFlightDate=qd.returnFlightDate||"";
   const returnDepartureTime=qd.returnDepartureTime||"";
   const returnArrivalTime=qd.returnArrivalTime||"";
   const returnNextDay=Boolean(qd.returnNextDay);
+  const returnTransitOpen=Boolean(qd.returnTransitOpen);
+  const returnTransitFromAirport=qd.returnTransitFromAirport||"";
+  const returnTransitToAirport=qd.returnTransitToAirport||"";
+  const returnTransitFlightNo=qd.returnTransitFlightNo||"";
+  const returnTransitFlightDate=qd.returnTransitFlightDate||"";
+  const returnTransitDepartureTime=qd.returnTransitDepartureTime||"";
+  const returnTransitArrivalTime=qd.returnTransitArrivalTime||"";
+  const returnTransitNextDay=Boolean(qd.returnTransitNextDay);
   const itineraryDays=Number(qd.itineraryDays)||0;
   const itineraryNights=Number(qd.itineraryNights)||0;
   const itineraryLabel=qd.itineraryLabel||"";
@@ -176,23 +196,47 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
         <div className="quote-flight-card">
           <h3>Departure Flight</h3>
           <div className="quote-flight-details">
+            <Detail label="Airport Route" value={outboundFromAirport||outboundToAirport?`${outboundFromAirport||"—"} → ${outboundToAirport||"—"}`:"—"}/>
             <Detail label="Airline / Flight No." value={outboundFlightNo||"—"}/>
             <Detail label="Flight Date" value={outboundFlightDate?new Date(outboundFlightDate+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
             <Detail label="Departure Time" value={outboundDepartureTime||"—"}/>
             <Detail label="Arrival Time" value={outboundArrivalTime||"—"}/>
             <Detail label="Arrival Day" value={outboundDepartureTime&&outboundArrivalTime?(outboundNextDay?"+1 Next Day":"Same Day"):"—"}/>
           </div>
+          {outboundTransitOpen && <div className="quote-transit-detail">
+            <div className="quote-transit-heading"><span>TRANSIT</span><strong>Departure Transit Flight</strong></div>
+            <div className="quote-flight-details">
+              <Detail label="Airport Route" value={outboundTransitFromAirport||outboundTransitToAirport?`${outboundTransitFromAirport||"—"} → ${outboundTransitToAirport||"—"}`:"—"}/>
+              <Detail label="Airline / Flight No." value={outboundTransitFlightNo||"—"}/>
+              <Detail label="Flight Date" value={outboundTransitFlightDate?new Date(outboundTransitFlightDate+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
+              <Detail label="Departure Time" value={outboundTransitDepartureTime||"—"}/>
+              <Detail label="Arrival Time" value={outboundTransitArrivalTime||"—"}/>
+              <Detail label="Arrival Day" value={outboundTransitDepartureTime&&outboundTransitArrivalTime?(outboundTransitNextDay?"+1 Next Day":"Same Day"):"—"}/>
+            </div>
+          </div>}
         </div>
 
         <div className="quote-flight-card">
           <h3>Return Flight</h3>
           <div className="quote-flight-details">
+            <Detail label="Airport Route" value={returnFromAirport||returnToAirport?`${returnFromAirport||"—"} → ${returnToAirport||"—"}`:"—"}/>
             <Detail label="Airline / Flight No." value={returnFlightNo||"—"}/>
             <Detail label="Flight Date" value={returnFlightDate?new Date(returnFlightDate+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
             <Detail label="Departure Time" value={returnDepartureTime||"—"}/>
             <Detail label="Arrival Time" value={returnArrivalTime||"—"}/>
             <Detail label="Arrival Day" value={returnDepartureTime&&returnArrivalTime?(returnNextDay?"+1 Next Day":"Same Day"):"—"}/>
           </div>
+          {returnTransitOpen && <div className="quote-transit-detail">
+            <div className="quote-transit-heading"><span>TRANSIT</span><strong>Return Transit Flight</strong></div>
+            <div className="quote-flight-details">
+              <Detail label="Airport Route" value={returnTransitFromAirport||returnTransitToAirport?`${returnTransitFromAirport||"—"} → ${returnTransitToAirport||"—"}`:"—"}/>
+              <Detail label="Airline / Flight No." value={returnTransitFlightNo||"—"}/>
+              <Detail label="Flight Date" value={returnTransitFlightDate?new Date(returnTransitFlightDate+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
+              <Detail label="Departure Time" value={returnTransitDepartureTime||"—"}/>
+              <Detail label="Arrival Time" value={returnTransitArrivalTime||"—"}/>
+              <Detail label="Arrival Day" value={returnTransitDepartureTime&&returnTransitArrivalTime?(returnTransitNextDay?"+1 Next Day":"Same Day"):"—"}/>
+            </div>
+          </div>}
         </div>
       </div>
     </section>
