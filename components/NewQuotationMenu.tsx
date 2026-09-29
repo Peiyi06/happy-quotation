@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { createPortal } from "react-dom";
 import { useEffect, useState } from "react";
 
 export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
@@ -22,7 +23,8 @@ export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
       ＋ New Quotation
     </button>
 
-    {open && <div className="quotation-type-overlay" onMouseDown={()=>setOpen(false)}>
+    {open && typeof document !== "undefined" && createPortal(
+      <div className="quotation-type-overlay" onMouseDown={()=>setOpen(false)}>
       <div className="quotation-type-modal" onMouseDown={e=>e.stopPropagation()}>
         <div className="quotation-type-head">
           <div>
@@ -71,6 +73,8 @@ export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
           </div>
         </div>
       </div>
-    </div>}
+    </div>,
+    document.body
+    )}
   </>;
 }
