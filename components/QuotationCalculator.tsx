@@ -56,16 +56,38 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [destination, setDestination] = useState("");
   const [departureDate, setDepartureDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
+  const [outboundFromAirport, setOutboundFromAirport] = useState("");
+  const [outboundToAirport, setOutboundToAirport] = useState("");
   const [outboundFlightNo, setOutboundFlightNo] = useState("");
   const [outboundFlightDate, setOutboundFlightDate] = useState("");
   const [outboundDepartureTime, setOutboundDepartureTime] = useState("");
   const [outboundArrivalTime, setOutboundArrivalTime] = useState("");
   const [outboundNextDay, setOutboundNextDay] = useState(false);
+  const [outboundTransitOpen, setOutboundTransitOpen] = useState(false);
+  const [outboundTransitFromAirport, setOutboundTransitFromAirport] = useState("");
+  const [outboundTransitToAirport, setOutboundTransitToAirport] = useState("");
+  const [outboundTransitFlightNo, setOutboundTransitFlightNo] = useState("");
+  const [outboundTransitFlightDate, setOutboundTransitFlightDate] = useState("");
+  const [outboundTransitDepartureTime, setOutboundTransitDepartureTime] = useState("");
+  const [outboundTransitArrivalTime, setOutboundTransitArrivalTime] = useState("");
+  const [outboundTransitNextDay, setOutboundTransitNextDay] = useState(false);
+
+  const [returnFromAirport, setReturnFromAirport] = useState("");
+  const [returnToAirport, setReturnToAirport] = useState("");
   const [returnFlightNo, setReturnFlightNo] = useState("");
   const [returnFlightDate, setReturnFlightDate] = useState("");
   const [returnDepartureTime, setReturnDepartureTime] = useState("");
   const [returnArrivalTime, setReturnArrivalTime] = useState("");
   const [returnNextDay, setReturnNextDay] = useState(false);
+  const [returnTransitOpen, setReturnTransitOpen] = useState(false);
+  const [returnTransitFromAirport, setReturnTransitFromAirport] = useState("");
+  const [returnTransitToAirport, setReturnTransitToAirport] = useState("");
+  const [returnTransitFlightNo, setReturnTransitFlightNo] = useState("");
+  const [returnTransitFlightDate, setReturnTransitFlightDate] = useState("");
+  const [returnTransitDepartureTime, setReturnTransitDepartureTime] = useState("");
+  const [returnTransitArrivalTime, setReturnTransitArrivalTime] = useState("");
+  const [returnTransitNextDay, setReturnTransitNextDay] = useState(false);
+
   const [flightTotalPrice, setFlightTotalPrice] = useState<number | "">("");
   const [flightPriceCurrency, setFlightPriceCurrency] = useState<Currency>("RM");
   const [customerName, setCustomerName] = useState("");
@@ -133,6 +155,14 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setReturnNextDay(inferNextDay(returnDepartureTime,returnArrivalTime));
   }, [returnDepartureTime,returnArrivalTime]);
 
+  useEffect(() => {
+    setOutboundTransitNextDay(inferNextDay(outboundTransitDepartureTime,outboundTransitArrivalTime));
+  }, [outboundTransitDepartureTime,outboundTransitArrivalTime]);
+
+  useEffect(() => {
+    setReturnTransitNextDay(inferNextDay(returnTransitDepartureTime,returnTransitArrivalTime));
+  }, [returnTransitDepartureTime,returnTransitArrivalTime]);
+
 
   useEffect(() => {
     const load = async () => {
@@ -163,8 +193,11 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       Object.entries(source).forEach(([k, v]) => {
         const setters: Record<string, (x: any) => void> = {
           tourCode:setTourCode,businessType:setBusinessType,op:setOp,supplier:setSupplier,pax:setPax,mainCurrency:setMainCurrency,mainRate:setMainRate,
-          outboundFlightNo:setOutboundFlightNo,outboundFlightDate:setOutboundFlightDate,outboundDepartureTime:setOutboundDepartureTime,outboundArrivalTime:setOutboundArrivalTime,outboundNextDay:setOutboundNextDay,
-          returnFlightNo:setReturnFlightNo,returnFlightDate:setReturnFlightDate,returnDepartureTime:setReturnDepartureTime,returnArrivalTime:setReturnArrivalTime,returnNextDay:setReturnNextDay,flightTotalPrice:setFlightTotalPrice,flightPriceCurrency:setFlightPriceCurrency,
+          outboundFromAirport:setOutboundFromAirport,outboundToAirport:setOutboundToAirport,outboundFlightNo:setOutboundFlightNo,outboundFlightDate:setOutboundFlightDate,outboundDepartureTime:setOutboundDepartureTime,outboundArrivalTime:setOutboundArrivalTime,outboundNextDay:setOutboundNextDay,
+          outboundTransitOpen:setOutboundTransitOpen,outboundTransitFromAirport:setOutboundTransitFromAirport,outboundTransitToAirport:setOutboundTransitToAirport,outboundTransitFlightNo:setOutboundTransitFlightNo,outboundTransitFlightDate:setOutboundTransitFlightDate,outboundTransitDepartureTime:setOutboundTransitDepartureTime,outboundTransitArrivalTime:setOutboundTransitArrivalTime,outboundTransitNextDay:setOutboundTransitNextDay,
+          returnFromAirport:setReturnFromAirport,returnToAirport:setReturnToAirport,returnFlightNo:setReturnFlightNo,returnFlightDate:setReturnFlightDate,returnDepartureTime:setReturnDepartureTime,returnArrivalTime:setReturnArrivalTime,returnNextDay:setReturnNextDay,
+          returnTransitOpen:setReturnTransitOpen,returnTransitFromAirport:setReturnTransitFromAirport,returnTransitToAirport:setReturnTransitToAirport,returnTransitFlightNo:setReturnTransitFlightNo,returnTransitFlightDate:setReturnTransitFlightDate,returnTransitDepartureTime:setReturnTransitDepartureTime,returnTransitArrivalTime:setReturnTransitArrivalTime,returnTransitNextDay:setReturnTransitNextDay,
+          flightTotalPrice:setFlightTotalPrice,flightPriceCurrency:setFlightPriceCurrency,
           travelerRows:setTravelerRows,leaderRows:setLeaderRows,leaderOpen:setLeaderOpen,singleRoomAmount:setSingleRoomAmount,singleRoomCurrency:setSingleRoomCurrency,profitMode:setProfitMode,profitRate:setProfitRate,minProfit:setMinProfit,maxProfit:setMaxProfit,
           fixedProfit:setFixedProfit,roundUnit:setRoundUnit,childBedMode:setChildBedMode,childBedManual:setChildBedManual,childBedCurrency:setChildBedCurrency,
           childNoBedMode:setChildNoBedMode,childNoBedManual:setChildNoBedManual,childNoBedCurrency:setChildNoBedCurrency,selectedType:setSelectedType,manualQuote:setManualQuote
@@ -178,19 +211,28 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   useEffect(() => {
     if (!hydrated) return;
     const state = {tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
-      outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
-      returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,flightTotalPrice,flightPriceCurrency,
+      outboundFromAirport,outboundToAirport,outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
+      outboundTransitOpen,outboundTransitFromAirport,outboundTransitToAirport,outboundTransitFlightNo,outboundTransitFlightDate,outboundTransitDepartureTime,outboundTransitArrivalTime,outboundTransitNextDay,
+      returnFromAirport,returnToAirport,returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
+      returnTransitOpen,returnTransitFromAirport,returnTransitToAirport,returnTransitFlightNo,returnTransitFlightDate,returnTransitDepartureTime,returnTransitArrivalTime,returnTransitNextDay,
+      flightTotalPrice,flightPriceCurrency,
       travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote};
     localStorage.setItem("happy-quotation-v1", JSON.stringify(state));
   }, [hydrated,tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
-  outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
-  returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,flightTotalPrice,flightPriceCurrency,
+  outboundFromAirport,outboundToAirport,outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
+  outboundTransitOpen,outboundTransitFromAirport,outboundTransitToAirport,outboundTransitFlightNo,outboundTransitFlightDate,outboundTransitDepartureTime,outboundTransitArrivalTime,outboundTransitNextDay,
+  returnFromAirport,returnToAirport,returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
+  returnTransitOpen,returnTransitFromAirport,returnTransitToAirport,returnTransitFlightNo,returnTransitFlightDate,returnTransitDepartureTime,returnTransitArrivalTime,returnTransitNextDay,
+  flightTotalPrice,flightPriceCurrency,
   travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote]);
 
   const currentSnapshot = JSON.stringify({
     quoteTitle,destination,departureDate,returnDate,customerName,status,tourGroupId,
-    outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
-    returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,flightTotalPrice,flightPriceCurrency,
+    outboundFromAirport,outboundToAirport,outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
+    outboundTransitOpen,outboundTransitFromAirport,outboundTransitToAirport,outboundTransitFlightNo,outboundTransitFlightDate,outboundTransitDepartureTime,outboundTransitArrivalTime,outboundTransitNextDay,
+    returnFromAirport,returnToAirport,returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
+    returnTransitOpen,returnTransitFromAirport,returnTransitToAirport,returnTransitFlightNo,returnTransitFlightDate,returnTransitDepartureTime,returnTransitArrivalTime,returnTransitNextDay,
+    flightTotalPrice,flightPriceCurrency,
     tourCode,businessType,op,supplier,pax,mainCurrency,mainRate,
     travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
     childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,
@@ -213,15 +255,20 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       const b = Date.UTC(ey, em - 1, ed);
       return Math.round((b-a)/86400000);
     };
-    const arrivalReturnDate = returnFlightDate ? addDays(returnFlightDate, returnNextDay ? 1 : 0) : "";
+    const finalReturnFlightDate = returnTransitOpen && returnTransitFlightDate ? returnTransitFlightDate : returnFlightDate;
+    const finalReturnNextDay = returnTransitOpen && returnTransitFlightDate ? returnTransitNextDay : returnNextDay;
+    const arrivalReturnDate = finalReturnFlightDate ? addDays(finalReturnFlightDate, finalReturnNextDay ? 1 : 0) : "";
     const days = departureDate && arrivalReturnDate ? diffDays(departureDate, arrivalReturnDate) + 1 : 0;
 
     let nights = 0;
-    if (outboundFlightDate && returnFlightDate) {
-      let hotelStart = outboundFlightDate;
-      if (outboundNextDay) {
-        const arrivalMinutes = outboundArrivalTime ? Number(outboundArrivalTime.slice(0,2))*60 + Number(outboundArrivalTime.slice(3,5)) : 9999;
-        hotelStart = arrivalMinutes <= 180 ? outboundFlightDate : addDays(outboundFlightDate,1);
+    const finalOutboundFlightDate = outboundTransitOpen && outboundTransitFlightDate ? outboundTransitFlightDate : outboundFlightDate;
+    const finalOutboundNextDay = outboundTransitOpen && outboundTransitFlightDate ? outboundTransitNextDay : outboundNextDay;
+    const finalOutboundArrivalTime = outboundTransitOpen && outboundTransitFlightDate ? outboundTransitArrivalTime : outboundArrivalTime;
+    if (finalOutboundFlightDate && returnFlightDate) {
+      let hotelStart = finalOutboundFlightDate;
+      if (finalOutboundNextDay) {
+        const arrivalMinutes = finalOutboundArrivalTime ? Number(finalOutboundArrivalTime.slice(0,2))*60 + Number(finalOutboundArrivalTime.slice(3,5)) : 9999;
+        hotelStart = arrivalMinutes <= 180 ? finalOutboundFlightDate : addDays(finalOutboundFlightDate,1);
       }
       nights = Math.max(0, diffDays(hotelStart, returnFlightDate));
     }
@@ -231,7 +278,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       nights,
       label: days ? `${days}D${nights}N` : ""
     };
-  }, [departureDate,outboundFlightDate,outboundArrivalTime,outboundNextDay,returnFlightDate,returnNextDay]);
+  }, [departureDate,outboundFlightDate,outboundArrivalTime,outboundNextDay,outboundTransitOpen,outboundTransitFlightDate,outboundTransitArrivalTime,outboundTransitNextDay,returnFlightDate,returnNextDay,returnTransitOpen,returnTransitFlightDate,returnTransitNextDay]);
 
   useEffect(() => {
     setDepartureDate(outboundFlightDate);
@@ -362,8 +409,11 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setSaveMessage("");
 
     const quotationData = {tourCode,businessType,op:op || currentStaffName,opStaffId:initialQuotation?.quotation_data?.opStaffId || initialQuotation?.owner_id || currentStaffId,supplier,pax,mainCurrency,mainRate,
-      outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
-      returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,flightTotalPrice,flightPriceCurrency,flightTicketType:flightTicketType.code,
+      outboundFromAirport,outboundToAirport,outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
+      outboundTransitOpen,outboundTransitFromAirport,outboundTransitToAirport,outboundTransitFlightNo,outboundTransitFlightDate,outboundTransitDepartureTime,outboundTransitArrivalTime,outboundTransitNextDay,
+      returnFromAirport,returnToAirport,returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
+      returnTransitOpen,returnTransitFromAirport,returnTransitToAirport,returnTransitFlightNo,returnTransitFlightDate,returnTransitDepartureTime,returnTransitArrivalTime,returnTransitNextDay,
+      flightTotalPrice,flightPriceCurrency,flightTicketType:flightTicketType.code,
       itineraryDays:itinerarySummary.days,itineraryNights:itinerarySummary.nights,itineraryLabel:itinerarySummary.label,
       travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType:effectiveSelectedType,manualQuote};
     const payload = {
@@ -446,16 +496,36 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setDestination("");
     setDepartureDate("");
     setReturnDate("");
+    setOutboundFromAirport("");
+    setOutboundToAirport("");
     setOutboundFlightNo("");
     setOutboundFlightDate("");
     setOutboundDepartureTime("");
     setOutboundArrivalTime("");
     setOutboundNextDay(false);
+    setOutboundTransitOpen(false);
+    setOutboundTransitFromAirport("");
+    setOutboundTransitToAirport("");
+    setOutboundTransitFlightNo("");
+    setOutboundTransitFlightDate("");
+    setOutboundTransitDepartureTime("");
+    setOutboundTransitArrivalTime("");
+    setOutboundTransitNextDay(false);
+    setReturnFromAirport("");
+    setReturnToAirport("");
     setReturnFlightNo("");
     setReturnFlightDate("");
     setReturnDepartureTime("");
     setReturnArrivalTime("");
     setReturnNextDay(false);
+    setReturnTransitOpen(false);
+    setReturnTransitFromAirport("");
+    setReturnTransitToAirport("");
+    setReturnTransitFlightNo("");
+    setReturnTransitFlightDate("");
+    setReturnTransitDepartureTime("");
+    setReturnTransitArrivalTime("");
+    setReturnTransitNextDay(false);
     setFlightTotalPrice("");
     setFlightPriceCurrency("RM");
     setCustomerName("");
@@ -562,8 +632,15 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
         <div className="flight-pair-grid">
           <div className="flight-block">
-            <h4>Departure Flight</h4>
+            <div className="flight-block-head">
+              <h4>Departure Flight</h4>
+              <button type="button" className={"btn transit-toggle "+(outboundTransitOpen?"active":"")} onClick={()=>setOutboundTransitOpen(v=>!v)}>
+                {outboundTransitOpen?"− Transit Flight":"+ Transit Flight"}
+              </button>
+            </div>
             <div className="flight-fields">
+              <Field label="From Airport Code"><input maxLength={3} value={outboundFromAirport} onChange={e=>setOutboundFromAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="KUL" /></Field>
+              <Field label="To Airport Code"><input maxLength={3} value={outboundToAirport} onChange={e=>setOutboundToAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="CSX" /></Field>
               <Field label="Airline / Flight No."><input value={outboundFlightNo} onChange={e=>setOutboundFlightNo(e.target.value.toUpperCase())} placeholder="CZ1234" /></Field>
               <Field label="Departure Flight Date"><input type="date" value={outboundFlightDate} onChange={e=>{setOutboundFlightDate(e.target.value); setDepartureDate(e.target.value);}} /></Field>
               <TimeField label="Departure Time" value={outboundDepartureTime} setValue={setOutboundDepartureTime} />
@@ -572,11 +649,33 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
                 <span>{outboundDepartureTime&&outboundArrivalTime?(outboundNextDay?"+1 Next Day":"Same Day"):"Waiting for time"}</span>
               </div>
             </div>
+
+            {outboundTransitOpen && <div className="transit-flight-panel">
+              <div className="transit-flight-title"><span>TRANSIT</span><strong>Departure Transit Flight</strong></div>
+              <div className="flight-fields">
+                <Field label="From Airport Code"><input maxLength={3} value={outboundTransitFromAirport} onChange={e=>setOutboundTransitFromAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="CAN" /></Field>
+                <Field label="To Airport Code"><input maxLength={3} value={outboundTransitToAirport} onChange={e=>setOutboundTransitToAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="CSX" /></Field>
+                <Field label="Airline / Flight No."><input value={outboundTransitFlightNo} onChange={e=>setOutboundTransitFlightNo(e.target.value.toUpperCase())} placeholder="CZ5678" /></Field>
+                <Field label="Transit Flight Date"><input type="date" value={outboundTransitFlightDate} onChange={e=>setOutboundTransitFlightDate(e.target.value)} /></Field>
+                <TimeField label="Departure Time" value={outboundTransitDepartureTime} setValue={setOutboundTransitDepartureTime} />
+                <TimeField label="Arrival Time" value={outboundTransitArrivalTime} setValue={setOutboundTransitArrivalTime} />
+                <div className={"flight-day-status "+(outboundTransitDepartureTime&&outboundTransitArrivalTime?(outboundTransitNextDay?"next":"same"):"pending")}>
+                  <span>{outboundTransitDepartureTime&&outboundTransitArrivalTime?(outboundTransitNextDay?"+1 Next Day":"Same Day"):"Waiting for time"}</span>
+                </div>
+              </div>
+            </div>}
           </div>
 
           <div className="flight-block">
-            <h4>Return Flight</h4>
+            <div className="flight-block-head">
+              <h4>Return Flight</h4>
+              <button type="button" className={"btn transit-toggle "+(returnTransitOpen?"active":"")} onClick={()=>setReturnTransitOpen(v=>!v)}>
+                {returnTransitOpen?"− Transit Flight":"+ Transit Flight"}
+              </button>
+            </div>
             <div className="flight-fields">
+              <Field label="From Airport Code"><input maxLength={3} value={returnFromAirport} onChange={e=>setReturnFromAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="CSX" /></Field>
+              <Field label="To Airport Code"><input maxLength={3} value={returnToAirport} onChange={e=>setReturnToAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="KUL" /></Field>
               <Field label="Airline / Flight No."><input value={returnFlightNo} onChange={e=>setReturnFlightNo(e.target.value.toUpperCase())} placeholder="CZ1235" /></Field>
               <Field label="Return Flight Date"><input type="date" value={returnFlightDate} onChange={e=>setReturnFlightDate(e.target.value)} /></Field>
               <TimeField label="Departure Time" value={returnDepartureTime} setValue={setReturnDepartureTime} />
@@ -585,6 +684,21 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
                 <span>{returnDepartureTime&&returnArrivalTime?(returnNextDay?"+1 Next Day":"Same Day"):"Waiting for time"}</span>
               </div>
             </div>
+
+            {returnTransitOpen && <div className="transit-flight-panel">
+              <div className="transit-flight-title"><span>TRANSIT</span><strong>Return Transit Flight</strong></div>
+              <div className="flight-fields">
+                <Field label="From Airport Code"><input maxLength={3} value={returnTransitFromAirport} onChange={e=>setReturnTransitFromAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="CAN" /></Field>
+                <Field label="To Airport Code"><input maxLength={3} value={returnTransitToAirport} onChange={e=>setReturnTransitToAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="KUL" /></Field>
+                <Field label="Airline / Flight No."><input value={returnTransitFlightNo} onChange={e=>setReturnTransitFlightNo(e.target.value.toUpperCase())} placeholder="CZ5679" /></Field>
+                <Field label="Transit Flight Date"><input type="date" value={returnTransitFlightDate} onChange={e=>setReturnTransitFlightDate(e.target.value)} /></Field>
+                <TimeField label="Departure Time" value={returnTransitDepartureTime} setValue={setReturnTransitDepartureTime} />
+                <TimeField label="Arrival Time" value={returnTransitArrivalTime} setValue={setReturnTransitArrivalTime} />
+                <div className={"flight-day-status "+(returnTransitDepartureTime&&returnTransitArrivalTime?(returnTransitNextDay?"next":"same"):"pending")}>
+                  <span>{returnTransitDepartureTime&&returnTransitArrivalTime?(returnTransitNextDay?"+1 Next Day":"Same Day"):"Waiting for time"}</span>
+                </div>
+              </div>
+            </div>}
           </div>
         </div>
 
