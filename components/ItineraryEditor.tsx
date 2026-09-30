@@ -88,6 +88,18 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   const op=initialItinerary?.owner_name||data.op||currentStaffName;
   const label=useMemo(()=>`${daysCount}D${nightsCount}N`,[daysCount,nightsCount]);
 
+  useEffect(()=>{
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(travelStartDate)||!/^\d{4}-\d{2}-\d{2}$/.test(travelEndDate)) return;
+    const [sy,sm,sd]=travelStartDate.split("-").map(Number);
+    const [ey,em,ed]=travelEndDate.split("-").map(Number);
+    const start=Date.UTC(sy,sm-1,sd);
+    const end=Date.UTC(ey,em-1,ed);
+    if(end<start) return;
+    const tripDays=Math.floor((end-start)/86400000)+1;
+    setDaysCount(tripDays);
+    setNightsCount(Math.max(0,tripDays-1));
+  },[travelStartDate,travelEndDate]);
+
   function addFlight(){
     setSuggestedFlights(items=>[...items,emptyFlight()]);
   }
