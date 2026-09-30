@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 type MealInfo={breakfast:string;lunch:string;dinner:string};
 type AttractionImage={path:string;url:string;name:string};
 type SuggestedFlight={id:string;from:string;to:string;flightNo:string;date:string;departureTime:string;arrivalTime:string;remarks:string};
+type HotelItem={id:string;name:string;cityArea:string;starRating:string;stayNights:string;roomSize:number|"";openingYear:string;renovationYear:string;nearbyNotes:string;images:AttractionImage[]};
 type AttractionItem={id:string;name:string;images:AttractionImage[]};
 type DayItem={
   id:string;
@@ -25,6 +26,7 @@ type Props={
 
 const uid=()=>Math.random().toString(36).slice(2,10);
 const emptyFlight=():SuggestedFlight=>({id:uid(),from:"",to:"",flightNo:"",date:"",departureTime:"",arrivalTime:"",remarks:""});
+const emptyHotel=():HotelItem=>({id:uid(),name:"",cityArea:"",starRating:"",stayNights:"",roomSize:"",openingYear:"",renovationYear:"",nearbyNotes:"",images:[]});
 const emptyDay=():DayItem=>({
   id:uid(),
   title:"",
@@ -78,9 +80,18 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     })):[]
   );
   const [days,setDays]=useState<DayItem[]>(initialDays);
+  const [hotels,setHotels]=useState<HotelItem[]>(
+    Array.isArray(data.hotels)?data.hotels.map((h:any)=>({
+      id:h?.id||uid(),name:h?.name||"",cityArea:h?.cityArea||"",starRating:h?.starRating||"",
+      stayNights:h?.stayNights||"",roomSize:h?.roomSize??"",openingYear:h?.openingYear||"",
+      renovationYear:h?.renovationYear||"",nearbyNotes:h?.nearbyNotes||"",
+      images:Array.isArray(h?.images)?h.images:[]
+    })):[]
+  );
   const [saving,setSaving]=useState(false);
   const [message,setMessage]=useState("");
   const [uploadingAttraction,setUploadingAttraction]=useState<string|null>(null);
+  const [uploadingHotel,setUploadingHotel]=useState<string|null>(null);
   const [pendingHref,setPendingHref]=useState<string|null>(null);
   const [isDirty,setIsDirty]=useState(false);
   const baselineRef=useRef("");
@@ -110,6 +121,91 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
 
   function removeFlight(id:string){
     setSuggestedFlights(items=>items.filter(f=>f.id!==id));
+  }
+
+  function addHotel(){
+    setHotels(items=>[...items,emptyHotel()]);
+  }
+
+  function patchHotel(id:string,patch:Partial<HotelItem>){
+    setHotels(items=>items.map(h=>h.id===id?{...h,...patch}:h));
+  }
+
+  function moveHotel(index:number,dir:-1|1){
+    setHotels(items=>{
+      const target=index+dir;
+      if(target<0||target>=items.length) return items;
+      const next=[...items];
+      [next[index],next[target]]=[next[target],next[index]];
+      return next;
+    });
+  }
+
+  function duplicateHotel(index:number){
+    setHotels(items=>{
+      const src=items[index];
+      const copy={...src,id:uid(),images:src.images.map(img=>({...img}))};
+      const next=[...items];
+      next.splice(index+1,0,copy);
+      return next;
+    });
+  }
+
+  async function removeHotel(index:number){
+    const hotel=hotels[index];
+    if(!hotel) return;
+    for(const image of hotel.images){
+      if(!image.path) continue;
+      const form=new FormData();
+      form.set("action","delete");
+      form.set("path",image.path);
+      await fetch("/api/internal-itinerary-images",{method:"POST",body:form}).catch(()=>null);
+    }
+    setHotels(items=>items.filter((_,i)=>i!==index));
+  }
+
+  async function uploadHotelImages(hotelId:string,files:FileList|null){
+    if(!files?.length) return;
+    const hotel=hotels.find(h=>h.id===hotelId);
+    const remaining=Math.max(0,5-(hotel?.images.length||0));
+    if(remaining<=0){alert("每间酒店最多上传 5 张图片。");return;}
+    const selected=Array.from(files).slice(0,remaining);
+    if(files.length>remaining) alert("每间酒店最多上传 5 张图片，多余图片不会上传。");
+
+    setUploadingHotel(hotelId);
+    try{
+      for(const file of selected){
+        const form=new FormData();
+        form.set("action","upload");
+        form.set("file",file);
+        const res=await fetch("/api/internal-itinerary-images",{method:"POST",body:form});
+        const data=await res.json().catch(()=>({}));
+        if(!res.ok||!data?.ok){alert(data?.error||"Unable to upload hotel image.");continue;}
+        setHotels(items=>items.map(h=>h.id===hotelId?{
+          ...h,images:[...h.images,{path:data.path,url:data.url,name:data.name||file.name}]
+        }:h));
+      }
+    } finally {setUploadingHotel(null);}
+  }
+
+  async function deleteHotelImage(hotelId:string,imageIndex:number){
+    const hotel=hotels.find(h=>h.id===hotelId);
+    const image=hotel?.images[imageIndex];
+    if(!image) return;
+    if(image.path){
+      const form=new FormData();
+      form.set("action","delete");
+      form.set("path",image.path);
+      const res=await fetch("/api/internal-itinerary-images",{method:"POST",body:form});
+      if(!res.ok){
+        const data=await res.json().catch(()=>({}));
+        alert(data?.error||"Unable to delete hotel image.");
+        return;
+      }
+    }
+    setHotels(items=>items.map(h=>h.id===hotelId?{
+      ...h,images:h.images.filter((_,i)=>i!==imageIndex)
+    }:h));
   }
 
   function syncDays(){
@@ -265,7 +361,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
 
   const currentSnapshot=JSON.stringify({
     title,destination,daysCount,nightsCount,customerName,status,
-    departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,days
+    departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,days,hotels
   });
 
   useEffect(()=>{
@@ -318,7 +414,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
         status,
         itinerary_data:{
           departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,
-          days,op,opStaffId:initialItinerary?.owner_id||currentStaffId
+          days,hotels,op,opStaffId:initialItinerary?.owner_id||currentStaffId
         }
       };
       const res=await fetch("/api/internal-itineraries",{
@@ -500,6 +596,66 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
           </div>
         </article>)}
       </div>
+    </section>
+
+    <section className="panel">
+      <div className="panel-head">
+        <div><h2>Hotel Introduction｜酒店介绍</h2><p className="panel-subtext">Optional｜可加入多间酒店；没有填写时未来导出 PDF 会自动隐藏。</p></div>
+        <button className="btn" type="button" onClick={addHotel}>+ Add Hotel</button>
+      </div>
+
+      {hotels.length>0 ? <div className="itinerary-hotel-list">
+        {hotels.map((hotel,index)=><article className="itinerary-hotel-card" key={hotel.id}>
+          <div className="itinerary-hotel-head">
+            <div><span>HOTEL {String(index+1).padStart(2,"0")}</span><strong>{hotel.name||"New Hotel"}</strong></div>
+            <div className="itinerary-day-actions">
+              <button type="button" onClick={()=>moveHotel(index,-1)} disabled={index===0}>↑</button>
+              <button type="button" onClick={()=>moveHotel(index,1)} disabled={index===hotels.length-1}>↓</button>
+              <button type="button" onClick={()=>duplicateHotel(index)}>Duplicate</button>
+              <button type="button" className="danger-link" onClick={()=>void removeHotel(index)}>Delete</button>
+            </div>
+          </div>
+
+          <div className="itinerary-hotel-grid">
+            <label className="field"><span>Hotel Name｜酒店名称</span><input value={hotel.name} onChange={e=>patchHotel(hotel.id,{name:e.target.value})} placeholder="重庆伊美大酒店"/></label>
+            <label className="field"><span>City / Area｜城市 / 地区</span><input value={hotel.cityArea} onChange={e=>patchHotel(hotel.id,{cityArea:e.target.value})} placeholder="Chongqing / Guanyinqiao"/></label>
+            <label className="field"><span>Star Rating｜星级</span><input value={hotel.starRating} onChange={e=>patchHotel(hotel.id,{starRating:e.target.value})} placeholder="4 Star / 4 星级"/></label>
+            <label className="field"><span>Stay Nights｜入住晚数</span><input value={hotel.stayNights} onChange={e=>patchHotel(hotel.id,{stayNights:e.target.value})} placeholder="Night 1 / 3 / 4 / 5"/></label>
+            <label className="field"><span>Room Size｜房间面积</span><div className="unit-input-wrap"><input type="number" min="0" step="0.1" value={hotel.roomSize} onChange={e=>patchHotel(hotel.id,{roomSize:e.target.value===""?"":Math.max(0,Number(e.target.value))})} placeholder="28"/><b>m²</b></div></label>
+            <label className="field"><span>Opening Year｜开业年份</span><input inputMode="numeric" value={hotel.openingYear} onChange={e=>patchHotel(hotel.id,{openingYear:e.target.value.replace(/\D/g,"").slice(0,4)})} placeholder="2013"/></label>
+            <label className="field"><span>Renovation Year｜装修年份</span><input inputMode="numeric" value={hotel.renovationYear} onChange={e=>patchHotel(hotel.id,{renovationYear:e.target.value.replace(/\D/g,"").slice(0,4)})} placeholder="2024 / 留空"/></label>
+          </div>
+
+          <label className="field">
+            <span>Nearby / Location Notes｜周边 / 地理位置说明</span>
+            <textarea value={hotel.nearbyNotes} onChange={e=>patchHotel(hotel.id,{nearbyNotes:e.target.value})} placeholder="例如：距离观音桥约 2km，步行约 15 分钟。"/>
+          </label>
+
+          <div className="itinerary-hotel-images">
+            <div className="field itinerary-upload-field">
+              <span>Hotel Images｜酒店图片</span>
+              <label className="itinerary-upload-control">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+                  multiple
+                  disabled={uploadingHotel===hotel.id||hotel.images.length>=5}
+                  onChange={e=>{void uploadHotelImages(hotel.id,e.target.files);e.currentTarget.value="";}}
+                />
+                <b>{uploadingHotel===hotel.id?"Uploading...":hotel.images.length>=5?"Maximum 5 Images":"+ Attach Hotel Images"}</b>
+                <small>{hotel.images.length}/5 · JPG, PNG, WEBP, HEIC · Max 10MB each</small>
+              </label>
+            </div>
+
+            {hotel.images.length>0&&<div className="itinerary-hotel-image-grid">
+              {hotel.images.map((image,imageIndex)=><div className="itinerary-hotel-image" key={image.path||image.url||imageIndex}>
+                <img src={image.url} alt={hotel.name||image.name||"Hotel"}/>
+                <button type="button" aria-label="Delete image" onClick={()=>void deleteHotelImage(hotel.id,imageIndex)}>×</button>
+              </div>)}
+            </div>}
+          </div>
+        </article>)}
+      </div> : <div className="itinerary-attraction-empty">尚未加入酒店资料。需要时点击 “+ Add Hotel”。</div>}
     </section>
 
     {message&&<div className="save-message">{message}</div>}
