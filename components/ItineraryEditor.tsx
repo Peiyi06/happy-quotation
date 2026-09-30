@@ -15,6 +15,8 @@ type DayItem={
   hotel:string;
   meals:MealInfo;
   attractions:AttractionItem[];
+  completed:boolean;
+  collapsed:boolean;
 };
 
 type Props={
@@ -33,7 +35,9 @@ const emptyDay=():DayItem=>({
   content:"",
   hotel:"",
   meals:{breakfast:"",lunch:"",dinner:""},
-  attractions:[]
+  attractions:[],
+  completed:false,
+  collapsed:false
 });
 
 const normalizeDay=(raw:any):DayItem=>({
@@ -52,7 +56,9 @@ const normalizeDay=(raw:any):DayItem=>({
         name:a?.name||"",
         images:Array.isArray(a?.images)?a.images:(a?.imageUrl?[{path:"",url:a.imageUrl,name:"Legacy image"}]:[])
       }))
-    : []
+    : [],
+  completed:Boolean(raw?.completed),
+  collapsed:Boolean(raw?.collapsed)
 });
 
 export default function ItineraryEditor({itineraryId,initialItinerary,currentStaffId,currentStaffName}:Props){
@@ -332,6 +338,8 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       const copy:DayItem={
         ...src,
         id:uid(),
+        completed:false,
+        collapsed:false,
         meals:{...src.meals},
         attractions:src.attractions.map(a=>({...a,id:uid()}))
       };
@@ -517,14 +525,35 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       <div className="itinerary-day-list">
         {days.map((day,index)=><article className="itinerary-day-card" key={day.id}>
           <div className="itinerary-day-head">
-            <div><span>DAY {String(index+1).padStart(2,"0")}</span><strong>第 {index+1} 天</strong></div>
+            <div className="itinerary-day-title-wrap">
+              <div><span>DAY {String(index+1).padStart(2,"0")}</span><strong>第 {index+1} 天</strong></div>
+              <span className={"itinerary-day-status "+(day.completed?"completed":"draft")}>{day.completed?"✓ Completed":"Draft"}</span>
+            </div>
             <div className="itinerary-day-actions">
+              {day.completed
+                ? <button type="button" className="day-status-btn" onClick={()=>patchDay(day.id,{completed:false})}>Mark as Draft</button>
+                : <button type="button" className="day-complete-btn" onClick={()=>patchDay(day.id,{completed:true,collapsed:true})}>✓ 完成</button>}
+              <button type="button" className="day-collapse-btn" onClick={()=>patchDay(day.id,{collapsed:!day.collapsed})}>{day.collapsed?"展开":"收起"}</button>
               <button type="button" onClick={()=>moveDay(index,-1)} disabled={index===0}>↑</button>
               <button type="button" onClick={()=>moveDay(index,1)} disabled={index===days.length-1}>↓</button>
               <button type="button" onClick={()=>duplicateDay(index)}>Duplicate</button>
               <button type="button" className="danger-link" onClick={()=>removeDay(index)} disabled={days.length<=1}>Delete</button>
             </div>
           </div>
+
+          {day.collapsed ? <div className="itinerary-day-collapsed-summary">
+            <div className="day-summary-primary">
+              <strong>{day.title||"未填写路线标题"}</strong>
+              <span>{day.hotel||"尚未填写酒店"}</span>
+            </div>
+            <div className="day-summary-chips">
+              <span>B: {day.meals.breakfast||"—"}</span>
+              <span>L: {day.meals.lunch||"—"}</span>
+              <span>D: {day.meals.dinner||"—"}</span>
+              <span>{day.attractions.length} Attractions</span>
+              <span>{day.attractions.reduce((sum,a)=>sum+a.images.length,0)} Photos</span>
+            </div>
+          </div> : <>
 
           <div className="itinerary-day-main-grid">
             <label className="field itinerary-route-field">
@@ -594,6 +623,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
 
             {!day.attractions.length && <div className="itinerary-attraction-empty">当天尚未加入景点。</div>}
           </div>
+          </>}
         </article>)}
       </div>
     </section>
