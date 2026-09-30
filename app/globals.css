@@ -390,3 +390,34 @@
 .itinerary-flight-table input{width:100%;box-sizing:border-box}
 .itinerary-flight-route{display:grid;grid-template-columns:72px 20px 72px;align-items:center;gap:6px}
 .itinerary-flight-route span{text-align:center;font-weight:800;color:var(--muted)}
+
+.itinerary-hotel-list{display:grid;gap:16px}
+.itinerary-hotel-card{border:1px solid var(--line);border-radius:14px;background:#fbfcfd;padding:16px;display:grid;gap:14px}
+.itinerary-hotel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.itinerary-hotel-head>div:first-child{display:flex;flex-direction:column;gap:3px}
+.itinerary-hotel-head span{font-size:10px;font-weight:900;letter-spacing:.08em;color:var(--muted)}
+.itinerary-hotel-head strong{font-size:15px;color:var(--navy2)}
+.itinerary-hotel-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.unit-input-wrap{display:grid;grid-template-columns:minmax(0,1fr) 46px;align-items:center;border:1px solid #ccd6df;border-radius:9px;background:white;overflow:hidden}
+.unit-input-wrap input{border:0!important;border-radius:0!important}
+.unit-input-wrap b{height:100%;display:grid;place-items:center;background:#f3f6f8;border-left:1px solid #d9e1e7;color:var(--navy2);font-size:12px}
+.itinerary-hotel-images{display:grid;gap:10px}
+.itinerary-hotel-image-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.itinerary-hotel-image{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#f5f7f9}
+.itinerary-hotel-image img{width:100%;height:100%;object-fit:cover;display:block}
+.itinerary-hotel-image button{position:absolute;top:6px;right:6px;width:26px;height:26px;border:0;border-radius:999px;background:rgba(20,31,42,.78);color:white;font-size:18px;line-height:1;display:grid;place-items:center;cursor:pointer}
+.itinerary-hotel-detail-list{display:grid;gap:16px}
+.itinerary-hotel-detail-card{border:1px solid var(--line);border-radius:14px;background:#fff;padding:16px}
+.itinerary-hotel-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.itinerary-hotel-detail-head span{display:block;font-size:10px;color:var(--muted);font-weight:900;letter-spacing:.08em}
+.itinerary-hotel-detail-head h3{margin:3px 0 0;color:var(--navy2);font-size:17px}
+.itinerary-hotel-detail-head>strong{font-size:12px;color:var(--navy2);background:#eef4f8;padding:6px 9px;border-radius:999px}
+.itinerary-hotel-detail-meta{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.itinerary-hotel-detail-meta>div{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fafcfd}
+.itinerary-hotel-detail-meta span{display:block;font-size:10px;color:var(--muted);margin-bottom:4px}
+.itinerary-hotel-detail-meta strong{font-size:12px;color:var(--navy2)}
+.itinerary-hotel-notes{margin:12px 0 0;white-space:pre-wrap;color:var(--text);font-size:13px;line-height:1.6}
+.itinerary-hotel-detail-images{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+.itinerary-hotel-detail-images img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block}
+@media(max-width:1100px){.itinerary-hotel-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.itinerary-hotel-detail-meta{grid-template-columns:repeat(3,minmax(0,1fr))}.itinerary-hotel-image-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.itinerary-hotel-grid,.itinerary-hotel-detail-meta,.itinerary-hotel-detail-images{grid-template-columns:1fr}.itinerary-hotel-image-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.itinerary-hotel-head{align-items:flex-start;flex-direction:column}}
