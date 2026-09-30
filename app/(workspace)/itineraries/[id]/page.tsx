@@ -11,7 +11,9 @@ export default async function ItineraryDetailPage({params}:{params:Promise<{id:s
   const {data,error}=await db.rpc("staff_get_itinerary",{p_token:token,p_id:id});
   if(error||!data||!data.id) notFound();
 
-  const days=Array.isArray(data.itinerary_data?.days)?data.itinerary_data.days:[];
+  const qd=data.itinerary_data||{};
+  const days=Array.isArray(qd.days)?qd.days:[];
+  const flights=Array.isArray(qd.suggestedFlights)?qd.suggestedFlights:[];
 
   return <div>
     <div className="page-head quote-detail-head">
@@ -28,11 +30,30 @@ export default async function ItineraryDetailPage({params}:{params:Promise<{id:s
     </div>
 
     <section className="dashboard-cards itinerary-summary-cards">
+      <div className="dash-card"><span>Departure City</span><b>{qd.departureCity||"—"}</b></div>
       <div className="dash-card"><span>Destination</span><b>{data.destination||"—"}</b></div>
+      <div className="dash-card"><span>Travel Dates</span><b>{qd.travelStartDate||"—"}{qd.travelEndDate?" → "+qd.travelEndDate:""}</b></div>
       <div className="dash-card"><span>Duration</span><b>{data.days_count}D{data.nights_count}N</b></div>
+      <div className="dash-card"><span>Pax</span><b>{qd.pax||"—"}</b></div>
+      <div className="dash-card"><span>Tour Type</span><b>{qd.tourType||"—"}</b></div>
       <div className="dash-card"><span>Customer</span><b>{data.customer_name||"—"}</b></div>
       <div className="dash-card"><span>OP</span><b>{data.owner_name||"—"}</b></div>
     </section>
+
+    {flights.length>0&&<section className="panel">
+      <div className="panel-head"><h2>Suggested Flights｜建议航班</h2></div>
+      <div className="table-wrap"><table className="itinerary-flight-table">
+        <thead><tr><th>Route</th><th>Flight No.</th><th>Date</th><th>Departure</th><th>Arrival</th><th>Remarks</th></tr></thead>
+        <tbody>{flights.map((f:any,index:number)=><tr key={f.id||index}>
+          <td><strong>{f.from||"—"} → {f.to||"—"}</strong></td>
+          <td>{f.flightNo||"—"}</td>
+          <td>{f.date||"—"}</td>
+          <td>{f.departureTime||"—"}</td>
+          <td>{f.arrivalTime||"—"}</td>
+          <td>{f.remarks||"—"}</td>
+        </tr>)}</tbody>
+      </table></div>
+    </section>}
 
     <section className="panel">
       <div className="panel-head"><h2>行程安排</h2><span className={"status status-"+data.status}>{data.status}</span></div>
