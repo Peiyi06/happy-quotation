@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 type MealInfo={breakfast:string;lunch:string;dinner:string};
 type AttractionImage={path:string;url:string;name:string};
+type SuggestedFlight={id:string;from:string;to:string;flightNo:string;date:string;departureTime:string;arrivalTime:string;remarks:string};
 type AttractionItem={id:string;name:string;images:AttractionImage[]};
 type DayItem={
   id:string;
@@ -23,6 +24,7 @@ type Props={
 };
 
 const uid=()=>Math.random().toString(36).slice(2,10);
+const emptyFlight=():SuggestedFlight=>({id:uid(),from:"",to:"",flightNo:"",date:"",departureTime:"",arrivalTime:"",remarks:""});
 const emptyDay=():DayItem=>({
   id:uid(),
   title:"",
@@ -64,6 +66,17 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   const [nightsCount,setNightsCount]=useState(Number(initialItinerary?.nights_count)||0);
   const [customerName,setCustomerName]=useState(initialItinerary?.customer_name||"");
   const [status,setStatus]=useState(initialItinerary?.status||"draft");
+  const [departureCity,setDepartureCity]=useState(data.departureCity||"");
+  const [travelStartDate,setTravelStartDate]=useState(data.travelStartDate||"");
+  const [travelEndDate,setTravelEndDate]=useState(data.travelEndDate||"");
+  const [pax,setPax]=useState<number|"">(data.pax??"");
+  const [tourType,setTourType]=useState(data.tourType||"");
+  const [suggestedFlights,setSuggestedFlights]=useState<SuggestedFlight[]>(
+    Array.isArray(data.suggestedFlights)?data.suggestedFlights.map((f:any)=>({
+      id:f?.id||uid(),from:f?.from||"",to:f?.to||"",flightNo:f?.flightNo||"",date:f?.date||"",
+      departureTime:f?.departureTime||"",arrivalTime:f?.arrivalTime||"",remarks:f?.remarks||""
+    })):[]
+  );
   const [days,setDays]=useState<DayItem[]>(initialDays);
   const [saving,setSaving]=useState(false);
   const [message,setMessage]=useState("");
@@ -74,6 +87,18 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
 
   const op=initialItinerary?.owner_name||data.op||currentStaffName;
   const label=useMemo(()=>`${daysCount}D${nightsCount}N`,[daysCount,nightsCount]);
+
+  function addFlight(){
+    setSuggestedFlights(items=>[...items,emptyFlight()]);
+  }
+
+  function patchFlight(id:string,patch:Partial<SuggestedFlight>){
+    setSuggestedFlights(items=>items.map(f=>f.id===id?{...f,...patch}:f));
+  }
+
+  function removeFlight(id:string){
+    setSuggestedFlights(items=>items.filter(f=>f.id!==id));
+  }
 
   function syncDays(){
     const target=Math.max(1,Number(daysCount)||1);
@@ -227,7 +252,8 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   }
 
   const currentSnapshot=JSON.stringify({
-    title,destination,daysCount,nightsCount,customerName,status,days
+    title,destination,daysCount,nightsCount,customerName,status,
+    departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,days
   });
 
   useEffect(()=>{
@@ -278,7 +304,10 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
         nights_count:Math.max(0,Number(nightsCount)||0),
         customer_name:customerName,
         status,
-        itinerary_data:{days,op,opStaffId:initialItinerary?.owner_id||currentStaffId}
+        itinerary_data:{
+          departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,
+          days,op,opStaffId:initialItinerary?.owner_id||currentStaffId
+        }
       };
       const res=await fetch("/api/internal-itineraries",{
         method:"POST",
@@ -333,14 +362,42 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       <div className="panel-head"><h2>基本资料</h2><span className="itinerary-code-preview">{label}</span></div>
       <div className="itinerary-meta-grid">
         <label className="field"><span>Itinerary Title</span><input value={title} onChange={e=>setTitle(e.target.value)}/></label>
-        <label className="field"><span>Destination</span><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder="Japan / China / Thailand"/></label>
+        <label className="field"><span>Departure City｜出发城市</span><input value={departureCity} onChange={e=>setDepartureCity(e.target.value)} placeholder="Kuala Lumpur"/></label>
+        <label className="field"><span>Destination｜目的地</span><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder="Chongqing / Japan / Thailand"/></label>
+        <label className="field"><span>Travel Start Date｜出发日期</span><input type="date" value={travelStartDate} onChange={e=>setTravelStartDate(e.target.value)}/></label>
+        <label className="field"><span>Travel End Date｜返程日期</span><input type="date" value={travelEndDate} onChange={e=>setTravelEndDate(e.target.value)}/></label>
         <label className="field"><span>Days</span><input type="number" min="1" value={daysCount} onChange={e=>setDaysCount(Math.max(1,Number(e.target.value)||1))}/></label>
         <label className="field"><span>Nights</span><input type="number" min="0" value={nightsCount} onChange={e=>setNightsCount(Math.max(0,Number(e.target.value)||0))}/></label>
+        <label className="field"><span>Pax｜人数</span><input type="number" min="1" value={pax} onChange={e=>setPax(e.target.value===""?"":Math.max(1,Number(e.target.value)||1))} placeholder="20"/></label>
+        <label className="field"><span>Tour Type｜团型</span><input value={tourType} onChange={e=>setTourType(e.target.value)} placeholder="私人定制团 / Company Trip"/></label>
         <label className="field"><span>Customer / Company</span><input value={customerName} onChange={e=>setCustomerName(e.target.value)}/></label>
         <label className="field"><span>Status</span><select value={status} onChange={e=>setStatus(e.target.value)}><option value="draft">Draft</option><option value="ready">Ready</option><option value="confirmed">Confirmed</option><option value="archived">Archived</option></select></label>
         <label className="field"><span>OP</span><input value={op} readOnly className="system-fixed-input"/></label>
         <div className="field"><span>Day Cards</span><button type="button" className="btn itinerary-sync-btn" onClick={syncDays}>Sync to {daysCount} Days</button></div>
       </div>
+    </section>
+
+    <section className="panel">
+      <div className="panel-head">
+        <div><h2>Suggested Flights｜建议航班</h2><p className="panel-subtext">Optional｜如没有填写航班，未来导出 PDF 时会自动隐藏此区块。</p></div>
+        <button className="btn" type="button" onClick={addFlight}>+ Add Flight</button>
+      </div>
+      {suggestedFlights.length>0 ? <div className="table-wrap"><table className="itinerary-flight-table">
+        <thead><tr><th>Route</th><th>Flight No.</th><th>Date</th><th>Departure</th><th>Arrival</th><th>Remarks</th><th>操作</th></tr></thead>
+        <tbody>{suggestedFlights.map(f=><tr key={f.id}>
+          <td><div className="itinerary-flight-route">
+            <input maxLength={3} value={f.from} onChange={e=>patchFlight(f.id,{from:e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3)})} placeholder="KUL"/>
+            <span>→</span>
+            <input maxLength={3} value={f.to} onChange={e=>patchFlight(f.id,{to:e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3)})} placeholder="CKG"/>
+          </div></td>
+          <td><input value={f.flightNo} onChange={e=>patchFlight(f.id,{flightNo:e.target.value.toUpperCase()})} placeholder="3U3774"/></td>
+          <td><input type="date" value={f.date} onChange={e=>patchFlight(f.id,{date:e.target.value})}/></td>
+          <td><input type="time" value={f.departureTime} onChange={e=>patchFlight(f.id,{departureTime:e.target.value})}/></td>
+          <td><input type="time" value={f.arrivalTime} onChange={e=>patchFlight(f.id,{arrivalTime:e.target.value})}/></td>
+          <td><input value={f.remarks} onChange={e=>patchFlight(f.id,{remarks:e.target.value})} placeholder="Sichuan Airlines"/></td>
+          <td><button type="button" className="danger-link" onClick={()=>removeFlight(f.id)}>Delete</button></td>
+        </tr>)}</tbody>
+      </table></div> : <div className="itinerary-attraction-empty">尚未填写建议航班。需要时点击 “+ Add Flight”。</div>}
     </section>
 
     <section className="panel">
