@@ -18,8 +18,17 @@ type QuoteStatus = "draft"|"ready"|"sent"|"revised"|"confirmed"|"lost"|"archived
 type CalculatorProps = { workspaceMode?: boolean; quotationId?: string; initialQuotation?: any; currentStaffId?: string; currentStaffName?: string };
 
 const travelerTypeLabel = (type: TravelerType) => ({
-  "成人不含领队":"成人（双人一房）",
-  "成人含领队":"成人（双人一房）",
+  "成人不含领队":"成人（双人一房）｜不含领队",
+  "成人含领队":"成人（双人一房）｜含领队",
+  "小孩含床不含领队":"小孩加床｜不含领队",
+  "小孩含床含领队":"小孩加床｜含领队",
+  "小孩不含床不含领队":"小孩不加床｜不含领队",
+  "小孩不含床含领队":"小孩不加床｜含领队",
+} as Record<TravelerType,string>)[type];
+
+const travelerBaseLabel = (type: TravelerType) => ({
+  "成人不含领队":"成人",
+  "成人含领队":"成人",
   "小孩含床不含领队":"小孩加床",
   "小孩含床含领队":"小孩加床",
   "小孩不含床不含领队":"小孩不加床",
@@ -393,6 +402,18 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     "小孩不含床含领队": calc.childNoBedLeader,
   } as Record<TravelerType, {cost:number;profit:number;suggested:number}>)[effectiveSelectedType];
 
+  const selectedIncludesLeader = isLeaderType(effectiveSelectedType);
+  const selectedTravelerLabel = travelerBaseLabel(effectiveSelectedType);
+  const selectedTravelerCost = ({
+    "成人不含领队": calc.adultNoLeader.cost,
+    "成人含领队": calc.adultNoLeader.cost,
+    "小孩含床不含领队": calc.childBedNoLeader.cost,
+    "小孩含床含领队": calc.childBedNoLeader.cost,
+    "小孩不含床不含领队": calc.childNoBedNoLeader.cost,
+    "小孩不含床含领队": calc.childNoBedNoLeader.cost,
+  } as Record<TravelerType, number>)[effectiveSelectedType];
+  const selectedSummaryLabel = `${selectedTravelerLabel} · ${selectedIncludesLeader ? "含领队" : "不含领队"}`;
+
   const finalQuote = manualQuote === "" ? roundUpTo(selected.suggested, roundUnit) : Number(manualQuote);
   const finalProfit = finalQuote - selected.cost;
   const finalMargin = finalQuote ? finalProfit / finalQuote : 0;
@@ -608,10 +629,10 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     </header>
 
     <section className="summary-grid">
-      <Summary label="旅客成本 / 人" value={money(calc.travelerPerPax)} />
-      <Summary label="领队分摊 / 人" value={money(calc.leaderPerPax)} />
-      <Summary label="系统建议售价" value={money(selected.suggested)} />
-      <Summary label="最终报价" value={money(finalQuote)} strong />
+      <Summary label={`旅客成本 / ${selectedTravelerLabel}`} value={money(selectedTravelerCost)} />
+      <Summary label={`领队分摊 / ${selectedTravelerLabel}`} value={selectedIncludesLeader ? money(calc.leaderPerPax) : "—"} />
+      <Summary label={`系统建议售价 / ${selectedSummaryLabel}`} value={money(selected.suggested)} />
+      <Summary label={`最终报价 / ${selectedSummaryLabel}`} value={money(finalQuote)} strong />
     </section>
 
     {workspaceMode && <section className="quote-meta-panel">
