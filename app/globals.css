@@ -421,3 +421,19 @@
 .itinerary-hotel-detail-images img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block}
 @media(max-width:1100px){.itinerary-hotel-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.itinerary-hotel-detail-meta{grid-template-columns:repeat(3,minmax(0,1fr))}.itinerary-hotel-image-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:760px){.itinerary-hotel-grid,.itinerary-hotel-detail-meta,.itinerary-hotel-detail-images{grid-template-columns:1fr}.itinerary-hotel-image-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.itinerary-hotel-head{align-items:flex-start;flex-direction:column}}
+
+.itinerary-day-title-wrap{display:flex;align-items:center;gap:12px;min-width:0}
+.itinerary-day-title-wrap>div{display:flex;flex-direction:column;gap:2px}
+.itinerary-day-status{display:inline-flex;align-items:center;justify-content:center;min-height:26px;padding:0 9px;border-radius:999px;font-size:10px;font-weight:900;white-space:nowrap}
+.itinerary-day-status.draft{background:#eef2f5;color:#667684}
+.itinerary-day-status.completed{background:#e8f5ed;color:#237448}
+.day-complete-btn{border-color:#b9d9c5!important;background:#edf8f1!important;color:#237448!important}
+.day-status-btn{border-color:#d7dfe5!important;background:#f7f9fa!important;color:#5d6a74!important}
+.day-collapse-btn{border-color:#c9d7e1!important;background:#f4f8fb!important;color:var(--navy2)!important}
+.itinerary-day-collapsed-summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-top:1px solid var(--line);background:#fbfcfd;border-radius:0 0 12px 12px}
+.day-summary-primary{display:flex;flex-direction:column;gap:4px;min-width:0}
+.day-summary-primary strong{font-size:14px;color:var(--navy2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.day-summary-primary span{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.day-summary-chips{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+.day-summary-chips span{display:inline-flex;align-items:center;min-height:26px;padding:0 8px;border:1px solid #dce4ea;border-radius:999px;background:#fff;color:#536473;font-size:10px;font-weight:700;white-space:nowrap}
+@media(max-width:900px){.itinerary-day-head{align-items:flex-start}.itinerary-day-title-wrap{align-items:flex-start;flex-direction:column;gap:6px}.itinerary-day-collapsed-summary{align-items:flex-start;flex-direction:column}.day-summary-chips{justify-content:flex-start}}
