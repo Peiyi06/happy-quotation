@@ -369,3 +369,17 @@
 .itinerary-detail-attraction strong{display:block;padding:9px 10px;color:var(--navy2);font-size:12px}
 @media(max-width:1100px){.itinerary-attraction-row{grid-template-columns:42px 1fr 1fr}.itinerary-attraction-preview,.itinerary-attraction-actions{grid-column:2/-1}.itinerary-detail-meta{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.itinerary-day-main-grid,.itinerary-meal-grid{grid-template-columns:1fr}.itinerary-subhead{align-items:flex-start;flex-direction:column}.itinerary-attraction-row{grid-template-columns:1fr}.itinerary-attraction-index,.itinerary-attraction-preview,.itinerary-attraction-actions{grid-column:auto}.itinerary-attraction-preview{width:100%;height:180px}.itinerary-detail-meta,.itinerary-detail-attraction-grid{grid-template-columns:1fr}}
+
+.itinerary-upload-field{min-width:0}
+.itinerary-upload-control{min-height:88px;border:1px dashed #c8d5df;border-radius:10px;background:#f8fbfd;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:12px;text-align:center;cursor:pointer}
+.itinerary-upload-control:hover{background:#f1f6fa;border-color:#aebfcd}
+.itinerary-upload-control input{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px}
+.itinerary-upload-control b{font-size:12px;color:var(--navy2)}
+.itinerary-upload-control small{font-size:10px;color:var(--muted)}
+.itinerary-attraction-previews{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-self:stretch}
+.itinerary-attraction-preview{position:relative;width:100%;aspect-ratio:4/3;height:auto;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#f5f7f9}
+.itinerary-attraction-preview img{width:100%;height:100%;object-fit:cover;display:block}
+.itinerary-attraction-preview button{position:absolute;top:6px;right:6px;width:26px;height:26px;border:0;border-radius:999px;background:rgba(20,31,42,.78);color:white;font-size:18px;line-height:1;display:grid;place-items:center;cursor:pointer}
+.itinerary-detail-attraction-images{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:6px 6px 0}
+.itinerary-detail-attraction-images img{width:100%;aspect-ratio:4/3;height:auto;object-fit:cover;border-radius:7px;display:block}
+@media(max-width:760px){.itinerary-attraction-previews,.itinerary-detail-attraction-images{grid-template-columns:repeat(2,minmax(0,1fr))}}
