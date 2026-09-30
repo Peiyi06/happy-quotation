@@ -3,9 +3,12 @@ export type Currency = "RM" | "RMB" | "USD" | "JPY" | "KRW" | "THB" | "VND" | "�
 export type ProfitMode = "固定金额" | "按成本加价率" | "按售价毛利率";
 export type ChildMode = "50%" | "60%" | "65%" | "70%" | "75%" | "80%" | "85%" | "90%" | "95%" | "100%" | "手动成本";
 
+export type CostDirection = "cost" | "deduction";
+
 export interface TravelerCostRow {
   id: string;
   item: string;
+  direction?: CostDirection;
   mode: CalcMode;
   unitPrice: number | "";
   qty: number | "";
@@ -34,7 +37,8 @@ export const travelerRowTotal = (row: TravelerCostRow, pax: number, mainCurrency
   const qty = Number(row.qty) || 0;
   const rate = currencyRate(row.currency, mainCurrency, mainRate);
   if (!unit || !qty || !rate || pax <= 0) return 0;
-  const base = unit * qty * rate;
+  const sign = row.direction === "deduction" ? -1 : 1;
+  const base = unit * qty * rate * sign;
   return row.mode === "每人" || row.mode === "每人每天" ? base * pax : base;
 };
 
