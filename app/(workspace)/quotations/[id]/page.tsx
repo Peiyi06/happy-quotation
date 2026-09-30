@@ -4,7 +4,7 @@ import DuplicateQuotationButton from "@/components/DuplicateQuotationButton";
 import { internalDb, internalToken } from "@/lib/internalSession";
 import {
   ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
-  childRatio, computeProfit, currencyRate, leaderRowTotal, travelerRowPerPax
+  childRatio, computeProfit, currencyRate, leaderRowTotal, travelerRowPerPax, roundUpTo
 } from "@/lib/calculations";
 
 const money=(n:number)=>new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR",minimumFractionDigits:2}).format(n||0).replace("MYR","RM");
@@ -106,11 +106,23 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
   const mainCurrency=(qd.mainCurrency||"RMB") as Currency;
   const mainRate=Number(qd.mainRate)||0;
   const singleRoomSupplement=singleRoomAmount==null?null:singleRoomAmount*currencyRate(singleRoomCurrency,mainCurrency,mainRate);
-  const adultSellingPrice=Number(data.selling_price)||0;
-  const singleRoomSellingPrice=singleRoomSupplement==null?null:adultSellingPrice+singleRoomSupplement;
   const matrixData=buildMatrix(data);
   const matrix=matrixData.rows;
   const hasLeader=matrixData.hasLeader;
+  const roundUnit=Number(qd.roundUnit)||50;
+  const selectedType=qd.selectedType||"成人不含领队";
+  const manualQuote=qd.manualQuote;
+  const adultNoLeaderSuggested=matrix[0][1].selling;
+  const adultLeaderSuggested=matrix[0][2].selling;
+  const savedFinalQuote=Number(data.selling_price)||0;
+  const adultSellingPrice=hasLeader
+    ? (selectedType==="成人含领队" && manualQuote!=="" && manualQuote!=null
+        ? savedFinalQuote
+        : roundUpTo(adultLeaderSuggested,roundUnit))
+    : (selectedType==="成人不含领队" && manualQuote!=="" && manualQuote!=null
+        ? savedFinalQuote
+        : roundUpTo(adultNoLeaderSuggested,roundUnit));
+  const singleRoomSellingPrice=singleRoomSupplement==null?null:adultSellingPrice+singleRoomSupplement;
 
   return <div>
     <div className="page-head quote-detail-head">
@@ -128,14 +140,14 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
 
     <section className="final-price-grid">
       <div className="quote-result-hero">
-        <span>成人价格 · Twin Sharing</span>
+        <span>成人价格 · Twin Sharing{hasLeader?" · 含领队":""}</span>
         <strong>{money(adultSellingPrice)}</strong>
-        <small>成人默认双人一房</small>
+        <small>{hasLeader?`已含领队分摊 ${money(Number(qd.leaderPerPax)||matrix[0][2].cost-matrix[0][1].cost)}`:"成人默认双人一房"}</small>
       </div>
       <div className="quote-result-hero">
-        <span>单人房价格 · Single Room</span>
+        <span>单人房价格 · Single Room{hasLeader?" · 含领队":""}</span>
         <strong>{singleRoomSellingPrice==null?"—":money(singleRoomSellingPrice)}</strong>
-        <small>{singleRoomSupplement==null?"尚未填写单人房差":`含单人房差 ${money(singleRoomSupplement)}`}</small>
+        <small>{singleRoomSupplement==null?"尚未填写单人房差":`${hasLeader?"含领队 · ":""}含单人房差 ${money(singleRoomSupplement)}`}</small>
       </div>
       <div className="quote-result-hero">
         <span>航班总报价 · Flight</span>
