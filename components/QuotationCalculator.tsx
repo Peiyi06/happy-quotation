@@ -155,6 +155,13 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setReturnNextDay(inferNextDay(returnDepartureTime,returnArrivalTime));
   }, [returnDepartureTime,returnArrivalTime]);
 
+  // Sync the fixed ground quote row with the quotation's main currency.
+  useEffect(() => {
+    setTravelerRows(rows => rows.map((row,index) =>
+      index === 0 ? {...row,item:"地接报价",currency:mainCurrency} : row
+    ));
+  }, [mainCurrency]);
+
   useEffect(() => {
     setOutboundTransitNextDay(inferNextDay(outboundTransitDepartureTime,outboundTransitArrivalTime));
   }, [outboundTransitDepartureTime,outboundTransitArrivalTime]);
@@ -741,18 +748,25 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
     <Section title="② 旅客成本输入" action={<button className="btn primary no-print" onClick={addTraveler}>＋ Add Cost Row</button>}>
       <div className="table-wrap"><table><thead><tr><th>成本项目</th><th>计算方式</th><th>单价</th><th>数量 / 天数</th><th>币种</th><th>汇率</th><th>总成本</th><th>每人成本</th><th>儿童比例</th><th>备注</th><th className="no-print">操作</th></tr></thead>
-      <tbody>{travelerRows.map(r=>{
+      <tbody>{travelerRows.map((r,index)=>{
+        const isGroundQuote=index===0;
         const rate=currencyRate(r.currency,mainCurrency,mainRate); const total=travelerRowTotal(r,pax,mainCurrency,mainRate); const pp=travelerRowPerPax(r,pax,mainCurrency,mainRate);
         return <tr key={r.id}>
-          <td><input value={r.item} onChange={e=>setTraveler(r.id,{item:e.target.value})}/></td>
+          <td>{isGroundQuote
+            ? <input value="地接报价" readOnly className="system-fixed-input" />
+            : <input value={r.item} onChange={e=>setTraveler(r.id,{item:e.target.value})}/>}</td>
           <td><select value={r.mode} onChange={e=>setTraveler(r.id,{mode:e.target.value as CalcMode})}>{calcModes.map(x=><option key={x}>{x}</option>)}</select></td>
           <td><input type="number" value={r.unitPrice} onChange={e=>setTraveler(r.id,{unitPrice:e.target.value===""?"":Number(e.target.value)})}/></td>
           <td><input type="number" value={r.qty} onChange={e=>setTraveler(r.id,{qty:e.target.value===""?"":Number(e.target.value)})}/></td>
-          <td><select value={r.currency} onChange={e=>setTraveler(r.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c}>{c}</option>)}</select></td>
+          <td>{isGroundQuote
+            ? <select value={mainCurrency} disabled className="system-fixed-input">{currencies.map(c=><option key={c}>{c}</option>)}</select>
+            : <select value={r.currency} onChange={e=>setTraveler(r.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c}>{c}</option>)}</select>}</td>
           <td className={rate===0?"warn":""}>{rate || "—"}</td><td>{money(total)}</td><td>{money(pp)}</td>
           <td><select value={r.childRatioApplicable?"是":"否"} onChange={e=>setTraveler(r.id,{childRatioApplicable:e.target.value==="是"})}><option>是</option><option>否</option></select></td>
           <td><input value={r.note} onChange={e=>setTraveler(r.id,{note:e.target.value})}/></td>
-          <td className="row-actions no-print"><button onClick={()=>duplicateTraveler(r.id)}>复制</button><button onClick={()=>removeTraveler(r.id)}>删除</button></td>
+          <td className="row-actions no-print">{isGroundQuote
+            ? <span className="fixed-row-label">固定</span>
+            : <><button onClick={()=>duplicateTraveler(r.id)}>复制</button><button onClick={()=>removeTraveler(r.id)}>删除</button></>}</td>
         </tr>})}</tbody></table></div>
     </Section>
 
