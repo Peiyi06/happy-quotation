@@ -14,6 +14,7 @@ export default async function ItineraryDetailPage({params}:{params:Promise<{id:s
   const qd=data.itinerary_data||{};
   const days=Array.isArray(qd.days)?qd.days:[];
   const flights=Array.isArray(qd.suggestedFlights)?qd.suggestedFlights:[];
+  const hotels=Array.isArray(qd.hotels)?qd.hotels:[];
 
   return <div>
     <div className="page-head quote-detail-head">
@@ -53,6 +54,29 @@ export default async function ItineraryDetailPage({params}:{params:Promise<{id:s
           <td>{f.remarks||"—"}</td>
         </tr>)}</tbody>
       </table></div>
+    </section>}
+
+    {hotels.length>0&&<section className="panel">
+      <div className="panel-head"><h2>Hotel Introduction｜酒店介绍</h2></div>
+      <div className="itinerary-hotel-detail-list">
+        {hotels.map((hotel:any,index:number)=><article className="itinerary-hotel-detail-card" key={hotel.id||index}>
+          <div className="itinerary-hotel-detail-head">
+            <div><span>HOTEL {String(index+1).padStart(2,"0")}</span><h3>{hotel.name||"Untitled Hotel"}</h3></div>
+            <strong>{hotel.starRating||"—"}</strong>
+          </div>
+          <div className="itinerary-hotel-detail-meta">
+            <div><span>City / Area</span><strong>{hotel.cityArea||"—"}</strong></div>
+            <div><span>Stay Nights</span><strong>{hotel.stayNights||"—"}</strong></div>
+            <div><span>Room Size</span><strong>{hotel.roomSize!==""&&hotel.roomSize!=null?`${hotel.roomSize} m²`:"—"}</strong></div>
+            <div><span>Opening Year</span><strong>{hotel.openingYear||"—"}</strong></div>
+            <div><span>Renovation Year</span><strong>{hotel.renovationYear||"—"}</strong></div>
+          </div>
+          {hotel.nearbyNotes&&<p className="itinerary-hotel-notes">{hotel.nearbyNotes}</p>}
+          {Array.isArray(hotel.images)&&hotel.images.length>0&&<div className="itinerary-hotel-detail-images">
+            {hotel.images.map((img:any,imgIndex:number)=><img key={img.path||img.url||imgIndex} src={img.url} alt={hotel.name||"Hotel"}/>)}
+          </div>}
+        </article>)}
+      </div>
     </section>}
 
     <section className="panel">
