@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import DuplicateQuotationButton from "@/components/DuplicateQuotationButton";
 import { internalDb, internalToken } from "@/lib/internalSession";
 import {
   ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
@@ -120,6 +121,7 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
       </div>
       <div className="detail-actions">
         <Link className="btn" href="/quotations">← Back</Link>
+        <DuplicateQuotationButton id={id} />
         <Link className="btn primary" href={"/quotations/"+id+"/edit"}>Edit Quotation</Link>
       </div>
     </div>
