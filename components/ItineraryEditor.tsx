@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type MealInfo={breakfast:string;lunch:string;dinner:string};
@@ -62,6 +62,9 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   const [days,setDays]=useState<DayItem[]>(initialDays);
   const [saving,setSaving]=useState(false);
   const [message,setMessage]=useState("");
+  const [pendingHref,setPendingHref]=useState<string|null>(null);
+  const [isDirty,setIsDirty]=useState(false);
+  const baselineRef=useRef("");
 
   const op=initialItinerary?.owner_name||data.op||currentStaffName;
   const label=useMemo(()=>`${daysCount}D${nightsCount}N`,[daysCount,nightsCount]);
@@ -163,7 +166,50 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     });
   }
 
-  async function save(){
+  const currentSnapshot=JSON.stringify({
+    title,destination,daysCount,nightsCount,customerName,status,days
+  });
+
+  useEffect(()=>{
+    if(!baselineRef.current){
+      baselineRef.current=currentSnapshot;
+      setIsDirty(false);
+      return;
+    }
+    setIsDirty(currentSnapshot!==baselineRef.current);
+  },[currentSnapshot]);
+
+  useEffect(()=>{
+    const beforeUnload=(event:BeforeUnloadEvent)=>{
+      if(!isDirty) return;
+      event.preventDefault();
+      event.returnValue="";
+    };
+
+    const guardNavigation=(event:MouseEvent)=>{
+      if(!isDirty||pendingHref) return;
+      const target=event.target as HTMLElement|null;
+      const anchor=target?.closest("a") as HTMLAnchorElement|null;
+      if(!anchor||anchor.target==="_blank"||anchor.hasAttribute("download")) return;
+
+      const url=new URL(anchor.href,window.location.href);
+      if(url.origin!==window.location.origin) return;
+      if(url.pathname===window.location.pathname&&url.search===window.location.search) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      setPendingHref(url.pathname+url.search+url.hash);
+    };
+
+    window.addEventListener("beforeunload",beforeUnload);
+    document.addEventListener("click",guardNavigation,true);
+    return ()=>{
+      window.removeEventListener("beforeunload",beforeUnload);
+      document.removeEventListener("click",guardNavigation,true);
+    };
+  },[isDirty,pendingHref]);
+
+  async function save():Promise<boolean>{
     setSaving(true); setMessage("");
     try{
       const payload={
@@ -180,11 +226,33 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
         body:JSON.stringify({id:itineraryId||null,payload})
       });
       const result=await res.json().catch(()=>({}));
-      if(!res.ok||!result?.ok){setMessage(result?.error||"Unable to save itinerary.");return;}
+      if(!res.ok||!result?.ok){setMessage(result?.error||"Unable to save itinerary.");return false;}
+      baselineRef.current=currentSnapshot;
+      setIsDirty(false);
       if(!itineraryId&&result.id){router.replace("/itineraries/"+result.id+"/edit");}
       else router.refresh();
       setMessage("Saved");
+      return true;
     } finally {setSaving(false);}
+  }
+
+  async function saveAndLeave(){
+    const href=pendingHref;
+    if(!href) return;
+    const ok=await save();
+    if(ok){
+      setPendingHref(null);
+      window.location.href=href;
+    }
+  }
+
+  function leaveWithoutSaving(){
+    const href=pendingHref;
+    if(!href) return;
+    baselineRef.current=currentSnapshot;
+    setIsDirty(false);
+    setPendingHref(null);
+    window.location.href=href;
   }
 
   return <div className="itinerary-editor">
@@ -195,8 +263,9 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
         <p>独立建立简易行程，暂时不与 Quotation 绑定。</p>
       </div>
       <div className="detail-actions">
-        <button className="btn" onClick={()=>router.push("/itineraries")}>← Back</button>
-        <button className="btn primary" onClick={save} disabled={saving}>{saving?"Saving...":"Save Itinerary"}</button>
+        {isDirty&&<span className="unsaved-badge">Unsaved changes</span>}
+        <button className="btn" onClick={()=>isDirty?setPendingHref("/itineraries"):router.push("/itineraries")}>← Back</button>
+        <button className="btn primary" onClick={()=>void save()} disabled={saving}>{saving?"Saving...":"Save Itinerary"}</button>
       </div>
     </div>
 
@@ -290,5 +359,20 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     </section>
 
     {message&&<div className="save-message">{message}</div>}
+
+    {pendingHref&&<div className="unsaved-overlay" role="dialog" aria-modal="true">
+      <div className="unsaved-dialog">
+        <div className="unsaved-icon">!</div>
+        <div>
+          <h3>当前行程尚未存档</h3>
+          <p>你已经修改了这份行程。离开之前要先保存吗？</p>
+        </div>
+        <div className="unsaved-actions">
+          <button className="btn primary" onClick={saveAndLeave} disabled={saving}>{saving?"Saving...":"Save & Continue"}</button>
+          <button className="btn leave-btn" onClick={leaveWithoutSaving} disabled={saving}>Leave Without Saving</button>
+          <button className="btn" onClick={()=>setPendingHref(null)} disabled={saving}>Cancel</button>
+        </div>
+      </div>
+    </div>}
   </div>;
 }
