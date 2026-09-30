@@ -53,10 +53,15 @@ export default async function ItineraryDetailPage({params}:{params:Promise<{id:s
             {Array.isArray(day.attractions)&&day.attractions.length>0&&<div className="itinerary-detail-attractions">
               <h4>Attractions｜景点</h4>
               <div className="itinerary-detail-attraction-grid">
-                {day.attractions.map((a:any,aIndex:number)=><div className="itinerary-detail-attraction" key={a.id||aIndex}>
-                  {a.imageUrl&&<img src={a.imageUrl} alt={a.name||"Attraction"}/>}
-                  <strong>{a.name||`Attraction ${aIndex+1}`}</strong>
-                </div>)}
+                {day.attractions.map((a:any,aIndex:number)=>{
+                  const images=Array.isArray(a.images)?a.images:(a.imageUrl?[{url:a.imageUrl}]:[]);
+                  return <div className="itinerary-detail-attraction" key={a.id||aIndex}>
+                    {images.length>0&&<div className="itinerary-detail-attraction-images">
+                      {images.map((img:any,imgIndex:number)=><img key={img.path||img.url||imgIndex} src={img.url} alt={a.name||"Attraction"}/>)}
+                    </div>}
+                    <strong>{a.name||`Attraction ${aIndex+1}`}</strong>
+                  </div>;
+                })}
               </div>
             </div>}
           </div>
