@@ -4,7 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type MealInfo={breakfast:string;lunch:string;dinner:string};
-type AttractionItem={id:string;name:string;imageUrl:string};
+type AttractionImage={path:string;url:string;name:string};
+type AttractionItem={id:string;name:string;images:AttractionImage[]};
 type DayItem={
   id:string;
   title:string;
@@ -42,7 +43,11 @@ const normalizeDay=(raw:any):DayItem=>({
     dinner:raw?.meals?.dinner||""
   },
   attractions:Array.isArray(raw?.attractions)
-    ? raw.attractions.map((a:any)=>({id:a?.id||uid(),name:a?.name||"",imageUrl:a?.imageUrl||""}))
+    ? raw.attractions.map((a:any)=>({
+        id:a?.id||uid(),
+        name:a?.name||"",
+        images:Array.isArray(a?.images)?a.images:(a?.imageUrl?[{path:"",url:a.imageUrl,name:"Legacy image"}]:[])
+      }))
     : []
 });
 
@@ -62,6 +67,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   const [days,setDays]=useState<DayItem[]>(initialDays);
   const [saving,setSaving]=useState(false);
   const [message,setMessage]=useState("");
+  const [uploadingAttraction,setUploadingAttraction]=useState<string|null>(null);
   const [pendingHref,setPendingHref]=useState<string|null>(null);
   const [isDirty,setIsDirty]=useState(false);
   const baselineRef=useRef("");
@@ -94,7 +100,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   function addAttraction(dayId:string){
     setDays(items=>items.map(day=>day.id===dayId?{
       ...day,
-      attractions:[...day.attractions,{id:uid(),name:"",imageUrl:""}]
+      attractions:[...day.attractions,{id:uid(),name:"",images:[]}]
     }:day));
   }
 
@@ -110,6 +116,60 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       ...day,
       attractions:day.attractions.filter(a=>a.id!==attractionId)
     }:day));
+  }
+
+  async function uploadAttractionImages(dayId:string,attractionId:string,files:FileList|null){
+    if(!files?.length) return;
+    const day=days.find(d=>d.id===dayId);
+    const attraction=day?.attractions.find(a=>a.id===attractionId);
+    const remaining=Math.max(0,3-(attraction?.images.length||0));
+    if(remaining<=0){alert("每个景点最多上传 3 张图片。");return;}
+    const selected=Array.from(files).slice(0,remaining);
+    if(files.length>remaining) alert("每个景点最多上传 3 张图片，多余图片不会上传。");
+
+    setUploadingAttraction(attractionId);
+    try{
+      for(const file of selected){
+        const form=new FormData();
+        form.set("action","upload");
+        form.set("file",file);
+        const res=await fetch("/api/internal-itinerary-images",{method:"POST",body:form});
+        const data=await res.json().catch(()=>({}));
+        if(!res.ok||!data?.ok){alert(data?.error||"Unable to upload image.");continue;}
+        setDays(items=>items.map(d=>d.id===dayId?{
+          ...d,
+          attractions:d.attractions.map(a=>a.id===attractionId?{
+            ...a,
+            images:[...a.images,{path:data.path,url:data.url,name:data.name||file.name}]
+          }:a)
+        }:d));
+      }
+    } finally {setUploadingAttraction(null);}
+  }
+
+  async function deleteAttractionImage(dayId:string,attractionId:string,imageIndex:number){
+    const day=days.find(d=>d.id===dayId);
+    const attraction=day?.attractions.find(a=>a.id===attractionId);
+    const image=attraction?.images[imageIndex];
+    if(!image) return;
+    if(image.path){
+      const form=new FormData();
+      form.set("action","delete");
+      form.set("path",image.path);
+      const res=await fetch("/api/internal-itinerary-images",{method:"POST",body:form});
+      if(!res.ok){
+        const data=await res.json().catch(()=>({}));
+        alert(data?.error||"Unable to delete image.");
+        return;
+      }
+    }
+    setDays(items=>items.map(d=>d.id===dayId?{
+      ...d,
+      attractions:d.attractions.map(a=>a.id===attractionId?{
+        ...a,
+        images:a.images.filter((_,i)=>i!==imageIndex)
+      }:a)
+    }:d));
   }
 
   function moveAttraction(dayId:string,index:number,dir:-1|1){
@@ -339,11 +399,26 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
                   <span>Attraction Name｜景点名称</span>
                   <input value={attraction.name} onChange={e=>patchAttraction(day.id,attraction.id,{name:e.target.value})} placeholder="仙女山风景区"/>
                 </label>
-                <label className="field">
-                  <span>Image URL｜景点图片</span>
-                  <input value={attraction.imageUrl} onChange={e=>patchAttraction(day.id,attraction.id,{imageUrl:e.target.value})} placeholder="第一阶段：粘贴图片链接"/>
-                </label>
-                {attraction.imageUrl && <div className="itinerary-attraction-preview"><img src={attraction.imageUrl} alt={attraction.name||"Attraction"}/></div>}
+                <div className="field itinerary-upload-field">
+                  <span>Upload Images｜上传景点图片</span>
+                  <label className="itinerary-upload-control">
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+                      multiple
+                      disabled={uploadingAttraction===attraction.id||attraction.images.length>=3}
+                      onChange={e=>{void uploadAttractionImages(day.id,attraction.id,e.target.files);e.currentTarget.value="";}}
+                    />
+                    <b>{uploadingAttraction===attraction.id?"Uploading...":attraction.images.length>=3?"Maximum 3 Images":"+ Attach Images"}</b>
+                    <small>{attraction.images.length}/3 · JPG, PNG, WEBP, HEIC · Max 10MB each</small>
+                  </label>
+                </div>
+                <div className="itinerary-attraction-previews">
+                  {attraction.images.map((image,imageIndex)=><div className="itinerary-attraction-preview" key={image.path||image.url||imageIndex}>
+                    <img src={image.url} alt={attraction.name||image.name||"Attraction"}/>
+                    <button type="button" aria-label="Delete image" onClick={()=>void deleteAttractionImage(day.id,attraction.id,imageIndex)}>×</button>
+                  </div>)}
+                </div>
                 <div className="itinerary-attraction-actions">
                   <button type="button" onClick={()=>moveAttraction(day.id,aIndex,-1)} disabled={aIndex===0}>↑</button>
                   <button type="button" onClick={()=>moveAttraction(day.id,aIndex,1)} disabled={aIndex===day.attractions.length-1}>↓</button>
