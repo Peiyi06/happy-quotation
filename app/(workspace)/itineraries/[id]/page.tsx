@@ -42,6 +42,23 @@ export default async function ItineraryDetailPage({params}:{params:Promise<{id:s
           <div className="itinerary-detail-day-content">
             <h3>{day.title||"Untitled Day"}</h3>
             <p>{day.content||"—"}</p>
+
+            <div className="itinerary-detail-meta">
+              <div><span>Hotel｜酒店</span><strong>{day.hotel||"—"}</strong></div>
+              <div><span>Breakfast｜早餐</span><strong>{day.meals?.breakfast||"—"}</strong></div>
+              <div><span>Lunch｜午餐</span><strong>{day.meals?.lunch||"—"}</strong></div>
+              <div><span>Dinner｜晚餐</span><strong>{day.meals?.dinner||"—"}</strong></div>
+            </div>
+
+            {Array.isArray(day.attractions)&&day.attractions.length>0&&<div className="itinerary-detail-attractions">
+              <h4>Attractions｜景点</h4>
+              <div className="itinerary-detail-attraction-grid">
+                {day.attractions.map((a:any,aIndex:number)=><div className="itinerary-detail-attraction" key={a.id||aIndex}>
+                  {a.imageUrl&&<img src={a.imageUrl} alt={a.name||"Attraction"}/>}
+                  <strong>{a.name||`Attraction ${aIndex+1}`}</strong>
+                </div>)}
+              </div>
+            </div>}
           </div>
         </article>)}
         {!days.length&&<div className="empty">尚未填写行程内容。</div>}
