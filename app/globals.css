@@ -383,3 +383,10 @@
 .itinerary-detail-attraction-images{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:6px 6px 0}
 .itinerary-detail-attraction-images img{width:100%;aspect-ratio:4/3;height:auto;object-fit:cover;border-radius:7px;display:block}
 @media(max-width:760px){.itinerary-attraction-previews,.itinerary-detail-attraction-images{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.itinerary-flight-table{min-width:980px}
+.itinerary-flight-table th{white-space:nowrap}
+.itinerary-flight-table td{vertical-align:middle}
+.itinerary-flight-table input{width:100%;box-sizing:border-box}
+.itinerary-flight-route{display:grid;grid-template-columns:72px 20px 72px;align-items:center;gap:6px}
+.itinerary-flight-route span{text-align:center;font-weight:800;color:var(--muted)}
