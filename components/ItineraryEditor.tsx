@@ -3,7 +3,17 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-type DayItem={id:string;title:string;content:string};
+type MealInfo={breakfast:string;lunch:string;dinner:string};
+type AttractionItem={id:string;name:string;imageUrl:string};
+type DayItem={
+  id:string;
+  title:string;
+  content:string;
+  hotel:string;
+  meals:MealInfo;
+  attractions:AttractionItem[];
+};
+
 type Props={
   itineraryId?:string;
   initialItinerary?:any;
@@ -12,13 +22,36 @@ type Props={
 };
 
 const uid=()=>Math.random().toString(36).slice(2,10);
+const emptyDay=():DayItem=>({
+  id:uid(),
+  title:"",
+  content:"",
+  hotel:"",
+  meals:{breakfast:"",lunch:"",dinner:""},
+  attractions:[]
+});
+
+const normalizeDay=(raw:any):DayItem=>({
+  id:raw?.id||uid(),
+  title:raw?.title||"",
+  content:raw?.content||"",
+  hotel:raw?.hotel||"",
+  meals:{
+    breakfast:raw?.meals?.breakfast||"",
+    lunch:raw?.meals?.lunch||"",
+    dinner:raw?.meals?.dinner||""
+  },
+  attractions:Array.isArray(raw?.attractions)
+    ? raw.attractions.map((a:any)=>({id:a?.id||uid(),name:a?.name||"",imageUrl:a?.imageUrl||""}))
+    : []
+});
 
 export default function ItineraryEditor({itineraryId,initialItinerary,currentStaffId,currentStaffName}:Props){
   const router=useRouter();
   const data=initialItinerary?.itinerary_data||{};
   const initialDays:Array<DayItem>=Array.isArray(data.days)&&data.days.length
-    ? data.days
-    : [{id:uid(),title:"",content:""}];
+    ? data.days.map(normalizeDay)
+    : [emptyDay()];
 
   const [title,setTitle]=useState(initialItinerary?.title||"New Itinerary");
   const [destination,setDestination]=useState(initialItinerary?.destination||"");
@@ -39,13 +72,52 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       if(current.length===target) return current;
       if(current.length>target) return current.slice(0,target);
       const next=[...current];
-      while(next.length<target) next.push({id:uid(),title:"",content:""});
+      while(next.length<target) next.push(emptyDay());
       return next;
     });
   }
 
   function patchDay(id:string,patch:Partial<DayItem>){
     setDays(items=>items.map(x=>x.id===id?{...x,...patch}:x));
+  }
+
+  function patchMeal(dayId:string,key:keyof MealInfo,value:string){
+    setDays(items=>items.map(day=>day.id===dayId?{
+      ...day,
+      meals:{...day.meals,[key]:value}
+    }:day));
+  }
+
+  function addAttraction(dayId:string){
+    setDays(items=>items.map(day=>day.id===dayId?{
+      ...day,
+      attractions:[...day.attractions,{id:uid(),name:"",imageUrl:""}]
+    }:day));
+  }
+
+  function patchAttraction(dayId:string,attractionId:string,patch:Partial<AttractionItem>){
+    setDays(items=>items.map(day=>day.id===dayId?{
+      ...day,
+      attractions:day.attractions.map(a=>a.id===attractionId?{...a,...patch}:a)
+    }:day));
+  }
+
+  function removeAttraction(dayId:string,attractionId:string){
+    setDays(items=>items.map(day=>day.id===dayId?{
+      ...day,
+      attractions:day.attractions.filter(a=>a.id!==attractionId)
+    }:day));
+  }
+
+  function moveAttraction(dayId:string,index:number,dir:-1|1){
+    setDays(items=>items.map(day=>{
+      if(day.id!==dayId) return day;
+      const target=index+dir;
+      if(target<0||target>=day.attractions.length) return day;
+      const next=[...day.attractions];
+      [next[index],next[target]]=[next[target],next[index]];
+      return {...day,attractions:next};
+    }));
   }
 
   function moveDay(index:number,dir:-1|1){
@@ -61,8 +133,14 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   function duplicateDay(index:number){
     setDays(items=>{
       const src=items[index];
+      const copy:DayItem={
+        ...src,
+        id:uid(),
+        meals:{...src.meals},
+        attractions:src.attractions.map(a=>({...a,id:uid()}))
+      };
       const next=[...items];
-      next.splice(index+1,0,{...src,id:uid()});
+      next.splice(index+1,0,copy);
       setDaysCount(next.length);
       return next;
     });
@@ -79,7 +157,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
 
   function addDay(){
     setDays(items=>{
-      const next=[...items,{id:uid(),title:"",content:""}];
+      const next=[...items,emptyDay()];
       setDaysCount(next.length);
       return next;
     });
@@ -89,12 +167,16 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     setSaving(true); setMessage("");
     try{
       const payload={
-        title,destination,days_count:Math.max(1,Number(daysCount)||1),nights_count:Math.max(0,Number(nightsCount)||0),
-        customer_name:customerName,status,
+        title,destination,
+        days_count:Math.max(1,Number(daysCount)||1),
+        nights_count:Math.max(0,Number(nightsCount)||0),
+        customer_name:customerName,
+        status,
         itinerary_data:{days,op,opStaffId:initialItinerary?.owner_id||currentStaffId}
       };
       const res=await fetch("/api/internal-itineraries",{
-        method:"POST",headers:{"Content-Type":"application/json"},
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
         body:JSON.stringify({id:itineraryId||null,payload})
       });
       const result=await res.json().catch(()=>({}));
@@ -133,7 +215,11 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     </section>
 
     <section className="panel">
-      <div className="panel-head"><div><h2>行程内容</h2><p className="panel-subtext">每天填写标题与简单行程内容。</p></div><button className="btn" type="button" onClick={addDay}>+ Add Day</button></div>
+      <div className="panel-head">
+        <div><h2>Daily Itinerary｜每日行程</h2><p className="panel-subtext">填写路线、行程内容、酒店、餐食及当天景点。</p></div>
+        <button className="btn" type="button" onClick={addDay}>+ Add Day</button>
+      </div>
+
       <div className="itinerary-day-list">
         {days.map((day,index)=><article className="itinerary-day-card" key={day.id}>
           <div className="itinerary-day-head">
@@ -145,11 +231,64 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
               <button type="button" className="danger-link" onClick={()=>removeDay(index)} disabled={days.length<=1}>Delete</button>
             </div>
           </div>
-          <label className="field"><span>Day Title</span><input value={day.title} onChange={e=>patchDay(day.id,{title:e.target.value})} placeholder="Kuala Lumpur → Osaka"/></label>
-          <label className="field"><span>Itinerary Content</span><textarea value={day.content} onChange={e=>patchDay(day.id,{content:e.target.value})} placeholder="输入当天简单行程内容..."/></label>
+
+          <div className="itinerary-day-main-grid">
+            <label className="field itinerary-route-field">
+              <span>Route / Title｜路线标题</span>
+              <input value={day.title} onChange={e=>patchDay(day.id,{title:e.target.value})} placeholder="新加坡 → 重庆"/>
+            </label>
+            <label className="field">
+              <span>Hotel｜酒店</span>
+              <input value={day.hotel} onChange={e=>patchDay(day.id,{hotel:e.target.value})} placeholder="重庆伊美 4 星酒店"/>
+            </label>
+          </div>
+
+          <label className="field">
+            <span>Itinerary Content｜行程内容</span>
+            <textarea value={day.content} onChange={e=>patchDay(day.id,{content:e.target.value})} placeholder="输入当天行程内容，例如集合、交通、景点、入住安排..."/>
+          </label>
+
+          <div className="itinerary-meal-section">
+            <div className="itinerary-subhead"><strong>Meals｜餐食</strong></div>
+            <div className="itinerary-meal-grid">
+              <label className="field"><span>Breakfast｜早餐</span><input value={day.meals.breakfast} onChange={e=>patchMeal(day.id,"breakfast",e.target.value)} placeholder="Hotel Breakfast / -"/></label>
+              <label className="field"><span>Lunch｜午餐</span><input value={day.meals.lunch} onChange={e=>patchMeal(day.id,"lunch",e.target.value)} placeholder="Lunch / Meal On Board / -"/></label>
+              <label className="field"><span>Dinner｜晚餐</span><input value={day.meals.dinner} onChange={e=>patchMeal(day.id,"dinner",e.target.value)} placeholder="Dinner / Hotpot / -"/></label>
+            </div>
+          </div>
+
+          <div className="itinerary-attraction-section">
+            <div className="itinerary-subhead">
+              <div><strong>Attractions｜景点</strong><span>每个景点可以独立填写名称及图片。</span></div>
+              <button type="button" className="btn" onClick={()=>addAttraction(day.id)}>+ Add Attraction</button>
+            </div>
+
+            {day.attractions.length>0 && <div className="itinerary-attraction-list">
+              {day.attractions.map((attraction,aIndex)=><div className="itinerary-attraction-row" key={attraction.id}>
+                <div className="itinerary-attraction-index">{String(aIndex+1).padStart(2,"0")}</div>
+                <label className="field">
+                  <span>Attraction Name｜景点名称</span>
+                  <input value={attraction.name} onChange={e=>patchAttraction(day.id,attraction.id,{name:e.target.value})} placeholder="仙女山风景区"/>
+                </label>
+                <label className="field">
+                  <span>Image URL｜景点图片</span>
+                  <input value={attraction.imageUrl} onChange={e=>patchAttraction(day.id,attraction.id,{imageUrl:e.target.value})} placeholder="第一阶段：粘贴图片链接"/>
+                </label>
+                {attraction.imageUrl && <div className="itinerary-attraction-preview"><img src={attraction.imageUrl} alt={attraction.name||"Attraction"}/></div>}
+                <div className="itinerary-attraction-actions">
+                  <button type="button" onClick={()=>moveAttraction(day.id,aIndex,-1)} disabled={aIndex===0}>↑</button>
+                  <button type="button" onClick={()=>moveAttraction(day.id,aIndex,1)} disabled={aIndex===day.attractions.length-1}>↓</button>
+                  <button type="button" className="danger-link" onClick={()=>removeAttraction(day.id,attraction.id)}>Delete</button>
+                </div>
+              </div>)}
+            </div>}
+
+            {!day.attractions.length && <div className="itinerary-attraction-empty">当天尚未加入景点。</div>}
+          </div>
         </article>)}
       </div>
     </section>
+
     {message&&<div className="save-message">{message}</div>}
   </div>;
 }
