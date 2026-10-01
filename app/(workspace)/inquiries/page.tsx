@@ -1,16 +1,21 @@
 import Link from "next/link";
-import { internalDb, internalToken } from "@/lib/internalSession";
+import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
 
-const inquiryStatusLabels:Record<string,string>={
+const baseStatusLabels:Record<string,string>={
   new:"New",
   in_progress:"In Progress",
-  waiting_quote:"Waiting Quote",
-  ready_customer:"Ready for Customer",
+  waiting_quote:"In Progress",
+  under_review:"Under Review",
+  revision_required:"Revision Required",
+  ready:"Ready",
+  ready_customer:"Ready",
+  itinerary_ready:"Itinerary Ready",
   closed:"Closed"
 };
 
 export default async function InquiryListPage(){
   const token=await internalToken();
+  const user=await internalUser();
   const db=internalDb();
   const response=token?await db.rpc("staff_list_inquiries",{p_token:token}):{data:[] as any[],error:null};
   const data=response.data;
@@ -28,7 +33,7 @@ export default async function InquiryListPage(){
         <tbody>{items.map((i:any)=><tr key={i.id}>
           <td><Link href={"/inquiries/"+i.id}>{i.inquiry_no}</Link></td><td>{i.customer_name||"—"}</td><td>{i.destination||"—"}</td>
           <td>{i.travel_start_date||"—"}{i.travel_end_date?" → "+i.travel_end_date:""}</td><td>{i.pax||"—"}</td>
-          <td>{i.sales_owner_name||"—"}</td><td>{i.operation_assignee_name||"—"}</td><td><span className={"status status-"+i.status}>{inquiryStatusLabels[i.status]||i.status}</span></td>
+          <td>{i.sales_owner_name||"—"}</td><td>{i.operation_assignee_name||"—"}</td><td><span className={"status status-"+i.status}>{i.status==="revision_required"&&user?.role!=="manager"?"Re-quote":baseStatusLabels[i.status]||i.status}</span></td>
         </tr>)}</tbody>
       </table></div>
       {!items.length&&<div className="empty">目前还没有 Inquiry。</div>}
