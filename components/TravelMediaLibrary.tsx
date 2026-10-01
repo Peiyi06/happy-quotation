@@ -114,6 +114,10 @@ export default function TravelMediaLibrary(){
 
   useEffect(()=>{
     void loadMediaReview();
+    if(mediaBackfillStartedRef.current) return;
+    mediaBackfillStartedRef.current=true;
+    const timer=window.setTimeout(()=>{ void processMediaBacklog(); },800);
+    return ()=>window.clearTimeout(timer);
   },[]);
 
   async function reviewMediaCandidate(id:string,action:"confirm"|"ignore"){
