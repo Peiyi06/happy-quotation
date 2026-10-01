@@ -138,8 +138,6 @@ export default async function SupplierInquiryFormPage({
     {rows.map(([label,value])=><div className="supplier-pro-row" key={label}><span>{label}</span><p>{value}</p></div>)}
   </div>;
 
-  const hasPageTwo=finalFlights.length>0;
-
   return <div className="supplier-form-page">
     <div className="supplier-form-toolbar">
       <a className="btn" href={"/inquiries/"+id+"/operation"}>← Operation Review</a>
@@ -200,12 +198,7 @@ export default async function SupplierInquiryFormPage({
           ])}
         </section>
 
-        <Footer/>
-      </section>
-
-      {hasPageTwo&&<section className="supplier-print-page supplier-print-page-two">
-        <Header/>
-        <section className="supplier-pro-section supplier-flight-section">
+        {finalFlights.length>0&&<section className="supplier-pro-section supplier-flight-section">
           <SectionTitle icon="✈" en="SUGGESTED FLIGHTS" zh="建议航班"/>
           <div className="supplier-flight-table supplier-pro-flight-table">
             <div className="supplier-flight-head">
@@ -225,9 +218,10 @@ export default async function SupplierInquiryFormPage({
               <span>{translated?.flightRemarks?.[index]||f.remarks||"—"}</span>
             </div>)}
           </div>
-        </section>
+        </section>}
+
         <Footer/>
-      </section>}
+      </section>
     </main>
   </div>;
 }
