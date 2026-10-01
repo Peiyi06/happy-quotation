@@ -123,6 +123,28 @@ export default function TravelMediaLibrary(){
         <div><span>Prices</span><strong>{preview.extraction?.prices?.length||0}</strong></div>
       </div>
 
+      {preview.extraction?.photoMatch&&<div className={"travel-library-photo-match "+(preview.extraction.photoMatch.status==="matched"?"matched":"review")}>
+        <div className="travel-library-photo-match-head">
+          <div>
+            <span className="page-kicker">PHOTO MATCH REVIEW</span>
+            <h3>{preview.extraction.photoMatch.status==="matched"?"✓ Matched":"Needs Review"}</h3>
+          </div>
+          <span className={"status "+(preview.extraction.photoMatch.status==="matched"?"status-ready":"status-under_review")}>
+            {Math.round(Number(preview.extraction.photoMatch.confidence||0)*100)}% Confidence
+          </span>
+        </div>
+        <div className="travel-library-photo-match-grid">
+          <div><span>AI Identified</span><strong>{preview.extraction.photoMatch.identifiedName||"Unknown"}</strong></div>
+          <div><span>Type</span><strong>{preview.extraction.photoMatch.identifiedType||"unknown"}</strong></div>
+          <div><span>Matched Library Record</span><strong>{preview.extraction.photoMatch.matchedName||"No confident match"}</strong></div>
+          <div><span>Match Method</span><strong>{preview.extraction.photoMatch.method==="ai_semantic"?"AI Semantic":preview.extraction.photoMatch.method==="fuzzy"?"Fuzzy":preview.extraction.photoMatch.method==="exact"?"Exact":"AI Identification Only"}</strong></div>
+          <div><span>Destination</span><strong>{preview.extraction.photoMatch.destination||"—"}</strong></div>
+          <div><span>City / Area</span><strong>{preview.extraction.photoMatch.cityArea||"—"}</strong></div>
+        </div>
+        <p>{preview.extraction.photoMatch.reason||"—"}</p>
+        {preview.extraction.photoMatch.status!=="matched"&&<small>系统不会把这个结果当作已确认匹配。请先检查照片与名称，再决定是否存档。</small>}
+      </div>}
+
       <div className="travel-library-review-grid">
         <article>
           <h3>Summary</h3>
