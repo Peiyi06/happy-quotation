@@ -61,10 +61,13 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
         ?"operation"
         :"sales";
   const supplierStatus=data.supplier_inquiry_status||"draft";
-  const supplierComplete=supplierStatus==="quote_received"||linkedQuotes.length>0;
-  const quotationComplete=linkedQuotes.some((q:any)=>q.status==="confirmed");
+  const visibleQuotes=viewerMode==="sales"
+    ?linkedQuotes.filter((q:any)=>["ready","sent","confirmed"].includes(q.status))
+    :linkedQuotes;
+  const supplierComplete=supplierStatus==="quote_received"||visibleQuotes.length>0;
+  const quotationComplete=visibleQuotes.some((q:any)=>q.status==="confirmed");
   const itineraryComplete=linkedItineraries.some((it:any)=>it.status==="confirmed");
-  const currentStep=!supplierComplete?"supplier":linkedQuotes.length===0?"quotation":!itineraryComplete?"itinerary":"done";
+  const currentStep=!supplierComplete?"supplier":visibleQuotes.length===0?"quotation":!itineraryComplete?"itinerary":"done";
 
   return <div>
     <div className="page-head inquiry-detail-head">
@@ -76,9 +79,9 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
           supplierStatus={data.supplier_inquiry_status||"draft"}
           canAdvance={Boolean(user&&(user.username==="long"||user.id===data.operation_assignee_id))}
           canUpdateStatus={false}
-          hasQuotation={linkedQuotes.length>0}
+          hasQuotation={visibleQuotes.length>0}
           viewerMode={viewerMode}
-          firstQuotationId={linkedQuotes[0]?.id}
+          firstQuotationId={visibleQuotes[0]?.id}
         />
         <div className="detail-actions">
           <Link className="btn" href="/inquiries">← Back</Link>
@@ -147,17 +150,17 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
           </div>
           <div className="simple-workflow-title">
             <h3>Quotation</h3>
-            <strong>{linkedQuotes.length?linkedQuotes.length+" linked":"Not Created"}</strong>
+            <strong>{visibleQuotes.length?visibleQuotes.length+" linked":viewerMode==="sales"&&data.status==="under_review"?"Under Review":"Not Ready"}</strong>
           </div>
-          {linkedQuotes.length>0
+          {visibleQuotes.length>0
             ? <div className="workflow-record-list">
-                {linkedQuotes.map((q:any)=><Link key={q.id} className="workflow-record-link" href={"/quotations/"+q.id}>
+                {visibleQuotes.map((q:any)=><Link key={q.id} className="workflow-record-link" href={"/quotations/"+q.id}>
                   <b>{q.quotation_no}</b>
                   <span>{quotationStatusLabels[q.status]||q.status||"Draft"} · {q.owner_name||"—"}</span>
                 </Link>)}
               </div>
             : <p>{supplierStatus==="quote_received"?"Supplier quote received. Ready to prepare customer quotation.":"Available after supplier quotation is received."}</p>}
-          {linkedQuotes.length===0&&supplierStatus==="quote_received"&&
+          {viewerMode!=="sales"&&visibleQuotes.length===0&&supplierStatus==="quote_received"&&
             <div className="simple-workflow-actions"><Link className="btn primary" href={"/quotations/new?sourceInquiry="+id}>Create Quotation</Link></div>}
         </div>
 
