@@ -736,3 +736,119 @@
 @media(max-width:700px){
   .inquiry-save-state{bottom:8px;align-items:flex-start;flex-direction:column}
 }
+
+/* Supplier Inquiry Form: lock a dedicated A4 print layout so mobile rules never collapse the PDF. */
+@media print{
+  @page{size:A4 portrait;margin:0}
+  html,body{background:#fff!important}
+  .supplier-form-page{width:210mm!important;max-width:210mm!important;margin:0 auto!important;padding:0!important}
+  .supplier-form-sheet{
+    width:210mm!important;
+    min-height:297mm!important;
+    box-sizing:border-box!important;
+    padding:12mm 13mm!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    background:#fff!important;
+  }
+
+  .supplier-form-header{
+    display:flex!important;
+    flex-direction:row!important;
+    align-items:flex-start!important;
+    justify-content:space-between!important;
+    gap:10mm!important;
+    padding-bottom:5mm!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+  .supplier-form-header h1{font-size:25px!important;line-height:1.12!important;margin:4px 0 3px!important}
+  .supplier-form-header p{font-size:11px!important}
+  .supplier-form-header span{font-size:9px!important}
+  .supplier-form-ref{
+    min-width:44mm!important;
+    text-align:right!important;
+    padding:8px 10px!important;
+    flex:0 0 44mm!important;
+  }
+  .supplier-form-ref small{font-size:9px!important}
+  .supplier-form-ref strong{font-size:12px!important}
+
+  .supplier-form-intro{
+    display:grid!important;
+    grid-template-columns:1.5fr 1fr 1fr!important;
+    gap:8px!important;
+    margin:5mm 0!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+  .supplier-form-intro>div{padding:9px 10px!important}
+  .supplier-form-intro span{font-size:9px!important;margin-bottom:4px!important}
+  .supplier-form-intro strong{font-size:11.5px!important}
+
+  .supplier-form-details{
+    display:block!important;
+    overflow:hidden!important;
+    break-inside:auto!important;
+  }
+  .supplier-form-row{
+    display:grid!important;
+    grid-template-columns:46mm minmax(0,1fr)!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+  .supplier-form-row>span{
+    padding:9px 11px!important;
+    font-size:10.5px!important;
+    line-height:1.35!important;
+  }
+  .supplier-form-row>p{
+    padding:9px 11px!important;
+    font-size:11.5px!important;
+    line-height:1.45!important;
+  }
+
+  .supplier-form-composition,
+  .supplier-form-flights,
+  .supplier-form-remarks,
+  .supplier-form-footer{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+  .supplier-form-composition{margin-top:5mm!important}
+  .supplier-form-composition h2,
+  .supplier-form-flights h2,
+  .supplier-form-remarks h2{font-size:12.5px!important;margin-bottom:7px!important}
+
+  .supplier-composition-grid{
+    display:grid!important;
+    grid-template-columns:repeat(4,1fr)!important;
+    gap:7px!important;
+  }
+  .supplier-composition-grid>div{padding:8px 9px!important}
+  .supplier-composition-grid span{font-size:9px!important}
+  .supplier-composition-grid strong{font-size:12px!important}
+
+  .supplier-composition-notes>div{
+    display:grid!important;
+    grid-template-columns:46mm minmax(0,1fr)!important;
+  }
+  .supplier-composition-notes span{font-size:9.5px!important;padding:8px 10px!important}
+  .supplier-composition-notes p{font-size:10.5px!important;padding:8px 10px!important}
+
+  .supplier-form-flights{margin-top:5mm!important}
+  .supplier-flight-head,
+  .supplier-flight-row{
+    display:grid!important;
+    grid-template-columns:1.15fr .85fr 1fr .8fr .8fr 1.25fr!important;
+  }
+  .supplier-flight-head{font-size:8.5px!important}
+  .supplier-flight-row{font-size:9.5px!important}
+  .supplier-flight-head span,
+  .supplier-flight-row span{padding:7px 6px!important}
+
+  .supplier-form-remarks{margin-top:5mm!important;padding:10px!important}
+  .supplier-form-remarks p{font-size:11px!important;line-height:1.45!important}
+  .supplier-form-footer{margin-top:6mm!important;padding-top:3mm!important;font-size:9.5px!important}
+}
