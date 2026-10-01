@@ -2,27 +2,32 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
 
-const supplierLabels:Record<string,string>={
-  draft:"Supplier Draft",
-  ready:"Ready to Send",
-  waiting_quote:"Waiting Supplier Quote",
-  quote_received:"Quote Received"
+const operationStatusLabels:Record<string,string>={
+  new:"New",
+  in_progress:"In Progress",
+  waiting_quote:"In Progress",
+  under_review:"Under Review",
+  revision_required:"Revision Required",
+  ready:"Ready",
+  ready_customer:"Ready"
 };
 
-type QueueKey="needs_review"|"waiting_supplier"|"quote_received"|"ready_sales";
+type QueueKey="new"|"in_progress"|"under_review"|"revision_required"|"ready";
 
 const queueMeta:Record<QueueKey,{title:string;subtitle:string}>={
-  needs_review:{title:"Needs Review",subtitle:"Review case details and prepare supplier inquiry."},
-  waiting_supplier:{title:"Waiting Supplier",subtitle:"Supplier inquiry sent; waiting for quotation."},
-  quote_received:{title:"Quote Received",subtitle:"Supplier quotation received; prepare the next customer-facing work."},
-  ready_sales:{title:"Ready for Sales",subtitle:"Operation work is ready to hand back to Sales."}
+  new:{title:"New",subtitle:"New Inquiry received from Sales; Operation has not started yet."},
+  in_progress:{title:"In Progress",subtitle:"Operation is preparing supplier inquiry and quotation."},
+  under_review:{title:"Under Review",subtitle:"Quotation submitted and waiting for management review."},
+  revision_required:{title:"Revision Required",subtitle:"Management requested changes before quotation can be approved."},
+  ready:{title:"Ready",subtitle:"Quotation approved and ready for Sales."}
 };
 
 function queueFor(item:any):QueueKey{
-  if(item.status==="ready_customer") return "ready_sales";
-  if(item.supplier_status==="quote_received") return "quote_received";
-  if(item.supplier_status==="waiting_quote") return "waiting_supplier";
-  return "needs_review";
+  if(item.status==="ready"||item.status==="ready_customer") return "ready";
+  if(item.status==="revision_required") return "revision_required";
+  if(item.status==="under_review") return "under_review";
+  if(item.status==="new") return "new";
+  return "in_progress";
 }
 
 function ageLabel(value:string){
@@ -76,7 +81,7 @@ export default async function OperationWorkspacePage({
       <div>
         <span className="page-kicker">OPERATION WORKSPACE</span>
         <h1>Operation</h1>
-        <p>以待办工作为中心查看 Supplier workflow，不需要先进入 Inquiry Library 找案件。</p>
+        <p>以案件进度为中心查看 Operation 工作：New → In Progress → Under Review → Ready。</p>
       </div>
       <div className="operation-scope-switch">
         <Link className={requestedScope==="mine"?"active":""} href="/operation">My Queue</Link>
@@ -159,7 +164,7 @@ function OperationRows({items}:{items:any[]}){
         <strong>{item.operation_assignee_name||"Unassigned"}</strong>
       </div>
       <div className="operation-case-state">
-        <span className={"status status-"+item.supplier_status}>{supplierLabels[item.supplier_status]||item.supplier_status}</span>
+        <span className={"status status-"+item.status}>{operationStatusLabels[item.status]||item.status}</span>
         <small className={ageLabel(item.supplier_inquiry_updated_at||item.updated_at).includes("Attention")?"attention":""}>{ageLabel(item.supplier_inquiry_updated_at||item.updated_at)}</small>
       </div>
     </Link>)}
