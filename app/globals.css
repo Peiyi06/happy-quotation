@@ -1185,3 +1185,9 @@
   .simple-workflow-grid{grid-template-columns:1fr}
   .simple-workflow-arrow{transform:rotate(90deg);height:20px}
 }
+
+
+.operation-queue-footer{display:flex;justify-content:flex-end;margin-top:12px;padding-top:10px;border-top:1px solid #edf1f4}
+.operation-queue-footer a{color:var(--navy);font-size:11px;font-weight:800;text-decoration:none}
+.operation-queue-footer a:hover{text-decoration:underline}
+.operation-queue-panel.expanded{grid-column:1/-1}
