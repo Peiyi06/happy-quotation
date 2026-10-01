@@ -14,6 +14,9 @@ type ImportResult={
   warnings:string[];
 };
 
+type ChatMessage={role:"user"|"assistant";text:string};
+type AdjustmentProposal={reply:string;changeSummary:string[];revisedDraft:Omit<ImportResult,"internalFindings">};
+
 const uid=()=>Math.random().toString(36).slice(2,10);
 
 export default function AiSupplierImport(){
@@ -25,9 +28,14 @@ export default function AiSupplierImport(){
   const [error,setError]=useState("");
   const [model,setModel]=useState("");
 
+  const [chatInput,setChatInput]=useState("");
+  const [chatting,setChatting]=useState(false);
+  const [chatMessages,setChatMessages]=useState<ChatMessage[]>([]);
+  const [proposal,setProposal]=useState<AdjustmentProposal|null>(null);
+
   async function analyze(){
     if(!file) return;
-    setAnalyzing(true);setError("");setResult(null);
+    setAnalyzing(true);setError("");setResult(null);setProposal(null);setChatMessages([]);
     try{
       const form=new FormData();
       form.set("file",file);
@@ -37,6 +45,59 @@ export default function AiSupplierImport(){
       setResult(data.result);
       setModel(data.model||"");
     }finally{setAnalyzing(false);}
+  }
+
+  async function askAssistant(){
+    if(!result||!chatInput.trim()) return;
+    const instruction=chatInput.trim();
+    const nextMessages=[...chatMessages,{role:"user" as const,text:instruction}];
+    setChatMessages(nextMessages);
+    setChatInput("");
+    setChatting(true);
+    setProposal(null);
+    setError("");
+    try{
+      const currentDraft={
+        title:result.title,
+        destination:result.destination,
+        departureCity:result.departureCity,
+        travelStartDate:result.travelStartDate,
+        travelEndDate:result.travelEndDate,
+        pax:result.pax,
+        tourType:result.tourType,
+        suggestedFlights:result.suggestedFlights,
+        days:result.days,
+        hotels:result.hotels,
+        includedItems:result.includedItems,
+        notIncludedItems:result.notIncludedItems,
+        reminders:result.reminders,
+        warnings:result.warnings
+      };
+      const res=await fetch("/api/ai-adjust-itinerary",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({currentDraft,instruction,history:chatMessages})
+      });
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok||!data?.ok){
+        setError(data?.error||"AI could not adjust this itinerary.");
+        return;
+      }
+      const p=data.result as AdjustmentProposal;
+      setProposal(p);
+      setChatMessages([...nextMessages,{role:"assistant",text:p.reply||"I prepared a revised itinerary for your review."}]);
+      if(data.model) setModel(data.model);
+    }finally{setChatting(false);}
+  }
+
+  function applyProposal(){
+    if(!result||!proposal) return;
+    setResult({
+      ...proposal.revisedDraft,
+      internalFindings:result.internalFindings
+    });
+    setProposal(null);
+    setChatMessages(prev=>[...prev,{role:"assistant",text:"Changes applied to the current draft."}]);
   }
 
   async function createDraft(){
@@ -93,7 +154,7 @@ export default function AiSupplierImport(){
       <div className="ai-import-upload-box">
         <label className="field">
           <span>Supplier File｜供应商文件</span>
-          <input type="file" accept=".pdf,.doc,.docx,.rtf,.txt,.jpg,.jpeg,.png,.webp" onChange={e=>{setFile(e.target.files?.[0]||null);setResult(null);setError("");}}/>
+          <input type="file" accept=".pdf,.doc,.docx,.rtf,.txt,.jpg,.jpeg,.png,.webp" onChange={e=>{setFile(e.target.files?.[0]||null);setResult(null);setError("");setProposal(null);setChatMessages([]);}}/>
         </label>
         <div className="ai-import-file-note">
           <strong>{file?file.name:"尚未选择文件"}</strong>
@@ -129,6 +190,66 @@ export default function AiSupplierImport(){
               {day.attractions?.length>0&&<div className="ai-import-tags">{day.attractions.map((a,i)=><span key={i}>{a}</span>)}</div>}
             </div>
           </article>)}
+        </div>
+      </section>
+
+      <section className="panel ai-assistant-panel">
+        <div className="panel-head">
+          <div>
+            <h2>AI Itinerary Assistant｜AI 行程调整助手</h2>
+            <p className="panel-subtext">告诉 AI 实际航班、天数或调整要求。AI 会先提出修改方案，确认后才套用到 Draft。</p>
+          </div>
+        </div>
+
+        <div className="ai-assistant-layout">
+          <div className="ai-chat-column">
+            <div className="ai-chat-log">
+              {chatMessages.length===0&&<div className="ai-chat-empty">
+                例如：供应商是 6D5N，但我们实际航班变成 7D6N。第一天上午抵达，请安排轻松景点，不要删除原本主要景点。
+              </div>}
+              {chatMessages.map((m,index)=><div key={index} className={"ai-chat-message "+m.role}>
+                <span>{m.role==="user"?"Operation":"AI Assistant"}</span>
+                <p>{m.text}</p>
+              </div>)}
+              {chatting&&<div className="ai-chat-thinking">AI is preparing a revised itinerary...</div>}
+            </div>
+
+            <div className="ai-chat-compose">
+              <textarea
+                value={chatInput}
+                onChange={e=>setChatInput(e.target.value)}
+                placeholder="Ask AI to adjust this itinerary..."
+                onKeyDown={e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();void askAssistant();}}}
+              />
+              <div className="ai-chat-compose-foot">
+                <span>Ctrl / Cmd + Enter to send</span>
+                <button className="btn primary" type="button" disabled={!chatInput.trim()||chatting} onClick={()=>void askAssistant()}>{chatting?"Adjusting...":"Ask AI to Adjust"}</button>
+              </div>
+            </div>
+          </div>
+
+          <div className="ai-change-column">
+            {!proposal&&<div className="ai-change-empty">
+              <strong>Changes Preview</strong>
+              <span>AI 调整后会先在这里列出修改内容，不会直接覆盖当前 Draft。</span>
+            </div>}
+
+            {proposal&&<div className="ai-change-preview">
+              <div className="ai-change-preview-head">
+                <div><strong>Proposed Changes｜建议修改</strong><span>{proposal.revisedDraft.days.length} Days · {Math.max(0,proposal.revisedDraft.days.length-1)} Nights</span></div>
+              </div>
+              <div className="ai-change-list">
+                {proposal.changeSummary.map((item,index)=><div key={index}><span>{index+1}</span><p>{item}</p></div>)}
+              </div>
+              {proposal.revisedDraft.warnings.length>0&&<div className="ai-warning-list">
+                {proposal.revisedDraft.warnings.map((w,index)=><div key={index}>⚠ {w}</div>)}
+              </div>}
+              <div className="ai-change-actions">
+                <button className="btn" type="button" onClick={()=>setProposal(null)}>Reject</button>
+                <button className="btn primary" type="button" onClick={applyProposal}>Apply Changes</button>
+              </div>
+            </div>}
+          </div>
         </div>
       </section>
 
