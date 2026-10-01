@@ -158,17 +158,30 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   const op=initialItinerary?.owner_name||data.op||currentStaffName;
   const label=useMemo(()=>`${daysCount}D${nightsCount}N`,[daysCount,nightsCount]);
 
-  async function lookupTravelMedia(type:"attraction"|"hotel",name:string){
+  async function lookupTravelMedia(type:"attraction"|"hotel",name:string,cityArea=""){
     const q=name.trim();
     if(!q) return null;
     try{
       const res=await fetch("/api/internal-travel-media?type="+encodeURIComponent(type)+"&q="+encodeURIComponent(q)+"&limit=3",{cache:"no-store"});
       const data=await res.json().catch(()=>({}));
-      if(!res.ok||!data?.ok||!Array.isArray(data.matches)||!data.matches.length) return null;
-      const best=data.matches[0];
+      const best=data?.ok&&Array.isArray(data.matches)&&data.matches.length?data.matches[0]:null;
       const threshold=type==="hotel"?0.72:0.58;
-      if(Number(best.score||0)<threshold||!Array.isArray(best.images)||!best.images.length) return null;
-      return best;
+      if(best&&Number(best.score||0)>=threshold&&Array.isArray(best.images)&&best.images.length) return {...best,matchMethod:"fuzzy"};
+
+      const semanticRes=await fetch("/api/internal-travel-media",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          action:"semantic_match",
+          type,
+          query:q,
+          destination,
+          cityArea
+        })
+      });
+      const semantic=await semanticRes.json().catch(()=>({}));
+      if(!semanticRes.ok||!semantic?.ok||!semantic?.match||!Array.isArray(semantic.match.images)||!semantic.match.images.length) return null;
+      return semantic.match;
     }catch{return null;}
   }
 
@@ -207,7 +220,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     if(!name.trim()) return;
     const current=hotels.find(h=>h.id===hotelId);
     if(!current||current.images.length) return;
-    const match=await lookupTravelMedia("hotel",name);
+    const match=await lookupTravelMedia("hotel",name,current.cityArea);
     if(!match) return;
     setHotels(items=>items.map(h=>h.id===hotelId&&h.images.length===0
       ?{...h,images:match.images.slice(0,5)}
@@ -241,7 +254,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       for(const hotel of hotels){
         if(hotel.name.trim()&&hotel.images.length===0){
           hotelTasks.push((async()=>{
-            const match=await lookupTravelMedia("hotel",hotel.name);
+            const match=await lookupTravelMedia("hotel",hotel.name,hotel.cityArea);
             if(!match) return;
             setHotels(items=>items.map(h=>h.id===hotel.id&&h.images.length===0
               ?{...h,images:match.images.slice(0,5)}
