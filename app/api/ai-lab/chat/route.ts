@@ -5,6 +5,21 @@ const MAX_IMAGE_BYTES=5*1024*1024;
 const MAX_IMAGES=4;
 const allowedImageTypes=new Set(["image/jpeg","image/png","image/webp"]);
 
+function isQuotationMemory(memory:any){
+  const text=[
+    memory?.category,
+    memory?.title,
+    memory?.ruleText,
+    memory?.reason
+  ].map(v=>String(v||"").toLowerCase()).join(" ");
+  return /(quotation|quote|报价|costing|supplier cost|traveler cost|leader cost|markup|margin|selling price|profit|成本|售价|利润|毛利|加价|报价单)/i.test(text);
+}
+
+function sameMemory(a:any,b:any){
+  const norm=(v:any)=>String(v||"").trim().toLowerCase().replace(/\s+/g," ");
+  return norm(a?.title)===norm(b?.title)&&norm(a?.ruleText||a?.rule_text)===norm(b?.ruleText||b?.rule_text);
+}
+
 function outputText(payload:any){
   if(typeof payload?.output_text==="string") return payload.output_text;
   for(const item of payload?.output||[]){
@@ -173,7 +188,9 @@ export async function POST(request:Request){
     "- Uploaded images may contain WhatsApp screenshots, flight screenshots, supplier quotations, itineraries, or other travel work material. Read what is visible and answer only from supported content.",
     "- If an uploaded image appears related to an existing case, match it to a real Inquiry only when the evidence is clear; otherwise ask which case it belongs to.",
     "- COMPANY MEMORY contains Long-approved durable company SOPs and preferences. Follow them when relevant, but never let them override explicit current-case facts.",
-    "- Do not silently create memory. If the user states a durable company rule, repeated preference, SOP, role responsibility, or standard operating habit that seems useful later, set memorySuggestion.shouldSuggest=true and summarize it as one concise reusable rule.",
+    "- If the user states a durable company rule, repeated preference, SOP, role responsibility, or standard operating habit that seems useful later, set memorySuggestion.shouldSuggest=true and summarize it as one concise reusable rule.",
+    "- Non-Quotation durable rules will be auto-saved by the application after your response. Quotation-related rules still require manual confirmation.",
+    "- Therefore, still return memorySuggestion for any durable rule you detect; the application decides whether it is auto-saved or shown for confirmation.",
     "- Do not suggest memory for customer-specific facts, temporary prices, one-off dates, personal data, secrets, or transient case details.",
     "- If the user explicitly says remember/save this as a company rule, strongly prefer proposing memory unless it is unsuitable.",
     "",
@@ -240,7 +257,43 @@ export async function POST(request:Request){
   if(!resultText) return NextResponse.json({error:"AI Lab returned no response.",threadId,saved:true},{status:502});
   try{
     const result=JSON.parse(resultText);
+
+    let autoMemorySaved:any=null;
+    const suggestion=result?.memorySuggestion;
+    if(suggestion?.shouldSuggest&&!isQuotationMemory(suggestion)){
+      const duplicate=companyMemories.some((m:any)=>sameMemory(m,suggestion));
+      if(duplicate){
+        autoMemorySaved={
+          title:String(suggestion.title||"Company Rule"),
+          ruleText:String(suggestion.ruleText||""),
+          duplicate:true
+        };
+        result.memorySuggestion={...suggestion,shouldSuggest:false};
+      }else{
+        const {data:memorySave,error:memoryError}=await db.rpc("staff_save_company_ai_memory",{
+          p_token:token,
+          p_category:String(suggestion.category||"workflow"),
+          p_title:String(suggestion.title||"Company Rule"),
+          p_rule_text:String(suggestion.ruleText||"")
+        });
+        if(!memoryError&&memorySave?.ok){
+          autoMemorySaved={
+            id:memorySave.id,
+            title:String(suggestion.title||"Company Rule"),
+            ruleText:String(suggestion.ruleText||""),
+            duplicate:false
+          };
+          result.memorySuggestion={...suggestion,shouldSuggest:false};
+        }
+      }
+    }
+
     const assistantPayload={
+      links:Array.isArray(result.links)?result.links:[],
+      action:result.action||null,
+      memorySuggestion:result.memorySuggestion||null,
+      autoMemorySaved
+    };
       links:Array.isArray(result.links)?result.links:[],
       action:result.action||null,
       memorySuggestion:result.memorySuggestion||null
@@ -268,7 +321,7 @@ export async function POST(request:Request){
       p_archived:null
     });
 
-    return NextResponse.json({ok:true,result,threadId,threadTitle:threadTitle||contextTitle||"Work Thread",saved:true});
+    return NextResponse.json({ok:true,result:{...result,autoMemorySaved},threadId,threadTitle:threadTitle||contextTitle||"Work Thread",saved:true});
   }catch{
     return NextResponse.json({error:"AI Lab response could not be parsed.",threadId,saved:true},{status:502});
   }
