@@ -17,6 +17,7 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
         </div>
         <nav className="sidebar-nav">
           <Link href="/dashboard">Dashboard</Link>
+          {user.username.toLowerCase() === "long" && <Link href="/ai-lab">AI Workspace Beta</Link>}
           <Link href="/inquiries">Inquiries</Link>
           <NewQuotationMenu compact />
           <Link href="/quotations">My Quotations</Link>
