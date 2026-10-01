@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type ImportResult={
   title:string;destination:string;departureCity:string;travelStartDate:string;travelEndDate:string;pax:number|null;tourType:string;
@@ -21,6 +21,8 @@ const uid=()=>Math.random().toString(36).slice(2,10);
 
 export default function AiSupplierImport({inquiryContext=null}:{inquiryContext?:any}){
   const router=useRouter();
+  const searchParams=useSearchParams();
+  const [linkedInquiryContext,setLinkedInquiryContext]=useState<any>(inquiryContext);
   const [file,setFile]=useState<File|null>(null);
   const [result,setResult]=useState<ImportResult|null>(null);
   const [analyzing,setAnalyzing]=useState(false);
@@ -35,6 +37,22 @@ export default function AiSupplierImport({inquiryContext=null}:{inquiryContext?:
   const [chatMessages,setChatMessages]=useState<ChatMessage[]>([]);
   const [proposal,setProposal]=useState<AdjustmentProposal|null>(null);
 
+  useEffect(()=>{
+    if(inquiryContext){setLinkedInquiryContext(inquiryContext);return;}
+    const sourceInquiry=searchParams.get("sourceInquiry");
+    if(!sourceInquiry){setLinkedInquiryContext(null);return;}
+    let cancelled=false;
+    fetch("/api/internal-inquiry-context?id="+encodeURIComponent(sourceInquiry),{cache:"no-store"})
+      .then(async res=>{
+        const data=await res.json().catch(()=>({}));
+        if(!cancelled&&res.ok&&data?.ok) setLinkedInquiryContext(data.context||null);
+      })
+      .catch(()=>{});
+    return ()=>{cancelled=true;};
+  },[inquiryContext,searchParams]);
+
+  const ctx=linkedInquiryContext;
+
   async function analyze(){
     if(!file) return;
     setAnalyzing(true);setError("");setResult(null);setProposal(null);setChatMessages([]);
@@ -42,7 +60,7 @@ export default function AiSupplierImport({inquiryContext=null}:{inquiryContext?:
       const form=new FormData();
       form.set("file",file);
       form.set("adjustmentNotes",adjustmentNotes.trim());
-      if(inquiryContext) form.set("inquiryContext",JSON.stringify(inquiryContext));
+      if(ctx) form.set("inquiryContext",JSON.stringify(ctx));
       const res=await fetch("/api/ai-import-supplier",{method:"POST",body:form});
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){setError(data?.error||"Unable to analyze supplier file.");return;}
@@ -124,24 +142,24 @@ export default function AiSupplierImport({inquiryContext=null}:{inquiryContext?:
       const reminders=(result.reminders||[]).map(r=>({id:uid(),preset:"other",title:r.title,description:r.description}));
 
       const payload={
-        source_inquiry_id:inquiryContext?.id||"",
+        source_inquiry_id:ctx?.id||"",
         title:result.title||`AI Imported Itinerary - ${file?.name||"Supplier File"}`,
         destination:result.destination||"",
         days_count:Math.max(1,days.length),
         nights_count:Math.max(0,days.length-1),
-        customer_name:inquiryContext?.customerName||"",
+        customer_name:ctx?.customerName||"",
         status:"draft",
         itinerary_data:{
-          departureCity:result.departureCity||inquiryContext?.departureCity||"",
-          travelStartDate:result.travelStartDate||inquiryContext?.travelStartDate||"",
-          travelEndDate:result.travelEndDate||inquiryContext?.travelEndDate||"",
-          pax:result.pax??inquiryContext?.pax??"",
-          tourType:result.tourType||inquiryContext?.tourType||"",
-          suggestedFlights:suggestedFlights.length?suggestedFlights:(Array.isArray(inquiryContext?.suggestedFlights)?inquiryContext.suggestedFlights.map((f:any)=>({id:uid(),...f})):[]),
+          departureCity:result.departureCity||ctx?.departureCity||"",
+          travelStartDate:result.travelStartDate||ctx?.travelStartDate||"",
+          travelEndDate:result.travelEndDate||ctx?.travelEndDate||"",
+          pax:result.pax??ctx?.pax??"",
+          tourType:result.tourType||ctx?.tourType||"",
+          suggestedFlights:suggestedFlights.length?suggestedFlights:(Array.isArray(ctx?.suggestedFlights)?inquiryContext.suggestedFlights.map((f:any)=>({id:uid(),...f})):[]),
           days,hotels,includedItems,notIncludedItems,reminders,
-          sourceInquiryId:inquiryContext?.id||"",
-          sourceInquiryNo:inquiryContext?.inquiryNo||"",
-          sourceInquirySnapshot:inquiryContext||null,
+          sourceInquiryId:ctx?.id||"",
+          sourceInquiryNo:ctx?.inquiryNo||"",
+          sourceInquirySnapshot:ctx||null,
           aiImportMeta:{sourceFileName:file?.name||"",adjustmentNotes:adjustmentNotes.trim(),model,warnings:result.warnings||[],importedAt:new Date().toISOString()}
         }
       };
@@ -153,13 +171,13 @@ export default function AiSupplierImport({inquiryContext=null}:{inquiryContext?:
   }
 
   return <div className="ai-import-workspace">
-    {inquiryContext&&<section className="quote-source-inquiry">
+    {ctx&&<section className="quote-source-inquiry">
       <div>
         <span>SOURCE INQUIRY｜来源询价</span>
-        <strong>{inquiryContext.inquiryNo||"Linked Inquiry"}</strong>
-        <small>{[inquiryContext.destination,inquiryContext.daysCount&&inquiryContext.nightsCount?`${inquiryContext.daysCount}D${inquiryContext.nightsCount}N`:"",inquiryContext.pax?`${inquiryContext.pax} Pax`:""].filter(Boolean).join(" · ")}</small>
+        <strong>{ctx.inquiryNo||"Linked Inquiry"}</strong>
+        <small>{[ctx.destination,ctx.daysCount&&ctx.nightsCount?`${ctx.daysCount}D${ctx.nightsCount}N`:"",ctx.pax?`${ctx.pax} Pax`:""].filter(Boolean).join(" · ")}</small>
       </div>
-      <button className="btn" type="button" onClick={()=>router.push("/inquiries/"+inquiryContext.id)}>Open Inquiry</button>
+      <button className="btn" type="button" onClick={()=>router.push("/inquiries/"+ctx.id)}>Open Inquiry</button>
     </section>
     <section className="panel ai-import-upload-panel">
       <div className="panel-head">
