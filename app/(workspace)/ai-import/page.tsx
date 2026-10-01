@@ -9,9 +9,9 @@ export default async function AiImportPage(){
   return <div>
     <div className="page-head page-hero-header">
       <div>
-        <span className="page-kicker">OPERATION AI</span>
-        <h1>Supplier Itinerary Import</h1>
-        <p>供应商文件 → AI 结构化 → Operation Review → Draft Itinerary</p>
+        <span className="page-kicker">AI ITINERARY</span>
+        <h1>AI Itinerary</h1>
+        <p>智能快速生成旅游行程｜从文件或 Inquiry 资料快速建立可编辑的 Itinerary Draft</p>
       </div>
     </div>
     <AiSupplierImport/>
