@@ -115,7 +115,7 @@ export default async function OperationWorkspacePage({
       {queues.map(queue=>{
         const expanded=expandedQueue===queue.key;
         const visibleItems=expanded?queue.items:queue.items.slice(0,3);
-        return <section className={"panel operation-queue-panel "+(expanded?"expanded":"")} key={queue.key}>
+        return <section className={"panel operation-queue-panel operation-queue-"+queue.key+" "+(expanded?"expanded":"")} key={queue.key}>
           <div className="panel-head operation-queue-title">
             <div><h2>{queue.title}</h2><p className="panel-subtext">{queue.subtitle}</p></div>
             <span className="operation-count">{queue.items.length}</span>
