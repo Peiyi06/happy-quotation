@@ -7,7 +7,7 @@ export default async function AiImportPage(){
   if(!user||!["jess","long"].includes(user.username.toLowerCase())) notFound();
 
   return <div>
-    <div className="page-head">
+    <div className="page-head page-hero-header">
       <div>
         <span className="page-kicker">OPERATION AI</span>
         <h1>Supplier Itinerary Import</h1>
