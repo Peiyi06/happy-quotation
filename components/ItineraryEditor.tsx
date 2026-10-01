@@ -757,7 +757,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
                 <div className="itinerary-attraction-previews">
                   {attraction.images.map((image,imageIndex)=><div className="itinerary-attraction-preview" key={image.path||image.url||imageIndex}>
                     <img src={image.url} alt={attraction.name||image.name||"Attraction"}/>
-                    <button type="button" aria-label="Delete image" onClick={()=>void deleteAttractionImage(day.id,attraction.id,imageIndex)}>×</button>
+                    <button className="icon-action-btn icon-action-remove" type="button" aria-label="Delete image" onClick={()=>void deleteAttractionImage(day.id,attraction.id,imageIndex)}>×</button>
                   </div>)}
                 </div>
                 <div className="itinerary-attraction-actions">
@@ -827,7 +827,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
             {hotel.images.length>0&&<div className="itinerary-hotel-image-grid">
               {hotel.images.map((image,imageIndex)=><div className="itinerary-hotel-image" key={image.path||image.url||imageIndex}>
                 <img src={image.url} alt={hotel.name||image.name||"Hotel"}/>
-                <button type="button" aria-label="Delete image" onClick={()=>void deleteHotelImage(hotel.id,imageIndex)}>×</button>
+                <button className="icon-action-btn icon-action-remove" type="button" aria-label="Delete image" onClick={()=>void deleteHotelImage(hotel.id,imageIndex)}>×</button>
               </div>)}
             </div>}
           </div>
