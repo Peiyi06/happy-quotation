@@ -2,6 +2,7 @@
 
 import { useEffect,useState } from "react";
 import { useRouter } from "next/navigation";
+import InquiryAiIntake from "@/components/InquiryAiIntake";
 
 type InquiryFlight={id:string;from:string;to:string;flightNo:string;date:string;departureTime:string;arrivalTime:string;remarks:string};
 const flightUid=()=>Math.random().toString(36).slice(2,10);
@@ -110,6 +111,56 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
     ].join("\n");
   }
 
+  function applyAiIntake(payload:any){
+    if(payload.trip){
+      if(payload.trip.departureCity) setDepartureCity(payload.trip.departureCity);
+      if(payload.trip.destination) setDestination(payload.trip.destination);
+      if(payload.trip.travelStartDate) setStartDate(payload.trip.travelStartDate);
+      if(payload.trip.travelEndDate) setEndDate(payload.trip.travelEndDate);
+      if(payload.trip.pax!=null) setPax(payload.trip.pax);
+      if(payload.trip.budget) setBudget(payload.trip.budget);
+      if(payload.trip.tourType) setTourType(payload.trip.tourType);
+    }
+    if(payload.composition){
+      if(payload.composition.adultCount!=null) setAdultCount(payload.composition.adultCount);
+      if(payload.composition.seniorCount!=null) setSeniorCount(payload.composition.seniorCount);
+      if(payload.composition.childCount!=null) setChildCount(payload.composition.childCount);
+      if(payload.composition.seniorNotes) setSeniorNotes(payload.composition.seniorNotes);
+      if(payload.composition.childAges) setChildAges(payload.composition.childAges);
+      if(payload.composition.childNotes) setChildNotes(payload.composition.childNotes);
+      if(payload.composition.mobilityNotes) setMobilityNotes(payload.composition.mobilityNotes);
+    }
+    if(payload.requirements){
+      if(payload.requirements.flightRequirement) setFlightRequirement(payload.requirements.flightRequirement);
+      if(payload.requirements.hotelRequirement) setHotelRequirement(payload.requirements.hotelRequirement);
+      if(payload.requirements.mealRequirement) setMealRequirement(payload.requirements.mealRequirement);
+      const combinedSpecial=[payload.requirements.specialRequest,payload.requirements.extraNotes].filter(Boolean).join("\n");
+      if(combinedSpecial) setSpecialRequest(combinedSpecial);
+    }
+    if(Array.isArray(payload.flights)){
+      const onlyFlights=payload.flights.filter((x:any)=>x.segmentType==="flight").map((x:any)=>({
+        id:flightUid(),
+        from:x.from||"",
+        to:x.to||"",
+        flightNo:x.flightNo||"",
+        date:x.date||"",
+        departureTime:x.departureTime||"",
+        arrivalTime:x.arrivalTime||"",
+        remarks:[
+          x.departureTerminal?"Departure Terminal: "+x.departureTerminal:"",
+          x.arrivalTerminal?"Arrival Terminal: "+x.arrivalTerminal:"",
+          x.cabin?"Cabin: "+x.cabin:"",
+          x.baggage?"Baggage: "+x.baggage:"",
+          x.operatingCarrier?"Operated by: "+x.operatingCarrier:"",
+          x.duration?"Duration: "+x.duration:"",
+          x.remarks||""
+        ].filter(Boolean).join(" · ")
+      }));
+      if(onlyFlights.length) setSuggestedFlights(onlyFlights);
+    }
+    setMessage("AI information applied. Please review before saving.");
+  }
+
   async function save(){
     setSaving(true);setMessage("");
     try{
@@ -138,6 +189,10 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
       <div className="panel-head">
         <div><h2>Customer Request｜客户需求</h2><p className="panel-subtext">Sales 只需在 Inquiry 输入一次，后续 Itinerary / Quotation 会复用这些资料。</p></div>
         <div className="customer-request-copy-actions">
+          <InquiryAiIntake
+            inquiryContext={{departureCity,destination,travelStartDate:startDate,travelEndDate:endDate,pax,budget,tourType}}
+            onApply={applyAiIntake}
+          />
           <button className="btn" type="button" onClick={()=>void copyText(basicRequestText(),"Basic request")}>Copy Basic Request</button>
           <button className="btn" type="button" onClick={()=>void copyText(detailedRequestText(),"Detailed request")}>Copy Detailed Request</button>
         </div>
