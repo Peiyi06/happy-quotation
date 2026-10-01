@@ -1191,3 +1191,52 @@
 .operation-queue-footer a{color:var(--navy);font-size:11px;font-weight:800;text-decoration:none}
 .operation-queue-footer a:hover{text-decoration:underline}
 .operation-queue-panel.expanded{grid-column:1/-1}
+
+
+/* Simplified Operation Review */
+.operation-review-simplified{display:grid;gap:18px}
+.operation-customer-brief .panel-head,.operation-supplier-panel .panel-head{align-items:flex-start}
+.operation-secondary-btn{background:#f5f8fa;color:var(--navy2);border-color:#d6e0e6}
+.operation-brief-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:4px}
+.operation-brief-grid>div,.operation-brief-requirements>div{border:1px solid var(--line);border-radius:11px;background:#fbfcfd;padding:11px 12px;min-width:0}
+.operation-brief-grid span,.operation-brief-requirements span{display:block;font-size:10px;font-weight:800;color:#7b8d99;margin-bottom:5px}
+.operation-brief-grid strong{display:block;color:var(--navy2);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.operation-brief-requirements{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.operation-brief-requirements p{margin:0;color:#4f626e;font-size:11.5px;line-height:1.5}
+.operation-full-sales{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);display:grid;gap:12px}
+.operation-subsection{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.operation-plan-panel>.operation-subsection:first-of-type{margin-top:0;padding-top:0;border-top:0}
+.operation-subsection-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}
+.operation-subsection-head h3{margin:0;color:var(--navy2);font-size:14px}
+.operation-subsection-head p{margin:3px 0 0;color:var(--muted);font-size:10.5px}
+.operation-subsection-actions{display:flex;gap:8px;flex-wrap:wrap}
+.operation-subsection-actions .btn{font-size:10.5px;padding:8px 10px}
+.operation-traveller-line{display:flex;gap:10px;flex-wrap:wrap}
+.operation-traveller-line span{display:inline-flex;align-items:center;gap:7px;border:1px solid #dce5ea;background:#f8fbfc;border-radius:999px;padding:7px 10px;color:#6a7f89;font-size:10.5px}
+.operation-traveller-line b{color:var(--navy2);font-size:12px}
+.operation-flight-summary-list{display:grid;gap:8px}
+.operation-flight-summary{display:grid;grid-template-columns:minmax(90px,1.15fr) minmax(70px,.8fr) minmax(95px,.9fr) minmax(120px,1fr);gap:8px 12px;align-items:center;border:1px solid #dce5ea;border-radius:10px;padding:9px 10px;background:#fbfcfd}
+.operation-flight-summary b{font-size:11px;color:var(--navy2)}
+.operation-flight-summary span{font-size:10.5px;color:#607581}
+.operation-flight-summary em{grid-column:1/-1;font-size:9.5px;color:#82929b;font-style:normal}
+.operation-inline-empty{border:1px dashed #d7e0e6;border-radius:10px;padding:12px;color:#81919b;font-size:11px;background:#fbfcfd}
+.operation-flight-editor{margin-top:8px}
+.operation-flight-editor-actions{display:flex;justify-content:flex-end;gap:8px}
+.operation-internal-notes .field textarea{min-height:90px}
+.operation-supplier-grid{display:grid;grid-template-columns:minmax(220px,.8fr) minmax(260px,1.2fr);gap:14px;align-items:end}
+.operation-budget-toggle{min-height:48px;border:1px solid var(--line);border-radius:10px;background:#fbfcfd;padding:0 12px}
+.operation-review-actions{margin-top:0}
+.operation-review-actions .btn.primary{margin-left:auto}
+.operation-sales-flights-head{margin-top:2px}
+@media(max-width:1100px){
+  .operation-brief-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .operation-flight-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:700px){
+  .operation-brief-grid,.operation-brief-requirements,.operation-supplier-grid{grid-template-columns:1fr}
+  .operation-subsection-head{flex-direction:column}
+  .operation-flight-summary{grid-template-columns:1fr}
+  .operation-review-actions{width:100%}
+  .operation-review-actions .btn{flex:1;text-align:center}
+  .operation-review-actions .btn.primary{margin-left:0}
+}
