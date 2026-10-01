@@ -3,6 +3,10 @@
 import { useEffect,useState } from "react";
 import { useRouter } from "next/navigation";
 
+type InquiryFlight={id:string;from:string;to:string;flightNo:string;date:string;departureTime:string;arrivalTime:string;remarks:string};
+const flightUid=()=>Math.random().toString(36).slice(2,10);
+const emptyFlight=():InquiryFlight=>({id:flightUid(),from:"",to:"",flightNo:"",date:"",departureTime:"",arrivalTime:"",remarks:""});
+
 export default function InquiryEditor({initialInquiry,currentStaffName}:{initialInquiry?:any;currentStaffName:string}){
   const router=useRouter();
   const [customerName,setCustomerName]=useState(initialInquiry?.customer_name||"");
@@ -17,6 +21,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
   const [budget,setBudget]=useState(initialInquiry?.budget||"");
   const [tourType,setTourType]=useState(initialInquiry?.tour_type||"");
   const [flightRequirement,setFlightRequirement]=useState(initialInquiry?.flight_requirement||"");
+  const [suggestedFlights,setSuggestedFlights]=useState<InquiryFlight[]>(Array.isArray(initialInquiry?.inquiry_data?.suggestedFlights)?initialInquiry.inquiry_data.suggestedFlights:[]);
   const [hotelRequirement,setHotelRequirement]=useState(initialInquiry?.hotel_requirement||"");
   const [mealRequirement,setMealRequirement]=useState(initialInquiry?.meal_requirement||"");
   const [specialRequest,setSpecialRequest]=useState(initialInquiry?.special_request||"");
@@ -42,7 +47,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
         travel_start_date:startDate,travel_end_date:endDate,days_count:days,nights_count:nights,
         pax,budget,tour_type:tourType,flight_requirement:flightRequirement,hotel_requirement:hotelRequirement,
         meal_requirement:mealRequirement,special_request:specialRequest,status,
-        inquiry_data:{}
+        inquiry_data:{...(initialInquiry?.inquiry_data||{}),suggestedFlights}
       };
       const res=await fetch("/api/internal-inquiries",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:initialInquiry?.id||null,payload})});
       const data=await res.json().catch(()=>({}));
@@ -74,6 +79,31 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
         <label className="field"><span>Status</span><select value={status} onChange={e=>setStatus(e.target.value)}>
           <option value="new">New Inquiry</option><option value="assigned">Assigned to Operation</option><option value="operation_review">Operation Review</option><option value="ready_supplier">Ready to Send Supplier</option><option value="waiting_supplier_quote">Waiting Supplier Quote</option><option value="supplier_quote_received">Supplier Quote Received</option><option value="planning">Sourcing / Planning</option><option value="itinerary_draft">Itinerary Draft</option><option value="quotation_draft">Quotation Draft</option><option value="ready_sales">Ready for Sales</option><option value="sent">Sent to Customer</option><option value="confirmed">Confirmed</option>
         </select></label>
+      </div>
+    </section>
+
+    <section className="panel">
+      <div className="panel-head">
+        <div>
+          <h2>Suggested Flights｜推荐航班</h2>
+          <p className="panel-subtext">Sales 可先填写推荐航班。Operation 后续可以沿用或提出替代航班，不会覆盖原始版本。</p>
+        </div>
+        <button className="btn" type="button" onClick={()=>setSuggestedFlights(prev=>[...prev,emptyFlight()])}>+ Add Flight</button>
+      </div>
+      <div className="inquiry-flight-list">
+        {suggestedFlights.length===0&&<div className="empty">Optional｜如暂时没有推荐航班，可以留空。</div>}
+        {suggestedFlights.map((flight,index)=><div className="inquiry-flight-card" key={flight.id}>
+          <div className="inquiry-flight-card-head"><strong>Flight {index+1}</strong><button className="btn danger" type="button" onClick={()=>setSuggestedFlights(prev=>prev.filter(x=>x.id!==flight.id))}>Delete</button></div>
+          <div className="itinerary-meta-grid">
+            <label className="field"><span>From</span><input maxLength={3} value={flight.from} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,from:e.target.value.toUpperCase()}:x))} placeholder="KUL"/></label>
+            <label className="field"><span>To</span><input maxLength={3} value={flight.to} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,to:e.target.value.toUpperCase()}:x))} placeholder="CTS"/></label>
+            <label className="field"><span>Flight No.</span><input value={flight.flightNo} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,flightNo:e.target.value.toUpperCase()}:x))} placeholder="MH 52"/></label>
+            <label className="field"><span>Date</span><input type="date" value={flight.date} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,date:e.target.value}:x))}/></label>
+            <label className="field"><span>Departure Time</span><input type="time" value={flight.departureTime} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,departureTime:e.target.value}:x))}/></label>
+            <label className="field"><span>Arrival Time</span><input type="time" value={flight.arrivalTime} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,arrivalTime:e.target.value}:x))}/></label>
+            <label className="field inquiry-flight-remarks"><span>Remarks</span><input value={flight.remarks} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,remarks:e.target.value}:x))} placeholder="+1 / transit / baggage..."/></label>
+          </div>
+        </div>)}
       </div>
     </section>
 
