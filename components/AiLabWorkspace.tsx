@@ -255,7 +255,7 @@ export default function AiLabWorkspace(){
           <div className="ai-lab-bubble">
             {m.attachments&&m.attachments.length>0&&<div className="ai-lab-message-images">{m.attachments.map((a,i)=>a.url?<img key={i} src={a.url} alt={a.name}/>:<span key={i} className="ai-lab-restored-attachment">📎 {a.name}</span>)}</div>}
             <p>{m.text}</p>
-            {m.links&&m.links.length>0&&<div className="ai-lab-links">{m.links.map((link,i)=><button key={i} type="button" onClick={()=>router.push(link.href)}>{link.label}<span>→</span></button>)}</div>}
+            {m.links&&m.links.length>0&&<div className="ai-lab-links">{m.links.map((link,i)=><a key={i} href={link.href}>{link.label}<span>→</span></a>)}</div>}
             {m.memorySuggestion&&<div className="ai-lab-memory-proposal">
               <span>COMPANY MEMORY｜建议保存</span>
               <strong>{m.memorySuggestion.title}</strong>
@@ -316,7 +316,7 @@ export default function AiLabWorkspace(){
       </div>
 
       <div className="ai-lab-context-head"><span>CURRENT CONTEXT</span><strong>{contextInquiryId?"Current Case":"No case selected"}</strong></div>
-      {contextInquiryId?<div className="ai-lab-current-case"><span>INQUIRY</span><strong>{contextTitle||contextInquiryId}</strong><small>{contextInquiryId}</small><button className="btn" type="button" onClick={()=>router.push("/inquiries/"+contextInquiryId)}>Open Inquiry</button><button className="ai-lab-clear" type="button" onClick={clearContext}>Clear Context</button></div>:<p className="ai-lab-context-empty">当你提到一笔 Inquiry 后，它会留在这里。之后你可以直接说「继续这笔」或「下一步」。</p>}
+      {contextInquiryId?<div className="ai-lab-current-case"><span>INQUIRY</span><strong>{contextTitle||contextInquiryId}</strong><small>{contextInquiryId}</small><a className="btn ai-lab-nav-link" href={"/inquiries/"+contextInquiryId}>Open Inquiry</a><button className="ai-lab-clear" type="button" onClick={clearContext}>Clear Context</button></div>:<p className="ai-lab-context-empty">当你提到一笔 Inquiry 后，它会留在这里。之后你可以直接说「继续这笔」或「下一步」。</p>}
       <div className="ai-lab-safety"><strong>Beta Safety</strong><span>查询 / 导航可以直接做。</span><span>真正修改状态时必须由你确认。</span><span>Company Memory 只有你按 Save as Company Rule 后才会长期保存。</span></div>
     </aside>
   </div>;
