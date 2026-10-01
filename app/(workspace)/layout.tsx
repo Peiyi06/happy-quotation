@@ -25,6 +25,7 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
           <Link href="/tour-groups">Tour Groups</Link>
           {user.role === "manager" && <Link href="/trash">Trash</Link>}
           <Link href="/itineraries">Itinerary Templates</Link>
+          <Link href="/travel-library">Travel Media Library</Link>
           {["jess","long"].includes(user.username.toLowerCase()) && <Link href="/ai-import">AI Itinerary</Link>}
           {user.role === "manager" && <Link href="/team">Staff Accounts</Link>}
         </nav>
