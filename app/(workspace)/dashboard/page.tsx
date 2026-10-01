@@ -19,7 +19,7 @@ export default async function DashboardPage() {
   const avgMargin = all.length ? all.reduce((s:number,q:any)=>s+Number(q.margin||0),0)/all.length : 0;
 
   return <div>
-    <div className="page-head">
+    <div className="page-head page-compact-header">
       <div>
         <span className="page-kicker">WORKSPACE</span>
         <h1>Good day, {user?.name || "Team"}</h1>
