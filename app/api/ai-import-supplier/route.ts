@@ -102,6 +102,7 @@ export async function POST(request:Request){
 
   const form=await request.formData();
   const file=form.get("file");
+  const adjustmentNotes=String(form.get("adjustmentNotes")||"").trim().slice(0,12000);
   if(!(file instanceof File)) return NextResponse.json({error:"Please attach a supplier file."},{status:400});
   if(file.size<=0||file.size>MAX_FILE_BYTES) return NextResponse.json({error:"For the MVP, each supplier file must be 3.5MB or smaller."},{status:400});
 
@@ -136,7 +137,7 @@ Goal:
 7. For each day: title should be a concise route/title; content should be customer-safe itinerary prose; hotel should be the hotel for that day if stated; attractions should be attraction names only.
 8. Internal findings must include any content that may expose supplier pricing or private commercial information, with a short reason.
 9. Add warnings for contradictions, missing days, unclear dates, unclear pricing separation, or any uncertain extraction.
-10. This is a draft for Operation review, not a final customer document.`;
+10. This is a draft for Operation review, not a final customer document.\n11. Operation adjustment notes, when provided, are intentional transformation instructions. Use them to change duration, shift days, move attractions, adapt arrival/departure days, or change pacing.\n12. If Operation explicitly requests new sightseeing or content not present in the supplier source, you may propose reasonable additions, but add a warning that the content was AI-added and requires Operation confirmation.\n13. Never let Operation adjustment notes cause internal supplier costs or confidential commercial information to enter customer-facing fields.${operationContext}`;
 
   const openai=await fetch("https://api.openai.com/v1/responses",{
     method:"POST",
