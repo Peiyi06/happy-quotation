@@ -8,7 +8,8 @@ type PendingAction={type:string;inquiryId:string;targetId:string;label:string;co
 type MemorySuggestion={shouldSuggest:boolean;category:string;title:string;ruleText:string;reason:string};
 type Attachment={name:string;url?:string;type?:string;size?:number};
 type WorkThread={id:string;title:string;linked_inquiry_id?:string|null;context_title?:string;inquiry_no?:string|null;destination?:string|null;inquiry_status?:string|null;last_active_at?:string;archived?:boolean};
-type Message={role:"user"|"assistant";text:string;links?:LinkItem[];action?:PendingAction;memorySuggestion?:MemorySuggestion;attachments?:Attachment[]};
+type AutoMemorySaved={id?:string;title:string;ruleText:string;duplicate?:boolean};
+type Message={role:"user"|"assistant";text:string;links?:LinkItem[];action?:PendingAction;memorySuggestion?:MemorySuggestion;autoMemorySaved?:AutoMemorySaved;attachments?:Attachment[]};
 
 const starterPrompts=[
   "今天有什么需要我注意？",
@@ -77,6 +78,7 @@ export default function AiLabWorkspace(){
         links:Array.isArray(payload.links)?payload.links:[],
         action:payload.action?.type&&payload.action.type!=="none"?payload.action:undefined,
         memorySuggestion:payload.memorySuggestion?.shouldSuggest?payload.memorySuggestion:undefined,
+        autoMemorySaved:payload.autoMemorySaved||undefined,
         attachments:Array.isArray(payload.attachments)?payload.attachments:[]
       } as Message;
     });
@@ -141,7 +143,8 @@ export default function AiLabWorkspace(){
         text:result.reply||"我已经检查了系统资料。",
         links:Array.isArray(result.links)?result.links:[],
         action:result.action?.type&&result.action.type!=="none"?result.action:undefined,
-        memorySuggestion:result.memorySuggestion?.shouldSuggest?result.memorySuggestion:undefined
+        memorySuggestion:result.memorySuggestion?.shouldSuggest?result.memorySuggestion:undefined,
+        autoMemorySaved:result.autoMemorySaved||undefined
       }]);
       await loadThreads();
     }finally{
@@ -256,6 +259,12 @@ export default function AiLabWorkspace(){
             {m.attachments&&m.attachments.length>0&&<div className="ai-lab-message-images">{m.attachments.map((a,i)=>a.url?<img key={i} src={a.url} alt={a.name}/>:<span key={i} className="ai-lab-restored-attachment">📎 {a.name}</span>)}</div>}
             <p>{m.text}</p>
             {m.links&&m.links.length>0&&<div className="ai-lab-links">{m.links.map((link,i)=><a key={i} href={link.href}>{link.label}<span>→</span></a>)}</div>}
+            {m.autoMemorySaved&&<div className="ai-lab-memory-autosaved">
+              <span>✓ COMPANY RULE 已自动保存</span>
+              <strong>{m.autoMemorySaved.title}</strong>
+              <p>{m.autoMemorySaved.ruleText}</p>
+              {m.autoMemorySaved.duplicate&&<small>这条规则之前已经保存过，因此没有重复建立。</small>}
+            </div>}
             {m.memorySuggestion&&<div className="ai-lab-memory-proposal">
               <span>COMPANY MEMORY｜建议保存</span>
               <strong>{m.memorySuggestion.title}</strong>
@@ -317,7 +326,7 @@ export default function AiLabWorkspace(){
 
       <div className="ai-lab-context-head"><span>CURRENT CONTEXT</span><strong>{contextInquiryId?"Current Case":"No case selected"}</strong></div>
       {contextInquiryId?<div className="ai-lab-current-case"><span>INQUIRY</span><strong>{contextTitle||contextInquiryId}</strong><small>{contextInquiryId}</small><a className="btn ai-lab-nav-link" href={"/inquiries/"+contextInquiryId}>Open Inquiry</a><button className="ai-lab-clear" type="button" onClick={clearContext}>Clear Context</button></div>:<p className="ai-lab-context-empty">当你提到一笔 Inquiry 后，它会留在这里。之后你可以直接说「继续这笔」或「下一步」。</p>}
-      <div className="ai-lab-safety"><strong>Beta Safety</strong><span>查询 / 导航可以直接做。</span><span>真正修改状态时必须由你确认。</span><span>Company Memory 只有你按 Save as Company Rule 后才会长期保存。</span></div>
+      <div className="ai-lab-safety"><strong>Beta Safety</strong><span>查询 / 导航可以直接做。</span><span>真正修改状态时必须由你确认。</span><span>非 Quotation 长期规则会自动保存并提示；Quotation 规则仍需你手动确认。</span></div>
     </aside>
   </div>;
 }
