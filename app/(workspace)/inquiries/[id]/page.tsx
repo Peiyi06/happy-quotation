@@ -3,6 +3,14 @@ import { notFound } from "next/navigation";
 import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
 import InquiryWorkflowAction from "@/components/InquiryWorkflowAction";
 
+const inquiryStatusLabels:Record<string,string>={
+  new:"New",
+  in_progress:"In Progress",
+  waiting_quote:"Waiting Quote",
+  ready_customer:"Ready for Customer",
+  closed:"Closed"
+};
+
 export default async function InquiryDetailPage({params}:{params:Promise<{id:string}>}){
   const {id}=await params;
   const token=await internalToken();
@@ -18,12 +26,14 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
 
   return <div>
     <div className="page-head inquiry-detail-head">
-      <div><span className="page-kicker">INQUIRY DETAIL</span><h1>{data.customer_name||data.inquiry_no}</h1><p>{data.inquiry_no} · {data.status}</p></div>
+      <div><span className="page-kicker">INQUIRY DETAIL</span><h1>{data.customer_name||data.inquiry_no}</h1><p>{data.inquiry_no} · {inquiryStatusLabels[data.status]||data.status}</p></div>
       <div className="inquiry-head-right">
         <InquiryWorkflowAction
           inquiryId={id}
+          mainStatus={data.status||"new"}
           supplierStatus={data.supplier_inquiry_status||"draft"}
           canAdvance={Boolean(user&&(user.username==="long"||user.id===data.operation_assignee_id))}
+          canUpdateStatus={Boolean(user)}
           hasQuotation={linkedQuotes.length>0}
           firstQuotationId={linkedQuotes[0]?.id}
         />
