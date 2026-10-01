@@ -226,12 +226,7 @@ export default function OperationReviewEditor({
       </div>
       <div className="itinerary-meta-grid">
         <label className="field"><span>Quotation Deadline｜报价截止</span><input disabled={!canEdit} type="date" value={quoteDeadline} onChange={e=>setQuoteDeadline(e.target.value)}/></label>
-        <label className="field"><span>Supplier Form Status</span><select disabled={!canEdit} value={supplierStatus} onChange={e=>setSupplierStatus(e.target.value)}>
-          <option value="draft">Draft</option>
-          <option value="ready">Ready to Send Supplier</option>
-          <option value="waiting_quote">Waiting Supplier Quote</option>
-          <option value="quote_received">Supplier Quote Received</option>
-        </select></label>
+        <label className="field"><span>Supplier Workflow Status</span><input value={supplierStatus==="quote_received"?"Quote Received":supplierStatus==="waiting_quote"?"Waiting Supplier Quote":supplierStatus==="ready"?"Ready to Send Supplier":"Supplier Draft"} readOnly className="system-fixed-input"/></label>
         <label className="supplier-budget-toggle"><input disabled={!canEdit} type="checkbox" checked={showBudget} onChange={e=>setShowBudget(e.target.checked)}/><span>Show customer budget on Supplier Inquiry Form</span></label>
       </div>
       <label className="field supplier-remarks"><span>Remarks to Supplier｜给供应商备注</span><textarea disabled={!canEdit} value={supplierRemarks} onChange={e=>setSupplierRemarks(e.target.value)} placeholder="Quotation format, response request, special commercial notes that are safe to send to supplier..."/></label>
