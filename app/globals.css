@@ -1870,3 +1870,250 @@ input::placeholder,textarea::placeholder{font-family:inherit;color:#8b98a3}
 .simple-workflow-actions .btn{
   font-weight:600;
 }
+
+
+/* =========================================================
+   Unified Button Design System
+   Primary / Secondary / Danger / Compact
+   ========================================================= */
+:root{
+  --btn-height:40px;
+  --btn-radius:9px;
+  --btn-font-size:13px;
+  --btn-font-weight:700;
+  --btn-pad-x:15px;
+  --btn-border:#cbd6df;
+  --btn-text:#173b43;
+  --btn-bg:#ffffff;
+  --btn-hover:#f5f8fa;
+  --btn-primary-bg:var(--gold);
+  --btn-primary-border:#b99558;
+  --btn-primary-text:#ffffff;
+  --btn-danger-bg:#fffafa;
+  --btn-danger-border:#e6c1bd;
+  --btn-danger-text:#a33f36;
+  --btn-compact-height:31px;
+  --btn-compact-radius:7px;
+  --btn-compact-font-size:12px;
+}
+
+/* Standard functional controls */
+.btn,
+.workflow-primary-btn,
+.workflow-text-link,
+.operation-secondary-btn{
+  min-height:var(--btn-height);
+  height:var(--btn-height);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:0 var(--btn-pad-x);
+  border:1px solid var(--btn-border);
+  border-radius:var(--btn-radius);
+  background:var(--btn-bg);
+  color:var(--btn-text);
+  font-size:var(--btn-font-size);
+  font-weight:var(--btn-font-weight);
+  line-height:1;
+  text-decoration:none!important;
+  white-space:nowrap;
+  cursor:pointer;
+  box-shadow:none;
+  transition:background-color .15s ease,border-color .15s ease,color .15s ease,box-shadow .15s ease;
+}
+
+.btn:hover,
+.workflow-primary-btn:hover,
+.workflow-text-link:hover,
+.operation-secondary-btn:hover{
+  background:var(--btn-hover);
+  border-color:#b9c8d2;
+  color:var(--btn-text);
+  text-decoration:none!important;
+  filter:none;
+}
+
+.btn.primary,
+.workflow-primary-btn{
+  background:var(--btn-primary-bg);
+  color:var(--btn-primary-text);
+  border-color:var(--btn-primary-border);
+}
+
+.btn.primary:hover,
+.workflow-primary-btn:hover{
+  background:#b99558;
+  border-color:#aa864c;
+  color:#fff;
+}
+
+.btn.ghost,
+.operation-secondary-btn{
+  background:#fff;
+  color:var(--btn-text);
+  border-color:var(--btn-border);
+}
+
+.btn.danger,
+.itinerary-delete-btn{
+  background:var(--btn-danger-bg);
+  color:var(--btn-danger-text);
+  border-color:var(--btn-danger-border);
+}
+
+.btn.danger:hover,
+.itinerary-delete-btn:hover{
+  background:#fff2f0;
+  color:#94372f;
+  border-color:#d9aaa5;
+}
+
+.btn:disabled,
+.workflow-primary-btn:disabled,
+.workflow-text-link[aria-disabled="true"],
+.operation-secondary-btn:disabled{
+  opacity:.52;
+  cursor:not-allowed;
+  box-shadow:none;
+}
+
+/* Compact controls used inside tables, cards and editors */
+.row-actions button,
+.danger-link,
+.day-status-btn,
+.day-complete-btn,
+.day-collapse-btn,
+.itinerary-editor .day-card button:not(.btn),
+.itinerary-editor td button:not(.btn),
+.itinerary-editor .attraction-card button:not(.btn),
+.itinerary-editor .hotel-card button:not(.btn),
+.itinerary-editor .package-item-row button:not(.btn),
+.itinerary-editor .reminder-row button:not(.btn){
+  min-height:var(--btn-compact-height);
+  height:var(--btn-compact-height);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 9px;
+  border:1px solid var(--btn-border);
+  border-radius:var(--btn-compact-radius);
+  background:#fff;
+  color:var(--btn-text);
+  font-size:var(--btn-compact-font-size);
+  font-weight:650;
+  line-height:1;
+  text-decoration:none!important;
+  white-space:nowrap;
+  cursor:pointer;
+}
+
+.danger-link,
+.itinerary-editor .danger-link{
+  background:var(--btn-danger-bg)!important;
+  color:var(--btn-danger-text)!important;
+  border-color:var(--btn-danger-border)!important;
+  padding:0 9px!important;
+}
+
+.day-complete-btn{
+  background:#edf8f1!important;
+  color:#237448!important;
+  border-color:#b9d9c5!important;
+}
+.day-status-btn{
+  background:#f7f9fa!important;
+  color:#5d6a74!important;
+  border-color:#d7dfe5!important;
+}
+.day-collapse-btn{
+  background:#f4f8fb!important;
+  color:var(--navy2)!important;
+  border-color:#c9d7e1!important;
+}
+
+/* Existing feature buttons should inherit the same measurements */
+.leader-toggle-btn,
+.transit-toggle,
+.itinerary-sync-btn,
+.ai-intake-launch,
+.supplier-form-print-button{
+  min-height:var(--btn-height)!important;
+  height:var(--btn-height)!important;
+  border-radius:var(--btn-radius)!important;
+  font-size:var(--btn-font-size)!important;
+  font-weight:var(--btn-font-weight)!important;
+  text-decoration:none!important;
+}
+
+/* Language segmented controls keep their grouping, but use the same border language */
+.supplier-language-switch button{
+  min-height:36px;
+  border:1px solid var(--btn-border);
+  font-size:12px;
+  font-weight:650;
+  text-decoration:none!important;
+}
+.supplier-language-switch button+button{
+  border-left-width:0;
+}
+
+/* Functional links must not look like browser hyperlinks */
+.detail-actions a,
+.simple-workflow-actions a,
+.quote-source-inquiry a,
+.ai-lab-nav-link,
+.workflow-record-link,
+.data-table a,
+.operation-queue-footer a,
+.quotation-type-card{
+  text-decoration:none!important;
+}
+
+.workflow-record-link:hover,
+.data-table a:hover,
+.operation-queue-footer a:hover{
+  text-decoration:none!important;
+}
+
+/* Quote top bar should use the same master measurements */
+.quote-top-actions .btn{
+  min-height:var(--btn-height);
+  height:var(--btn-height);
+  border-radius:var(--btn-radius);
+  font-size:var(--btn-font-size);
+  font-weight:var(--btn-font-weight);
+  padding:0 var(--btn-pad-x);
+}
+.quote-top-actions .btn.primary{
+  min-width:0;
+}
+
+/* Preserve compact status pills: these are labels, not functional buttons */
+.quote-top-actions .unsaved-badge,
+.quote-top-actions .quote-editor-review-state,
+.quote-commercial-change-note{
+  height:auto;
+  min-height:0;
+}
+
+/* Small close / icon actions still have a visible border */
+.quotation-type-close,
+.ai-lab-attach-btn,
+.ai-lab-clear,
+.ai-thread-panel-head button,
+.ai-thread-archive,
+.ai-import-remove-file,
+.sidebar-user button{
+  border:1px solid var(--btn-border);
+  text-decoration:none!important;
+}
+
+/* No underlines anywhere a class explicitly represents an action */
+a.btn,
+a.workflow-text-link,
+a.workflow-primary-btn,
+button,
+[role="button"]{
+  text-decoration:none!important;
+}
