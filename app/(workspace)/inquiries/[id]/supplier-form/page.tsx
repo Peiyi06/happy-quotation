@@ -39,6 +39,9 @@ export default async function SupplierInquiryFormPage({params}:{params:Promise<{
   const itinerary=pick("itineraryRequirement","")||"";
   const salesFlights=Array.isArray(data?.inquiry_data?.suggestedFlights)?data.inquiry_data.suggestedFlights:[];
   const finalFlights=r?.overrideSuggestedFlights===true&&Array.isArray(r?.suggestedFlights)?r.suggestedFlights:salesFlights;
+  const salesComposition=data?.inquiry_data?.travellerComposition||{};
+  const finalComposition=r?.overrideTravellerComposition===true&&r?.travellerComposition?r.travellerComposition:salesComposition;
+  const compositionTotal=(Number(finalComposition.adultCount)||0)+(Number(finalComposition.seniorCount)||0)+(Number(finalComposition.childCount)||0);
 
   const rows=[
     ["Destination｜目的地",destination],
@@ -87,6 +90,22 @@ export default async function SupplierInquiryFormPage({params}:{params:Promise<{
           <p>{value}</p>
         </div>)}
       </section>
+
+      {(finalComposition.adultCount!=null||finalComposition.seniorCount!=null||finalComposition.childCount!=null)&&<section className="supplier-form-composition">
+        <h2>Traveller Composition｜旅客组成</h2>
+        <div className="supplier-composition-grid">
+          <div><span>Adult｜成人</span><strong>{finalComposition.adultCount??"—"}</strong></div>
+          <div><span>Senior｜老人</span><strong>{finalComposition.seniorCount??"—"}</strong></div>
+          <div><span>Child｜小孩</span><strong>{finalComposition.childCount??"—"}</strong></div>
+          <div><span>Total｜合计</span><strong>{compositionTotal}</strong></div>
+        </div>
+        {(finalComposition.seniorNotes||finalComposition.childAges||finalComposition.childNotes||finalComposition.mobilityNotes)&&<div className="supplier-composition-notes">
+          {finalComposition.seniorNotes&&<div><span>Senior Notes｜老人备注</span><p>{finalComposition.seniorNotes}</p></div>}
+          {finalComposition.childAges&&<div><span>Child Ages｜小孩年龄</span><p>{finalComposition.childAges}</p></div>}
+          {finalComposition.childNotes&&<div><span>Child Notes｜小孩备注</span><p>{finalComposition.childNotes}</p></div>}
+          {finalComposition.mobilityNotes&&<div><span>Mobility / Care｜行动与照顾需求</span><p>{finalComposition.mobilityNotes}</p></div>}
+        </div>}
+      </section>}
 
       {finalFlights.length>0&&<section className="supplier-form-flights">
         <h2>Suggested Flights｜推荐航班</h2>
