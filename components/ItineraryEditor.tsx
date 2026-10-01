@@ -9,6 +9,7 @@ type SuggestedFlight={id:string;from:string;to:string;flightNo:string;date:strin
 type HotelItem={id:string;name:string;cityArea:string;starRating:string;stayNights:string;roomSize:number|"";openingYear:string;renovationYear:string;nearbyNotes:string;images:AttractionImage[]};
 type AttractionItem={id:string;name:string;images:AttractionImage[]};
 type PackageItem={id:string;preset:string;name:string};
+type ReminderItem={id:string;preset:string;title:string;description:string};
 type DayItem={
   id:string;
   title:string;
@@ -31,6 +32,22 @@ const uid=()=>Math.random().toString(36).slice(2,10);
 const emptyFlight=():SuggestedFlight=>({id:uid(),from:"",to:"",flightNo:"",date:"",departureTime:"",arrivalTime:"",remarks:""});
 const emptyHotel=():HotelItem=>({id:uid(),name:"",cityArea:"",starRating:"",stayNights:"",roomSize:"",openingYear:"",renovationYear:"",nearbyNotes:"",images:[]});
 const emptyPackageItem=():PackageItem=>({id:uid(),preset:"other",name:""});
+const emptyReminder=():ReminderItem=>({id:uid(),preset:"other",title:"",description:""});
+const normalizeReminders=(raw:any):ReminderItem[]=>Array.isArray(raw)?raw.map((item:any)=>(
+  typeof item==="string"
+    ? {id:uid(),preset:"other",title:"Reminder",description:item}
+    : {id:item?.id||uid(),preset:item?.preset||"other",title:item?.title||"",description:item?.description||""}
+)):[];
+const reminderPresets=[
+  ["passport","Passport / Travel Document｜护照 / 旅行证件"],
+  ["weather","Weather / Clothing｜天气 / 穿着"],
+  ["personal","Personal Expenses｜个人消费"],
+  ["insurance","Travel Insurance｜旅游保险"],
+  ["baggage","Baggage｜行李"],
+  ["activity","Special Activity Notice｜特别活动提醒"],
+  ["terms","Terms / Itinerary Change｜条款 / 行程调整"],
+  ["other","Other｜其他"]
+] as const;
 const normalizePackageItems=(raw:any):PackageItem[]=>Array.isArray(raw)?raw.map((item:any)=>(
   typeof item==="string"
     ? {id:uid(),preset:"other",name:item}
@@ -122,6 +139,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   );
   const [includedItems,setIncludedItems]=useState<PackageItem[]>(normalizePackageItems(data.includedItems));
   const [notIncludedItems,setNotIncludedItems]=useState<PackageItem[]>(normalizePackageItems(data.notIncludedItems));
+  const [reminders,setReminders]=useState<ReminderItem[]>(normalizeReminders(data.reminders));
   const [saving,setSaving]=useState(false);
   const [message,setMessage]=useState("");
   const [uploadingAttraction,setUploadingAttraction]=useState<string|null>(null);
@@ -288,6 +306,45 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     setter(items=>items.filter(item=>item.id!==id));
   }
 
+  function reminderPresetTitle(preset:string){
+    return reminderPresets.find(([value])=>value===preset)?.[1]||"";
+  }
+
+  function addReminder(){
+    setReminders(items=>[...items,emptyReminder()]);
+  }
+
+  function patchReminder(id:string,patch:Partial<ReminderItem>){
+    setReminders(items=>items.map(item=>item.id===id?{...item,...patch}:item));
+  }
+
+  function selectReminderPreset(id:string,preset:string){
+    patchReminder(id,{preset,title:preset==="other"?"":reminderPresetTitle(preset)});
+  }
+
+  function moveReminder(index:number,dir:-1|1){
+    setReminders(items=>{
+      const target=index+dir;
+      if(target<0||target>=items.length) return items;
+      const next=[...items];
+      [next[index],next[target]]=[next[target],next[index]];
+      return next;
+    });
+  }
+
+  function duplicateReminder(index:number){
+    setReminders(items=>{
+      const src=items[index];
+      const next=[...items];
+      next.splice(index+1,0,{...src,id:uid()});
+      return next;
+    });
+  }
+
+  function removeReminder(id:string){
+    setReminders(items=>items.filter(item=>item.id!==id));
+  }
+
   function syncDays(){
     const target=Math.max(1,Number(daysCount)||1);
     setDays(current=>{
@@ -443,7 +500,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
 
   const currentSnapshot=JSON.stringify({
     title,destination,daysCount,nightsCount,customerName,status,
-    departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,days,hotels,includedItems,notIncludedItems
+    departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,days,hotels,includedItems,notIncludedItems,reminders
   });
 
   useEffect(()=>{
@@ -496,7 +553,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
         status,
         itinerary_data:{
           departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,
-          days,hotels,includedItems,notIncludedItems,op,opStaffId:initialItinerary?.owner_id||currentStaffId
+          days,hotels,includedItems,notIncludedItems,reminders,op,opStaffId:initialItinerary?.owner_id||currentStaffId
         }
       };
       const res=await fetch("/api/internal-itineraries",{
@@ -827,6 +884,42 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
           </div> : <div className="itinerary-attraction-empty">尚未加入 Not Included 项目。</div>}
         </div>
       </div>
+    </section>
+
+    <section className="panel">
+      <div className="panel-head">
+        <div>
+          <h2>Friendly Reminder｜温馨提醒</h2>
+          <p className="panel-subtext">Optional｜有填写才会在 Detail / 未来 PDF 显示。</p>
+        </div>
+        <button className="btn" type="button" onClick={addReminder}>+ Add Reminder</button>
+      </div>
+
+      {reminders.length>0 ? <div className="itinerary-reminder-list">
+        {reminders.map((item,index)=><article className="itinerary-reminder-row" key={item.id}>
+          <div className="itinerary-reminder-index">{String(index+1).padStart(2,"0")}</div>
+          <label className="field">
+            <span>Preset｜常用提醒</span>
+            <select value={item.preset} onChange={e=>selectReminderPreset(item.id,e.target.value)}>
+              {reminderPresets.map(([value,label])=><option key={value} value={value}>{label}</option>)}
+            </select>
+          </label>
+          <label className="field">
+            <span>Reminder Title｜提醒标题</span>
+            <input value={item.title} onChange={e=>patchReminder(item.id,{title:e.target.value})} placeholder={item.preset==="other"?"手动输入提醒标题":"可继续修改提醒标题"}/>
+          </label>
+          <label className="field itinerary-reminder-description">
+            <span>Description｜提醒内容</span>
+            <textarea value={item.description} onChange={e=>patchReminder(item.id,{description:e.target.value})} placeholder="输入需要提醒旅客的内容..."/>
+          </label>
+          <div className="itinerary-reminder-actions">
+            <button type="button" onClick={()=>moveReminder(index,-1)} disabled={index===0}>↑</button>
+            <button type="button" onClick={()=>moveReminder(index,1)} disabled={index===reminders.length-1}>↓</button>
+            <button type="button" onClick={()=>duplicateReminder(index)}>Duplicate</button>
+            <button type="button" className="danger-link" onClick={()=>removeReminder(item.id)}>Delete</button>
+          </div>
+        </article>)}
+      </div> : <div className="itinerary-attraction-empty">尚未加入温馨提醒。</div>}
     </section>
 
     {message&&<div className="save-message">{message}</div>}
