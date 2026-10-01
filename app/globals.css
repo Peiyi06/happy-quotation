@@ -970,3 +970,21 @@
 @media(max-width:700px){
   .quote-source-inquiry{align-items:flex-start;flex-direction:column}
 }
+
+.inquiry-detail-head{align-items:flex-start}
+.inquiry-head-right{display:grid;gap:10px;justify-items:end}
+.inquiry-workflow-box{min-width:330px;border:1px solid #c9d9df;border-radius:14px;background:#f9fcfd;padding:12px 14px;display:grid;grid-template-columns:1fr 1.1fr;gap:12px;align-items:center;box-shadow:0 8px 24px rgba(20,50,65,.06)}
+.inquiry-workflow-status,.inquiry-workflow-next{display:grid;gap:4px}
+.inquiry-workflow-status>span,.inquiry-workflow-next>span{font-size:9px;font-weight:900;letter-spacing:.08em;color:#6f8791}
+.inquiry-workflow-status>strong{font-size:13px;color:var(--navy2)}
+.workflow-primary-btn{border:1px solid #1b9aaa;background:#1b9aaa;color:#fff;font-weight:800;font-size:11px;border-radius:9px;padding:9px 12px;cursor:pointer;box-shadow:0 5px 14px rgba(27,154,170,.18)}
+.workflow-primary-btn:hover{filter:brightness(.96)}
+.workflow-primary-btn.disabled{background:#dfe8eb;border-color:#dfe8eb;color:#7b8c92;box-shadow:none;cursor:not-allowed}
+.workflow-error{grid-column:1/-1;color:#a33e3e;font-size:9px}
+@media(max-width:900px){
+  .inquiry-head-right{justify-items:stretch;width:100%}
+  .inquiry-workflow-box{min-width:0;width:100%}
+}
+@media(max-width:620px){
+  .inquiry-workflow-box{grid-template-columns:1fr}
+}
