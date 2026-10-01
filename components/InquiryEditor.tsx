@@ -18,6 +18,14 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
   const [days,setDays]=useState(Number(initialInquiry?.days_count)||1);
   const [nights,setNights]=useState(Number(initialInquiry?.nights_count)||0);
   const [pax,setPax]=useState<number|"">(initialInquiry?.pax??"");
+  const initialComposition=initialInquiry?.inquiry_data?.travellerComposition||{};
+  const [adultCount,setAdultCount]=useState<number|"">(initialComposition.adultCount??"");
+  const [seniorCount,setSeniorCount]=useState<number|"">(initialComposition.seniorCount??"");
+  const [childCount,setChildCount]=useState<number|"">(initialComposition.childCount??"");
+  const [seniorNotes,setSeniorNotes]=useState(initialComposition.seniorNotes||"");
+  const [childAges,setChildAges]=useState(initialComposition.childAges||"");
+  const [childNotes,setChildNotes]=useState(initialComposition.childNotes||"");
+  const [mobilityNotes,setMobilityNotes]=useState(initialComposition.mobilityNotes||"");
   const [budget,setBudget]=useState(initialInquiry?.budget||"");
   const [tourType,setTourType]=useState(initialInquiry?.tour_type||"");
   const [flightRequirement,setFlightRequirement]=useState(initialInquiry?.flight_requirement||"");
@@ -39,6 +47,10 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
     setDays(d);setNights(Math.max(0,d-1));
   },[startDate,endDate]);
 
+  const compositionTotal=(Number(adultCount)||0)+(Number(seniorCount)||0)+(Number(childCount)||0);
+  const compositionHasValues=adultCount!==""||seniorCount!==""||childCount!=="";
+  const compositionMismatch=compositionHasValues&&pax!==""&&compositionTotal!==Number(pax);
+
   async function save(){
     setSaving(true);setMessage("");
     try{
@@ -47,7 +59,12 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
         travel_start_date:startDate,travel_end_date:endDate,days_count:days,nights_count:nights,
         pax,budget,tour_type:tourType,flight_requirement:flightRequirement,hotel_requirement:hotelRequirement,
         meal_requirement:mealRequirement,special_request:specialRequest,status,
-        inquiry_data:{...(initialInquiry?.inquiry_data||{}),suggestedFlights}
+        inquiry_data:{...(initialInquiry?.inquiry_data||{}),suggestedFlights,travellerComposition:{
+          adultCount:adultCount===""?null:Number(adultCount),
+          seniorCount:seniorCount===""?null:Number(seniorCount),
+          childCount:childCount===""?null:Number(childCount),
+          seniorNotes,childAges,childNotes,mobilityNotes
+        }}
       };
       const res=await fetch("/api/internal-inquiries",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:initialInquiry?.id||null,payload})});
       const data=await res.json().catch(()=>({}));
@@ -79,6 +96,30 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
         <label className="field"><span>Status</span><select value={status} onChange={e=>setStatus(e.target.value)}>
           <option value="new">New Inquiry</option><option value="assigned">Assigned to Operation</option><option value="operation_review">Operation Review</option><option value="ready_supplier">Ready to Send Supplier</option><option value="waiting_supplier_quote">Waiting Supplier Quote</option><option value="supplier_quote_received">Supplier Quote Received</option><option value="planning">Sourcing / Planning</option><option value="itinerary_draft">Itinerary Draft</option><option value="quotation_draft">Quotation Draft</option><option value="ready_sales">Ready for Sales</option><option value="sent">Sent to Customer</option><option value="confirmed">Confirmed</option>
         </select></label>
+      </div>
+    </section>
+
+    <section className="panel">
+      <div className="panel-head">
+        <div>
+          <h2>Traveller Composition｜旅客组成</h2>
+          <p className="panel-subtext">填写成人、老人及小孩人数，方便 Operation 与供应商判断行程强度、车辆、门票及餐食安排。</p>
+        </div>
+      </div>
+      <div className="itinerary-meta-grid">
+        <label className="field"><span>Adult｜成人</span><input type="number" min="0" value={adultCount} onChange={e=>setAdultCount(e.target.value===""?"":Math.max(0,Number(e.target.value)||0))}/></label>
+        <label className="field"><span>Senior｜老人</span><input type="number" min="0" value={seniorCount} onChange={e=>setSeniorCount(e.target.value===""?"":Math.max(0,Number(e.target.value)||0))}/></label>
+        <label className="field"><span>Child｜小孩</span><input type="number" min="0" value={childCount} onChange={e=>setChildCount(e.target.value===""?"":Math.max(0,Number(e.target.value)||0))}/></label>
+      </div>
+      <div className="inquiry-requirement-grid traveller-composition-notes">
+        <label className="field"><span>Senior Notes｜老人备注</span><textarea value={seniorNotes} onChange={e=>setSeniorNotes(e.target.value)} placeholder="例如：65岁、72岁，其中1位走路较慢"/></label>
+        <label className="field"><span>Child Ages｜小孩年龄</span><textarea value={childAges} onChange={e=>setChildAges(e.target.value)} placeholder="例如：6岁、10岁"/></label>
+        <label className="field"><span>Child Notes｜小孩备注</span><textarea value={childNotes} onChange={e=>setChildNotes(e.target.value)} placeholder="婴儿车、儿童餐、儿童座椅等"/></label>
+        <label className="field"><span>Mobility / Care Notes｜行动与照顾需求</span><textarea value={mobilityNotes} onChange={e=>setMobilityNotes(e.target.value)} placeholder="例如：减少长时间步行、需要轮椅协助"/></label>
+      </div>
+      <div className={"traveller-composition-check "+(compositionMismatch?"warning":"ok")}>
+        <strong>Composition Total: {compositionTotal}</strong>
+        <span>{pax===""?"请先填写总 Pax。":compositionMismatch?`与 Pax ${pax} 不一致，请检查。`:`与 Pax ${pax} 一致。`}</span>
       </div>
     </section>
 
