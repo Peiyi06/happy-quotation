@@ -644,3 +644,30 @@
   .supplier-flight-head{font-size:10px}
   .supplier-flight-row{font-size:11px}
 }
+
+.traveller-composition-notes{margin-top:14px}
+.traveller-composition-check{margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 13px;border-radius:10px;font-size:11px}
+.traveller-composition-check.ok{background:#f1f8f4;border:1px solid #cfe5d6;color:#2f5d42}
+.traveller-composition-check.warning{background:#fff7ed;border:1px solid #f0d2a8;color:#8b5a1e}
+.traveller-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.traveller-summary-grid>div{padding:12px;border:1px solid var(--line);border-radius:10px;background:#fafcfd}
+.traveller-summary-grid span{display:block;font-size:10px;color:var(--muted);margin-bottom:4px}
+.traveller-summary-grid strong{font-size:17px;color:var(--navy2)}
+.composition-detail-grid{margin-top:12px}
+.operation-composition-source,.operation-composition-override{margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fafcfd}
+.operation-composition-override>p{margin:7px 0 12px;font-size:11px;color:var(--muted)}
+.supplier-form-composition{margin-top:18px}
+.supplier-form-composition h2{margin:0 0 9px;color:var(--navy2);font-size:15px}
+.supplier-composition-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.supplier-composition-grid>div{border:1px solid #dfe6eb;border-radius:10px;padding:11px;background:#fafcfd}
+.supplier-composition-grid span{display:block;font-size:10px;color:var(--muted);margin-bottom:5px}
+.supplier-composition-grid strong{font-size:15px;color:var(--navy2)}
+.supplier-composition-notes{margin-top:10px;border:1px solid #dfe6eb;border-radius:10px;overflow:hidden}
+.supplier-composition-notes>div{display:grid;grid-template-columns:210px 1fr;border-bottom:1px solid #e7ecef}
+.supplier-composition-notes>div:last-child{border-bottom:0}
+.supplier-composition-notes span{padding:11px 13px;background:#f7f9fb;font-size:11px;font-weight:800;color:var(--navy2)}
+.supplier-composition-notes p{margin:0;padding:11px 13px;font-size:12px;line-height:1.5;white-space:pre-wrap}
+@media(max-width:800px){
+  .traveller-summary-grid,.supplier-composition-grid{grid-template-columns:1fr 1fr}
+  .supplier-composition-notes>div{grid-template-columns:1fr}
+}
