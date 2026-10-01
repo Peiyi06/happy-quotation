@@ -19,7 +19,7 @@ export default async function OperationReviewPage({params}:{params:Promise<{id:s
   const linkedQuotes=Array.isArray(linkedQuoteData)?linkedQuoteData:[];
 
   return <div>
-    <div className="page-head inquiry-detail-head">
+    <div className="page-head inquiry-detail-head page-hero-header">
       <div>
         <span className="page-kicker">OPERATION REVIEW</span>
         <h1>{data.inquiry_no}</h1>
