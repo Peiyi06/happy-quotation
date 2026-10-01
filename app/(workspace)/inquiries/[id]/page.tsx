@@ -13,6 +13,8 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
   if(error||!data||!data.id) notFound();
   const {data:linkedQuoteData}=await db.rpc("staff_list_quotes_for_inquiry",{p_token:token,p_inquiry_id:id});
   const linkedQuotes=Array.isArray(linkedQuoteData)?linkedQuoteData:[];
+  const {data:linkedItineraryData}=await db.rpc("staff_list_itineraries_for_inquiry",{p_token:token,p_inquiry_id:id});
+  const linkedItineraries=Array.isArray(linkedItineraryData)?linkedItineraryData:[];
 
   return <div>
     <div className="page-head inquiry-detail-head">
@@ -99,8 +101,24 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
     <section className="panel inquiry-next-actions">
       <div className="panel-head"><div><h2>Downstream｜后续流程</h2><p className="panel-subtext">收到供应商报价后，再进入现有 Quotation 与 Itinerary 流程。</p></div></div>
       <div className="inquiry-flow-actions">
-        <div><strong>Create Itinerary</strong><span>下一阶段：从 Inquiry 自动带入客户基本资料</span><button className="btn" disabled>Coming next</button></div>
-        <div><strong>AI Supplier Import</strong><span>上传供应商行程 + Adjustment Notes</span><Link className="btn" href="/ai-import">Open AI Import</Link></div>
+        <div>
+          <strong>Itinerary</strong>
+          {linkedItineraries.length>0
+            ? <>
+                <span>{linkedItineraries.length} linked itinerary{linkedItineraries.length>1?"s":""} · 已关联当前 Inquiry。</span>
+                <div className="linked-quotation-list">
+                  {linkedItineraries.map((it:any)=><Link key={it.id} className="linked-quotation-item" href={"/itineraries/"+it.id}>
+                    <span><b>{it.itinerary_no} · {it.title||"Itinerary"}</b><small>{it.days_count}D{it.nights_count}N · {it.owner_name||"—"} · {it.status||"draft"}</small></span>
+                    <strong>Open →</strong>
+                  </Link>)}
+                </div>
+              </>
+            : <>
+                <span>从 Inquiry 自动带入客户、日期、人数、团型和推荐航班。</span>
+                <Link className="btn" href={"/itineraries/new?sourceInquiry="+id}>Create Itinerary</Link>
+              </>}
+        </div>
+        <div><strong>AI Supplier Import</strong><span>上传供应商行程 + Adjustment Notes，并自动关联当前 Inquiry。</span><Link className="btn" href={"/ai-import?sourceInquiry="+id}>Import Supplier Itinerary</Link></div>
         <div><strong>Customer Proposal</strong><span>Quotation + Itinerary 完成后组合为对客文件</span><button className="btn" disabled>Coming later</button></div>
       </div>
     </section>
