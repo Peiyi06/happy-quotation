@@ -37,6 +37,11 @@ function normalizeComposition(raw:any){
   };
 }
 
+function mentionsProvidedFlightDetails(text:any){
+  const v=s(text,2500).toLowerCase();
+  return /(已提供.*航班|航班.*已提供|航班信息|航班资料|客户.*航班|provided.*flight|flight.*provided|flight details|flight information|flight screenshot|航班截图)/i.test(v);
+}
+
 function inquiryPayload(raw:any,existing?:any){
   const old=existing||{};
   const oldData=old.inquiry_data||{};
@@ -164,6 +169,10 @@ export async function POST(request:Request){
 
   if(type==="create_inquiry"){
     const payload=inquiryPayload(proposed);
+    const proposedFlights=Array.isArray(payload?.inquiry_data?.suggestedFlights)?payload.inquiry_data.suggestedFlights:[];
+    if(mentionsProvidedFlightDetails(payload.flight_requirement)&&proposedFlights.length===0){
+      return NextResponse.json({error:"检测到客户已提供具体航班资料，但 Suggested Flights 仍为空。请先让 AI 结构化航班后再建立 Inquiry。",code:"FLIGHT_DETAILS_NOT_STRUCTURED"},{status:409});
+    }
     if(!payload.destination&&!payload.customer_name){
       return NextResponse.json({error:"Inquiry needs at least a customer or destination"},{status:400});
     }
@@ -183,6 +192,10 @@ export async function POST(request:Request){
     const {data:existing,error:getError}=await db.rpc("staff_get_inquiry",{p_token:token,p_id:id});
     if(getError||!existing?.id) return NextResponse.json({error:getError?.message||"Inquiry not found"},{status:404});
     const payload=inquiryPayload(proposed,existing);
+    const updatedFlights=Array.isArray(payload?.inquiry_data?.suggestedFlights)?payload.inquiry_data.suggestedFlights:[];
+    if(mentionsProvidedFlightDetails(payload.flight_requirement)&&updatedFlights.length===0){
+      return NextResponse.json({error:"检测到客户已提供具体航班资料，但 Suggested Flights 仍为空。请先让 AI 结构化航班后再更新 Inquiry。",code:"FLIGHT_DETAILS_NOT_STRUCTURED"},{status:409});
+    }
     const {data,error}=await db.rpc("staff_save_inquiry",{p_token:token,p_payload:payload,p_id:id});
     if(error||!data?.ok) return NextResponse.json({error:data?.error||error?.message||"Unable to update inquiry"},{status:400});
     if(threadId){
