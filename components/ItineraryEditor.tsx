@@ -8,6 +8,7 @@ type AttractionImage={path:string;url:string;name:string};
 type SuggestedFlight={id:string;from:string;to:string;flightNo:string;date:string;departureTime:string;arrivalTime:string;remarks:string};
 type HotelItem={id:string;name:string;cityArea:string;starRating:string;stayNights:string;roomSize:number|"";openingYear:string;renovationYear:string;nearbyNotes:string;images:AttractionImage[]};
 type AttractionItem={id:string;name:string;images:AttractionImage[]};
+type PackageItem={id:string;preset:string;name:string};
 type DayItem={
   id:string;
   title:string;
@@ -29,6 +30,31 @@ type Props={
 const uid=()=>Math.random().toString(36).slice(2,10);
 const emptyFlight=():SuggestedFlight=>({id:uid(),from:"",to:"",flightNo:"",date:"",departureTime:"",arrivalTime:"",remarks:""});
 const emptyHotel=():HotelItem=>({id:uid(),name:"",cityArea:"",starRating:"",stayNights:"",roomSize:"",openingYear:"",renovationYear:"",nearbyNotes:"",images:[]});
+const emptyPackageItem=():PackageItem=>({id:uid(),preset:"other",name:""});
+const normalizePackageItems=(raw:any):PackageItem[]=>Array.isArray(raw)?raw.map((item:any)=>(
+  typeof item==="string"
+    ? {id:uid(),preset:"other",name:item}
+    : {id:item?.id||uid(),preset:item?.preset||"other",name:item?.name||""}
+)):[];
+const includedPresets=[
+  ["hotel","Hotel Accommodation｜酒店住宿"],
+  ["transport","Transportation｜交通"],
+  ["guide","Tour Guide / Driver｜导游 / 司机"],
+  ["tickets","Entrance Tickets｜景点门票"],
+  ["insurance","Travel Insurance｜旅游保险"],
+  ["meals","Meals｜餐食"],
+  ["airport","Airport Transfer｜机场接送"],
+  ["other","Other｜其他"]
+] as const;
+const excludedPresets=[
+  ["flight","Air Ticket｜机票"],
+  ["meals","Meals｜餐食"],
+  ["tips","Tips｜小费"],
+  ["personal","Personal Expenses｜个人消费"],
+  ["luggage","Excess Baggage｜超重行李"],
+  ["unmentioned","Unmentioned Items｜行程未注明项目"],
+  ["other","Other｜其他"]
+] as const;
 const emptyDay=():DayItem=>({
   id:uid(),
   title:"",
@@ -94,6 +120,8 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       images:Array.isArray(h?.images)?h.images:[]
     })):[]
   );
+  const [includedItems,setIncludedItems]=useState<PackageItem[]>(normalizePackageItems(data.includedItems));
+  const [notIncludedItems,setNotIncludedItems]=useState<PackageItem[]>(normalizePackageItems(data.notIncludedItems));
   const [saving,setSaving]=useState(false);
   const [message,setMessage]=useState("");
   const [uploadingAttraction,setUploadingAttraction]=useState<string|null>(null);
@@ -212,6 +240,52 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     setHotels(items=>items.map(h=>h.id===hotelId?{
       ...h,images:h.images.filter((_,i)=>i!==imageIndex)
     }:h));
+  }
+
+  function presetLabel(kind:"included"|"excluded",preset:string){
+    const list=kind==="included"?includedPresets:excludedPresets;
+    return list.find(([value])=>value===preset)?.[1]||"";
+  }
+
+  function addPackageItem(kind:"included"|"excluded"){
+    const setter=kind==="included"?setIncludedItems:setNotIncludedItems;
+    setter(items=>[...items,emptyPackageItem()]);
+  }
+
+  function patchPackageItem(kind:"included"|"excluded",id:string,patch:Partial<PackageItem>){
+    const setter=kind==="included"?setIncludedItems:setNotIncludedItems;
+    setter(items=>items.map(item=>item.id===id?{...item,...patch}:item));
+  }
+
+  function selectPackagePreset(kind:"included"|"excluded",id:string,preset:string){
+    const label=presetLabel(kind,preset);
+    patchPackageItem(kind,id,{preset,name:preset==="other"?"":label});
+  }
+
+  function movePackageItem(kind:"included"|"excluded",index:number,dir:-1|1){
+    const setter=kind==="included"?setIncludedItems:setNotIncludedItems;
+    setter(items=>{
+      const target=index+dir;
+      if(target<0||target>=items.length) return items;
+      const next=[...items];
+      [next[index],next[target]]=[next[target],next[index]];
+      return next;
+    });
+  }
+
+  function duplicatePackageItem(kind:"included"|"excluded",index:number){
+    const setter=kind==="included"?setIncludedItems:setNotIncludedItems;
+    setter(items=>{
+      const src=items[index];
+      const next=[...items];
+      next.splice(index+1,0,{...src,id:uid()});
+      return next;
+    });
+  }
+
+  function removePackageItem(kind:"included"|"excluded",id:string){
+    const setter=kind==="included"?setIncludedItems:setNotIncludedItems;
+    setter(items=>items.filter(item=>item.id!==id));
   }
 
   function syncDays(){
@@ -369,7 +443,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
 
   const currentSnapshot=JSON.stringify({
     title,destination,daysCount,nightsCount,customerName,status,
-    departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,days,hotels
+    departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,days,hotels,includedItems,notIncludedItems
   });
 
   useEffect(()=>{
@@ -422,7 +496,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
         status,
         itinerary_data:{
           departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,
-          days,hotels,op,opStaffId:initialItinerary?.owner_id||currentStaffId
+          days,hotels,includedItems,notIncludedItems,op,opStaffId:initialItinerary?.owner_id||currentStaffId
         }
       };
       const res=await fetch("/api/internal-itineraries",{
@@ -686,6 +760,73 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
           </div>
         </article>)}
       </div> : <div className="itinerary-attraction-empty">尚未加入酒店资料。需要时点击 “+ Add Hotel”。</div>}
+    </section>
+
+    <section className="panel">
+      <div className="panel-head">
+        <div>
+          <h2>Included / Not Included｜配套包含与不包含</h2>
+          <p className="panel-subtext">使用常用 Preset 快速加入，也可选择 Other 手动输入项目名称。</p>
+        </div>
+      </div>
+
+      <div className="itinerary-package-columns">
+        <div className="itinerary-package-card included">
+          <div className="itinerary-package-head">
+            <div><strong>Included｜配套包含</strong><span>{includedItems.length} items</span></div>
+            <button className="btn" type="button" onClick={()=>addPackageItem("included")}>+ Add Item</button>
+          </div>
+          {includedItems.length>0 ? <div className="itinerary-package-list">
+            {includedItems.map((item,index)=><div className="itinerary-package-row" key={item.id}>
+              <div className="itinerary-package-index">{String(index+1).padStart(2,"0")}</div>
+              <label className="field">
+                <span>Preset｜常用项目</span>
+                <select value={item.preset} onChange={e=>selectPackagePreset("included",item.id,e.target.value)}>
+                  {includedPresets.map(([value,label])=><option key={value} value={value}>{label}</option>)}
+                </select>
+              </label>
+              <label className="field itinerary-package-name">
+                <span>Item Name｜项目名称</span>
+                <input value={item.name} onChange={e=>patchPackageItem("included",item.id,{name:e.target.value})} placeholder={item.preset==="other"?"手动输入项目名称":"可继续修改项目名称"}/>
+              </label>
+              <div className="itinerary-package-actions">
+                <button type="button" onClick={()=>movePackageItem("included",index,-1)} disabled={index===0}>↑</button>
+                <button type="button" onClick={()=>movePackageItem("included",index,1)} disabled={index===includedItems.length-1}>↓</button>
+                <button type="button" onClick={()=>duplicatePackageItem("included",index)}>Duplicate</button>
+                <button type="button" className="danger-link" onClick={()=>removePackageItem("included",item.id)}>Delete</button>
+              </div>
+            </div>)}
+          </div> : <div className="itinerary-attraction-empty">尚未加入 Included 项目。</div>}
+        </div>
+
+        <div className="itinerary-package-card excluded">
+          <div className="itinerary-package-head">
+            <div><strong>Not Included｜配套不包含</strong><span>{notIncludedItems.length} items</span></div>
+            <button className="btn" type="button" onClick={()=>addPackageItem("excluded")}>+ Add Item</button>
+          </div>
+          {notIncludedItems.length>0 ? <div className="itinerary-package-list">
+            {notIncludedItems.map((item,index)=><div className="itinerary-package-row" key={item.id}>
+              <div className="itinerary-package-index">{String(index+1).padStart(2,"0")}</div>
+              <label className="field">
+                <span>Preset｜常用项目</span>
+                <select value={item.preset} onChange={e=>selectPackagePreset("excluded",item.id,e.target.value)}>
+                  {excludedPresets.map(([value,label])=><option key={value} value={value}>{label}</option>)}
+                </select>
+              </label>
+              <label className="field itinerary-package-name">
+                <span>Item Name｜项目名称</span>
+                <input value={item.name} onChange={e=>patchPackageItem("excluded",item.id,{name:e.target.value})} placeholder={item.preset==="other"?"手动输入项目名称":"可继续修改项目名称"}/>
+              </label>
+              <div className="itinerary-package-actions">
+                <button type="button" onClick={()=>movePackageItem("excluded",index,-1)} disabled={index===0}>↑</button>
+                <button type="button" onClick={()=>movePackageItem("excluded",index,1)} disabled={index===notIncludedItems.length-1}>↓</button>
+                <button type="button" onClick={()=>duplicatePackageItem("excluded",index)}>Duplicate</button>
+                <button type="button" className="danger-link" onClick={()=>removePackageItem("excluded",item.id)}>Delete</button>
+              </div>
+            </div>)}
+          </div> : <div className="itinerary-attraction-empty">尚未加入 Not Included 项目。</div>}
+        </div>
+      </div>
     </section>
 
     {message&&<div className="save-message">{message}</div>}
