@@ -1,7 +1,68 @@
 import ItineraryEditor from "@/components/ItineraryEditor";
-import { internalUser } from "@/lib/internalSession";
+import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
 
-export default async function NewItineraryPage(){
+export default async function NewItineraryPage({searchParams}:{searchParams:Promise<{sourceInquiry?:string}>}){
   const user=await internalUser();
-  return <ItineraryEditor currentStaffId={user?.id||""} currentStaffName={user?.name||""}/>;
+  const {sourceInquiry}=await searchParams;
+  let initialItinerary:any=undefined;
+  let sourceInquiryNo="";
+  let sourceInquirySnapshot:any=undefined;
+
+  if(sourceInquiry){
+    const token=await internalToken();
+    if(token){
+      const db=internalDb();
+      const {data}=await db.rpc("staff_get_inquiry",{p_token:token,p_id:sourceInquiry});
+      if(data?.id){
+        const r=data.operation_review||{};
+        const pick=(key:string,original:any)=>Object.prototype.hasOwnProperty.call(r,key)?r[key]:original;
+        const salesFlights=Array.isArray(data?.inquiry_data?.suggestedFlights)?data.inquiry_data.suggestedFlights:[];
+        const finalFlights=r?.overrideSuggestedFlights===true&&Array.isArray(r?.suggestedFlights)?r.suggestedFlights:salesFlights;
+        sourceInquiryNo=data.inquiry_no||"";
+        sourceInquirySnapshot={
+          inquiryNo:data.inquiry_no||"",
+          destination:pick("destination",data.destination)||"",
+          departureCity:pick("departureCity",data.departure_city)||"",
+          travelStartDate:pick("travelStartDate",data.travel_start_date)||"",
+          travelEndDate:pick("travelEndDate",data.travel_end_date)||"",
+          daysCount:Number(pick("daysCount",data.days_count))||1,
+          nightsCount:Number(pick("nightsCount",data.nights_count))||0,
+          pax:pick("pax",data.pax)||"",
+          tourType:pick("tourType",data.tour_type)||"",
+          salesOwner:data.sales_owner_name||"",
+          operationAssignee:data.operation_assignee_name||""
+        };
+        initialItinerary={
+          title:`${sourceInquirySnapshot.destination||"Tour"} ${sourceInquirySnapshot.daysCount}D${sourceInquirySnapshot.nightsCount}N`,
+          destination:sourceInquirySnapshot.destination,
+          days_count:sourceInquirySnapshot.daysCount,
+          nights_count:sourceInquirySnapshot.nightsCount,
+          customer_name:data.customer_name||"",
+          status:"draft",
+          source_inquiry_id:data.id,
+          itinerary_data:{
+            departureCity:sourceInquirySnapshot.departureCity,
+            travelStartDate:sourceInquirySnapshot.travelStartDate,
+            travelEndDate:sourceInquirySnapshot.travelEndDate,
+            pax:sourceInquirySnapshot.pax,
+            tourType:sourceInquirySnapshot.tourType,
+            suggestedFlights:finalFlights,
+            sourceInquiryId:data.id,
+            sourceInquiryNo:data.inquiry_no||"",
+            sourceInquirySnapshot,
+            days:[]
+          }
+        };
+      }
+    }
+  }
+
+  return <ItineraryEditor
+    initialItinerary={initialItinerary}
+    sourceInquiryId={sourceInquiry||""}
+    sourceInquiryNo={sourceInquiryNo}
+    sourceInquirySnapshot={sourceInquirySnapshot}
+    currentStaffId={user?.id||""}
+    currentStaffName={user?.name||""}
+  />;
 }
