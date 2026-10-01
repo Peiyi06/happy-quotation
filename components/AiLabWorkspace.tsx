@@ -286,7 +286,7 @@ export default function AiLabWorkspace(){
 
       {messages.length<=1&&<div className="ai-lab-starters">{starterPrompts.map(p=><button key={p} type="button" onClick={()=>void send(p)}>{p}</button>)}</div>}
 
-      {imagePreviews.length>0&&<div className="ai-lab-upload-previews">{imagePreviews.map((a,i)=><div key={a.url} className="ai-lab-upload-chip"><img src={a.url} alt={a.name}/><span>{a.name}</span><button type="button" aria-label={"Remove "+a.name} onClick={()=>removeImage(i)}>×</button></div>)}</div>}
+      {imagePreviews.length>0&&<div className="ai-lab-upload-previews">{imagePreviews.map((a,i)=><div key={a.url} className="ai-lab-upload-chip"><img src={a.url} alt={a.name}/><span>{a.name}</span><button className="icon-action-btn icon-action-remove" type="button" aria-label={"Remove "+a.name} onClick={()=>removeImage(i)}>×</button></div>)}</div>}
       <div className="ai-lab-compose">
         <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onChange={e=>addImages(e.target.files)}/>
         <button type="button" className="ai-lab-attach-btn" disabled={loading||imageFiles.length>=4} onClick={()=>fileInputRef.current?.click()}>＋</button>
@@ -307,7 +307,7 @@ export default function AiLabWorkspace(){
               <span>{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
               <small>{t.last_active_at?new Date(t.last_active_at).toLocaleString(): ""}</small>
             </button>
-            <button type="button" className="ai-thread-archive" title="Archive Thread" onClick={()=>void setThreadArchived(t.id,true)}>×</button>
+            <button type="button" className="ai-thread-archive icon-action-btn icon-action-remove" title="Archive Thread" onClick={()=>void setThreadArchived(t.id,true)}>×</button>
           </div>)}
         </div>:<p className="ai-lab-context-empty">还没有保存的工作对话。第一次发送消息后会自动建立 Thread。</p>}
         <div className="ai-thread-archived">
