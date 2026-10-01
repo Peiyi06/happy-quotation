@@ -27,6 +27,7 @@ export default function AiSupplierImport(){
   const [creating,setCreating]=useState(false);
   const [error,setError]=useState("");
   const [model,setModel]=useState("");
+  const supplierInputRef=useRef<HTMLInputElement|null>(null);
   const [adjustmentNotes,setAdjustmentNotes]=useState("");
 
   const [chatInput,setChatInput]=useState("");
@@ -156,10 +157,21 @@ export default function AiSupplierImport(){
       <div className="ai-import-upload-box">
         <label className="field">
           <span>Supplier File｜供应商文件</span>
-          <input type="file" accept=".pdf,.doc,.docx,.rtf,.txt,.jpg,.jpeg,.png,.webp" onChange={e=>{setFile(e.target.files?.[0]||null);setResult(null);setError("");setProposal(null);setChatMessages([]);}}/>
+          <input ref={supplierInputRef} type="file" accept=".pdf,.doc,.docx,.rtf,.txt,.jpg,.jpeg,.png,.webp" onChange={e=>{setFile(e.target.files?.[0]||null);setResult(null);setError("");setProposal(null);setChatMessages([]);}}/>
         </label>
         <div className="ai-import-file-note">
-          <strong>{file?file.name:"尚未选择文件"}</strong>
+          <div className="ai-import-file-note-head">
+            <strong>{file?file.name:"尚未选择文件"}</strong>
+            {file&&<button className="ai-import-remove-file" type="button" onClick={()=>{
+              setFile(null);
+              setResult(null);
+              setError("");
+              setProposal(null);
+              setChatMessages([]);
+              setModel("");
+              if(supplierInputRef.current) supplierInputRef.current.value="";
+            }}>× Remove File｜移除文件</button>}
+          </div>
           <span>MVP 支持 PDF / Word / RTF / TXT / JPG / PNG / WEBP · 单个文件 ≤ 3.5MB</span>
         </div>
       </div>
