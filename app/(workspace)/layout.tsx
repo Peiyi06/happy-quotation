@@ -17,6 +17,7 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
         </div>
         <nav className="sidebar-nav">
           <Link href="/dashboard">Dashboard</Link>
+          <Link href="/inquiries">Inquiries</Link>
           <NewQuotationMenu compact />
           <Link href="/quotations">My Quotations</Link>
           <Link href="/tour-groups">Tour Groups</Link>
