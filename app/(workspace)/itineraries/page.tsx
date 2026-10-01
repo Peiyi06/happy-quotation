@@ -12,7 +12,7 @@ export default async function ItinerariesPage({searchParams}:{searchParams:Promi
   if(q) items=items.filter((x:any)=>[x.itinerary_no,x.title,x.destination,x.customer_name].some((v:any)=>(v||"").toLowerCase().includes(q)));
 
   return <div>
-    <div className="page-head">
+    <div className="page-head page-compact-header">
       <div><span className="page-kicker">ITINERARY TEMPLATES</span><h1>行程模板</h1><p>独立建立与管理简易行程。</p></div>
       <Link className="btn primary" href="/itineraries/new">+ New Itinerary</Link>
     </div>
