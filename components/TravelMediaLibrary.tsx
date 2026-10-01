@@ -4,7 +4,7 @@ import { useEffect,useMemo,useRef,useState } from "react";
 
 type Doc={
   id:string;title:string;fileName:string;storagePath:string;mimeType:string;fileSize:number;
-  sourceType:string;status:string;destination:string;summary:string;extraction:any;createdAt:string;updatedAt:string;
+  sourceType:string;status:string;verificationStatus?:string;destination:string;summary:string;extraction:any;createdAt:string;updatedAt:string;
 };
 
 const fmtSize=(n:number)=>{
@@ -20,6 +20,8 @@ export default function TravelMediaLibrary(){
   const [loading,setLoading]=useState(true);
   const [analyzing,setAnalyzing]=useState(false);
   const [savingId,setSavingId]=useState("");
+  const [deletingId,setDeletingId]=useState("");
+  const [signedUrls,setSignedUrls]=useState<Record<string,string>>({});
   const [error,setError]=useState("");
   const [preview,setPreview]=useState<any>(null);
   const [model,setModel]=useState("");
@@ -69,6 +71,53 @@ export default function TravelMediaLibrary(){
     }finally{setSavingId("");}
   }
 
+  async function verifyAndSave(id:string){
+    setSavingId(id);setError("");
+    try{
+      const res=await fetch("/api/internal-travel-library",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({action:"verify_and_save",id})
+      });
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok||!data?.ok){setError(data?.error||"Unable to verify and save.");return;}
+      if(preview?.id===id) setPreview((p:any)=>p?{...p,saved:true}:p);
+      await load();
+    }finally{setSavingId("");}
+  }
+
+  async function deleteDocument(doc:Doc){
+    const ok=window.confirm("Delete this test source and its private Storage file? This cannot be undone.");
+    if(!ok) return;
+    setDeletingId(doc.id);setError("");
+    try{
+      const res=await fetch("/api/internal-travel-library",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({action:"delete",id:doc.id})
+      });
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok||!data?.ok){setError(data?.error||"Unable to delete source.");return;}
+      if(preview?.id===doc.id) setPreview(null);
+      setSignedUrls(current=>{
+        const next={...current};
+        delete next[doc.id];
+        return next;
+      });
+      await load();
+    }finally{setDeletingId("");}
+  }
+
+  async function signedUrlFor(doc:Doc){
+    if(signedUrls[doc.id]) return signedUrls[doc.id];
+    const res=await fetch("/api/internal-travel-library",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({action:"sign",path:doc.storagePath})
+    });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok||!data?.ok||!data.url) return "";
+    setSignedUrls(current=>({...current,[doc.id]:data.url}));
+    return data.url as string;
+  }
+
   async function openSource(doc:Doc){
     const res=await fetch("/api/internal-travel-library",{
       method:"POST",headers:{"Content-Type":"application/json"},
@@ -81,6 +130,13 @@ export default function TravelMediaLibrary(){
 
   const savedCount=useMemo(()=>docs.filter(x=>x.status==="saved").length,[docs]);
   const pendingCount=useMemo(()=>docs.filter(x=>x.status==="pending_review").length,[docs]);
+  const photoQueue=useMemo(()=>docs.filter(x=>x.mimeType?.startsWith("image/")&&x.status==="pending_review"),[docs]);
+
+  useEffect(()=>{
+    for(const doc of photoQueue.slice(0,12)){
+      if(!signedUrls[doc.id]) void signedUrlFor(doc);
+    }
+  },[photoQueue]);
 
   return <div className="travel-library-workspace">
     <div className="travel-library-toolbar">
@@ -104,6 +160,58 @@ export default function TravelMediaLibrary(){
     </div>
 
     {error&&<div className="ai-import-error">{error}</div>}
+
+    <section className="panel travel-library-verification">
+      <div className="panel-head">
+        <div>
+          <span className="page-kicker">CALIBRATION MODE</span>
+          <h2>Verification Queue｜照片验证窗口</h2>
+          <p className="panel-subtext">逐张检查 AI 判断。确认正确后才正式存档；错误或测试资料可以直接删除。</p>
+        </div>
+        <span className="status status-under_review">{photoQueue.length} To Verify</span>
+      </div>
+
+      {photoQueue.length>0?<div className="travel-library-verification-grid">
+        {photoQueue.map(doc=>{
+          const match=doc.extraction?.photoMatch||{};
+          const url=signedUrls[doc.id]||"";
+          return <article className={"travel-library-verification-card "+(match.status==="matched"?"matched":"review")} key={doc.id}>
+            <div className="travel-library-verification-image">
+              {url?<img src={url} alt={match.identifiedName||doc.fileName}/>:<div className="travel-library-verification-loading">Loading photo...</div>}
+            </div>
+            <div className="travel-library-verification-body">
+              <div className="travel-library-verification-top">
+                <div>
+                  <span>AI Identified</span>
+                  <strong>{match.identifiedName||"Unknown"}</strong>
+                </div>
+                <span className={"status "+(match.status==="matched"?"status-ready":"status-under_review")}>
+                  {Math.round(Number(match.confidence||0)*100)}%
+                </span>
+              </div>
+              <div className="travel-library-verification-details">
+                <div><span>Matched Record</span><strong>{match.matchedName||"No confident match"}</strong></div>
+                <div><span>Method</span><strong>{match.method==="ai_semantic"?"AI Semantic":match.method==="fuzzy"?"Fuzzy":match.method==="exact"?"Exact":"AI Identification Only"}</strong></div>
+                <div><span>Destination</span><strong>{match.destination||doc.destination||"—"}</strong></div>
+                <div><span>Type</span><strong>{match.identifiedType||doc.sourceType||"unknown"}</strong></div>
+              </div>
+              <p>{match.reason||doc.summary||"—"}</p>
+              <small>{doc.fileName}</small>
+              <div className="travel-library-verification-actions">
+                <button className="btn" type="button" onClick={()=>void openSource(doc)}>Open Photo</button>
+                <button className="btn primary" type="button" disabled={savingId===doc.id||match.status!=="matched"} onClick={()=>void verifyAndSave(doc.id)}>
+                  {savingId===doc.id?"Saving...":"✓ Verify & Save"}
+                </button>
+                <button className="btn danger" type="button" disabled={deletingId===doc.id} onClick={()=>void deleteDocument(doc)}>
+                  {deletingId===doc.id?"Deleting...":"Delete"}
+                </button>
+              </div>
+              {match.status!=="matched"&&<div className="travel-library-verification-note">AI 没有达到自动匹配门槛，因此 Verify & Save 暂时锁定。可先删除测试资料，或从下方 Review 查看判断内容。</div>}
+            </div>
+          </article>;
+        })}
+      </div>:<div className="travel-library-verification-empty">目前没有待验证照片。上传一张测试照片后会自动出现在这里。</div>}
+    </section>
 
     {preview&&<section className="panel travel-library-review">
       <div className="panel-head">
