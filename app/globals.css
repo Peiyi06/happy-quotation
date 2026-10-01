@@ -2340,3 +2340,227 @@ button,
     justify-content:flex-start;
   }
 }
+
+
+/* =========================================================
+   Unified Typography Scale
+   Master reference: Outbound Quotation
+   ========================================================= */
+:root{
+  --type-hero:34px;
+  --type-page:30px;
+  --type-section:18px;
+  --type-subsection:16px;
+  --type-body:13px;
+  --type-body-lg:14px;
+  --type-label:12px;
+  --type-small:11.5px;
+  --type-micro:11px;
+  --type-metric:24px;
+}
+
+/* Page hierarchy */
+.page-hero-header h1,
+.topbar h1{
+  font-size:var(--type-hero)!important;
+}
+.page-compact-header h1,
+.page-head:not(.page-hero-header):not(.page-compact-header) h1{
+  font-size:var(--type-page)!important;
+}
+.page-hero-header p,
+.topbar p{
+  font-size:var(--type-body-lg)!important;
+}
+.page-compact-header p,
+.page-head p{
+  font-size:var(--type-body)!important;
+}
+.page-kicker,
+.topbar .eyebrow{
+  font-size:12px!important;
+}
+
+/* Section / panel hierarchy */
+.workspace-main .section h2,
+.workspace-main .panel-head h2,
+.inquiry-workflow-panel h2{
+  font-size:var(--type-section)!important;
+}
+.workspace-main h3,
+.operation-subsection-head h3,
+.simple-workflow-title h3{
+  font-size:var(--type-subsection)!important;
+}
+.panel-subtext,
+.workspace-main .section p,
+.workspace-main .panel p{
+  font-size:var(--type-body)!important;
+}
+
+/* Forms */
+.workspace-main .field>span,
+.workspace-main .form-grid .field span,
+.workspace-main .quote-meta-grid .field span,
+.operation-brief-grid span,
+.operation-brief-requirements span,
+.inquiry-detail-grid span{
+  font-size:var(--type-label)!important;
+}
+.workspace-main input,
+.workspace-main select,
+.workspace-main textarea{
+  font-size:var(--type-body)!important;
+}
+
+/* Tables */
+.workspace-main th,
+.data-table th{
+  font-size:var(--type-label)!important;
+}
+.workspace-main td,
+.data-table td{
+  font-size:var(--type-body)!important;
+}
+.data-table td small{
+  font-size:var(--type-small)!important;
+}
+
+/* Cards / summaries */
+.dash-card span,
+.summary-card span,
+.metric span{
+  font-size:var(--type-body)!important;
+}
+.dash-card b,
+.summary-card b{
+  font-size:var(--type-metric)!important;
+}
+
+/* Status / badges */
+.status,
+.simple-workflow-state,
+.operation-case-state small,
+.workflow-record-link span,
+.quote-review-status>small,
+.quote-review-waiting,
+.quote-review-ready,
+.quote-editor-review-state,
+.quote-commercial-change-note{
+  font-size:var(--type-small)!important;
+}
+.simple-workflow-index,
+.operation-case-field>span,
+.operation-toolbar span,
+.fixed-row-label{
+  font-size:var(--type-label)!important;
+}
+
+/* Workflow */
+.simple-workflow-title>strong,
+.simple-workflow-card p,
+.workflow-record-link b,
+.operation-case-field>strong,
+.operation-brief-grid strong,
+.operation-brief-requirements p{
+  font-size:var(--type-body)!important;
+}
+.operation-case-field.compact>strong{
+  font-size:var(--type-label)!important;
+}
+.operation-queue-footer a{
+  font-size:var(--type-label)!important;
+}
+
+/* Operation review */
+.operation-subsection-head p,
+.operation-traveller-line span,
+.operation-flight-summary span,
+.operation-flight-summary em,
+.operation-inline-empty{
+  font-size:var(--type-small)!important;
+}
+.operation-traveller-line b,
+.operation-flight-summary b{
+  font-size:var(--type-label)!important;
+}
+.operation-subsection-actions .btn{
+  font-size:var(--btn-font-size)!important;
+}
+
+/* Itinerary editor / detail */
+.itinerary-day-head span,
+.itinerary-subhead span,
+.itinerary-attraction-index,
+.itinerary-hotel-head span,
+.itinerary-package-head span,
+.itinerary-package-index,
+.itinerary-reminder-index,
+.itinerary-detail-meta span,
+.itinerary-hotel-detail-head span,
+.itinerary-hotel-detail-meta span{
+  font-size:var(--type-small)!important;
+}
+.itinerary-day-head strong,
+.itinerary-subhead strong,
+.itinerary-hotel-head strong,
+.itinerary-hotel-detail-head>strong,
+.itinerary-detail-meta strong,
+.itinerary-hotel-detail-meta strong,
+.itinerary-attraction-empty,
+.itinerary-upload-control b,
+.itinerary-upload-control small{
+  font-size:var(--type-label)!important;
+}
+
+/* AI workspace: lift previously tiny utility text without changing layout */
+.ai-lab-message-label,
+.ai-lab-action-card>span,
+.ai-lab-context-head span,
+.ai-lab-current-case>span,
+.ai-lab-current-case>small,
+.ai-lab-compose-note,
+.ai-lab-safety span,
+.ai-lab-memory-proposal>span,
+.ai-thread-panel-head span,
+.ai-thread-save-state,
+.ai-thread-open span,
+.ai-thread-open small,
+.ai-lab-memory-autosaved>span,
+.ai-lab-memory-autosaved>small{
+  font-size:var(--type-micro)!important;
+}
+.ai-lab-action-card>strong,
+.ai-lab-current-case>strong,
+.ai-thread-open strong,
+.ai-lab-memory-proposal>strong,
+.ai-lab-memory-autosaved>strong{
+  font-size:var(--type-body)!important;
+}
+
+/* Keep compact functional controls aligned to the Quotation master */
+.btn,
+.workflow-primary-btn,
+.workflow-text-link,
+.operation-secondary-btn{
+  font-size:var(--btn-font-size)!important;
+}
+.row-actions button,
+.danger-link,
+.day-status-btn,
+.day-complete-btn,
+.day-collapse-btn{
+  font-size:var(--btn-compact-font-size)!important;
+}
+
+/* Mobile follows the same proportional scale */
+@media(max-width:760px){
+  .page-hero-header h1,
+  .topbar h1{
+    font-size:29px!important;
+  }
+  .page-compact-header h1,
+  .page-head:not(.page-hero-header):not(.page-compact-header) h1{
+    font-size:27px!important;
+  }
+}
