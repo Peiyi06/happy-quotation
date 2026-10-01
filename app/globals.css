@@ -1149,3 +1149,39 @@
   .operation-scope-switch a{flex:1;justify-content:center}
   .operation-case-row{grid-template-columns:1fr}
 }
+
+
+/* Simplified Inquiry Workflow */
+.inquiry-workflow-panel{overflow:hidden}
+.inquiry-workflow-panel-head{align-items:flex-start}
+.workflow-current-label{display:inline-flex;align-items:center;border-radius:999px;padding:7px 10px;background:#eef4f8;color:var(--navy2);font-size:10px;font-weight:850;letter-spacing:.03em}
+.simple-workflow-grid{display:grid;grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr) 34px minmax(0,1fr);gap:10px;align-items:stretch}
+.simple-workflow-card{border:1px solid #dbe4ea;border-radius:14px;padding:16px;background:#fbfcfd;display:grid;gap:12px;min-width:0}
+.simple-workflow-card.complete{background:#f8fbf9;border-color:#d4e7da}
+.simple-workflow-card.current{background:#fff;border-color:#9fb7c8;box-shadow:0 8px 24px rgba(31,78,120,.08)}
+.simple-workflow-card.upcoming{opacity:.76}
+.simple-workflow-card.active{background:#fffaf2;border-color:#ead6aa}
+.simple-workflow-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.simple-workflow-index{font-size:11px;font-weight:900;letter-spacing:.08em;color:var(--gold)}
+.simple-workflow-state{font-size:10px;font-weight:800;color:#71818c}
+.simple-workflow-card.complete .simple-workflow-state{color:#397552}
+.simple-workflow-card.current .simple-workflow-state{color:var(--navy)}
+.simple-workflow-card.active .simple-workflow-state{color:#8a681d}
+.simple-workflow-title{display:grid;gap:3px}
+.simple-workflow-title h3{margin:0;font-size:18px;color:var(--navy2)}
+.simple-workflow-title>strong{font-size:12px;color:#5d6f7b}
+.simple-workflow-card p{margin:0;color:#687a86;font-size:12px;line-height:1.55;min-height:38px}
+.simple-workflow-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:auto}
+.simple-workflow-actions .btn{padding:9px 12px;font-size:11px}
+.workflow-text-link{color:var(--navy);font-size:11px;font-weight:800;text-decoration:none}
+.workflow-text-link:hover{text-decoration:underline}
+.simple-workflow-arrow{display:grid;place-items:center;color:#9aa9b2;font-size:18px;font-weight:800}
+.workflow-record-list{display:grid;gap:7px}
+.workflow-record-link{display:grid;gap:2px;border:1px solid #dce5eb;border-radius:10px;padding:9px 10px;background:#fff;text-decoration:none}
+.workflow-record-link b{color:var(--navy);font-size:12px}
+.workflow-record-link span{font-size:10px;color:#74838d}
+.workflow-record-link:hover{border-color:#a9bfce;background:#fbfdfe}
+@media(max-width:1050px){
+  .simple-workflow-grid{grid-template-columns:1fr}
+  .simple-workflow-arrow{transform:rotate(90deg);height:20px}
+}
