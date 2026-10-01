@@ -1007,8 +1007,8 @@
 .ai-lab-bubble p{margin:0;white-space:pre-wrap;line-height:1.6;font-size:14px}
 .ai-lab-bubble.thinking{font-size:13px;color:#71868e}
 .ai-lab-links{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
-.ai-lab-links button{display:inline-flex;align-items:center;gap:8px;border:1px solid #bfd4da;background:#f7fbfc;color:#145c67;border-radius:9px;padding:8px 10px;font-size:12px;font-weight:800;cursor:pointer}
-.ai-lab-links button:hover{border-color:#1b9aaa;background:#eef9fa}
+.ai-lab-links a{display:inline-flex;align-items:center;gap:8px;border:1px solid #bfd4da;background:#f7fbfc;color:#145c67;border-radius:9px;padding:8px 10px;font-size:12px;font-weight:800;cursor:pointer;text-decoration:none}
+.ai-lab-links a:hover{border-color:#1b9aaa;background:#eef9fa}
 .ai-lab-action-card{margin-top:12px;padding:11px;border:1px solid #9fd6dd;background:#f0fbfc;border-radius:11px;display:grid;gap:7px;color:#173d48}
 .ai-lab-action-card>span{font-size:9.5px;letter-spacing:.08em;font-weight:900;color:#1b8f9c}
 .ai-lab-action-card>strong{font-size:13px;line-height:1.45}
@@ -1092,3 +1092,5 @@
 .ai-thread-archived>button{border:0;background:transparent;color:#6f858d;font-size:10px;text-align:left;padding:2px 0;cursor:pointer;font-weight:800}
 .ai-thread-list.archived{max-height:180px}
 .ai-thread-list.archived .ai-thread-item{opacity:.82;background:#f8fafb}
+
+.ai-lab-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:inherit}
