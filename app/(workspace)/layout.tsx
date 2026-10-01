@@ -22,6 +22,7 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
           <Link href="/tour-groups">Tour Groups</Link>
           {user.role === "manager" && <Link href="/trash">Trash</Link>}
           <Link href="/itineraries">Itinerary Templates</Link>
+          {["jess","long"].includes(user.username.toLowerCase()) && <Link href="/ai-import">AI Supplier Import</Link>}
           {user.role === "manager" && <Link href="/team">Staff Accounts</Link>}
         </nav>
         <WorkspaceUserMenu name={user.name} role={user.role} />
