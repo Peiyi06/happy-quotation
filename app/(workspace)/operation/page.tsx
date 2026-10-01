@@ -111,18 +111,33 @@ export default async function OperationWorkspacePage({
 function OperationRows({items}:{items:any[]}){
   return <div className="operation-case-list">
     {items.map((item:any)=><Link className="operation-case-row" href={"/inquiries/"+item.id} key={item.id}>
-      <div className="operation-case-main">
+      <div className="operation-case-field operation-case-no">
+        <span>Inquiry No.</span>
         <strong>{item.inquiry_no}</strong>
-        <span>{item.customer_name||"—"}</span>
       </div>
-      <div className="operation-case-route">
+      <div className="operation-case-field">
+        <span>Customer</span>
+        <strong>{item.customer_name||"—"}</strong>
+      </div>
+      <div className="operation-case-field">
+        <span>Destination</span>
         <strong>{item.destination||"—"}</strong>
-        <span>{item.travel_start_date||"—"}{item.travel_end_date?" → "+item.travel_end_date:""}</span>
       </div>
-      <div className="operation-case-meta">
-        <span>{item.pax||"—"} Pax</span>
-        <span>Sales: {item.sales_owner_name||"—"}</span>
-        <span>OP: {item.operation_assignee_name||"Unassigned"}</span>
+      <div className="operation-case-field">
+        <span>Travel Date</span>
+        <strong>{item.travel_start_date||"—"}{item.travel_end_date?" → "+item.travel_end_date:""}</strong>
+      </div>
+      <div className="operation-case-field compact">
+        <span>Pax</span>
+        <strong>{item.pax||"—"}</strong>
+      </div>
+      <div className="operation-case-field compact">
+        <span>Sales</span>
+        <strong>{item.sales_owner_name||"—"}</strong>
+      </div>
+      <div className="operation-case-field compact">
+        <span>Operation</span>
+        <strong>{item.operation_assignee_name||"Unassigned"}</strong>
       </div>
       <div className="operation-case-state">
         <span className={"status status-"+item.supplier_status}>{supplierLabels[item.supplier_status]||item.supplier_status}</span>
