@@ -11,7 +11,7 @@ export default async function EditInquiryPage({params}:{params:Promise<{id:strin
   const {data,error}=await db.rpc("staff_get_inquiry",{p_token:token,p_id:id});
   if(error||!data||!data.id) notFound();
   return <div>
-    <div className="page-head"><div><span className="page-kicker">EDIT INQUIRY</span><h1>{data.inquiry_no}</h1><p>更新客户需求及案件状态。</p></div></div>
+    <div className="page-head"><div><span className="page-kicker">EDIT INQUIRY</span><h1>{data.inquiry_no}</h1><p>更新客户需求与案件资料；Status 请在 Inquiry Detail 右上角操作。</p></div></div>
     <InquiryEditor initialInquiry={data} currentStaffName={user?.name||""}/>
   </div>;
 }
