@@ -9,7 +9,7 @@ export default async function TourGroupsPage(){
   const destinations=[...new Set(groups.map((g:any)=>g.destination||"Others"))];
 
   return <div>
-    <div className="page-head"><div><span className="page-kicker">TOUR LIBRARY</span><h1>Tour Groups</h1><p>把相同类型的团归在一起，方便复制旧报价和比较不同人数版本。</p></div></div>
+    <div className="page-head page-compact-header"><div><span className="page-kicker">TOUR LIBRARY</span><h1>Tour Groups</h1><p>把相同类型的团归在一起，方便复制旧报价和比较不同人数版本。</p></div></div>
     <TourGroupCreator />
     <div className="tour-group-sections">
       {destinations.map((dest:any)=><section className="panel" key={dest}><div className="panel-head"><h2>{dest}</h2></div><div className="tour-card-grid">
