@@ -19,7 +19,8 @@ function sourceFromInquiry(data:any){
   const pick=(key:string,original:any)=>has(key)?r[key]:original;
   const salesFlights=Array.isArray(data?.inquiry_data?.suggestedFlights)?data.inquiry_data.suggestedFlights:[];
   const finalFlights=r?.overrideSuggestedFlights===true&&Array.isArray(r?.suggestedFlights)?r.suggestedFlights:salesFlights;
-  const composition=data?.inquiry_data?.travellerComposition||{};
+  const salesComposition=data?.inquiry_data?.travellerComposition||{};
+  const composition=r?.overrideTravellerComposition===true&&r?.travellerComposition?r.travellerComposition:salesComposition;
   return {
     destination:String(pick("destination",data.destination)||""),
     departureCity:String(pick("departureCity",data.departure_city)||""),
