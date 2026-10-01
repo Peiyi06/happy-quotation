@@ -15,6 +15,8 @@ export default async function ItineraryDetailPage({params}:{params:Promise<{id:s
   const days=Array.isArray(qd.days)?qd.days:[];
   const flights=Array.isArray(qd.suggestedFlights)?qd.suggestedFlights:[];
   const hotels=Array.isArray(qd.hotels)?qd.hotels:[];
+  const includedItems=Array.isArray(qd.includedItems)?qd.includedItems:[];
+  const notIncludedItems=Array.isArray(qd.notIncludedItems)?qd.notIncludedItems:[];
 
   return <div>
     <div className="page-head quote-detail-head">
@@ -76,6 +78,20 @@ export default async function ItineraryDetailPage({params}:{params:Promise<{id:s
             {hotel.images.map((img:any,imgIndex:number)=><img key={img.path||img.url||imgIndex} src={img.url} alt={hotel.name||"Hotel"}/>)}
           </div>}
         </article>)}
+      </div>
+    </section>}
+
+    {(includedItems.length>0||notIncludedItems.length>0)&&<section className="panel">
+      <div className="panel-head"><h2>Included / Not Included｜配套包含与不包含</h2></div>
+      <div className="itinerary-package-detail-grid">
+        {includedItems.length>0&&<div className="itinerary-package-detail-card included">
+          <h3>Included｜配套包含</h3>
+          <ul>{includedItems.map((item:any,index:number)=><li key={item.id||index}>{typeof item==="string"?item:(item.name||"—")}</li>)}</ul>
+        </div>}
+        {notIncludedItems.length>0&&<div className="itinerary-package-detail-card excluded">
+          <h3>Not Included｜配套不包含</h3>
+          <ul>{notIncludedItems.map((item:any,index:number)=><li key={item.id||index}>{typeof item==="string"?item:(item.name||"—")}</li>)}</ul>
+        </div>}
       </div>
     </section>}
 
