@@ -1477,3 +1477,67 @@ input::placeholder,textarea::placeholder{font-family:inherit;color:#8b98a3}
     page-break-after:auto!important;
   }
 }
+
+
+/* Content-driven Supplier Form pagination */
+@media print{
+  .supplier-pro-document{
+    display:block!important;
+  }
+
+  .supplier-print-page{
+    display:block!important;
+    width:auto!important;
+    min-height:0!important;
+    height:auto!important;
+    padding:0!important;
+    margin:0!important;
+    break-after:auto!important;
+    page-break-after:auto!important;
+    break-before:auto!important;
+    page-break-before:auto!important;
+  }
+
+  .supplier-print-page-one,
+  .supplier-print-page-two{
+    break-after:auto!important;
+    page-break-after:auto!important;
+    break-before:auto!important;
+    page-break-before:auto!important;
+  }
+
+  .supplier-pro-section{
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+
+  .supplier-section-title{
+    break-after:avoid!important;
+    page-break-after:avoid!important;
+  }
+
+  .supplier-pro-row,
+  .supplier-flight-row,
+  .supplier-info-cards>div{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  .supplier-flight-section{
+    break-before:auto!important;
+    page-break-before:auto!important;
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+
+  .supplier-pro-footer{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+    margin-top:5mm!important;
+  }
+
+  .supplier-print-page:after{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+}
