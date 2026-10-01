@@ -17,6 +17,7 @@ export default async function ItineraryDetailPage({params}:{params:Promise<{id:s
   const hotels=Array.isArray(qd.hotels)?qd.hotels:[];
   const includedItems=Array.isArray(qd.includedItems)?qd.includedItems:[];
   const notIncludedItems=Array.isArray(qd.notIncludedItems)?qd.notIncludedItems:[];
+  const reminders=Array.isArray(qd.reminders)?qd.reminders:[];
 
   return <div>
     <div className="page-head quote-detail-head">
@@ -92,6 +93,19 @@ export default async function ItineraryDetailPage({params}:{params:Promise<{id:s
           <h3>Not Included｜配套不包含</h3>
           <ul>{notIncludedItems.map((item:any,index:number)=><li key={item.id||index}>{typeof item==="string"?item:(item.name||"—")}</li>)}</ul>
         </div>}
+      </div>
+    </section>}
+
+    {reminders.length>0&&<section className="panel">
+      <div className="panel-head"><h2>Friendly Reminder｜温馨提醒</h2></div>
+      <div className="itinerary-reminder-detail-list">
+        {reminders.map((item:any,index:number)=><article className="itinerary-reminder-detail-card" key={item.id||index}>
+          <div className="itinerary-reminder-detail-no">{String(index+1).padStart(2,"0")}</div>
+          <div>
+            <h3>{item.title||"Reminder"}</h3>
+            <p>{item.description||"—"}</p>
+          </div>
+        </article>)}
       </div>
     </section>}
 
