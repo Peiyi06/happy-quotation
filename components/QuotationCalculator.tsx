@@ -659,14 +659,14 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         <h1>Outbound Quotation</h1>
         <p>Outbound Tour Quotation Calculator</p>
       </div>
-      <div className="top-actions no-print">
+      <div className="top-actions quote-top-actions no-print">
         {workspaceMode && isDirty && <span className="unsaved-badge">Unsaved changes</span>}
         {workspaceMode && <button className="btn primary" onClick={()=>void saveQuotation()} disabled={saving}>{saving?"Saving...":"Save Quotation"}</button>}
         {workspaceMode&&quotationId&&(status==="draft"||status==="revision_required")&&<button className="btn ghost" onClick={()=>void submitForReview()} disabled={saving}>{saving?"Working...":status==="revision_required"?"Resubmit for Review":"Submit for Review"}</button>}
         {workspaceMode&&status==="under_review"&&<span className="quote-editor-review-state">Under Review</span>}
         {workspaceMode&&status==="ready"&&<span className="quote-editor-review-state ready">Ready</span>}
-        <button className="btn ghost" onClick={()=>window.print()}>打印 / PDF</button>
-        <button className="btn danger" onClick={resetAll}>重置</button>
+        <button className="btn ghost quote-action-secondary" onClick={()=>window.print()}>Print / PDF</button>
+        <button className="btn danger quote-action-danger" onClick={resetAll}>Reset</button>
       </div>
     </header>
 
