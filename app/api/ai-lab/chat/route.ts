@@ -49,13 +49,15 @@ const schema={
       type:"object",
       additionalProperties:false,
       properties:{
-        type:{type:"string",enum:["none","update_supplier_status"]},
+        type:{type:"string",enum:["none","update_supplier_status","create_inquiry","update_inquiry","create_itinerary","update_itinerary"]},
         inquiryId:{type:"string"},
+        targetId:{type:"string"},
         label:{type:"string"},
         confirmText:{type:"string"},
-        nextStatus:{type:"string",enum:["","draft","ready","waiting_quote","quote_received"]}
+        nextStatus:{type:"string",enum:["","draft","ready","waiting_quote","quote_received"]},
+        payloadJson:{type:"string"}
       },
-      required:["type","inquiryId","label","confirmText","nextStatus"]
+      required:["type","inquiryId","targetId","label","confirmText","nextStatus","payloadJson"]
     }
   },
   required:["reply","contextInquiryId","contextTitle","links","memorySuggestion","action"]
@@ -157,9 +159,13 @@ export async function POST(request:Request){
     "- Help Long find and understand real records in the supplied system snapshot.",
     "- Explain current workflow status and sensible next step.",
     "- Return navigation links to real records when useful.",
-    "- You may PROPOSE one supplier workflow status change, but never claim it was executed.",
+    "- You may PROPOSE one controlled write action, but never claim it was executed before the user confirms.",
     "- Only propose update_supplier_status when the user clearly says a real-world event already happened, such as sent to supplier or supplier quote received.",
-    "- For create quotation, create itinerary, or AI import, provide navigation links only. Do not propose database write actions.",
+    "- You MAY propose direct actions for Inquiry and Itinerary only: create_inquiry, update_inquiry, create_itinerary, update_itinerary.",
+    "- Never write quotation commercial fields. Quotation costing, supplier cost, markup, margin, selling price and profit remain manual. For quotation work, provide navigation only.",
+    "- If the user asks to create a new Inquiry and enough information is present, propose create_inquiry instead of saying there is no creation access.",
+    "- If the user asks to create an Itinerary and there is a clear current Inquiry context, propose create_itinerary.",
+    "- For update actions, only propose changes clearly requested or directly supported by the conversation/current record.",
     "- Never invent record IDs, quotation numbers, itinerary numbers, customers, statuses, dates, or amounts.",
     "- If multiple records could match, ask which one instead of guessing.",
     "- Prefer concise Chinese with occasional English system labels.",
@@ -171,6 +177,15 @@ export async function POST(request:Request){
     "- Do not suggest memory for customer-specific facts, temporary prices, one-off dates, personal data, secrets, or transient case details.",
     "- If the user explicitly says remember/save this as a company rule, strongly prefer proposing memory unless it is unsuitable.",
     "",
+    "DIRECT ACTION PAYLOAD FORMAT:",
+    "For create_inquiry/update_inquiry, payloadJson must be a JSON string using only these keys when relevant: customer_name, contact, destination, departure_city, travel_start_date, travel_end_date, days_count, nights_count, pax, budget, tour_type, flight_requirement, hotel_requirement, meal_requirement, special_request, status, suggestedFlights, travellerComposition.",
+    "travellerComposition keys: adultCount, seniorCount, childCount, seniorNotes, childAges, childNotes, mobilityNotes.",
+    "suggestedFlights entries: from,to,flightNo,date,departureTime,arrivalTime,remarks.",
+    "For create_itinerary/update_itinerary, payloadJson must be a JSON string using only these keys when relevant: sourceInquiryId, id, title, destination, departureCity, travelStartDate, travelEndDate, days_count, nights_count, pax, tourType, customer_name, status, suggestedFlights, days, hotels, includedItems, notIncludedItems, reminders.",
+    "Each itinerary day: title, content, hotel, meals{breakfast,lunch,dinner}, attractions as names or {name}.",
+    "Hotels: name, cityArea, starRating, stayNights, roomSize, openingYear, renovationYear, nearbyNotes.",
+    "Do not put quotation prices or costing into any direct-action payload.",
+    "",
     "Allowed supplier status transitions:",
     "draft/ready -> waiting_quote when sent to supplier.",
     "waiting_quote -> quote_received when supplier quote has actually been received.",
@@ -181,6 +196,7 @@ export async function POST(request:Request){
     "New quotation from inquiry: /quotations/new?sourceInquiry={id}",
     "New itinerary from inquiry: /itineraries/new?sourceInquiry={id}",
     "AI supplier import from inquiry: /ai-import?sourceInquiry={id}",
+    "New Inquiry manual page: /inquiries/new",
     "Quotation detail: /quotations/{id}",
     "Itinerary detail: /itineraries/{id}",
     "",
