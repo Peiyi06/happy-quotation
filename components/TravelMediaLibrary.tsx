@@ -56,14 +56,26 @@ export default function TravelMediaLibrary(){
   }
 
   async function processMediaBacklog(){
-    if(mediaBackfillStartedRef.current) return;
+    if(mediaProcessing) return;
     mediaBackfillStartedRef.current=true;
     setMediaProcessing(true);
-    setMediaBackfillMessage("Checking existing Library Sources...");
+    setMediaBackfillMessage("Queueing existing Library Sources...");
     let failures=0;
     let processed=0;
     let lastError="";
     try{
+      const queueRes=await fetch("/api/internal-travel-library-media",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({action:"queue_existing"})
+      });
+      const queueData=await queueRes.json().catch(()=>({}));
+      if(!queueRes.ok||!queueData?.ok){
+        setMediaBackfillMessage("Unable to queue Library Sources: "+String(queueData?.error||"unknown error"));
+        return;
+      }
+
+      setMediaBackfillMessage("Queued "+Number(queueData.queued||0)+" source(s). Processing...");
       for(let i=0;i<20;i++){
         const res=await fetch("/api/internal-travel-library-media",{
           method:"POST",
@@ -102,7 +114,6 @@ export default function TravelMediaLibrary(){
 
   useEffect(()=>{
     void loadMediaReview();
-    void processMediaBacklog();
   },[]);
 
   async function reviewMediaCandidate(id:string,action:"confirm"|"ignore"){
@@ -307,6 +318,9 @@ export default function TravelMediaLibrary(){
         <div className="travel-library-document-media-status">
           {mediaProcessing&&<span className="status status-under_review">Processing...</span>}
           <span className="status status-ready">{mediaReview.length} To Review</span>
+          <button className="btn compact primary" type="button" disabled={mediaProcessing} onClick={()=>void processMediaBacklog()}>
+            {mediaProcessing?"Running...":"Run Media Extraction"}
+          </button>
         </div>
       </div>
 
@@ -364,7 +378,7 @@ export default function TravelMediaLibrary(){
           </div>
         </article>)}
       </div>:<div className="travel-library-inspector-empty">
-        {mediaProcessing?"正在重新分析现有 Library Sources...":"目前没有待审核的 PDF / DOCX 内嵌照片。"}
+        {mediaProcessing?"正在分析现有 Library Sources...":"目前没有待审核的 PDF / DOCX 内嵌照片。点击 Run Media Extraction 手动开始。"}
       </div>}
     </section>
 
