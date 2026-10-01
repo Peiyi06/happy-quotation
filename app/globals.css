@@ -1332,3 +1332,148 @@ input::placeholder,textarea::placeholder{font-family:inherit;color:#8b98a3}
 @media print{
   .supplier-language-wrap{display:none!important}
 }
+
+
+/* Supplier Form PDF readability — print in real point sizes and avoid browser fit-to-page shrinking */
+@media print{
+  @page{size:A4 portrait;margin:8mm 9mm}
+
+  html,body{
+    width:auto!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+    font-size:10.5pt!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+
+  .supplier-form-page{
+    width:auto!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:0!important;
+  }
+
+  .supplier-pro-document{
+    width:auto!important;
+    max-width:none!important;
+    display:block!important;
+  }
+
+  .supplier-print-page{
+    width:auto!important;
+    min-height:0!important;
+    height:auto!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+  }
+
+  .supplier-pro-header{
+    padding-bottom:3mm!important;
+  }
+  .supplier-pro-header h1{
+    font-size:22pt!important;
+    line-height:1.08!important;
+  }
+  .supplier-pro-header p{
+    font-size:10.5pt!important;
+    line-height:1.35!important;
+  }
+  .supplier-pro-header span{
+    font-size:8.5pt!important;
+  }
+
+  .supplier-info-cards{
+    gap:2.5mm!important;
+    margin:4mm 0!important;
+  }
+  .supplier-info-cards>div{
+    padding:2.5mm 2.8mm!important;
+  }
+  .supplier-info-cards span{
+    font-size:8.5pt!important;
+  }
+  .supplier-info-cards strong{
+    font-size:10.5pt!important;
+    line-height:1.3!important;
+  }
+
+  .supplier-two-column{
+    gap:3mm!important;
+  }
+  .supplier-pro-section{
+    margin-top:3.5mm!important;
+  }
+  .supplier-section-title{
+    padding:2.2mm 2.8mm!important;
+  }
+  .supplier-section-title h2{
+    font-size:11.5pt!important;
+    line-height:1.2!important;
+  }
+  .supplier-section-title span{
+    font-size:11pt!important;
+  }
+
+  .supplier-pro-row>span{
+    padding:2.6mm 2.8mm!important;
+    font-size:9.5pt!important;
+    line-height:1.38!important;
+  }
+  .supplier-pro-row>p{
+    padding:2.6mm 2.8mm!important;
+    font-size:10.5pt!important;
+    line-height:1.48!important;
+  }
+
+  .supplier-flight-head{
+    font-size:8.5pt!important;
+    line-height:1.25!important;
+  }
+  .supplier-flight-row{
+    font-size:9.2pt!important;
+    line-height:1.35!important;
+  }
+  .supplier-flight-head span,
+  .supplier-flight-row span{
+    padding:2.2mm 1.7mm!important;
+  }
+
+  .supplier-pro-footer{
+    margin-top:5mm!important;
+    padding-top:3mm!important;
+    font-size:8.5pt!important;
+    line-height:1.35!important;
+  }
+
+  .supplier-print-page:after{
+    height:8mm!important;
+    margin:3mm 0 0!important;
+  }
+
+  .supplier-pro-header,
+  .supplier-info-cards,
+  .supplier-section-title,
+  .supplier-pro-row,
+  .supplier-flight-row,
+  .supplier-pro-footer{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  .supplier-print-page-one{
+    break-after:page!important;
+    page-break-after:always!important;
+  }
+  .supplier-print-page-two{
+    break-before:page!important;
+    page-break-before:always!important;
+  }
+  .supplier-print-page:last-child{
+    break-after:auto!important;
+    page-break-after:auto!important;
+  }
+}
