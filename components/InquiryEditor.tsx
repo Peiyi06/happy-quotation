@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect,useState } from "react";
+import { useEffect,useMemo,useRef,useState } from "react";
 import { useRouter } from "next/navigation";
 import InquiryAiIntake from "@/components/InquiryAiIntake";
 
@@ -38,6 +38,10 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
   const [saving,setSaving]=useState(false);
   const [message,setMessage]=useState("");
   const [copyMessage,setCopyMessage]=useState("");
+  const [isDirty,setIsDirty]=useState(false);
+  const [pendingHref,setPendingHref]=useState<string|null>(null);
+  const [showUnsavedPrompt,setShowUnsavedPrompt]=useState(false);
+  const baselineRef=useRef("");
 
   useEffect(()=>{
     if(!/^\d{4}-\d{2}-\d{2}$/.test(startDate)||!/^\d{4}-\d{2}-\d{2}$/.test(endDate)) return;
@@ -52,6 +56,53 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
   const compositionTotal=(Number(adultCount)||0)+(Number(seniorCount)||0)+(Number(childCount)||0);
   const compositionHasValues=adultCount!==""||seniorCount!==""||childCount!=="";
   const compositionMismatch=compositionHasValues&&pax!==""&&compositionTotal!==Number(pax);
+
+  const editorSnapshot=useMemo(()=>JSON.stringify({
+    customerName,contact,destination,departureCity,startDate,endDate,days,nights,pax,budget,tourType,
+    adultCount,seniorCount,childCount,seniorNotes,childAges,childNotes,mobilityNotes,
+    flightRequirement,suggestedFlights,hotelRequirement,mealRequirement,specialRequest,status
+  }),[customerName,contact,destination,departureCity,startDate,endDate,days,nights,pax,budget,tourType,adultCount,seniorCount,childCount,seniorNotes,childAges,childNotes,mobilityNotes,flightRequirement,suggestedFlights,hotelRequirement,mealRequirement,specialRequest,status]);
+
+  useEffect(()=>{
+    if(!baselineRef.current){
+      baselineRef.current=editorSnapshot;
+      return;
+    }
+    setIsDirty(editorSnapshot!==baselineRef.current);
+  },[editorSnapshot]);
+
+  useEffect(()=>{
+    const beforeUnload=(e:BeforeUnloadEvent)=>{
+      if(!isDirty) return;
+      e.preventDefault();
+      e.returnValue="";
+    };
+    window.addEventListener("beforeunload",beforeUnload);
+    return ()=>window.removeEventListener("beforeunload",beforeUnload);
+  },[isDirty]);
+
+  useEffect(()=>{
+    const onLinkClick=(e:MouseEvent)=>{
+      if(!isDirty||e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
+      const target=e.target as HTMLElement|null;
+      const anchor=target?.closest?.("a[href]") as HTMLAnchorElement|null;
+      if(!anchor||anchor.target==="_blank"||anchor.hasAttribute("download")) return;
+      const url=new URL(anchor.href,window.location.href);
+      if(url.origin!==window.location.origin) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setPendingHref(url.pathname+url.search+url.hash);
+      setShowUnsavedPrompt(true);
+    };
+    document.addEventListener("click",onLinkClick,true);
+    return ()=>document.removeEventListener("click",onLinkClick,true);
+  },[isDirty]);
+
+  function requestNavigate(href:string){
+    if(!isDirty){router.push(href);return;}
+    setPendingHref(href);
+    setShowUnsavedPrompt(true);
+  }
 
   async function copyText(text:string,label:string){
     try{
@@ -158,7 +209,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
       }));
       if(onlyFlights.length) setSuggestedFlights(onlyFlights);
     }
-    setMessage("AI information applied. Please review before saving.");
+    setMessage("AI information applied — remember to Save Inquiry.");
   }
 
   async function save(){
@@ -179,8 +230,12 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
       const res=await fetch("/api/internal-inquiries",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:initialInquiry?.id||null,payload})});
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){setMessage(data?.error||"Unable to save inquiry.");return;}
+      baselineRef.current=editorSnapshot;
+      setIsDirty(false);
+      setShowUnsavedPrompt(false);
+      setPendingHref(null);
       if(!initialInquiry?.id&&data.id) router.replace("/inquiries/"+data.id);
-      else {setMessage("Saved");router.refresh();}
+      else {setMessage("All changes saved ✓");router.refresh();}
     }finally{setSaving(false);}
   }
 
@@ -277,10 +332,37 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
       </div>
     </section>
 
+    <div className={"inquiry-save-state "+(isDirty?"unsaved":"saved")}>
+      <div>
+        <strong>{isDirty?"● Unsaved Changes｜有未存档修改":"✓ All changes saved｜所有修改已存档"}</strong>
+        <span>{isDirty?"离开、刷新或关闭页面前请先 Save Inquiry。":"目前页面资料已存档。"}</span>
+      </div>
+      {isDirty&&<button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>{saving?"Saving...":"Save Inquiry"}</button>}
+    </div>
+
     <div className="detail-actions inquiry-save-actions">
-      <button className="btn" type="button" onClick={()=>router.push("/inquiries")}>← Back</button>
-      <button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>{saving?"Saving...":"Save Inquiry"}</button>
+      <button className="btn" type="button" onClick={()=>requestNavigate("/inquiries")}>← Back</button>
+      <button className="btn primary" type="button" disabled={saving||!isDirty} onClick={()=>void save()}>{saving?"Saving...":isDirty?"Save Inquiry":"Saved ✓"}</button>
     </div>
     {message&&<div className="save-message">{message}</div>}
+
+    {showUnsavedPrompt&&<div className="unsaved-overlay" onMouseDown={()=>setShowUnsavedPrompt(false)}>
+      <div className="unsaved-modal" onMouseDown={e=>e.stopPropagation()}>
+        <span className="page-kicker">UNSAVED CHANGES</span>
+        <h3>You have unsaved changes.</h3>
+        <p>尚有修改未存档，离开后这些资料会丢失。</p>
+        <div className="detail-actions">
+          <button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>{saving?"Saving...":"Stay & Save"}</button>
+          <button className="btn" type="button" onClick={()=>{
+            const href=pendingHref||"/inquiries";
+            baselineRef.current=editorSnapshot;
+            setIsDirty(false);
+            setShowUnsavedPrompt(false);
+            setPendingHref(null);
+            router.push(href);
+          }}>Leave Without Saving</button>
+        </div>
+      </div>
+    </div>}
   </div>;
 }
