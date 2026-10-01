@@ -1,6 +1,14 @@
 import Link from "next/link";
 import { internalDb, internalToken } from "@/lib/internalSession";
 
+const inquiryStatusLabels:Record<string,string>={
+  new:"New",
+  in_progress:"In Progress",
+  waiting_quote:"Waiting Quote",
+  ready_customer:"Ready for Customer",
+  closed:"Closed"
+};
+
 export default async function InquiryListPage(){
   const token=await internalToken();
   const db=internalDb();
@@ -20,7 +28,7 @@ export default async function InquiryListPage(){
         <tbody>{items.map((i:any)=><tr key={i.id}>
           <td><strong>{i.inquiry_no}</strong></td><td>{i.customer_name||"—"}</td><td>{i.destination||"—"}</td>
           <td>{i.travel_start_date||"—"}{i.travel_end_date?" → "+i.travel_end_date:""}</td><td>{i.pax||"—"}</td>
-          <td>{i.sales_owner_name||"—"}</td><td>{i.operation_assignee_name||"—"}</td><td><span className={"status status-"+i.status}>{i.status}</span></td>
+          <td>{i.sales_owner_name||"—"}</td><td>{i.operation_assignee_name||"—"}</td><td><span className={"status status-"+i.status}>{inquiryStatusLabels[i.status]||i.status}</span></td>
           <td><Link className="btn" href={"/inquiries/"+i.id}>Open</Link></td>
         </tr>)}</tbody>
       </table></div>
