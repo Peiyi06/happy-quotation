@@ -615,3 +615,32 @@
   .supplier-form-sheet{border:0!important;border-radius:0!important;box-shadow:none!important;padding:14mm!important}
   @page{size:A4 portrait;margin:0}
 }
+
+.inquiry-flight-list{display:grid;gap:12px}
+.inquiry-flight-card{border:1px solid var(--line);border-radius:12px;background:#fbfcfd;padding:13px}
+.inquiry-flight-card-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.inquiry-flight-card-head strong{font-size:12px;color:var(--navy2)}
+.inquiry-flight-remarks{grid-column:span 2}
+.operation-sales-flight-source{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.flight-summary-line{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:11px;color:#425564}
+.flight-summary-line b{color:var(--navy2)}
+.flight-summary-line em{font-style:normal;color:var(--muted)}
+.operation-flight-override{margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fafcfd}
+.operation-flight-override>p{margin:7px 0 12px;font-size:11px;color:var(--muted)}
+.supplier-form-flights{margin-top:18px}
+.supplier-form-flights h2{margin:0 0 9px;color:var(--navy2);font-size:15px}
+.supplier-flight-table{border:1px solid #dfe6eb;border-radius:12px;overflow:hidden}
+.supplier-flight-head,.supplier-flight-row{display:grid;grid-template-columns:1.2fr .9fr 1fr .8fr .8fr 1.4fr}
+.supplier-flight-head{background:#f3f7fa;font-size:10px;font-weight:900;color:var(--navy2)}
+.supplier-flight-row{font-size:11px;color:#334655;border-top:1px solid #e7ecef}
+.supplier-flight-head span,.supplier-flight-row span{padding:10px 9px}
+@media(max-width:800px){
+  .inquiry-flight-remarks{grid-column:1/-1}
+  .supplier-flight-head{display:none}
+  .supplier-flight-row{grid-template-columns:1fr 1fr}
+  .supplier-flight-row span{border-bottom:1px solid #eef2f4}
+}
+@media print{
+  .supplier-flight-head{font-size:10px}
+  .supplier-flight-row{font-size:11px}
+}
