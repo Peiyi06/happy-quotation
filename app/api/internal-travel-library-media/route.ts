@@ -277,6 +277,7 @@ async function processOne(token:string,db:any,doc:any,key:string){
   const prev=doc.mediaExtractionSummary||{};
   const processed=Math.max(0,Number(prev.processed||0));
   const previousMatched=Math.max(0,Number(prev.matched||0));
+  const previousSkipped=Math.max(0,Number(prev.skipped||0));
 
   if(!images.length){
     const summary={found:0,processed:0,matched:0,needsReview:0,complete:true};
@@ -290,8 +291,8 @@ async function processOne(token:string,db:any,doc:any,key:string){
   const chunk=images.filter(x=>x.imageIndex>processed).slice(0,1);
   if(!chunk.length){
     const summary={
-      found:images.length,processed:images.length,matched:previousMatched,
-      needsReview:Math.max(0,images.length-previousMatched),complete:true
+      found:images.length,processed:images.length,matched:previousMatched,skipped:previousSkipped,
+      needsReview:Math.max(0,images.length-previousMatched-previousSkipped),complete:true
     };
     const {data,error}=await db.rpc("staff_save_travel_media_extraction_chunk",{
       p_token:token,p_document_id:doc.id,p_candidates:[],p_summary:summary,p_complete:true
@@ -311,6 +312,10 @@ async function processOne(token:string,db:any,doc:any,key:string){
       const type=String(ai.suggestedType||"unknown");
       const name=String(ai.candidateName||"").trim();
       const confidence=Math.max(0,Math.min(1,Number(ai.confidence||0)));
+      if(!["attraction","hotel"].includes(type)){
+        continue;
+      }
+
       const resolved=await resolvePlace(db,token,type,name);
       const accepted=resolved&&confidence>=(type==="hotel"?0.92:0.86);
       const stored=await uploadExtracted(token,img,String(doc.id));
@@ -326,7 +331,7 @@ async function processOne(token:string,db:any,doc:any,key:string){
         width:img.width,
         height:img.height,
         nearbyText:img.nearbyText,
-        suggestedType:["attraction","hotel"].includes(type)?type:"unknown",
+        suggestedType:type,
         suggestedPlaceId:accepted?String(resolved.placeId||""):"",
         suggestedName:accepted?String(resolved.canonicalName||name):name,
         confidence,
@@ -337,12 +342,15 @@ async function processOne(token:string,db:any,doc:any,key:string){
 
     const processedTotal=Math.min(images.length,processed+chunk.length);
     const matchedTotal=previousMatched+matchedThisChunk;
+    const skippedThisChunk=Math.max(0,chunk.length-candidates.length);
+    const skippedTotal=previousSkipped+skippedThisChunk;
     const complete=processedTotal>=images.length;
     const summary={
       found:images.length,
       processed:processedTotal,
       matched:matchedTotal,
-      needsReview:Math.max(0,processedTotal-matchedTotal),
+      skipped:skippedTotal,
+      needsReview:Math.max(0,processedTotal-matchedTotal-skippedTotal),
       complete
     };
 
