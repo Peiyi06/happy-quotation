@@ -4,7 +4,9 @@ import { internalDb, internalToken } from "@/lib/internalSession";
 export default async function InquiryListPage(){
   const token=await internalToken();
   const db=internalDb();
-  const {data}=token?await db.rpc("staff_list_inquiries",{p_token:token}):{data:[] as any[]};
+  const response=token?await db.rpc("staff_list_inquiries",{p_token:token}):{data:[] as any[],error:null};
+  const data=response.data;
+  const error=response.error;
   const items=Array.isArray(data)?data:[];
   return <div>
     <div className="page-head">
@@ -12,6 +14,7 @@ export default async function InquiryListPage(){
       <div className="detail-actions"><Link className="btn primary" href="/inquiries/new">+ New Inquiry</Link></div>
     </div>
     <section className="panel">
+      {error&&<div className="save-message">Unable to load inquiries: {error.message}</div>}
       <div className="table-wrap"><table>
         <thead><tr><th>Inquiry No.</th><th>Customer</th><th>Destination</th><th>Travel Date</th><th>Pax</th><th>Sales</th><th>Operation</th><th>Status</th><th></th></tr></thead>
         <tbody>{items.map((i:any)=><tr key={i.id}>
