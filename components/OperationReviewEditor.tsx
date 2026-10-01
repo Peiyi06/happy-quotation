@@ -23,6 +23,15 @@ export default function OperationReviewEditor({
   const [days,setDays]=useState(Number(has(initial,"daysCount")?initial.daysCount:inquiry.days_count)||1);
   const [nights,setNights]=useState(Number(has(initial,"nightsCount")?initial.nightsCount:inquiry.nights_count)||0);
   const [pax,setPax]=useState<number|"">(has(initial,"pax")?initial.pax:(inquiry.pax??""));
+  const salesComposition=inquiry?.inquiry_data?.travellerComposition||{};
+  const [overrideComposition,setOverrideComposition]=useState(Boolean(initial.overrideTravellerComposition));
+  const [adultCount,setAdultCount]=useState<number|"">(initial?.travellerComposition?.adultCount??salesComposition.adultCount??"");
+  const [seniorCount,setSeniorCount]=useState<number|"">(initial?.travellerComposition?.seniorCount??salesComposition.seniorCount??"");
+  const [childCount,setChildCount]=useState<number|"">(initial?.travellerComposition?.childCount??salesComposition.childCount??"");
+  const [seniorNotes,setSeniorNotes]=useState(initial?.travellerComposition?.seniorNotes??salesComposition.seniorNotes??"");
+  const [childAges,setChildAges]=useState(initial?.travellerComposition?.childAges??salesComposition.childAges??"");
+  const [childNotes,setChildNotes]=useState(initial?.travellerComposition?.childNotes??salesComposition.childNotes??"");
+  const [mobilityNotes,setMobilityNotes]=useState(initial?.travellerComposition?.mobilityNotes??salesComposition.mobilityNotes??"");
   const [budget,setBudget]=useState(has(initial,"budget")?initial.budget:(inquiry.budget||""));
   const [tourType,setTourType]=useState(has(initial,"tourType")?initial.tourType:(inquiry.tour_type||""));
   const [flight,setFlight]=useState(has(initial,"flightRequirement")?initial.flightRequirement:(inquiry.flight_requirement||""));
@@ -50,8 +59,15 @@ export default function OperationReviewEditor({
     specialRequest:special,transportRequirement:transport,
     itineraryRequirement:itineraryReq,operationNotes,
     overrideSuggestedFlights:overrideFlights,
-    suggestedFlights:overrideFlights?operationFlights:salesSuggestedFlights
-  }),[destination,departureCity,startDate,endDate,days,nights,pax,budget,tourType,flight,hotel,meals,special,transport,itineraryReq,operationNotes,overrideFlights,operationFlights,salesSuggestedFlights]);
+    suggestedFlights:overrideFlights?operationFlights:salesSuggestedFlights,
+    overrideTravellerComposition:overrideComposition,
+    travellerComposition:overrideComposition?{
+      adultCount:adultCount===""?null:Number(adultCount),
+      seniorCount:seniorCount===""?null:Number(seniorCount),
+      childCount:childCount===""?null:Number(childCount),
+      seniorNotes,childAges,childNotes,mobilityNotes
+    }:salesComposition
+  }),[destination,departureCity,startDate,endDate,days,nights,pax,budget,tourType,flight,hotel,meals,special,transport,itineraryReq,operationNotes,overrideFlights,operationFlights,salesSuggestedFlights,overrideComposition,adultCount,seniorCount,childCount,seniorNotes,childAges,childNotes,mobilityNotes,salesComposition]);
 
   async function save(nextStatus=supplierStatus){
     setSaving(true);setMessage("");
@@ -119,6 +135,48 @@ export default function OperationReviewEditor({
         <label className="field"><span>Pax</span><input disabled={!canEdit} type="number" min="1" value={pax} onChange={e=>setPax(e.target.value===""?"":Math.max(1,Number(e.target.value)||1))}/></label>
         <label className="field"><span>Tour Type</span><input disabled={!canEdit} value={tourType} onChange={e=>setTourType(e.target.value)}/></label>
         <label className="field"><span>Budget</span><input disabled={!canEdit} value={budget} onChange={e=>setBudget(e.target.value)}/></label>
+      </div>
+
+      <div className="operation-composition-source">
+        <div className="panel-head compact">
+          <div><h3>Sales Traveller Composition｜销售旅客组成</h3><p className="panel-subtext">Sales 原始人数结构会保留，Operation 可选择是否覆盖。</p></div>
+        </div>
+        <div className="traveller-summary-grid">
+          <div><span>Adult</span><strong>{salesComposition.adultCount??"—"}</strong></div>
+          <div><span>Senior</span><strong>{salesComposition.seniorCount??"—"}</strong></div>
+          <div><span>Child</span><strong>{salesComposition.childCount??"—"}</strong></div>
+        </div>
+        {(salesComposition.seniorNotes||salesComposition.childAges||salesComposition.childNotes||salesComposition.mobilityNotes)&&<div className="inquiry-detail-grid composition-detail-grid">
+          <div><span>Senior Notes</span><p>{salesComposition.seniorNotes||"—"}</p></div>
+          <div><span>Child Ages</span><p>{salesComposition.childAges||"—"}</p></div>
+          <div><span>Child Notes</span><p>{salesComposition.childNotes||"—"}</p></div>
+          <div><span>Mobility / Care</span><p>{salesComposition.mobilityNotes||"—"}</p></div>
+        </div>}
+      </div>
+
+      <div className="operation-composition-override">
+        <label className="supplier-budget-toggle">
+          <input disabled={!canEdit} type="checkbox" checked={overrideComposition} onChange={e=>setOverrideComposition(e.target.checked)}/>
+          <span>Override Traveller Composition｜Operation 更改旅客组成</span>
+        </label>
+        <p>{overrideComposition?"Supplier Inquiry Form 将使用 Operation 调整后的旅客组成。":"目前沿用 Sales 的旅客组成。"}</p>
+        {overrideComposition&&<>
+          <div className="itinerary-meta-grid">
+            <label className="field"><span>Adult｜成人</span><input disabled={!canEdit} type="number" min="0" value={adultCount} onChange={e=>setAdultCount(e.target.value===""?"":Math.max(0,Number(e.target.value)||0))}/></label>
+            <label className="field"><span>Senior｜老人</span><input disabled={!canEdit} type="number" min="0" value={seniorCount} onChange={e=>setSeniorCount(e.target.value===""?"":Math.max(0,Number(e.target.value)||0))}/></label>
+            <label className="field"><span>Child｜小孩</span><input disabled={!canEdit} type="number" min="0" value={childCount} onChange={e=>setChildCount(e.target.value===""?"":Math.max(0,Number(e.target.value)||0))}/></label>
+          </div>
+          <div className="inquiry-requirement-grid traveller-composition-notes">
+            <label className="field"><span>Senior Notes</span><textarea disabled={!canEdit} value={seniorNotes} onChange={e=>setSeniorNotes(e.target.value)}/></label>
+            <label className="field"><span>Child Ages</span><textarea disabled={!canEdit} value={childAges} onChange={e=>setChildAges(e.target.value)}/></label>
+            <label className="field"><span>Child Notes</span><textarea disabled={!canEdit} value={childNotes} onChange={e=>setChildNotes(e.target.value)}/></label>
+            <label className="field"><span>Mobility / Care Notes</span><textarea disabled={!canEdit} value={mobilityNotes} onChange={e=>setMobilityNotes(e.target.value)}/></label>
+          </div>
+          <div className={"traveller-composition-check "+((((Number(adultCount)||0)+(Number(seniorCount)||0)+(Number(childCount)||0))!==Number(pax))?"warning":"ok")}>
+            <strong>Composition Total: {(Number(adultCount)||0)+(Number(seniorCount)||0)+(Number(childCount)||0)}</strong>
+            <span>{pax===""?"请先填写总 Pax。":((Number(adultCount)||0)+(Number(seniorCount)||0)+(Number(childCount)||0))!==Number(pax)?`与 Pax ${pax} 不一致，请检查。`:`与 Pax ${pax} 一致。`}</span>
+          </div>
+        </>}
       </div>
 
       <div className="operation-flight-override">
