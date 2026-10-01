@@ -56,6 +56,18 @@ const schema={
       },
       required:["title","destination","daysCount","nightsCount","travelPeriod","customerType","summary","dayOutline"]
     },
+    photoIdentification:{
+      type:"object",additionalProperties:false,
+      properties:{
+        kind:{type:"string",enum:["attraction","hotel","unknown"]},
+        name:{type:"string"},
+        destination:{type:"string"},
+        cityArea:{type:"string"},
+        confidence:{type:"number"},
+        evidence:{type:"string"}
+      },
+      required:["kind","name","destination","cityArea","confidence","evidence"]
+    },
     prices:{
       type:"array",
       items:{
@@ -70,8 +82,132 @@ const schema={
     },
     warnings:{type:"array",items:{type:"string"}}
   },
-  required:["title","sourceType","destination","summary","places","hotels","itineraryCase","prices","warnings"]
+  required:["title","sourceType","destination","summary","places","hotels","itineraryCase","photoIdentification","prices","warnings"]
 };
+
+async function semanticLibraryMatch(db:any,token:string,key:string,type:"attraction"|"hotel",query:string,destination:string,cityArea:string){
+  const {data:candidateData,error:candidateError}=await db.rpc("staff_list_travel_media_candidates",{
+    p_token:token,
+    p_place_type:type,
+    p_destination:destination,
+    p_limit:120
+  });
+  if(candidateError||!candidateData?.ok) return null;
+  const candidates=Array.isArray(candidateData.candidates)?candidateData.candidates:[];
+  if(!candidates.length) return null;
+
+  const matchSchema={
+    type:"object",additionalProperties:false,
+    properties:{
+      samePlace:{type:"boolean"},
+      placeId:{type:"string"},
+      confidence:{type:"number"},
+      reason:{type:"string"}
+    },
+    required:["samePlace","placeId","confidence","reason"]
+  };
+
+  const prompt=[
+    "Match this AI-identified travel photo subject against Happy Express Travel's existing private library.",
+    "Choose a candidate only when it is clearly the SAME real-world attraction/place or the SAME hotel property.",
+    "Translations, transliterations, common aliases and reordered naming are allowed.",
+    "For hotels, different branches are never the same property.",
+    "Use destination and cityArea as supporting context.",
+    "If uncertain, return samePlace=false. Never invent a placeId.",
+    JSON.stringify({
+      type,query,destination,cityArea,
+      candidates:candidates.map((x:any)=>({
+        placeId:String(x.placeId||""),
+        canonicalName:String(x.canonicalName||""),
+        aliases:Array.isArray(x.aliases)?x.aliases:[],
+        destination:String(x.destination||""),
+        cityArea:String(x.cityArea||"")
+      }))
+    })
+  ].join("\n");
+
+  const ai=await fetch("https://api.openai.com/v1/responses",{
+    method:"POST",
+    headers:{"Authorization":"Bearer "+key,"Content-Type":"application/json"},
+    body:JSON.stringify({
+      model:process.env.OPENAI_ITINERARY_MODEL||"gpt-5.6-terra",
+      reasoning:{effort:"low"},
+      input:[{role:"user",content:[{type:"input_text",text:prompt}]}],
+      text:{format:{type:"json_schema",name:"travel_photo_library_match",strict:true,schema:matchSchema}}
+    })
+  });
+  const raw=await ai.json().catch(()=>({}));
+  if(!ai.ok) return null;
+  const text=outputText(raw);
+  if(!text) return null;
+  let parsed:any={};
+  try{parsed=JSON.parse(text);}catch{return null;}
+
+  const threshold=type==="hotel"?0.92:0.86;
+  if(!parsed?.samePlace||!parsed?.placeId||Number(parsed.confidence||0)<threshold) return null;
+  const chosen=candidates.find((x:any)=>String(x.placeId)===String(parsed.placeId));
+  if(!chosen) return null;
+  return {
+    placeId:String(chosen.placeId),
+    canonicalName:String(chosen.canonicalName||""),
+    destination:String(chosen.destination||""),
+    cityArea:String(chosen.cityArea||""),
+    confidence:Number(parsed.confidence||0),
+    method:"ai_semantic",
+    reason:String(parsed.reason||"")
+  };
+}
+
+async function resolvePhotoMatch(db:any,token:string,key:string,photo:any){
+  const type=photo?.kind==="hotel"?"hotel":photo?.kind==="attraction"?"attraction":null;
+  const query=String(photo?.name||"").trim();
+  if(!type||!query){
+    return {
+      status:"needs_review",method:"none",confidence:Number(photo?.confidence||0),
+      identifiedName:query,identifiedType:photo?.kind||"unknown",
+      destination:String(photo?.destination||""),cityArea:String(photo?.cityArea||""),
+      matchedPlaceId:"",matchedName:"",reason:String(photo?.evidence||"Photo identity is uncertain.")
+    };
+  }
+
+  const {data}=await db.rpc("staff_match_travel_media",{
+    p_token:token,p_place_type:type,p_query:query,p_limit:3
+  });
+  const best=data?.ok&&Array.isArray(data.matches)&&data.matches.length?data.matches[0]:null;
+  const threshold=type==="hotel"?0.72:0.58;
+  if(best&&Number(best.score||0)>=threshold){
+    const exact=Number(best.score||0)>=0.99;
+    return {
+      status:"matched",method:exact?"exact":"fuzzy",confidence:Number(best.score||0),
+      identifiedName:query,identifiedType:type,
+      destination:String(best.destination||photo?.destination||""),cityArea:String(best.cityArea||photo?.cityArea||""),
+      matchedPlaceId:String(best.placeId||""),matchedName:String(best.canonicalName||query),
+      reason:exact?"Exact / normalized name match.":"Name similarity match."
+    };
+  }
+
+  const semantic=await semanticLibraryMatch(
+    db,token,key,type,query,String(photo?.destination||""),String(photo?.cityArea||"")
+  );
+  if(semantic){
+    return {
+      status:"matched",method:semantic.method,confidence:semantic.confidence,
+      identifiedName:query,identifiedType:type,
+      destination:semantic.destination||String(photo?.destination||""),
+      cityArea:semantic.cityArea||String(photo?.cityArea||""),
+      matchedPlaceId:semantic.placeId,matchedName:semantic.canonicalName,
+      reason:semantic.reason
+    };
+  }
+
+  return {
+    status:"needs_review",method:"ai_identification",confidence:Number(photo?.confidence||0),
+    identifiedName:query,identifiedType:type,
+    destination:String(photo?.destination||""),cityArea:String(photo?.cityArea||""),
+    matchedPlaceId:"",matchedName:"",
+    reason:String(photo?.evidence||"AI identified the photo subject, but no confident existing Library match was found.")
+  };
+}
 
 async function storageAction(token:string,form:FormData){
   const res=await fetch(supabaseUrl+"/functions/v1/travel-library-storage",{
@@ -171,8 +307,9 @@ Goals:
 6. Extract historical price references exactly as written. Never guess missing amount, pax, supplier, date, currency, or validity. Old prices are historical references only.
 7. Do not invent attractions, hotels, prices, dates, aliases, or suppliers.
 8. Put ambiguity or missing context into warnings.
-9. If the source is only a photo and the place/hotel identity is not written or visually reliable, leave names empty rather than guessing.
-10. Preserve multilingual proper names when useful.`;
+9. For every upload, fill photoIdentification. For non-image files use kind="unknown", blank name/destination/cityArea, confidence=0, evidence="".
+10. For a photo: identify a specific attraction or hotel only when the visual evidence is genuinely strong. Set confidence from 0 to 1 and briefly state the visible evidence. If it could be many places or properties, use kind="unknown", blank name and low confidence rather than guessing.
+11. Preserve multilingual proper names when useful.`;
 
   const openai=await fetch("https://api.openai.com/v1/responses",{
     method:"POST",
@@ -193,6 +330,12 @@ Goals:
 
   let extraction:any;
   try{extraction=JSON.parse(text);}catch{return NextResponse.json({error:"AI extraction could not be parsed."},{status:502});}
+
+  if(mime.startsWith("image/")){
+    extraction.photoMatch=await resolvePhotoMatch(db,token,key,extraction.photoIdentification||{});
+  }else{
+    extraction.photoMatch=null;
+  }
 
   const {data:created,error:createError}=await db.rpc("staff_create_travel_library_document",{
     p_token:token,
