@@ -1683,3 +1683,59 @@ input::placeholder,textarea::placeholder{font-family:inherit;color:#8b98a3}
   color:var(--status-ready-text)!important;
   border-color:var(--status-ready-border)!important;
 }
+
+
+/* Compact Current Status card */
+.inquiry-status-card{
+  min-width:0;
+  width:auto;
+  max-width:220px;
+  padding:10px 12px;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:6px;
+  align-items:start;
+  background:#fff;
+  border:1px solid #dce5ea;
+  border-radius:12px;
+  box-shadow:0 5px 16px rgba(20,50,65,.05);
+  position:relative;
+  overflow:hidden;
+}
+.inquiry-status-card:before{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  height:3px;
+  background:#d7e1e7;
+}
+.inquiry-status-card-label{
+  font-size:8.5px;
+  font-weight:900;
+  letter-spacing:.1em;
+  color:#7b8b95;
+  line-height:1.2;
+}
+.inquiry-status-card-value.status{
+  justify-self:start;
+  padding:5px 9px;
+  font-size:11.5px;
+  line-height:1.15;
+  border-radius:999px;
+  text-transform:none;
+}
+.status-card-new:before{background:#aebfca}
+.status-card-in_progress:before{background:#79a9d0}
+.status-card-under_review:before{background:#d7ad4d}
+.status-card-revision_required:before{background:#cf7a70}
+.status-card-ready:before{background:#77a881}
+.status-card-closed:before{background:#9aa7b0}
+
+@media(max-width:760px){
+  .inquiry-status-card{
+    max-width:none;
+    width:100%;
+  }
+}
