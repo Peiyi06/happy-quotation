@@ -9,7 +9,15 @@ export async function POST(request:Request){
   const id=String(body?.id||"");
   const supplierStatus=String(body?.supplierStatus||"");
   const mainStatus=String(body?.mainStatus||"");
+  const event=String(body?.event||"");
   if(!id) return NextResponse.json({error:"Inquiry ID is required"},{status:400});
+
+  const db=internalDb();
+  if(event==="supplier_form_exported"){
+    const {data,error}=await db.rpc("staff_mark_supplier_form_exported",{p_token:token,p_id:id});
+    if(error||!data?.ok) return NextResponse.json({error:data?.error||error?.message||"Unable to record supplier form export"},{status:400});
+    return NextResponse.json(data);
+  }
   const hasSupplierUpdate=Boolean(supplierStatus);
   const hasMainUpdate=Boolean(mainStatus);
   if(hasSupplierUpdate&&!["draft","ready","waiting_quote","quote_received"].includes(supplierStatus)){
@@ -22,7 +30,6 @@ export async function POST(request:Request){
     return NextResponse.json({error:"No workflow update supplied"},{status:400});
   }
 
-  const db=internalDb();
   const {data:inquiry,error:getError}=await db.rpc("staff_get_inquiry",{p_token:token,p_id:id});
   if(getError||!inquiry?.id) return NextResponse.json({error:getError?.message||"Inquiry not found"},{status:404});
 
