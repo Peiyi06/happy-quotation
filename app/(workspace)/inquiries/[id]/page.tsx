@@ -212,7 +212,7 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
                 :"Quotation 审核通过后，Sales 才进入 Itinerary 阶段。"}</p>}
           {quotationReady&&!itineraryReady&&<div className="simple-workflow-actions">
             {linkedItineraries.length===0&&<Link className="btn primary" href={"/itineraries/new?sourceInquiry="+id}>Create Itinerary</Link>}
-            <Link className="workflow-text-link" href={"/ai-import?sourceInquiry="+id}>Import Supplier Itinerary</Link>
+            <Link className="workflow-text-link" href={"/ai-import?sourceInquiry="+id}>AI Itinerary</Link>
           </div>}
         </div>
       </div>
