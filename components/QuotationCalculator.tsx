@@ -111,6 +111,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [pendingHref, setPendingHref] = useState<string | null>(null);
   const [isDirty, setIsDirty] = useState(false);
   const baselineRef = useRef("");
+  const commercialBaselineRef = useRef("");
   const [tourCode, setTourCode] = useState("");
   const [businessType, setBusinessType] = useState("");
   const [op, setOp] = useState(currentStaffName);
@@ -258,6 +259,24 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     selectedType,manualQuote
   });
 
+  const currentCommercialSnapshot = JSON.stringify({
+    supplier,pax,mainCurrency,mainRate,
+    flightTotalPrice,flightPriceCurrency,
+    travelerRows,leaderRows,
+    singleRoomAmount,singleRoomCurrency,
+    profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
+    childBedMode,childBedManual,childBedCurrency,
+    childNoBedMode,childNoBedManual,childNoBedCurrency,
+    selectedType,manualQuote
+  });
+  const commercialDirty = Boolean(
+    hydrated &&
+    commercialBaselineRef.current &&
+    currentCommercialSnapshot !== commercialBaselineRef.current
+  );
+  const displayStatus:QuoteStatus =
+    status==="ready" && commercialDirty ? "revision_required" : status;
+
   const itinerarySummary = useMemo(() => {
     const addDays = (date:string, days:number) => {
       if (!date) return "";
@@ -311,11 +330,15 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     if (!hydrated) return;
     if (!baselineRef.current) {
       baselineRef.current = currentSnapshot;
+      commercialBaselineRef.current = currentCommercialSnapshot;
       setIsDirty(false);
       return;
     }
+    if(!commercialBaselineRef.current){
+      commercialBaselineRef.current = currentCommercialSnapshot;
+    }
     setIsDirty(currentSnapshot !== baselineRef.current);
-  }, [hydrated,currentSnapshot]);
+  }, [hydrated,currentSnapshot,currentCommercialSnapshot]);
 
   useEffect(() => {
     const beforeUnload = (event: BeforeUnloadEvent) => {
@@ -487,8 +510,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           return false;
         }
       } else {
-        setSaveMessage("Saved");
+        setSaveMessage(data?.review_required?"Saved · Revision Required":"Saved");
         baselineRef.current = currentSnapshot;
+        commercialBaselineRef.current = currentCommercialSnapshot;
         setIsDirty(false);
         if(data?.review_required) setStatus("revision_required");
         if (!quotationId && data.id) router.replace("/quotations/" + data.id);
@@ -662,9 +686,10 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <div className="top-actions quote-top-actions no-print">
         {workspaceMode && isDirty && <span className="unsaved-badge">Unsaved changes</span>}
         {workspaceMode && <button className="btn primary" onClick={()=>void saveQuotation()} disabled={saving}>{saving?"Saving...":"Save Quotation"}</button>}
-        {workspaceMode&&quotationId&&(status==="draft"||status==="revision_required")&&<button className="btn ghost" onClick={()=>void submitForReview()} disabled={saving}>{saving?"Working...":status==="revision_required"?"Resubmit for Review":"Submit for Review"}</button>}
-        {workspaceMode&&status==="under_review"&&<span className="quote-editor-review-state">Under Review</span>}
-        {workspaceMode&&status==="ready"&&<span className="quote-editor-review-state ready">Ready</span>}
+        {workspaceMode&&quotationId&&(displayStatus==="draft"||displayStatus==="revision_required")&&<button className="btn ghost" onClick={()=>void submitForReview()} disabled={saving}>{saving?"Working...":displayStatus==="revision_required"?"Resubmit for Review":"Submit for Review"}</button>}
+        {workspaceMode&&displayStatus==="under_review"&&<span className="quote-editor-review-state">Under Review</span>}
+        {workspaceMode&&displayStatus==="ready"&&<span className="quote-editor-review-state ready">Ready</span>}
+        {workspaceMode&&status==="ready"&&commercialDirty&&<span className="quote-commercial-change-note">Commercial changes pending save</span>}
         <button className="btn ghost quote-action-secondary" onClick={()=>window.print()}>Print / PDF</button>
         <button className="btn danger quote-action-danger" onClick={resetAll}>Reset</button>
       </div>
@@ -685,7 +710,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         <Field label="Return Date (Arrival)"><input type="text" value={formatDisplayDate(returnDate)} readOnly placeholder="—" /></Field>
         <Field label="Customer"><input value={customerName} onChange={e=>setCustomerName(e.target.value)} placeholder="Customer / Company" /></Field>
         <Field label="Tour Group"><select value={tourGroupId} onChange={e=>setTourGroupId(e.target.value)}><option value="">Unclassified</option>{tourGroups.map((g:any)=><option key={g.id} value={g.id}>{g.name}</option>)}</select></Field>
-        <Field label="Status"><div className={"quote-status-readonly status-"+status}>{status==="under_review"?"Under Review":status==="revision_required"?"Revision Required":status.charAt(0).toUpperCase()+status.slice(1)}</div></Field>
+        <Field label="Status"><div className={"quote-status-readonly status-"+displayStatus}>{displayStatus==="under_review"?"Under Review":displayStatus==="revision_required"?"Revision Required":displayStatus.charAt(0).toUpperCase()+displayStatus.slice(1)}</div></Field>
       </div>
 
       <div className="flight-info-card">
