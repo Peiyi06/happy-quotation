@@ -1834,3 +1834,39 @@ input::placeholder,textarea::placeholder{font-family:inherit;color:#8b98a3}
   font-weight:800;
   white-space:nowrap;
 }
+
+
+/* Sales workflow typography cleanup */
+.inquiry-workflow-panel .page-kicker{
+  font-weight:800;
+  letter-spacing:.14em;
+}
+.inquiry-workflow-panel h2{
+  font-weight:700;
+}
+.inquiry-workflow-panel .panel-subtext{
+  font-weight:400;
+}
+.simple-workflow-index{
+  font-weight:800;
+}
+.simple-workflow-state{
+  font-weight:700;
+}
+.simple-workflow-title h3{
+  font-weight:700;
+}
+.simple-workflow-title>strong{
+  font-weight:600;
+}
+.simple-workflow-card p{
+  font-weight:400;
+}
+.workflow-record-link b{
+  font-weight:700;
+}
+.workflow-record-link span,
+.workflow-text-link,
+.simple-workflow-actions .btn{
+  font-weight:600;
+}
