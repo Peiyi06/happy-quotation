@@ -1087,3 +1087,8 @@
 @media(max-width:1000px){
   .ai-lab-shell{grid-template-columns:1fr}
 }
+
+.ai-thread-archived{display:grid;gap:6px;padding-top:2px}
+.ai-thread-archived>button{border:0;background:transparent;color:#6f858d;font-size:8.5px;text-align:left;padding:2px 0;cursor:pointer;font-weight:800}
+.ai-thread-list.archived{max-height:180px}
+.ai-thread-list.archived .ai-thread-item{opacity:.82;background:#f8fafb}
