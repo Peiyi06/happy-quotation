@@ -22,7 +22,7 @@ export default async function InquiryListPage(){
   const error=response.error;
   const items=Array.isArray(data)?data:[];
   return <div>
-    <div className="page-head">
+    <div className="page-head page-compact-header">
       <div><span className="page-kicker">INQUIRY PIPELINE</span><h1>Inquiries</h1><p>Sales → Operation → Itinerary / Quotation 的案件主档案。</p></div>
       <div className="detail-actions"><Link className="btn primary" href="/inquiries/new">+ New Inquiry</Link></div>
     </div>
