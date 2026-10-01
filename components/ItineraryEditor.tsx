@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type MealInfo={breakfast:string;lunch:string;dinner:string};
-type AttractionImage={path:string;url:string;name:string};
+type AttractionImage={path:string;url:string;name:string;libraryImageId?:string;libraryPlaceId?:string;source?:string};
 type SuggestedFlight={id:string;from:string;to:string;flightNo:string;date:string;departureTime:string;arrivalTime:string;remarks:string};
 type HotelItem={id:string;name:string;cityArea:string;starRating:string;stayNights:string;roomSize:number|"";openingYear:string;renovationYear:string;nearbyNotes:string;images:AttractionImage[]};
 type AttractionItem={id:string;name:string;images:AttractionImage[]};
@@ -153,9 +153,106 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   const [pendingHref,setPendingHref]=useState<string|null>(null);
   const [isDirty,setIsDirty]=useState(false);
   const baselineRef=useRef("");
+  const mediaHydratedRef=useRef(false);
 
   const op=initialItinerary?.owner_name||data.op||currentStaffName;
   const label=useMemo(()=>`${daysCount}D${nightsCount}N`,[daysCount,nightsCount]);
+
+  async function lookupTravelMedia(type:"attraction"|"hotel",name:string){
+    const q=name.trim();
+    if(!q) return null;
+    try{
+      const res=await fetch("/api/internal-travel-media?type="+encodeURIComponent(type)+"&q="+encodeURIComponent(q)+"&limit=3",{cache:"no-store"});
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok||!data?.ok||!Array.isArray(data.matches)||!data.matches.length) return null;
+      const best=data.matches[0];
+      const threshold=type==="hotel"?0.72:0.58;
+      if(Number(best.score||0)<threshold||!Array.isArray(best.images)||!best.images.length) return null;
+      return best;
+    }catch{return null;}
+  }
+
+  async function registerTravelMedia(type:"attraction"|"hotel",name:string,image:AttractionImage,cityArea=""){
+    if(!name.trim()||!image.path||!image.url) return image;
+    try{
+      const res=await fetch("/api/internal-travel-media",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          type,name,path:image.path,url:image.url,originalName:image.name,
+          destination,cityArea
+        })
+      });
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok||!data?.ok) return image;
+      return {...image,libraryImageId:data.image_id,libraryPlaceId:data.place_id,source:"library"};
+    }catch{return image;}
+  }
+
+  async function autoMatchAttraction(dayId:string,attractionId:string,name:string){
+    if(!name.trim()) return;
+    const current=days.find(d=>d.id===dayId)?.attractions.find(a=>a.id===attractionId);
+    if(!current||current.images.length) return;
+    const match=await lookupTravelMedia("attraction",name);
+    if(!match) return;
+    setDays(items=>items.map(d=>d.id===dayId?{
+      ...d,
+      attractions:d.attractions.map(a=>a.id===attractionId&&a.images.length===0
+        ?{...a,images:match.images.slice(0,3)}
+        :a)
+    }:d));
+  }
+
+  async function autoMatchHotel(hotelId:string,name:string){
+    if(!name.trim()) return;
+    const current=hotels.find(h=>h.id===hotelId);
+    if(!current||current.images.length) return;
+    const match=await lookupTravelMedia("hotel",name);
+    if(!match) return;
+    setHotels(items=>items.map(h=>h.id===hotelId&&h.images.length===0
+      ?{...h,images:match.images.slice(0,5)}
+      :h));
+  }
+
+  useEffect(()=>{
+    if(mediaHydratedRef.current) return;
+    mediaHydratedRef.current=true;
+
+    void (async()=>{
+      const attractionTasks:Promise<void>[]=[];
+      for(const day of initialDays){
+        for(const attraction of day.attractions){
+          if(attraction.name.trim()&&attraction.images.length===0){
+            attractionTasks.push((async()=>{
+              const match=await lookupTravelMedia("attraction",attraction.name);
+              if(!match) return;
+              setDays(items=>items.map(d=>d.id===day.id?{
+                ...d,
+                attractions:d.attractions.map(a=>a.id===attraction.id&&a.images.length===0
+                  ?{...a,images:match.images.slice(0,3)}
+                  :a)
+              }:d));
+            })());
+          }
+        }
+      }
+
+      const hotelTasks:Promise<void>[]=[];
+      for(const hotel of hotels){
+        if(hotel.name.trim()&&hotel.images.length===0){
+          hotelTasks.push((async()=>{
+            const match=await lookupTravelMedia("hotel",hotel.name);
+            if(!match) return;
+            setHotels(items=>items.map(h=>h.id===hotel.id&&h.images.length===0
+              ?{...h,images:match.images.slice(0,5)}
+              :h));
+          })());
+        }
+      }
+
+      await Promise.all([...attractionTasks,...hotelTasks]);
+    })();
+  },[]);
 
   useEffect(()=>{
     if(!/^\d{4}-\d{2}-\d{2}$/.test(travelStartDate)||!/^\d{4}-\d{2}-\d{2}$/.test(travelEndDate)) return;
@@ -213,7 +310,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     const hotel=hotels[index];
     if(!hotel) return;
     for(const image of hotel.images){
-      if(!image.path) continue;
+      if(!image.path||image.source==="library"||image.libraryImageId) continue;
       const form=new FormData();
       form.set("action","delete");
       form.set("path",image.path);
@@ -225,6 +322,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   async function uploadHotelImages(hotelId:string,files:FileList|null){
     if(!files?.length) return;
     const hotel=hotels.find(h=>h.id===hotelId);
+    if(!hotel?.name.trim()){alert("请先填写酒店名称，再上传图片。这样系统才能把照片存入 Media Library。");return;}
     const remaining=Math.max(0,5-(hotel?.images.length||0));
     if(remaining<=0){alert("每间酒店最多上传 5 张图片。");return;}
     const selected=Array.from(files).slice(0,remaining);
@@ -239,8 +337,10 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
         const res=await fetch("/api/internal-itinerary-images",{method:"POST",body:form});
         const data=await res.json().catch(()=>({}));
         if(!res.ok||!data?.ok){alert(data?.error||"Unable to upload hotel image.");continue;}
+        const rawImage:AttractionImage={path:data.path,url:data.url,name:data.name||file.name};
+        const savedImage=await registerTravelMedia("hotel",hotel.name,rawImage,hotel.cityArea);
         setHotels(items=>items.map(h=>h.id===hotelId?{
-          ...h,images:[...h.images,{path:data.path,url:data.url,name:data.name||file.name}]
+          ...h,images:[...h.images,savedImage]
         }:h));
       }
     } finally {setUploadingHotel(null);}
@@ -250,7 +350,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     const hotel=hotels.find(h=>h.id===hotelId);
     const image=hotel?.images[imageIndex];
     if(!image) return;
-    if(image.path){
+    if(image.path&&image.source!=="library"&&!image.libraryImageId){
       const form=new FormData();
       form.set("action","delete");
       form.set("path",image.path);
@@ -398,6 +498,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     if(!files?.length) return;
     const day=days.find(d=>d.id===dayId);
     const attraction=day?.attractions.find(a=>a.id===attractionId);
+    if(!attraction?.name.trim()){alert("请先填写景点名称，再上传图片。这样系统才能把照片存入 Media Library。");return;}
     const remaining=Math.max(0,3-(attraction?.images.length||0));
     if(remaining<=0){alert("每个景点最多上传 3 张图片。");return;}
     const selected=Array.from(files).slice(0,remaining);
@@ -412,11 +513,13 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
         const res=await fetch("/api/internal-itinerary-images",{method:"POST",body:form});
         const data=await res.json().catch(()=>({}));
         if(!res.ok||!data?.ok){alert(data?.error||"Unable to upload image.");continue;}
+        const rawImage:AttractionImage={path:data.path,url:data.url,name:data.name||file.name};
+        const savedImage=await registerTravelMedia("attraction",attraction.name,rawImage);
         setDays(items=>items.map(d=>d.id===dayId?{
           ...d,
           attractions:d.attractions.map(a=>a.id===attractionId?{
             ...a,
-            images:[...a.images,{path:data.path,url:data.url,name:data.name||file.name}]
+            images:[...a.images,savedImage]
           }:a)
         }:d));
       }
@@ -428,7 +531,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     const attraction=day?.attractions.find(a=>a.id===attractionId);
     const image=attraction?.images[imageIndex];
     if(!image) return;
-    if(image.path){
+    if(image.path&&image.source!=="library"&&!image.libraryImageId){
       const form=new FormData();
       form.set("action","delete");
       form.set("path",image.path);
@@ -738,7 +841,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
                 <div className="itinerary-attraction-index">{String(aIndex+1).padStart(2,"0")}</div>
                 <label className="field">
                   <span>Attraction Name｜景点名称</span>
-                  <input value={attraction.name} onChange={e=>patchAttraction(day.id,attraction.id,{name:e.target.value})} placeholder="仙女山风景区"/>
+                  <input value={attraction.name} onChange={e=>patchAttraction(day.id,attraction.id,{name:e.target.value})} onBlur={e=>void autoMatchAttraction(day.id,attraction.id,e.target.value)} placeholder="仙女山风景区"/>
                 </label>
                 <div className="field itinerary-upload-field">
                   <span>Upload Images｜上传景点图片</span>
@@ -794,7 +897,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
           </div>
 
           <div className="itinerary-hotel-grid">
-            <label className="field"><span>Hotel Name｜酒店名称</span><input value={hotel.name} onChange={e=>patchHotel(hotel.id,{name:e.target.value})} placeholder="重庆伊美大酒店"/></label>
+            <label className="field"><span>Hotel Name｜酒店名称</span><input value={hotel.name} onChange={e=>patchHotel(hotel.id,{name:e.target.value})} onBlur={e=>void autoMatchHotel(hotel.id,e.target.value)} placeholder="重庆伊美大酒店"/></label>
             <label className="field"><span>City / Area｜城市 / 地区</span><input value={hotel.cityArea} onChange={e=>patchHotel(hotel.id,{cityArea:e.target.value})} placeholder="Chongqing / Guanyinqiao"/></label>
             <label className="field"><span>Star Rating｜星级</span><input value={hotel.starRating} onChange={e=>patchHotel(hotel.id,{starRating:e.target.value})} placeholder="4 Star / 4 星级"/></label>
             <label className="field"><span>Stay Nights｜入住晚数</span><input value={hotel.stayNights} onChange={e=>patchHotel(hotel.id,{stayNights:e.target.value})} placeholder="Night 1 / 3 / 4 / 5"/></label>
