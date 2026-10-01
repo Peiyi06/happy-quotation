@@ -72,10 +72,7 @@ export async function POST(request:Request){
   const form=await request.formData();
   const message=String(form.get("message")||"").trim().slice(0,6000);
   const contextInquiryId=String(form.get("contextInquiryId")||"");
-  const historyRaw=String(form.get("history")||"[]");
-  let history:any[]=[];
-  try{const parsed=JSON.parse(historyRaw);history=Array.isArray(parsed)?parsed:[];}catch{}
-  history=history.slice(-8);
+  let threadId=String(form.get("threadId")||"");
 
   const images=form.getAll("images").filter((f):f is File=>f instanceof File);
   if(!message&&!images.length) return NextResponse.json({error:"Type a message or attach at least one image."},{status:400});
@@ -90,6 +87,45 @@ export async function POST(request:Request){
   }
 
   const db=internalDb();
+
+  let thread:any=null;
+  let createdThread=false;
+  if(threadId){
+    const {data,error}=await db.rpc("staff_get_ai_thread",{p_token:token,p_thread_id:threadId});
+    if(error||!data?.id) return NextResponse.json({error:error?.message||"Thread not found"},{status:404});
+    thread=data;
+  }else{
+    const firstTitle=(message||((images[0] as File|undefined)?.name)||"New Work Thread").replace(/\s+/g," ").trim().slice(0,72)||"New Work Thread";
+    const {data,error}=await db.rpc("staff_create_ai_thread",{
+      p_token:token,
+      p_title:firstTitle,
+      p_linked_inquiry_id:contextInquiryId||null
+    });
+    if(error||!data?.ok) return NextResponse.json({error:data?.error||error?.message||"Unable to create thread"},{status:400});
+    threadId=String(data.id);
+    createdThread=true;
+    thread={id:threadId,title:firstTitle,messages:[]};
+  }
+
+  const persistedMessages=Array.isArray(thread?.messages)?thread.messages:[];
+  const history=persistedMessages
+    .filter((m:any)=>m?.role==="user"||m?.role==="assistant")
+    .slice(-8)
+    .map((m:any)=>({role:m.role,text:String(m.text||"")}));
+
+  const attachmentMeta=images.map((file:any)=>({name:file.name,type:file.type,size:file.size}));
+  const userText=message||"请分析这些图片";
+  const {data:userSaved,error:userSaveError}=await db.rpc("staff_append_ai_message",{
+    p_token:token,
+    p_thread_id:threadId,
+    p_role:"user",
+    p_text:userText,
+    p_payload:{attachments:attachmentMeta}
+  });
+  if(userSaveError||!userSaved?.ok){
+    return NextResponse.json({error:userSaved?.error||userSaveError?.message||"Unable to save message"},{status:500});
+  }
+
   const [{data:inq},{data:quotes},{data:itins},{data:memoryData}]=await Promise.all([
     db.rpc("staff_list_inquiries",{p_token:token}),
     db.rpc("staff_list_quotes",{p_token:token}),
@@ -184,8 +220,37 @@ export async function POST(request:Request){
   const resultText=outputText(raw);
   if(!resultText) return NextResponse.json({error:"AI Lab returned no response."},{status:502});
   try{
-    return NextResponse.json({ok:true,result:JSON.parse(resultText)});
+    const result=JSON.parse(resultText);
+    const assistantPayload={
+      links:Array.isArray(result.links)?result.links:[],
+      action:result.action||null,
+      memorySuggestion:result.memorySuggestion||null
+    };
+    const {data:assistantSaved,error:assistantSaveError}=await db.rpc("staff_append_ai_message",{
+      p_token:token,
+      p_thread_id:threadId,
+      p_role:"assistant",
+      p_text:String(result.reply||""),
+      p_payload:assistantPayload
+    });
+    if(assistantSaveError||!assistantSaved?.ok){
+      return NextResponse.json({error:assistantSaved?.error||assistantSaveError?.message||"AI replied but conversation could not be saved."},{status:500});
+    }
+
+    const linkedInquiryId=String(result.contextInquiryId||contextInquiryId||"");
+    const contextTitle=String(result.contextTitle||"");
+    const threadTitle=createdThread&&contextTitle?contextTitle:String(thread?.title||"");
+    await db.rpc("staff_update_ai_thread",{
+      p_token:token,
+      p_thread_id:threadId,
+      p_title:createdThread&&contextTitle?contextTitle:null,
+      p_linked_inquiry_id:linkedInquiryId||null,
+      p_context_title:contextTitle||null,
+      p_archived:null
+    });
+
+    return NextResponse.json({ok:true,result,threadId,threadTitle:threadTitle||contextTitle||"Work Thread",saved:true});
   }catch{
-    return NextResponse.json({error:"AI Lab response could not be parsed."},{status:502});
+    return NextResponse.json({error:"AI Lab response could not be parsed.",threadId,saved:true},{status:502});
   }
 }
