@@ -624,7 +624,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         <strong>{resolvedSourceInquiryNo||"Linked Inquiry"}</strong>
         {resolvedSourceInquirySnapshot&&<small>{[resolvedSourceInquirySnapshot.destination,resolvedSourceInquirySnapshot.daysCount&&resolvedSourceInquirySnapshot.nightsCount?`${resolvedSourceInquirySnapshot.daysCount}D${resolvedSourceInquirySnapshot.nightsCount}N`:"",resolvedSourceInquirySnapshot.pax?`${resolvedSourceInquirySnapshot.pax} Pax`:""].filter(Boolean).join(" · ")}</small>}
       </div>
-      <button className="btn" type="button" onClick={()=>requestNavigate("/inquiries/"+resolvedSourceInquiryId)}>Open Inquiry</button>
+      <button className="btn" type="button" onClick={()=>{const href="/inquiries/"+resolvedSourceInquiryId;if(isDirty)setPendingHref(href);else router.push(href);}}>Open Inquiry</button>
     </section>}
     <header className="topbar">
       <div>
