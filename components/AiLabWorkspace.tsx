@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type LinkItem={label:string;href:string;kind:string};
 type PendingAction={type:string;inquiryId:string;label:string;confirmText:string;nextStatus:string};
 type MemorySuggestion={shouldSuggest:boolean;category:string;title:string;ruleText:string;reason:string};
-type Attachment={name:string;url:string};
+type Attachment={name:string;url?:string;type?:string;size?:number};
+type WorkThread={id:string;title:string;linked_inquiry_id?:string|null;context_title?:string;inquiry_no?:string|null;destination?:string|null;inquiry_status?:string|null;last_active_at?:string;archived?:boolean};
 type Message={role:"user"|"assistant";text:string;links?:LinkItem[];action?:PendingAction;memorySuggestion?:MemorySuggestion;attachments?:Attachment[]};
 
 const starterPrompts=[
@@ -27,11 +28,70 @@ export default function AiLabWorkspace(){
   const [memorySaving,setMemorySaving]=useState(false);
   const [contextInquiryId,setContextInquiryId]=useState("");
   const [contextTitle,setContextTitle]=useState("");
+  const [threadId,setThreadId]=useState("");
+  const [threads,setThreads]=useState<WorkThread[]>([]);
+  const [threadsLoading,setThreadsLoading]=useState(false);
+  const [saveState,setSaveState]=useState<"saved"|"saving"|"">("");
   const [imageFiles,setImageFiles]=useState<File[]>([]);
   const [imagePreviews,setImagePreviews]=useState<Attachment[]>([]);
   const fileInputRef=useRef<HTMLInputElement|null>(null);
 
   const history=useMemo(()=>messages.slice(-8).map(m=>({role:m.role,text:m.text})),[messages]);
+
+  async function loadThreads(){
+    setThreadsLoading(true);
+    try{
+      const res=await fetch("/api/ai-lab/threads",{cache:"no-store"});
+      const data=await res.json().catch(()=>({}));
+      if(res.ok&&data?.ok) setThreads(Array.isArray(data.threads)?data.threads:[]);
+    }finally{setThreadsLoading(false);}
+  }
+
+  useEffect(()=>{void loadThreads();},[]);
+
+  function newThread(){
+    setThreadId("");
+    setContextInquiryId("");
+    setContextTitle("");
+    setMessages([{role:"assistant",text:"新的工作对话已经准备好。直接告诉我你要处理什么；第一次发送后会自动建立并保存 Thread。"}]);
+    setSaveState("");
+  }
+
+  async function openThread(id:string){
+    if(loading||actionLoading) return;
+    const res=await fetch("/api/ai-lab/threads?id="+encodeURIComponent(id),{cache:"no-store"});
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok||!data?.ok) return;
+    const t=data.thread||{};
+    const loaded=(Array.isArray(t.messages)?t.messages:[]).map((m:any)=>{
+      const payload=m.payload||{};
+      return {
+        role:m.role==="assistant"?"assistant":"user",
+        text:String(m.text||""),
+        links:Array.isArray(payload.links)?payload.links:[],
+        action:payload.action?.type&&payload.action.type!=="none"?payload.action:undefined,
+        memorySuggestion:payload.memorySuggestion?.shouldSuggest?payload.memorySuggestion:undefined,
+        attachments:Array.isArray(payload.attachments)?payload.attachments:[]
+      } as Message;
+    });
+    setThreadId(String(t.id||id));
+    setContextInquiryId(String(t.linked_inquiry_id||""));
+    setContextTitle(String(t.context_title||""));
+    setMessages(loaded.length?loaded:[{role:"assistant",text:"这个 Thread 还没有消息。"}]);
+    setSaveState("saved");
+  }
+
+  async function archiveThread(id:string){
+    const res=await fetch("/api/ai-lab/threads",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({id,archived:true})
+    });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok||!data?.ok) return;
+    if(threadId===id) newThread();
+    await loadThreads();
+  }
 
   async function send(text?:string){
     const message=(text??input).trim();
@@ -41,19 +101,25 @@ export default function AiLabWorkspace(){
     setMessages(prev=>[...prev,userMessage]);
     setInput("");
     setLoading(true);
+    setSaveState("saving");
     try{
       const form=new FormData();
       form.set("message",message);
-      form.set("history",JSON.stringify(history));
       form.set("contextInquiryId",contextInquiryId);
+      form.set("threadId",threadId);
       imageFiles.forEach(file=>form.append("images",file));
       const res=await fetch("/api/ai-lab/chat",{method:"POST",body:form});
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){
+        if(data?.threadId&&!threadId) setThreadId(String(data.threadId));
+        setSaveState(data?.saved?"saved":"");
         setMessages(prev=>[...prev,{role:"assistant",text:data?.error||"AI Lab 暂时无法回应，请稍后再试。"}]);
+        await loadThreads();
         return;
       }
       const result=data.result||{};
+      if(data.threadId) setThreadId(String(data.threadId));
+      setSaveState(data.saved?"saved":"");
       if(result.contextInquiryId){setContextInquiryId(result.contextInquiryId);setContextTitle(result.contextTitle||"Current Inquiry");}
       setMessages(prev=>[...prev,{
         role:"assistant",
@@ -62,6 +128,7 @@ export default function AiLabWorkspace(){
         action:result.action?.type&&result.action.type!=="none"?result.action:undefined,
         memorySuggestion:result.memorySuggestion?.shouldSuggest?result.memorySuggestion:undefined
       }]);
+      await loadThreads();
     }finally{
       setLoading(false);
       setImageFiles([]);
@@ -142,7 +209,7 @@ export default function AiLabWorkspace(){
         {messages.map((m,index)=><div key={index} className={"ai-lab-message "+m.role}>
           <div className="ai-lab-message-label">{m.role==="user"?"You":"Happy AI"}</div>
           <div className="ai-lab-bubble">
-            {m.attachments&&m.attachments.length>0&&<div className="ai-lab-message-images">{m.attachments.map((a,i)=><img key={i} src={a.url} alt={a.name}/>)}</div>}
+            {m.attachments&&m.attachments.length>0&&<div className="ai-lab-message-images">{m.attachments.map((a,i)=>a.url?<img key={i} src={a.url} alt={a.name}/>:<span key={i} className="ai-lab-restored-attachment">📎 {a.name}</span>)}</div>}
             <p>{m.text}</p>
             {m.links&&m.links.length>0&&<div className="ai-lab-links">{m.links.map((link,i)=><button key={i} type="button" onClick={()=>router.push(link.href)}>{link.label}<span>→</span></button>)}</div>}
             {m.memorySuggestion&&<div className="ai-lab-memory-proposal">
@@ -173,10 +240,25 @@ export default function AiLabWorkspace(){
         <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="可以输入文字，或直接上传 WhatsApp / 航班 / 报价截图…" onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();void send();}}}/>
         <button type="button" className="workflow-primary-btn" disabled={(!input.trim()&&!imageFiles.length)||loading} onClick={()=>void send()}>{loading?"Thinking...":"Send"}</button>
       </div>
-      <div className="ai-lab-compose-note">支持 JPG / PNG / WEBP · 最多 4 张 · 每张 ≤ 5MB · Enter 发送 · AI 修改系统前仍需确认</div>
+      <div className="ai-lab-compose-note">支持 JPG / PNG / WEBP · 最多 4 张 · 每张 ≤ 5MB · 对话自动保存 · Enter 发送 · AI 修改系统前仍需确认</div>
     </section>
 
     <aside className="ai-lab-context">
+      <div className="ai-thread-panel">
+        <div className="ai-thread-panel-head"><div><span>WORK THREADS</span><strong>Active Conversations</strong></div><button type="button" onClick={newThread}>＋ New</button></div>
+        <div className="ai-thread-save-state">{saveState==="saving"?"Saving...":saveState==="saved"?"✓ Saved":"Auto-save on"}</div>
+        {threadsLoading?<p className="ai-lab-context-empty">Loading threads...</p>:threads.length>0?<div className="ai-thread-list">
+          {threads.map(t=><div key={t.id} className={"ai-thread-item "+(threadId===t.id?"active":"")}>
+            <button type="button" className="ai-thread-open" onClick={()=>void openThread(t.id)}>
+              <strong>{t.title||"Untitled Thread"}</strong>
+              <span>{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
+              <small>{t.last_active_at?new Date(t.last_active_at).toLocaleString(): ""}</small>
+            </button>
+            <button type="button" className="ai-thread-archive" title="Archive Thread" onClick={()=>void archiveThread(t.id)}>×</button>
+          </div>)}
+        </div>:<p className="ai-lab-context-empty">还没有保存的工作对话。第一次发送消息后会自动建立 Thread。</p>}
+      </div>
+
       <div className="ai-lab-context-head"><span>CURRENT CONTEXT</span><strong>{contextInquiryId?"Current Case":"No case selected"}</strong></div>
       {contextInquiryId?<div className="ai-lab-current-case"><span>INQUIRY</span><strong>{contextTitle||contextInquiryId}</strong><small>{contextInquiryId}</small><button className="btn" type="button" onClick={()=>router.push("/inquiries/"+contextInquiryId)}>Open Inquiry</button><button className="ai-lab-clear" type="button" onClick={clearContext}>Clear Context</button></div>:<p className="ai-lab-context-empty">当你提到一笔 Inquiry 后，它会留在这里。之后你可以直接说「继续这笔」或「下一步」。</p>}
       <div className="ai-lab-safety"><strong>Beta Safety</strong><span>查询 / 导航可以直接做。</span><span>真正修改状态时必须由你确认。</span><span>Company Memory 只有你按 Save as Company Rule 后才会长期保存。</span></div>
