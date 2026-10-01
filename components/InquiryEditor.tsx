@@ -267,9 +267,6 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
         <label className="field"><span>Tour Type｜团型</span><input value={tourType} onChange={e=>setTourType(e.target.value)} placeholder="Private / Company Trip"/></label>
         <label className="field"><span>Sales Owner</span><input value={initialInquiry?.sales_owner_name||currentStaffName} readOnly className="system-fixed-input"/></label>
         <label className="field"><span>Operation Assignee</span><input value={initialInquiry?.operation_assignee_name||"Jess"} readOnly className="system-fixed-input"/></label>
-        <label className="field"><span>Status</span><select value={status} onChange={e=>setStatus(e.target.value)}>
-          <option value="new">New Inquiry</option><option value="assigned">Assigned to Operation</option><option value="operation_review">Operation Review</option><option value="ready_supplier">Ready to Send Supplier</option><option value="waiting_supplier_quote">Waiting Supplier Quote</option><option value="supplier_quote_received">Supplier Quote Received</option><option value="planning">Sourcing / Planning</option><option value="itinerary_draft">Itinerary Draft</option><option value="quotation_draft">Quotation Draft</option><option value="ready_sales">Ready for Sales</option><option value="sent">Sent to Customer</option><option value="confirmed">Confirmed</option>
-        </select></label>
       </div>
     </section>
 
