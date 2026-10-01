@@ -31,8 +31,9 @@ export default async function OperationReviewPage({params}:{params:Promise<{id:s
           mainStatus={data.status||"new"}
           supplierStatus={data.supplier_inquiry_status||"draft"}
           canAdvance={Boolean(user&&(user.username==="long"||user.id===data.operation_assignee_id))}
-          canUpdateStatus={Boolean(user)}
+          canUpdateStatus={false}
           hasQuotation={linkedQuotes.length>0}
+          viewerMode={user.role==="manager"||user.username.toLowerCase()==="long"?"management":"operation"}
           firstQuotationId={linkedQuotes[0]?.id}
         />
         <div className="detail-actions">
