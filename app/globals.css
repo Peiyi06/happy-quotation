@@ -555,3 +555,13 @@
 .ai-change-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
 @media(max-width:1100px){.ai-assistant-layout{grid-template-columns:1fr}.ai-change-empty{min-height:180px}}
 @media(max-width:700px){.ai-chat-message{max-width:96%}.ai-chat-compose-foot{align-items:flex-start;flex-direction:column}.ai-chat-compose-foot .btn{width:100%}.ai-change-actions{flex-direction:column}.ai-change-actions .btn{width:100%}}
+
+.ai-pre-adjustment{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(260px,.8fr);gap:14px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.ai-pre-adjustment textarea{min-height:150px;resize:vertical;line-height:1.6}
+.ai-pre-adjustment .field>span{display:flex;align-items:center;gap:7px}
+.ai-pre-adjustment .field>span small{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800}
+.ai-adjustment-hint{border:1px dashed #c7d3dc;border-radius:12px;background:#f7fafc;padding:13px 14px;display:flex;flex-direction:column;justify-content:center;gap:6px}
+.ai-adjustment-hint strong{font-size:12px;color:var(--navy2)}
+.ai-adjustment-hint span{font-size:11px;line-height:1.55;color:var(--muted)}
+.ai-import-primary-action{display:flex;justify-content:flex-end;margin-top:14px}
+@media(max-width:900px){.ai-pre-adjustment{grid-template-columns:1fr}.ai-import-primary-action .btn{width:100%}}
