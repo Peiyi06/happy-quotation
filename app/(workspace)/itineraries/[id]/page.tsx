@@ -33,6 +33,15 @@ export default async function ItineraryDetailPage({params}:{params:Promise<{id:s
       </div>
     </div>
 
+    {data.source_inquiry_id&&<section className="quote-source-inquiry quote-source-inquiry-detail">
+      <div>
+        <span>SOURCE INQUIRY｜来源询价</span>
+        <strong>{qd.sourceInquiryNo||"Linked Inquiry"}</strong>
+        {qd.sourceInquirySnapshot&&<small>{[qd.sourceInquirySnapshot.destination,qd.sourceInquirySnapshot.daysCount&&qd.sourceInquirySnapshot.nightsCount?`${qd.sourceInquirySnapshot.daysCount}D${qd.sourceInquirySnapshot.nightsCount}N`:"",qd.sourceInquirySnapshot.pax?`${qd.sourceInquirySnapshot.pax} Pax`:""].filter(Boolean).join(" · ")}</small>}
+      </div>
+      <Link className="btn" href={"/inquiries/"+data.source_inquiry_id}>Open Inquiry</Link>
+    </section>}
+
     <section className="dashboard-cards itinerary-summary-cards">
       <div className="dash-card"><span>Departure City</span><b>{qd.departureCity||"—"}</b></div>
       <div className="dash-card"><span>Destination</span><b>{data.destination||"—"}</b></div>
