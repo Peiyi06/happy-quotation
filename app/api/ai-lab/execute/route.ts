@@ -42,6 +42,25 @@ function mentionsProvidedFlightDetails(text:any){
   return /(已提供.*航班|航班.*已提供|航班信息|航班资料|客户.*航班|provided.*flight|flight.*provided|flight details|flight information|flight screenshot|航班截图)/i.test(v);
 }
 
+function normalizeInquiryStatus(value:any,fallback="new"){
+  const v=s(value,60);
+  if(["new","in_progress","waiting_quote","ready_customer","closed"].includes(v)) return v;
+  const legacy:Record<string,string>={
+    assigned:"in_progress",
+    operation_review:"in_progress",
+    ready_supplier:"in_progress",
+    waiting_supplier_quote:"waiting_quote",
+    supplier_quote_received:"waiting_quote",
+    planning:"in_progress",
+    itinerary_draft:"in_progress",
+    quotation_draft:"in_progress",
+    ready_sales:"ready_customer",
+    sent:"ready_customer",
+    confirmed:"closed"
+  };
+  return legacy[v]||fallback;
+}
+
 function inquiryPayload(raw:any,existing?:any){
   const old=existing||{};
   const oldData=old.inquiry_data||{};
@@ -75,7 +94,7 @@ function inquiryPayload(raw:any,existing?:any){
     hotel_requirement:s(data.hotel_requirement??old.hotel_requirement,2000),
     meal_requirement:s(data.meal_requirement??old.meal_requirement,2000),
     special_request:s(data.special_request??old.special_request,4000),
-    status:s(data.status??old.status??"new",60)||"new",
+    status:normalizeInquiryStatus(data.status??old.status??"new",normalizeInquiryStatus(old.status??"new","new")),
     inquiry_data:{...oldData,suggestedFlights:flights,travellerComposition:composition}
   };
 }
