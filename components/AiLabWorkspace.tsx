@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 
 type LinkItem={label:string;href:string;kind:string};
 type PendingAction={type:string;inquiryId:string;label:string;confirmText:string;nextStatus:string};
-type Message={role:"user"|"assistant";text:string;links?:LinkItem[];action?:PendingAction};
+type MemorySuggestion={shouldSuggest:boolean;category:string;title:string;ruleText:string;reason:string};
+type Message={role:"user"|"assistant";text:string;links?:LinkItem[];action?:PendingAction;memorySuggestion?:MemorySuggestion};
 
 const starterPrompts=[
   "今天有什么需要我注意？",
@@ -22,6 +23,7 @@ export default function AiLabWorkspace(){
   const [input,setInput]=useState("");
   const [loading,setLoading]=useState(false);
   const [actionLoading,setActionLoading]=useState(false);
+  const [memorySaving,setMemorySaving]=useState(false);
   const [contextInquiryId,setContextInquiryId]=useState("");
   const [contextTitle,setContextTitle]=useState("");
 
@@ -51,9 +53,28 @@ export default function AiLabWorkspace(){
         role:"assistant",
         text:result.reply||"我已经检查了系统资料。",
         links:Array.isArray(result.links)?result.links:[],
-        action:result.action?.type&&result.action.type!=="none"?result.action:undefined
+        action:result.action?.type&&result.action.type!=="none"?result.action:undefined,
+        memorySuggestion:result.memorySuggestion?.shouldSuggest?result.memorySuggestion:undefined
       }]);
     }finally{setLoading(false);}
+  }
+
+  async function saveCompanyRule(suggestion:MemorySuggestion){
+    if(memorySaving) return;
+    setMemorySaving(true);
+    try{
+      const res=await fetch("/api/ai-lab/memory",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({category:suggestion.category,title:suggestion.title,ruleText:suggestion.ruleText})
+      });
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok||!data?.ok){
+        setMessages(prev=>[...prev,{role:"assistant",text:data?.error||"Company Rule 保存失败。"}]);
+        return;
+      }
+      setMessages(prev=>prev.map(m=>m.memorySuggestion===suggestion?{...m,memorySuggestion:undefined}:m).concat({role:"assistant",text:"已保存为 Company Memory。以后遇到相关情况，我会参考这条公司规则。"}));
+    }finally{setMemorySaving(false);}
   }
 
   async function confirmAction(action:PendingAction){
@@ -93,6 +114,15 @@ export default function AiLabWorkspace(){
           <div className="ai-lab-message-label">{m.role==="user"?"You":"Happy AI"}</div>
           <div className="ai-lab-bubble"><p>{m.text}</p>
             {m.links&&m.links.length>0&&<div className="ai-lab-links">{m.links.map((link,i)=><button key={i} type="button" onClick={()=>router.push(link.href)}>{link.label}<span>→</span></button>)}</div>}
+            {m.memorySuggestion&&<div className="ai-lab-memory-proposal">
+              <span>COMPANY MEMORY｜建议保存</span>
+              <strong>{m.memorySuggestion.title}</strong>
+              <p>{m.memorySuggestion.ruleText}</p>
+              <div>
+                <button type="button" className="btn" disabled={memorySaving} onClick={()=>setMessages(prev=>prev.map(x=>x===m?{...x,memorySuggestion:undefined}:x))}>Ignore</button>
+                <button type="button" className="workflow-primary-btn" disabled={memorySaving} onClick={()=>void saveCompanyRule(m.memorySuggestion!)}>{memorySaving?"Saving...":"Save as Company Rule"}</button>
+              </div>
+            </div>}
             {m.action&&<div className="ai-lab-action-card">
               <span>PROPOSED ACTION｜待确认操作</span>
               <strong>{m.action.confirmText}</strong>
@@ -115,7 +145,7 @@ export default function AiLabWorkspace(){
     <aside className="ai-lab-context">
       <div className="ai-lab-context-head"><span>CURRENT CONTEXT</span><strong>{contextInquiryId?"Current Case":"No case selected"}</strong></div>
       {contextInquiryId?<div className="ai-lab-current-case"><span>INQUIRY</span><strong>{contextTitle||contextInquiryId}</strong><small>{contextInquiryId}</small><button className="btn" type="button" onClick={()=>router.push("/inquiries/"+contextInquiryId)}>Open Inquiry</button><button className="ai-lab-clear" type="button" onClick={clearContext}>Clear Context</button></div>:<p className="ai-lab-context-empty">当你提到一笔 Inquiry 后，它会留在这里。之后你可以直接说「继续这笔」或「下一步」。</p>}
-      <div className="ai-lab-safety"><strong>Beta Safety</strong><span>查询 / 导航可以直接做。</span><span>真正修改状态时必须由你确认。</span><span>Quotation / Itinerary 建立目前先带你进入原本页面。</span></div>
+      <div className="ai-lab-safety"><strong>Beta Safety</strong><span>查询 / 导航可以直接做。</span><span>真正修改状态时必须由你确认。</span><span>Company Memory 只有你按 Save as Company Rule 后才会长期保存。</span></div>
     </aside>
   </div>;
 }
