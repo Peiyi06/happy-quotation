@@ -15,7 +15,8 @@
     "react-dom": "19.3.0",
     "pdfjs-dist": "latest",
     "jszip": "latest",
-    "sharp": "latest"
+    "sharp": "latest",
+    "@napi-rs/canvas": "latest"
   },
   "devDependencies": {
     "@types/node": "22.10.7",
