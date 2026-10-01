@@ -2117,3 +2117,69 @@ button,
 [role="button"]{
   text-decoration:none!important;
 }
+
+
+/* Unified pure × icon action buttons */
+.icon-action-btn,
+.quotation-type-close{
+  width:36px;
+  height:36px;
+  min-width:36px;
+  min-height:36px;
+  padding:0!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 36px;
+  border:1px solid var(--btn-border)!important;
+  border-radius:50%!important;
+  background:#fff!important;
+  color:var(--navy2)!important;
+  font-size:20px!important;
+  font-weight:500!important;
+  line-height:1!important;
+  text-align:center!important;
+  text-decoration:none!important;
+  box-sizing:border-box!important;
+  cursor:pointer;
+  vertical-align:middle;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","Segoe UI",Arial,sans-serif;
+}
+
+.icon-action-btn:hover,
+.quotation-type-close:hover{
+  background:#f5f8fa!important;
+  border-color:#b9c8d2!important;
+  color:var(--navy2)!important;
+}
+
+/* Remove/delete semantics: neutral by default, soft red only on hover */
+.icon-action-remove:hover{
+  background:#fff2f0!important;
+  border-color:var(--btn-danger-border)!important;
+  color:var(--btn-danger-text)!important;
+}
+
+/* Context-specific × buttons must not be distorted by older local rules */
+.ai-lab-upload-chip .icon-action-btn,
+.ai-thread-archive.icon-action-btn,
+.ai-intake-filechip .icon-action-btn,
+.itinerary-attraction-preview .icon-action-btn,
+.itinerary-hotel-image .icon-action-btn{
+  width:36px!important;
+  height:36px!important;
+  min-width:36px!important;
+  min-height:36px!important;
+  padding:0!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:50%!important;
+  line-height:1!important;
+  font-size:20px!important;
+}
+
+/* Archived-thread restore is not a close/remove × button */
+.ai-thread-archive:not(.icon-action-btn){
+  border:1px solid var(--btn-border);
+}
