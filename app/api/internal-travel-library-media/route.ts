@@ -257,26 +257,39 @@ async function processOne(token:string,db:any,doc:any,key:string){
     throw new Error("Unsupported source format for media extraction");
   }
 
+  const prev=doc.mediaExtractionSummary||{};
+  const processed=Math.max(0,Number(prev.processed||0));
+  const previousMatched=Math.max(0,Number(prev.matched||0));
+
   if(!images.length){
-    const {data,error}=await db.rpc("staff_save_travel_media_extraction",{
-      p_token:token,p_document_id:doc.id,p_candidates:[],p_summary:{found:0,matched:0,needsReview:0}
+    const summary={found:0,processed:0,matched:0,needsReview:0,complete:true};
+    const {data,error}=await db.rpc("staff_save_travel_media_extraction_chunk",{
+      p_token:token,p_document_id:doc.id,p_candidates:[],p_summary:summary,p_complete:true
     });
     if(error||!data?.ok) throw new Error(data?.error||error?.message||"Unable to save empty extraction");
-    return {found:0,matched:0,needsReview:0};
+    return summary;
   }
 
-  const aiMatches:any[]=[];
-  for(let i=0;i<images.length;i+=8){
-    const batch=images.slice(i,i+8);
-    const found=await identifyBatch(key,batch,doc);
-    aiMatches.push(...found);
+  const chunk=images.filter(x=>x.imageIndex>processed).slice(0,4);
+  if(!chunk.length){
+    const summary={
+      found:images.length,processed:images.length,matched:previousMatched,
+      needsReview:Math.max(0,images.length-previousMatched),complete:true
+    };
+    const {data,error}=await db.rpc("staff_save_travel_media_extraction_chunk",{
+      p_token:token,p_document_id:doc.id,p_candidates:[],p_summary:summary,p_complete:true
+    });
+    if(error||!data?.ok) throw new Error(data?.error||error?.message||"Unable to finalize media extraction");
+    return summary;
   }
 
+  const aiMatches:any[]=await identifyBatch(key,chunk,doc);
   const candidates:any[]=[];
-  let matched=0;
+  let matchedThisChunk=0;
   const uploadedPaths:string[]=[];
+
   try{
-    for(const img of images){
+    for(const img of chunk){
       const ai=aiMatches.find((x:any)=>Number(x.imageIndex)===img.imageIndex)||{};
       const type=String(ai.suggestedType||"unknown");
       const name=String(ai.candidateName||"").trim();
@@ -285,7 +298,7 @@ async function processOne(token:string,db:any,doc:any,key:string){
       const accepted=resolved&&confidence>=(type==="hotel"?0.92:0.86);
       const stored=await uploadExtracted(token,img,String(doc.id));
       uploadedPaths.push(stored.path);
-      if(accepted) matched++;
+      if(accepted) matchedThisChunk++;
 
       candidates.push({
         imageIndex:img.imageIndex,
@@ -305,11 +318,21 @@ async function processOne(token:string,db:any,doc:any,key:string){
       });
     }
 
-    const summary={found:images.length,matched,needsReview:images.length-matched};
-    const {data,error}=await db.rpc("staff_save_travel_media_extraction",{
-      p_token:token,p_document_id:doc.id,p_candidates:candidates,p_summary:summary
+    const processedTotal=Math.min(images.length,processed+chunk.length);
+    const matchedTotal=previousMatched+matchedThisChunk;
+    const complete=processedTotal>=images.length;
+    const summary={
+      found:images.length,
+      processed:processedTotal,
+      matched:matchedTotal,
+      needsReview:Math.max(0,processedTotal-matchedTotal),
+      complete
+    };
+
+    const {data,error}=await db.rpc("staff_save_travel_media_extraction_chunk",{
+      p_token:token,p_document_id:doc.id,p_candidates:candidates,p_summary:summary,p_complete:complete
     });
-    if(error||!data?.ok) throw new Error(data?.error||error?.message||"Unable to save media extraction");
+    if(error||!data?.ok) throw new Error(data?.error||error?.message||"Unable to save media extraction chunk");
     return summary;
   }catch(error){
     for(const path of uploadedPaths) await deleteExtracted(token,path);
