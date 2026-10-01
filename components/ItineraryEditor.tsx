@@ -26,6 +26,9 @@ type Props={
   initialItinerary?:any;
   currentStaffId:string;
   currentStaffName:string;
+  sourceInquiryId?:string;
+  sourceInquiryNo?:string;
+  sourceInquirySnapshot?:any;
 };
 
 const uid=()=>Math.random().toString(36).slice(2,10);
@@ -104,9 +107,12 @@ const normalizeDay=(raw:any):DayItem=>({
   collapsed:Boolean(raw?.collapsed)
 });
 
-export default function ItineraryEditor({itineraryId,initialItinerary,currentStaffId,currentStaffName}:Props){
+export default function ItineraryEditor({itineraryId,initialItinerary,currentStaffId,currentStaffName,sourceInquiryId="",sourceInquiryNo="",sourceInquirySnapshot}:Props){
   const router=useRouter();
   const data=initialItinerary?.itinerary_data||{};
+  const resolvedSourceInquiryId=sourceInquiryId||initialItinerary?.source_inquiry_id||data.sourceInquiryId||"";
+  const resolvedSourceInquiryNo=sourceInquiryNo||data.sourceInquiryNo||"";
+  const resolvedSourceInquirySnapshot=sourceInquirySnapshot||data.sourceInquirySnapshot||null;
   const initialDays:Array<DayItem>=Array.isArray(data.days)&&data.days.length
     ? data.days.map(normalizeDay)
     : [emptyDay()];
@@ -546,6 +552,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     setSaving(true); setMessage("");
     try{
       const payload={
+        source_inquiry_id:resolvedSourceInquiryId||"",
         title,destination,
         days_count:Math.max(1,Number(daysCount)||1),
         nights_count:Math.max(0,Number(nightsCount)||0),
@@ -553,7 +560,8 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
         status,
         itinerary_data:{
           departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,
-          days,hotels,includedItems,notIncludedItems,reminders,op,opStaffId:initialItinerary?.owner_id||currentStaffId
+          days,hotels,includedItems,notIncludedItems,reminders,op,opStaffId:initialItinerary?.owner_id||currentStaffId,
+          sourceInquiryId:resolvedSourceInquiryId,sourceInquiryNo:resolvedSourceInquiryNo,sourceInquirySnapshot:resolvedSourceInquirySnapshot
         }
       };
       const res=await fetch("/api/internal-itineraries",{
@@ -592,11 +600,19 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   }
 
   return <div className="itinerary-editor">
+    {resolvedSourceInquiryId&&<section className="quote-source-inquiry">
+      <div>
+        <span>SOURCE INQUIRY｜来源询价</span>
+        <strong>{resolvedSourceInquiryNo||"Linked Inquiry"}</strong>
+        {resolvedSourceInquirySnapshot&&<small>{[resolvedSourceInquirySnapshot.destination,resolvedSourceInquirySnapshot.daysCount&&resolvedSourceInquirySnapshot.nightsCount?`${resolvedSourceInquirySnapshot.daysCount}D${resolvedSourceInquirySnapshot.nightsCount}N`:"",resolvedSourceInquirySnapshot.pax?`${resolvedSourceInquirySnapshot.pax} Pax`:""].filter(Boolean).join(" · ")}</small>}
+      </div>
+      <button className="btn" type="button" onClick={()=>isDirty?setPendingHref("/inquiries/"+resolvedSourceInquiryId):router.push("/inquiries/"+resolvedSourceInquiryId)}>Open Inquiry</button>
+    </section>}
     <div className="page-head">
       <div>
         <span className="page-kicker">ITINERARY TEMPLATE</span>
         <h1>{itineraryId?"Edit Itinerary":"New Itinerary"}</h1>
-        <p>独立建立简易行程，暂时不与 Quotation 绑定。</p>
+        <p>{resolvedSourceInquiryId?"由 Inquiry 自动带入基础资料；请检查后完成每日行程。":"独立建立简易行程。保存后可继续编辑。"}</p>
       </div>
       <div className="detail-actions">
         {isDirty&&<span className="unsaved-badge">Unsaved changes</span>}
