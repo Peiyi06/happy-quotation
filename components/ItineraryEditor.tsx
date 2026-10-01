@@ -608,7 +608,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       </div>
       <button className="btn" type="button" onClick={()=>isDirty?setPendingHref("/inquiries/"+resolvedSourceInquiryId):router.push("/inquiries/"+resolvedSourceInquiryId)}>Open Inquiry</button>
     </section>}
-    <div className="page-head">
+    <div className="page-head page-hero-header">
       <div>
         <span className="page-kicker">ITINERARY TEMPLATE</span>
         <h1>{itineraryId?"Edit Itinerary":"New Itinerary"}</h1>
