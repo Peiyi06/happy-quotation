@@ -116,7 +116,7 @@ export default function InquiryAiIntake({
         </div>
         {files.length>0&&<div className="ai-intake-filechips">{files.map((f,i)=><span key={i} className="ai-intake-filechip">
           <span>{f.name}</span>
-          <button type="button" aria-label={"Remove "+f.name} onClick={()=>{
+          <button className="icon-action-btn icon-action-remove" type="button" aria-label={"Remove "+f.name} onClick={()=>{
             setFiles(prev=>prev.filter((_,index)=>index!==i));
             if(inputRef.current) inputRef.current.value="";
           }}>×</button>
