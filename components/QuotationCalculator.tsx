@@ -14,7 +14,7 @@ const childModes: ChildMode[] = ["50%","60%","65%","70%","75%","80%","85%","90%"
 const profitModes: ProfitMode[] = ["固定金额", "按成本加价率", "按售价毛利率"];
 const travelerTypes = ["成人不含领队","成人含领队","小孩含床不含领队","小孩含床含领队","小孩不含床不含领队","小孩不含床含领队"] as const;
 type TravelerType = typeof travelerTypes[number];
-type QuoteStatus = "draft"|"ready"|"sent"|"revised"|"confirmed"|"lost"|"archived";
+type QuoteStatus = "draft"|"under_review"|"revision_required"|"ready"|"sent"|"revised"|"confirmed"|"lost"|"archived";
 type CalculatorProps = { workspaceMode?: boolean; quotationId?: string; initialQuotation?: any; currentStaffId?: string; currentStaffName?: string; sourceInquiryId?: string; sourceInquiryNo?: string; sourceInquirySnapshot?: any };
 
 const travelerTypeLabel = (type: TravelerType) => ({
@@ -490,6 +490,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         setSaveMessage("Saved");
         baselineRef.current = currentSnapshot;
         setIsDirty(false);
+        if(data?.review_required) setStatus("revision_required");
         if (!quotationId && data.id) router.replace("/quotations/" + data.id);
         router.refresh();
       }
@@ -509,6 +510,32 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     if (ok) {
       setPendingHref(null);
       window.location.href = href;
+    }
+  };
+
+
+  const submitForReview = async () => {
+    if(!quotationId) return;
+    const ok=await saveQuotation();
+    if(!ok) return;
+    setSaving(true);
+    setSaveMessage("");
+    try{
+      const res=await fetch("/api/internal-quotation-review",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({id:quotationId,action:"submit"})
+      });
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok||!data?.ok){
+        setSaveMessage(data?.error||"Unable to submit for review.");
+        return;
+      }
+      setStatus("under_review");
+      setSaveMessage("Submitted for management review");
+      router.refresh();
+    }finally{
+      setSaving(false);
     }
   };
 
@@ -635,6 +662,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <div className="top-actions no-print">
         {workspaceMode && isDirty && <span className="unsaved-badge">Unsaved changes</span>}
         {workspaceMode && <button className="btn primary" onClick={()=>void saveQuotation()} disabled={saving}>{saving?"Saving...":"Save Quotation"}</button>}
+        {workspaceMode&&quotationId&&(status==="draft"||status==="revision_required")&&<button className="btn ghost" onClick={()=>void submitForReview()} disabled={saving}>{saving?"Working...":status==="revision_required"?"Resubmit for Review":"Submit for Review"}</button>}
+        {workspaceMode&&status==="under_review"&&<span className="quote-editor-review-state">Under Review</span>}
+        {workspaceMode&&status==="ready"&&<span className="quote-editor-review-state ready">Ready</span>}
         <button className="btn ghost" onClick={()=>window.print()}>打印 / PDF</button>
         <button className="btn danger" onClick={resetAll}>重置</button>
       </div>
@@ -655,7 +685,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         <Field label="Return Date (Arrival)"><input type="text" value={formatDisplayDate(returnDate)} readOnly placeholder="—" /></Field>
         <Field label="Customer"><input value={customerName} onChange={e=>setCustomerName(e.target.value)} placeholder="Customer / Company" /></Field>
         <Field label="Tour Group"><select value={tourGroupId} onChange={e=>setTourGroupId(e.target.value)}><option value="">Unclassified</option>{tourGroups.map((g:any)=><option key={g.id} value={g.id}>{g.name}</option>)}</select></Field>
-        <Field label="Status"><select value={status} onChange={e=>setStatus(e.target.value as QuoteStatus)}><option value="draft">Draft</option><option value="ready">Ready</option><option value="sent">Sent</option><option value="revised">Revised</option><option value="confirmed">Confirmed</option><option value="lost">Lost</option><option value="archived">Archived</option></select></Field>
+        <Field label="Status"><div className={"quote-status-readonly status-"+status}>{status==="under_review"?"Under Review":status==="revision_required"?"Revision Required":status.charAt(0).toUpperCase()+status.slice(1)}</div></Field>
       </div>
 
       <div className="flight-info-card">
