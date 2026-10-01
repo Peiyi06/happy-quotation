@@ -62,7 +62,18 @@ export default function AiSupplierImport({inquiryContext=null,sourceInquiryId=""
       const res=await fetch("/api/ai-import-supplier",{method:"POST",body:form});
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){setError(data?.error||"Unable to analyze supplier file.");return;}
-      setResult(data.result);
+      const parsed=data.result as ImportResult;
+      const linked=ctx||{};
+      setResult({
+        ...parsed,
+        destination:parsed.destination||linked.destination||"",
+        departureCity:parsed.departureCity||linked.departureCity||"",
+        travelStartDate:parsed.travelStartDate||linked.travelStartDate||"",
+        travelEndDate:parsed.travelEndDate||linked.travelEndDate||"",
+        pax:parsed.pax??linked.pax??null,
+        tourType:parsed.tourType||linked.tourType||"",
+        suggestedFlights:(parsed.suggestedFlights||[]).length?parsed.suggestedFlights:(Array.isArray(linked.suggestedFlights)?linked.suggestedFlights:[])
+      });
       setModel(data.model||"");
     }finally{setAnalyzing(false);}
   }
