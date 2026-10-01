@@ -30,6 +30,14 @@ export async function POST(request:Request){
   const body=await request.json().catch(()=>({}));
   const mode=String(body?.mode||"update");
   const id=String(body?.id||"");
+  if(mode==="clearPayload"){
+    const id=String(body?.id||"");
+    const key=String(body?.key||"");
+    if(!id||!key) return NextResponse.json({error:"Thread ID and key are required"},{status:400});
+    const {data,error}=await ctx.db.rpc("staff_clear_ai_thread_payload_key",{p_token:ctx.token,p_thread_id:id,p_key:key});
+    if(error||!data?.ok) return NextResponse.json({error:data?.error||error?.message||"Unable to clear saved proposal"},{status:400});
+    return NextResponse.json(data);
+  }
   if(mode==="create"){
     const {data,error}=await ctx.db.rpc("staff_create_ai_thread",{
       p_token:ctx.token,
