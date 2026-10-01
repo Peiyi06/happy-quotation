@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 type ImportResult={
   title:string;destination:string;departureCity:string;travelStartDate:string;travelEndDate:string;pax:number|null;tourType:string;
@@ -19,9 +19,8 @@ type AdjustmentProposal={reply:string;changeSummary:string[];revisedDraft:Omit<I
 
 const uid=()=>Math.random().toString(36).slice(2,10);
 
-export default function AiSupplierImport({inquiryContext=null}:{inquiryContext?:any}){
+export default function AiSupplierImport({inquiryContext=null,sourceInquiryId=""}:{inquiryContext?:any;sourceInquiryId?:string}){
   const router=useRouter();
-  const searchParams=useSearchParams();
   const [linkedInquiryContext,setLinkedInquiryContext]=useState<any>(inquiryContext);
   const [file,setFile]=useState<File|null>(null);
   const [result,setResult]=useState<ImportResult|null>(null);
@@ -39,17 +38,16 @@ export default function AiSupplierImport({inquiryContext=null}:{inquiryContext?:
 
   useEffect(()=>{
     if(inquiryContext){setLinkedInquiryContext(inquiryContext);return;}
-    const sourceInquiry=searchParams.get("sourceInquiry");
-    if(!sourceInquiry){setLinkedInquiryContext(null);return;}
+    if(!sourceInquiryId){setLinkedInquiryContext(null);return;}
     let cancelled=false;
-    fetch("/api/internal-inquiry-context?id="+encodeURIComponent(sourceInquiry),{cache:"no-store"})
+    fetch("/api/internal-inquiry-context?id="+encodeURIComponent(sourceInquiryId),{cache:"no-store"})
       .then(async res=>{
         const data=await res.json().catch(()=>({}));
         if(!cancelled&&res.ok&&data?.ok) setLinkedInquiryContext(data.context||null);
       })
       .catch(()=>{});
     return ()=>{cancelled=true;};
-  },[inquiryContext,searchParams]);
+  },[inquiryContext,sourceInquiryId]);
 
   const ctx=linkedInquiryContext;
 
@@ -155,7 +153,7 @@ export default function AiSupplierImport({inquiryContext=null}:{inquiryContext?:
           travelEndDate:result.travelEndDate||ctx?.travelEndDate||"",
           pax:result.pax??ctx?.pax??"",
           tourType:result.tourType||ctx?.tourType||"",
-          suggestedFlights:suggestedFlights.length?suggestedFlights:(Array.isArray(ctx?.suggestedFlights)?inquiryContext.suggestedFlights.map((f:any)=>({id:uid(),...f})):[]),
+          suggestedFlights:suggestedFlights.length?suggestedFlights:(Array.isArray(ctx?.suggestedFlights)?ctx.suggestedFlights.map((f:any)=>({id:uid(),...f})):[]),
           days,hotels,includedItems,notIncludedItems,reminders,
           sourceInquiryId:ctx?.id||"",
           sourceInquiryNo:ctx?.inquiryNo||"",
