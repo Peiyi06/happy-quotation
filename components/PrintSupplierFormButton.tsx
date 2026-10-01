@@ -8,17 +8,28 @@ function safePart(value:string){
 }
 
 export default function PrintSupplierFormButton({
+  inquiryId,
   inquiryNo,
   destination,
   customerName,
   startDate
 }:{
+  inquiryId:string;
   inquiryNo:string;
   destination:string;
   customerName:string;
   startDate:string;
 }){
-  function handlePrint(){
+  async function handlePrint(){
+    try{
+      await fetch("/api/internal-inquiry-workflow",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({id:inquiryId,event:"supplier_form_exported"})
+      });
+    }catch{
+      // Printing should remain available even if progress tracking fails.
+    }
     const originalTitle=document.title;
     const compactDate=String(startDate||"").replace(/-/g,"");
     const fileName=[
