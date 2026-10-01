@@ -1739,3 +1739,82 @@ input::placeholder,textarea::placeholder{font-family:inherit;color:#8b98a3}
     width:100%;
   }
 }
+
+
+/* Quotation top action bar */
+.quote-top-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.quote-top-actions .btn,
+.quote-top-actions .unsaved-badge,
+.quote-top-actions .quote-editor-review-state{
+  min-height:44px;
+  height:44px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+  margin:0;
+  white-space:nowrap;
+  line-height:1;
+  font-size:13px;
+  font-weight:700;
+  border-radius:11px;
+}
+.quote-top-actions .btn{
+  padding:0 18px;
+}
+.quote-top-actions .btn.primary{
+  min-width:150px;
+  box-shadow:none;
+}
+.quote-top-actions .unsaved-badge{
+  min-height:0;
+  height:auto;
+  padding:7px 11px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:800;
+  align-self:center;
+}
+.quote-top-actions .quote-editor-review-state{
+  min-height:0;
+  height:auto;
+  padding:7px 11px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:800;
+  background:var(--status-review-bg);
+  color:var(--status-review-text);
+  border:1px solid var(--status-review-border);
+}
+.quote-top-actions .quote-editor-review-state.ready{
+  background:var(--status-ready-bg);
+  color:var(--status-ready-text);
+  border-color:var(--status-ready-border);
+}
+.quote-top-actions .quote-action-secondary{
+  min-width:112px;
+}
+.quote-top-actions .quote-action-danger{
+  min-width:82px;
+  border:1px solid rgba(255,255,255,.55);
+}
+.quote-top-actions .btn:disabled{
+  opacity:.65;
+  cursor:not-allowed;
+}
+
+@media(max-width:760px){
+  .quote-top-actions{
+    width:100%;
+    justify-content:flex-start;
+  }
+  .quote-top-actions .btn{
+    min-width:auto;
+  }
+}
