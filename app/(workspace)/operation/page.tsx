@@ -77,7 +77,7 @@ export default async function OperationWorkspacePage({
   };
 
   return <div>
-    <div className="page-head operation-workspace-head">
+    <div className="page-head operation-workspace-head page-compact-header">
       <div>
         <span className="page-kicker">OPERATION WORKSPACE</span>
         <h1>Operation</h1>
