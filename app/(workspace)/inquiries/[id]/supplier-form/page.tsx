@@ -37,6 +37,8 @@ export default async function SupplierInquiryFormPage({params}:{params:Promise<{
   const special=pick("specialRequest",data.special_request)||"";
   const transport=pick("transportRequirement","")||"";
   const itinerary=pick("itineraryRequirement","")||"";
+  const salesFlights=Array.isArray(data?.inquiry_data?.suggestedFlights)?data.inquiry_data.suggestedFlights:[];
+  const finalFlights=Array.isArray(r?.suggestedFlights)?r.suggestedFlights:salesFlights;
 
   const rows=[
     ["Destination｜目的地",destination],
@@ -85,6 +87,21 @@ export default async function SupplierInquiryFormPage({params}:{params:Promise<{
           <p>{value}</p>
         </div>)}
       </section>
+
+      {finalFlights.length>0&&<section className="supplier-form-flights">
+        <h2>Suggested Flights｜推荐航班</h2>
+        <div className="supplier-flight-table">
+          <div className="supplier-flight-head"><span>Route</span><span>Flight</span><span>Date</span><span>Departure</span><span>Arrival</span><span>Remarks</span></div>
+          {finalFlights.map((f:any,index:number)=><div className="supplier-flight-row" key={f.id||index}>
+            <span><strong>{f.from||"—"} → {f.to||"—"}</strong></span>
+            <span>{f.flightNo||"—"}</span>
+            <span>{displayDate(f.date||"")}</span>
+            <span>{f.departureTime||"—"}</span>
+            <span>{f.arrivalTime||"—"}</span>
+            <span>{f.remarks||"—"}</span>
+          </div>)}
+        </div>
+      </section>}
 
       {s.remarks&&<section className="supplier-form-remarks"><h2>Remarks｜备注</h2><p>{s.remarks}</p></section>}
 
