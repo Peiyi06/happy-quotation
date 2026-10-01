@@ -92,7 +92,7 @@ export default async function SupplierInquiryFormPage({params}:{params:Promise<{
     {rows.map(([label,value])=><div className="supplier-pro-row" key={label}><span>{label}</span><p>{value}</p></div>)}
   </div>;
 
-  const hasPageTwo=finalFlights.length>0||Boolean(s.remarks);
+  const hasPageTwo=finalFlights.length>0;
 
   return <div className="supplier-form-page">
     <div className="supplier-form-toolbar">
@@ -130,13 +130,13 @@ export default async function SupplierInquiryFormPage({params}:{params:Promise<{
           {detailRows(requirementRows)}
         </section>
 
-        {!hasPageTwo&&<section className="supplier-pro-section">
+        <section className="supplier-pro-section">
           <SectionTitle icon="▤" title="SPECIAL REQUEST & REMARKS｜特别要求 & 备注"/>
           {detailRows([
             ["Special Request｜特别要求",special||"—"],
             ["Remarks｜备注",s.remarks||"—"]
           ])}
-        </section>}
+        </section>
 
         <Footer/>
       </section>
@@ -158,14 +158,6 @@ export default async function SupplierInquiryFormPage({params}:{params:Promise<{
             </div>)}
           </div>
         </section>}
-
-        <section className="supplier-pro-section supplier-long-section">
-          <SectionTitle icon="▤" title="SPECIAL REQUEST & REMARKS｜特别要求 & 备注"/>
-          {detailRows([
-            ["Special Request｜特别要求",special||"—"],
-            ["Remarks｜备注",s.remarks||"—"]
-          ])}
-        </section>
 
         <Footer/>
       </section>}
