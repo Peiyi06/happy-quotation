@@ -60,6 +60,9 @@ export default function TravelMediaLibrary(){
     mediaBackfillStartedRef.current=true;
     setMediaProcessing(true);
     setMediaBackfillMessage("Checking existing Library Sources...");
+    let failures=0;
+    let processed=0;
+    let lastError="";
     try{
       for(let i=0;i<20;i++){
         const res=await fetch("/api/internal-travel-library-media",{
@@ -69,13 +72,20 @@ export default function TravelMediaLibrary(){
         });
         const data=await res.json().catch(()=>({}));
         if(!res.ok){
-          setMediaBackfillMessage("Some Library Sources need attention: "+String(data?.error||"media extraction failed"));
+          failures++;
+          lastError=String(data?.error||"media extraction failed");
+          setMediaBackfillMessage("Media extraction failed: "+lastError);
           continue;
         }
         if(data?.done){
-          setMediaBackfillMessage(i===0?"Existing Library Sources are up to date.":"Existing Library Sources media extraction completed.");
+          if(failures>0){
+            setMediaBackfillMessage(failures+" Library Source(s) failed media extraction. "+lastError);
+          }else{
+            setMediaBackfillMessage(processed===0?"Existing Library Sources are up to date.":"Existing Library Sources media extraction completed.");
+          }
           break;
         }
+        processed++;
         const s=data?.summary||{};
         setMediaBackfillMessage(
           String(data?.title||"Library Source")+" · "+Number(s.found||0)+" photos found · "+Number(s.matched||0)+" matched"
