@@ -2,9 +2,10 @@ import { notFound } from "next/navigation";
 import AiSupplierImport from "@/components/AiSupplierImport";
 import { internalUser } from "@/lib/internalSession";
 
-export default async function AiImportPage(){
+export default async function AiImportPage({searchParams}:{searchParams:Promise<{sourceInquiry?:string}>}){
   const user=await internalUser();
   if(!user||!["jess","long"].includes(user.username.toLowerCase())) notFound();
+  const {sourceInquiry}=await searchParams;
 
   return <div>
     <div className="page-head">
@@ -14,6 +15,6 @@ export default async function AiImportPage(){
         <p>供应商文件 → AI 结构化 → Operation Review → Draft Itinerary</p>
       </div>
     </div>
-    <AiSupplierImport/>
+    <AiSupplierImport sourceInquiryId={sourceInquiry||""}/>
   </div>;
 }
