@@ -6,8 +6,12 @@ import InquiryWorkflowAction from "@/components/InquiryWorkflowAction";
 const inquiryStatusLabels:Record<string,string>={
   new:"New",
   in_progress:"In Progress",
-  waiting_quote:"Waiting Quote",
-  ready_customer:"Ready for Customer",
+  waiting_quote:"In Progress",
+  under_review:"Under Review",
+  revision_required:"Revision Required",
+  ready:"Ready",
+  ready_customer:"Ready",
+  itinerary_ready:"Itinerary Ready",
   closed:"Closed"
 };
 
@@ -20,6 +24,8 @@ const supplierStatusLabels:Record<string,string>={
 
 const quotationStatusLabels:Record<string,string>={
   draft:"Draft",
+  under_review:"Under Review",
+  revision_required:"Revision Required",
   ready:"Ready",
   sent:"Sent",
   revised:"Revised",
@@ -48,6 +54,12 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
   const {data:linkedItineraryData}=await db.rpc("staff_list_itineraries_for_inquiry",{p_token:token,p_inquiry_id:id});
   const linkedItineraries=Array.isArray(linkedItineraryData)?linkedItineraryData:[];
 
+  const viewerMode:"sales"|"operation"|"management"=
+    user?.role==="manager"||user?.username?.toLowerCase()==="long"
+      ?"management"
+      :user?.id===data.operation_assignee_id
+        ?"operation"
+        :"sales";
   const supplierStatus=data.supplier_inquiry_status||"draft";
   const supplierComplete=supplierStatus==="quote_received"||linkedQuotes.length>0;
   const quotationComplete=linkedQuotes.some((q:any)=>q.status==="confirmed");
@@ -63,8 +75,9 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
           mainStatus={data.status||"new"}
           supplierStatus={data.supplier_inquiry_status||"draft"}
           canAdvance={Boolean(user&&(user.username==="long"||user.id===data.operation_assignee_id))}
-          canUpdateStatus={Boolean(user)}
+          canUpdateStatus={false}
           hasQuotation={linkedQuotes.length>0}
+          viewerMode={viewerMode}
           firstQuotationId={linkedQuotes[0]?.id}
         />
         <div className="detail-actions">
