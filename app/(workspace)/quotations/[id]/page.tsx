@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import DuplicateQuotationButton from "@/components/DuplicateQuotationButton";
-import { internalDb, internalToken } from "@/lib/internalSession";
+import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
+import QuotationReviewActions from "@/components/QuotationReviewActions";
 import {
   ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
   childRatio, computeProfit, currencyRate, leaderRowTotal, travelerRowPerPax, roundUpTo
@@ -58,9 +59,18 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
   const {id}=await params;
   const token=await internalToken();
   if(!token) notFound();
+  const user=await internalUser();
   const db=internalDb();
   const {data,error}=await db.rpc("staff_get_quote",{p_token:token,p_id:id});
   if(error||!data||!data.id) notFound();
+
+  let sourceInquiry:any=null;
+  if(data.source_inquiry_id){
+    const sourceResult=await db.rpc("staff_get_inquiry",{p_token:token,p_id:data.source_inquiry_id});
+    sourceInquiry=sourceResult.data||null;
+  }
+  const canReview=Boolean(user&&(user.role==="manager"||user.username.toLowerCase()==="long"));
+  const canSubmit=Boolean(user&&(canReview||user.id===data.owner_id||user.id===sourceInquiry?.operation_assignee_id));
 
   const margin=Number(data.margin||0);
   const qd=data.quotation_data||{};
@@ -146,6 +156,15 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
       </div>
       <Link className="btn" href={"/inquiries/"+data.source_inquiry_id}>Open Inquiry</Link>
     </section>}
+
+    <QuotationReviewActions
+      quotationId={id}
+      status={data.status||"draft"}
+      canSubmit={canSubmit}
+      canReview={canReview}
+      reviewNote={data.review_note||""}
+      reviewedAt={data.reviewed_at||""}
+    />
 
     <section className="final-price-grid">
       <div className="quote-result-hero">
