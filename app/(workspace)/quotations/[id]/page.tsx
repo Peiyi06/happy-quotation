@@ -138,6 +138,15 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
       </div>
     </div>
 
+    {data.source_inquiry_id&&<section className="quote-source-inquiry quote-source-inquiry-detail">
+      <div>
+        <span>SOURCE INQUIRY｜来源询价</span>
+        <strong>{qd.sourceInquiryNo||"Linked Inquiry"}</strong>
+        {qd.sourceInquirySnapshot&&<small>{[qd.sourceInquirySnapshot.destination,qd.sourceInquirySnapshot.daysCount&&qd.sourceInquirySnapshot.nightsCount?`${qd.sourceInquirySnapshot.daysCount}D${qd.sourceInquirySnapshot.nightsCount}N`:"",qd.sourceInquirySnapshot.pax?`${qd.sourceInquirySnapshot.pax} Pax`:""].filter(Boolean).join(" · ")}</small>}
+      </div>
+      <Link className="btn" href={"/inquiries/"+data.source_inquiry_id}>Open Inquiry</Link>
+    </section>}
+
     <section className="final-price-grid">
       <div className="quote-result-hero">
         <span>成人价格 · Twin Sharing{hasLeader?" · 含领队":""}</span>
