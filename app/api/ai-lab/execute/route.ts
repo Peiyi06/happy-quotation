@@ -151,6 +151,7 @@ export async function POST(request:Request){
   }
 
   const body=await request.json().catch(()=>({}));
+  const threadId=s(body?.threadId,80);
   const type=s(body?.type,60);
   if(!allowedTypes.has(type)) return NextResponse.json({error:"Unsupported AI action"},{status:400});
 
@@ -168,7 +169,12 @@ export async function POST(request:Request){
     }
     const {data,error}=await db.rpc("staff_save_inquiry",{p_token:token,p_payload:payload,p_id:null});
     if(error||!data?.ok) return NextResponse.json({error:data?.error||error?.message||"Unable to create inquiry"},{status:400});
-    return NextResponse.json({ok:true,type,id:data.id,recordNo:data.inquiry_no,href:"/inquiries/"+data.id,message:"Inquiry created"});
+    if(threadId){
+      await db.rpc("staff_update_ai_thread",{p_token:token,p_thread_id:threadId,p_title:null,p_linked_inquiry_id:data.id,p_context_title:data.inquiry_no||"Inquiry",p_archived:null});
+      await db.rpc("staff_clear_ai_thread_payload_key",{p_token:token,p_thread_id:threadId,p_key:"action"});
+      await db.rpc("staff_append_ai_message",{p_token:token,p_thread_id:threadId,p_role:"assistant",p_text:"Inquiry 已建立："+(data.inquiry_no||data.id),p_payload:{links:[{label:"Open Inquiry",href:"/inquiries/"+data.id,kind:"inquiry"}]}});
+    }
+    return NextResponse.json({ok:true,type,id:data.id,recordNo:data.inquiry_no,href:"/inquiries/"+data.id,message:"Inquiry created",contextInquiryId:data.id,contextTitle:data.inquiry_no||"Inquiry"});
   }
 
   if(type==="update_inquiry"){
@@ -179,7 +185,11 @@ export async function POST(request:Request){
     const payload=inquiryPayload(proposed,existing);
     const {data,error}=await db.rpc("staff_save_inquiry",{p_token:token,p_payload:payload,p_id:id});
     if(error||!data?.ok) return NextResponse.json({error:data?.error||error?.message||"Unable to update inquiry"},{status:400});
-    return NextResponse.json({ok:true,type,id,recordNo:existing.inquiry_no||"",href:"/inquiries/"+id,message:"Inquiry updated"});
+    if(threadId){
+      await db.rpc("staff_clear_ai_thread_payload_key",{p_token:token,p_thread_id:threadId,p_key:"action"});
+      await db.rpc("staff_append_ai_message",{p_token:token,p_thread_id:threadId,p_role:"assistant",p_text:"Inquiry 已更新："+(existing.inquiry_no||id),p_payload:{links:[{label:"Open Inquiry",href:"/inquiries/"+id,kind:"inquiry"}]}});
+    }
+    return NextResponse.json({ok:true,type,id,recordNo:existing.inquiry_no||"",href:"/inquiries/"+id,message:"Inquiry updated",contextInquiryId:id,contextTitle:existing.inquiry_no||"Inquiry"});
   }
 
   if(type==="create_itinerary"){
@@ -229,7 +239,11 @@ export async function POST(request:Request){
     };
     const {data,error}=await db.rpc("staff_save_itinerary",{p_token:token,p_payload:payload,p_id:null});
     if(error||!data?.ok) return NextResponse.json({error:data?.error||error?.message||"Unable to create itinerary"},{status:400});
-    return NextResponse.json({ok:true,type,id:data.id,recordNo:data.itinerary_no,href:"/itineraries/"+data.id+"/edit",message:"Itinerary draft created"});
+    if(threadId){
+      await db.rpc("staff_clear_ai_thread_payload_key",{p_token:token,p_thread_id:threadId,p_key:"action"});
+      await db.rpc("staff_append_ai_message",{p_token:token,p_thread_id:threadId,p_role:"assistant",p_text:"Itinerary Draft 已建立："+(data.itinerary_no||data.id),p_payload:{links:[{label:"Open Itinerary",href:"/itineraries/"+data.id+"/edit",kind:"itinerary"}]}});
+    }
+    return NextResponse.json({ok:true,type,id:data.id,recordNo:data.itinerary_no,href:"/itineraries/"+data.id+"/edit",message:"Itinerary draft created",contextInquiryId:sourceInquiryId});
   }
 
   const id=s(body?.targetId||proposed?.id,80);
@@ -264,5 +278,9 @@ export async function POST(request:Request){
   };
   const {data,error}=await db.rpc("staff_save_itinerary",{p_token:token,p_payload:payload,p_id:id});
   if(error||!data?.ok) return NextResponse.json({error:data?.error||error?.message||"Unable to update itinerary"},{status:400});
-  return NextResponse.json({ok:true,type,id,recordNo:existing.itinerary_no||"",href:"/itineraries/"+id+"/edit",message:"Itinerary updated"});
+  if(threadId){
+    await db.rpc("staff_clear_ai_thread_payload_key",{p_token:token,p_thread_id:threadId,p_key:"action"});
+    await db.rpc("staff_append_ai_message",{p_token:token,p_thread_id:threadId,p_role:"assistant",p_text:"Itinerary 已更新："+(existing.itinerary_no||id),p_payload:{links:[{label:"Open Itinerary",href:"/itineraries/"+id+"/edit",kind:"itinerary"}]}});
+  }
+  return NextResponse.json({ok:true,type,id,recordNo:existing.itinerary_no||"",href:"/itineraries/"+id+"/edit",message:"Itinerary updated",contextInquiryId:s(existing.source_inquiry_id||old.sourceInquiryId,80)});
 }
