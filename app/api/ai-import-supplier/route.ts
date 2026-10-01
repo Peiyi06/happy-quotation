@@ -103,11 +103,6 @@ export async function POST(request:Request){
   const form=await request.formData();
   const file=form.get("file");
   const adjustmentNotes=String(form.get("adjustmentNotes")||"").trim().slice(0,12000);
-  const inquiryContextRaw=String(form.get("inquiryContext")||"").trim();
-  let inquiryContext:any=null;
-  if(inquiryContextRaw){
-    try{ inquiryContext=JSON.parse(inquiryContextRaw); }catch{}
-  }
   if(!(file instanceof File)) return NextResponse.json({error:"Please attach a supplier file."},{status:400});
   if(file.size<=0||file.size>MAX_FILE_BYTES) return NextResponse.json({error:"For the MVP, each supplier file must be 3.5MB or smaller."},{status:400});
 
@@ -129,9 +124,6 @@ export async function POST(request:Request){
     ? {type:"input_image",image_url:dataUrl,detail:"high"}
     : {type:"input_file",filename:file.name,file_data:dataUrl,detail:ext==="pdf"?"high":undefined};
 
-  const inquiryTrustedContext=inquiryContext
-    ? `\n\nLINKED INQUIRY CONTEXT (trusted internal source):\n${JSON.stringify(inquiryContext)}\n\nUse the linked Inquiry as the authoritative source for customer name context, destination, departure city, travel dates, pax, tour type, suggested flights and customer requirements when those fields are present. Use the supplier file as the primary source for the detailed day-by-day itinerary, hotels, meals and inclusions. If the supplier file conflicts with the Inquiry context, keep the Inquiry's confirmed trip basics, preserve supplier content where possible, and add a warning describing the conflict.`
-    : "";
   const operationContext=adjustmentNotes
     ? `\n\nOPERATION ADJUSTMENT NOTES (trusted staff instruction):\n${adjustmentNotes}\n\nApply these instructions while transforming the supplier itinerary. If they conflict with the supplier itinerary, follow the Operation notes for the customer-facing draft, preserve the supplier source as the reference, and add a warning explaining the adjustment.`
     : "";
@@ -149,7 +141,7 @@ Goal:
 7. For each day: title should be a concise route/title; content should be customer-safe itinerary prose; hotel should be the hotel for that day if stated; attractions should be attraction names only.
 8. Internal findings must include any content that may expose supplier pricing or private commercial information, with a short reason.
 9. Add warnings for contradictions, missing days, unclear dates, unclear pricing separation, or any uncertain extraction.
-10. This is a draft for Operation review, not a final customer document.\n11. Operation adjustment notes, when provided, are intentional transformation instructions. Use them to change duration, shift days, move attractions, adapt arrival/departure days, or change pacing.\n12. If Operation explicitly requests new sightseeing or content not present in the supplier source, you may propose reasonable additions, but add a warning that the content was AI-added and requires Operation confirmation.\n13. Never let Operation adjustment notes cause internal supplier costs or confidential commercial information to enter customer-facing fields.\n14. When linked Inquiry context is supplied, do not ask Operation to re-enter its basic trip information; use it to complete missing trip basics and suggested flights.${inquiryTrustedContext}${operationContext}`;
+10. This is a draft for Operation review, not a final customer document.\n11. Operation adjustment notes, when provided, are intentional transformation instructions. Use them to change duration, shift days, move attractions, adapt arrival/departure days, or change pacing.\n12. If Operation explicitly requests new sightseeing or content not present in the supplier source, you may propose reasonable additions, but add a warning that the content was AI-added and requires Operation confirmation.\n13. Never let Operation adjustment notes cause internal supplier costs or confidential commercial information to enter customer-facing fields.${operationContext}`;
 
   const openai=await fetch("https://api.openai.com/v1/responses",{
     method:"POST",
