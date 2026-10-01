@@ -914,32 +914,32 @@
   .supplier-print-page-two{break-before:page!important;page-break-before:always!important}
   .supplier-print-page:last-child{break-after:auto!important;page-break-after:auto!important}
   .supplier-pro-header{break-inside:avoid!important;page-break-inside:avoid!important;padding-bottom:3mm!important}
-  .supplier-pro-header h1{font-size:24px!important}
-  .supplier-pro-header p{font-size:10.5px!important}
-  .supplier-pro-header span{font-size:8.5px!important}
+  .supplier-pro-header h1{font-size:26px!important}
+  .supplier-pro-header p{font-size:12px!important}
+  .supplier-pro-header span{font-size:9.5px!important}
   .supplier-pro-map{width:48mm!important;height:20mm!important}
   .supplier-info-cards{grid-template-columns:1fr 1fr!important;gap:2.2mm!important;margin:3.5mm 0!important;break-inside:avoid!important;page-break-inside:avoid!important}
-  .supplier-info-cards>div{padding:2.1mm 2.5mm!important}
-  .supplier-info-cards b{font-size:15px!important}
-  .supplier-info-cards span{font-size:8px!important}
-  .supplier-info-cards strong{font-size:10.5px!important}
+  .supplier-info-cards>div{padding:2.4mm 2.7mm!important}
+  .supplier-info-cards b{font-size:16px!important}
+  .supplier-info-cards span{font-size:9.5px!important}
+  .supplier-info-cards strong{font-size:12px!important}
   .supplier-two-column{grid-template-columns:1fr 1fr!important;gap:2.5mm!important}
-  .supplier-pro-section{margin-top:3mm!important;break-inside:auto!important;page-break-inside:auto!important}
-  .supplier-section-title{padding:2mm 2.7mm!important;break-after:avoid!important;page-break-after:avoid!important}
-  .supplier-section-title h2{font-size:10.5px!important}
-  .supplier-section-title span{font-size:11px!important}
+  .supplier-pro-section{margin-top:3.2mm!important;break-inside:auto!important;page-break-inside:auto!important}
+  .supplier-section-title{padding:2.2mm 2.8mm!important;break-after:avoid!important;page-break-after:avoid!important}
+  .supplier-section-title h2{font-size:13.5px!important}
+  .supplier-section-title span{font-size:13px!important}
   .supplier-pro-table{overflow:visible!important}
   .supplier-pro-row{grid-template-columns:40% 60%!important;break-inside:avoid!important;page-break-inside:avoid!important}
-  .supplier-pro-row>span{padding:2mm 2.5mm!important;font-size:8.8px!important;line-height:1.35!important}
-  .supplier-pro-row>p{padding:2mm 2.5mm!important;font-size:9.5px!important;line-height:1.4!important;overflow-wrap:anywhere!important;word-break:break-word!important}
-  .supplier-pro-footer{margin-top:4mm!important;padding-top:2.5mm!important;font-size:8px!important;break-inside:avoid!important;page-break-inside:avoid!important;position:static!important}
+  .supplier-pro-row>span{padding:2.4mm 2.7mm!important;font-size:11.5px!important;line-height:1.4!important}
+  .supplier-pro-row>p{padding:2.4mm 2.7mm!important;font-size:12.5px!important;line-height:1.45!important;overflow-wrap:anywhere!important;word-break:break-word!important}
+  .supplier-pro-footer{margin-top:4.5mm!important;padding-top:2.8mm!important;font-size:9.8px!important;break-inside:avoid!important;page-break-inside:avoid!important;position:static!important}
   .supplier-pro-footer span{max-width:62%!important}
   .supplier-print-page:after{height:10mm!important;margin:2mm -11mm -9mm!important}
   .supplier-flight-section{break-inside:auto!important;page-break-inside:auto!important}
   .supplier-pro-flight-table{overflow:visible!important}
-  .supplier-flight-head{display:grid!important;grid-template-columns:1.15fr .85fr 1fr .8fr .8fr 1.25fr!important;font-size:7.5px!important;break-after:avoid!important;page-break-after:avoid!important}
-  .supplier-flight-row{display:grid!important;grid-template-columns:1.15fr .85fr 1fr .8fr .8fr 1.25fr!important;font-size:8.2px!important;break-inside:avoid!important;page-break-inside:avoid!important}
-  .supplier-flight-head span,.supplier-flight-row span{padding:1.8mm 1.5mm!important;overflow-wrap:anywhere!important;word-break:break-word!important}
+  .supplier-flight-head{display:grid!important;grid-template-columns:1.15fr .85fr 1fr .8fr .8fr 1.25fr!important;font-size:10.8px!important;break-after:avoid!important;page-break-after:avoid!important}
+  .supplier-flight-row{display:grid!important;grid-template-columns:1.15fr .85fr 1fr .8fr .8fr 1.25fr!important;font-size:11.3px!important;break-inside:avoid!important;page-break-inside:avoid!important}
+  .supplier-flight-head span,.supplier-flight-row span{padding:2.1mm 1.8mm!important;overflow-wrap:anywhere!important;word-break:break-word!important}
   .supplier-long-section{break-inside:auto!important;page-break-inside:auto!important}
   .supplier-long-section .supplier-pro-table{break-inside:auto!important;page-break-inside:auto!important}
   .supplier-long-section .supplier-pro-row{break-inside:avoid!important;page-break-inside:avoid!important}
