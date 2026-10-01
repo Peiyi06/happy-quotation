@@ -294,10 +294,6 @@ export async function POST(request:Request){
       memorySuggestion:result.memorySuggestion||null,
       autoMemorySaved
     };
-      links:Array.isArray(result.links)?result.links:[],
-      action:result.action||null,
-      memorySuggestion:result.memorySuggestion||null
-    };
     const {data:assistantSaved,error:assistantSaveError}=await db.rpc("staff_append_ai_message",{
       p_token:token,
       p_thread_id:threadId,
