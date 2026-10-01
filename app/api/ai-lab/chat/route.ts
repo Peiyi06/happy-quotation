@@ -139,7 +139,7 @@ export async function POST(request:Request){
   const companyMemories=Array.isArray(memoryData)?memoryData.slice(0,100):[];
 
   let focused:any=null;
-  const requestedContext=contextInquiryId;
+  const requestedContext=String(thread?.linked_inquiry_id||contextInquiryId||"");
   if(requestedContext){
     const {data}=await db.rpc("staff_get_inquiry",{p_token:token,p_id:requestedContext});
     if(data?.id) focused=data;
@@ -215,10 +215,10 @@ export async function POST(request:Request){
 
   const raw=await response.json().catch(()=>({}));
   if(!response.ok){
-    return NextResponse.json({error:raw?.error?.message||"AI Lab could not respond."},{status:502});
+    return NextResponse.json({error:raw?.error?.message||"AI Lab could not respond.",threadId,saved:true},{status:502});
   }
   const resultText=outputText(raw);
-  if(!resultText) return NextResponse.json({error:"AI Lab returned no response."},{status:502});
+  if(!resultText) return NextResponse.json({error:"AI Lab returned no response.",threadId,saved:true},{status:502});
   try{
     const result=JSON.parse(resultText);
     const assistantPayload={
