@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { internalDb,internalToken,internalUser } from "@/lib/internalSession";
 import OperationReviewEditor from "@/components/OperationReviewEditor";
@@ -20,6 +21,9 @@ export default async function OperationReviewPage({params}:{params:Promise<{id:s
         <span className="page-kicker">OPERATION REVIEW</span>
         <h1>{data.inquiry_no}</h1>
         <p>{data.customer_name||"Customer"} · {data.destination||"Destination"}</p>
+      </div>
+      <div className="detail-actions">
+        <Link className="btn" href={"/inquiries/"+id}>← Close Review｜收起</Link>
       </div>
     </div>
     <OperationReviewEditor inquiry={data} canEdit={canEdit}/>
