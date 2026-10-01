@@ -15,7 +15,7 @@ const profitModes: ProfitMode[] = ["固定金额", "按成本加价率", "按售
 const travelerTypes = ["成人不含领队","成人含领队","小孩含床不含领队","小孩含床含领队","小孩不含床不含领队","小孩不含床含领队"] as const;
 type TravelerType = typeof travelerTypes[number];
 type QuoteStatus = "draft"|"ready"|"sent"|"revised"|"confirmed"|"lost"|"archived";
-type CalculatorProps = { workspaceMode?: boolean; quotationId?: string; initialQuotation?: any; currentStaffId?: string; currentStaffName?: string };
+type CalculatorProps = { workspaceMode?: boolean; quotationId?: string; initialQuotation?: any; currentStaffId?: string; currentStaffName?: string; sourceInquiryId?: string; sourceInquiryNo?: string; sourceInquirySnapshot?: any };
 
 const travelerTypeLabel = (type: TravelerType) => ({
   "成人不含领队":"成人（双人一房）｜不含领队",
@@ -59,8 +59,11 @@ const defaultLeaderRows: LeaderCostRow[] = [
   { id: uid(), item: "其他", unitPrice: 0, qty: 1, currency: "RM", note: "" },
 ];
 
-export default function QuotationCalculator({workspaceMode=false,quotationId,initialQuotation,currentStaffId="",currentStaffName=""}:CalculatorProps) {
+export default function QuotationCalculator({workspaceMode=false,quotationId,initialQuotation,currentStaffId="",currentStaffName="",sourceInquiryId="",sourceInquiryNo="",sourceInquirySnapshot}:CalculatorProps) {
   const router = useRouter();
+  const resolvedSourceInquiryId=sourceInquiryId||initialQuotation?.source_inquiry_id||initialQuotation?.quotation_data?.sourceInquiryId||"";
+  const resolvedSourceInquiryNo=sourceInquiryNo||initialQuotation?.quotation_data?.sourceInquiryNo||"";
+  const resolvedSourceInquirySnapshot=sourceInquirySnapshot||initialQuotation?.quotation_data?.sourceInquirySnapshot||null;
   const [quoteTitle, setQuoteTitle] = useState("New Tour Quotation");
   const [destination, setDestination] = useState("");
   const [departureDate, setDepartureDate] = useState("");
@@ -443,8 +446,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       returnTransitOpen,returnTransitFromAirport,returnTransitToAirport,returnTransitFlightNo,returnTransitFlightDate,returnTransitDepartureTime,returnTransitArrivalTime,returnTransitNextDay,
       flightTotalPrice,flightPriceCurrency,flightTicketType:flightTicketType.code,
       itineraryDays:itinerarySummary.days,itineraryNights:itinerarySummary.nights,itineraryLabel:itinerarySummary.label,
-      travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType:effectiveSelectedType,manualQuote};
+      travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType:effectiveSelectedType,manualQuote,sourceInquiryId:resolvedSourceInquiryId,sourceInquiryNo:resolvedSourceInquiryNo,sourceInquirySnapshot:resolvedSourceInquirySnapshot};
     const payload = {
+      source_inquiry_id: resolvedSourceInquiryId || "",
       tour_group_id: tourGroupId || "",
       tour_code: tourCode,
       title: quoteTitle || tourCode || "Untitled Quotation",
@@ -614,6 +618,14 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   ] as const;
 
   return <main className="app-shell">
+    {workspaceMode&&resolvedSourceInquiryId&&<section className="quote-source-inquiry">
+      <div>
+        <span>SOURCE INQUIRY｜来源询价</span>
+        <strong>{resolvedSourceInquiryNo||"Linked Inquiry"}</strong>
+        {resolvedSourceInquirySnapshot&&<small>{[resolvedSourceInquirySnapshot.destination,resolvedSourceInquirySnapshot.daysCount&&resolvedSourceInquirySnapshot.nightsCount?`${resolvedSourceInquirySnapshot.daysCount}D${resolvedSourceInquirySnapshot.nightsCount}N`:"",resolvedSourceInquirySnapshot.pax?`${resolvedSourceInquirySnapshot.pax} Pax`:""].filter(Boolean).join(" · ")}</small>}
+      </div>
+      <button className="btn" type="button" onClick={()=>requestNavigate("/inquiries/"+resolvedSourceInquiryId)}>Open Inquiry</button>
+    </section>}
     <header className="topbar">
       <div>
         <div className="eyebrow">HAPPY EXPRESS TRAVEL</div>
