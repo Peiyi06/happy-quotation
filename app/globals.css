@@ -1564,3 +1564,122 @@ input::placeholder,textarea::placeholder{font-family:inherit;color:#8b98a3}
   .quote-review-card{align-items:flex-start;flex-direction:column}
   .quote-review-actions{width:100%;justify-content:flex-start}
 }
+
+
+/* Unified status color system */
+:root{
+  --status-new-bg:#eef3f6;
+  --status-new-text:#526b7a;
+  --status-new-border:#d7e1e7;
+  --status-progress-bg:#eaf3fb;
+  --status-progress-text:#2f6593;
+  --status-progress-border:#cfe1f1;
+  --status-review-bg:#fff6df;
+  --status-review-text:#8a661b;
+  --status-review-border:#ead8a8;
+  --status-revision-bg:#fff0ee;
+  --status-revision-text:#9b433a;
+  --status-revision-border:#ebc8c3;
+  --status-ready-bg:#edf7ef;
+  --status-ready-text:#2f6b3b;
+  --status-ready-border:#cfe4d3;
+}
+
+.status-new{
+  background:var(--status-new-bg)!important;
+  color:var(--status-new-text)!important;
+  border:1px solid var(--status-new-border)!important;
+}
+.status-in_progress,
+.status-waiting_quote{
+  background:var(--status-progress-bg)!important;
+  color:var(--status-progress-text)!important;
+  border:1px solid var(--status-progress-border)!important;
+}
+.status-under_review{
+  background:var(--status-review-bg)!important;
+  color:var(--status-review-text)!important;
+  border:1px solid var(--status-review-border)!important;
+}
+.status-revision_required{
+  background:var(--status-revision-bg)!important;
+  color:var(--status-revision-text)!important;
+  border:1px solid var(--status-revision-border)!important;
+}
+.status-ready,
+.status-ready_customer,
+.status-itinerary_ready{
+  background:var(--status-ready-bg)!important;
+  color:var(--status-ready-text)!important;
+  border:1px solid var(--status-ready-border)!important;
+}
+
+/* Operation queue cards use the same status language without becoming visually heavy */
+.operation-queue-panel{
+  position:relative;
+  overflow:hidden;
+}
+.operation-queue-panel:before{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  height:4px;
+  background:#dfe7ec;
+}
+.operation-queue-panel .operation-count{
+  border:1px solid transparent;
+}
+
+.operation-queue-new:before{background:#aebfca}
+.operation-queue-new .operation-count{
+  background:var(--status-new-bg);
+  color:var(--status-new-text);
+  border-color:var(--status-new-border);
+}
+
+.operation-queue-in_progress:before{background:#79a9d0}
+.operation-queue-in_progress .operation-count{
+  background:var(--status-progress-bg);
+  color:var(--status-progress-text);
+  border-color:var(--status-progress-border);
+}
+
+.operation-queue-under_review:before{background:#d7ad4d}
+.operation-queue-under_review .operation-count{
+  background:var(--status-review-bg);
+  color:var(--status-review-text);
+  border-color:var(--status-review-border);
+}
+
+.operation-queue-revision_required:before{background:#cf7a70}
+.operation-queue-revision_required .operation-count{
+  background:var(--status-revision-bg);
+  color:var(--status-revision-text);
+  border-color:var(--status-revision-border);
+}
+
+.operation-queue-ready:before{background:#77a881}
+.operation-queue-ready .operation-count{
+  background:var(--status-ready-bg);
+  color:var(--status-ready-text);
+  border-color:var(--status-ready-border);
+}
+
+/* Match quotation review chips to the global semantic colors */
+.quote-status-readonly.status-under_review{
+  background:var(--status-review-bg)!important;
+  color:var(--status-review-text)!important;
+  border-color:var(--status-review-border)!important;
+}
+.quote-status-readonly.status-revision_required{
+  background:var(--status-revision-bg)!important;
+  color:var(--status-revision-text)!important;
+  border-color:var(--status-revision-border)!important;
+}
+.quote-status-readonly.status-ready{
+  background:var(--status-ready-bg)!important;
+  color:var(--status-ready-text)!important;
+  border-color:var(--status-ready-border)!important;
+}
