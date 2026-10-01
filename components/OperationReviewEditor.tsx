@@ -4,6 +4,9 @@ import { useMemo,useState } from "react";
 import { useRouter } from "next/navigation";
 
 const has=(obj:any,key:string)=>Object.prototype.hasOwnProperty.call(obj||{},key);
+type InquiryFlight={id:string;from:string;to:string;flightNo:string;date:string;departureTime:string;arrivalTime:string;remarks:string};
+const flightUid=()=>Math.random().toString(36).slice(2,10);
+const emptyFlight=():InquiryFlight=>({id:flightUid(),from:"",to:"",flightNo:"",date:"",departureTime:"",arrivalTime:"",remarks:""});
 
 export default function OperationReviewEditor({
   inquiry,
@@ -23,6 +26,9 @@ export default function OperationReviewEditor({
   const [budget,setBudget]=useState(has(initial,"budget")?initial.budget:(inquiry.budget||""));
   const [tourType,setTourType]=useState(has(initial,"tourType")?initial.tourType:(inquiry.tour_type||""));
   const [flight,setFlight]=useState(has(initial,"flightRequirement")?initial.flightRequirement:(inquiry.flight_requirement||""));
+  const salesSuggestedFlights:InquiryFlight[]=Array.isArray(inquiry?.inquiry_data?.suggestedFlights)?inquiry.inquiry_data.suggestedFlights:[];
+  const [overrideFlights,setOverrideFlights]=useState(Boolean(initial.overrideSuggestedFlights));
+  const [operationFlights,setOperationFlights]=useState<InquiryFlight[]>(Array.isArray(initial.suggestedFlights)?initial.suggestedFlights:salesSuggestedFlights);
   const [hotel,setHotel]=useState(has(initial,"hotelRequirement")?initial.hotelRequirement:(inquiry.hotel_requirement||""));
   const [meals,setMeals]=useState(has(initial,"mealRequirement")?initial.mealRequirement:(inquiry.meal_requirement||""));
   const [special,setSpecial]=useState(has(initial,"specialRequest")?initial.specialRequest:(inquiry.special_request||""));
@@ -42,8 +48,10 @@ export default function OperationReviewEditor({
     daysCount:days,nightsCount:nights,pax,budget,tourType,
     flightRequirement:flight,hotelRequirement:hotel,mealRequirement:meals,
     specialRequest:special,transportRequirement:transport,
-    itineraryRequirement:itineraryReq,operationNotes
-  }),[destination,departureCity,startDate,endDate,days,nights,pax,budget,tourType,flight,hotel,meals,special,transport,itineraryReq,operationNotes]);
+    itineraryRequirement:itineraryReq,operationNotes,
+    overrideSuggestedFlights:overrideFlights,
+    suggestedFlights:overrideFlights?operationFlights:salesSuggestedFlights
+  }),[destination,departureCity,startDate,endDate,days,nights,pax,budget,tourType,flight,hotel,meals,special,transport,itineraryReq,operationNotes,overrideFlights,operationFlights,salesSuggestedFlights]);
 
   async function save(nextStatus=supplierStatus){
     setSaving(true);setMessage("");
@@ -75,10 +83,21 @@ export default function OperationReviewEditor({
         <div><span>Travel Dates</span><strong>{inquiry.travel_start_date||"—"}{inquiry.travel_end_date?" → "+inquiry.travel_end_date:""}</strong></div>
         <div><span>Duration</span><strong>{inquiry.days_count}D{inquiry.nights_count}N</strong></div>
         <div><span>Pax</span><strong>{inquiry.pax||"—"}</strong></div>
-        <div><span>Flight</span><p>{inquiry.flight_requirement||"—"}</p></div>
+        <div><span>Flight Requirement</span><p>{inquiry.flight_requirement||"—"}</p></div>
         <div><span>Hotel</span><p>{inquiry.hotel_requirement||"—"}</p></div>
         <div><span>Meals</span><p>{inquiry.meal_requirement||"—"}</p></div>
         <div><span>Special Request</span><p>{inquiry.special_request||"—"}</p></div>
+      </div>
+      <div className="operation-sales-flight-source">
+        <div className="panel-head compact">
+          <div><h3>Sales Suggested Flights｜销售推荐航班</h3><p className="panel-subtext">这是 Sales 原始推荐，会保留作为记录。</p></div>
+        </div>
+        {salesSuggestedFlights.length===0?<div className="empty">Sales 没有填写推荐航班。</div>:<div className="inquiry-flight-list readonly">
+          {salesSuggestedFlights.map((f,index)=><div className="inquiry-flight-card" key={f.id||index}>
+            <div className="inquiry-flight-card-head"><strong>Flight {index+1}</strong></div>
+            <div className="flight-summary-line"><b>{f.from||"—"} → {f.to||"—"}</b><span>{f.flightNo||"—"}</span><span>{f.date||"—"}</span><span>{f.departureTime||"—"} → {f.arrivalTime||"—"}</span>{f.remarks&&<em>{f.remarks}</em>}</div>
+          </div>)}
+        </div>}
       </div>
     </section>
 
@@ -100,6 +119,33 @@ export default function OperationReviewEditor({
         <label className="field"><span>Pax</span><input disabled={!canEdit} type="number" min="1" value={pax} onChange={e=>setPax(e.target.value===""?"":Math.max(1,Number(e.target.value)||1))}/></label>
         <label className="field"><span>Tour Type</span><input disabled={!canEdit} value={tourType} onChange={e=>setTourType(e.target.value)}/></label>
         <label className="field"><span>Budget</span><input disabled={!canEdit} value={budget} onChange={e=>setBudget(e.target.value)}/></label>
+      </div>
+
+      <div className="operation-flight-override">
+        <label className="supplier-budget-toggle">
+          <input disabled={!canEdit} type="checkbox" checked={overrideFlights} onChange={e=>{
+            const checked=e.target.checked;
+            setOverrideFlights(checked);
+            if(checked&&operationFlights.length===0) setOperationFlights(salesSuggestedFlights.length?salesSuggestedFlights.map(f=>({...f,id:flightUid()})):[emptyFlight()]);
+          }}/>
+          <span>Override Sales Suggested Flights｜Operation 更改推荐航班</span>
+        </label>
+        <p>{overrideFlights?"Supplier Inquiry Form 将使用 Operation 推荐航班。":"目前沿用 Sales 推荐航班。"}</p>
+        {overrideFlights&&<div className="inquiry-flight-list">
+          {operationFlights.map((f,index)=><div className="inquiry-flight-card" key={f.id}>
+            <div className="inquiry-flight-card-head"><strong>Operation Flight {index+1}</strong><button disabled={!canEdit} className="btn danger" type="button" onClick={()=>setOperationFlights(prev=>prev.filter(x=>x.id!==f.id))}>Delete</button></div>
+            <div className="itinerary-meta-grid">
+              <label className="field"><span>From</span><input disabled={!canEdit} maxLength={3} value={f.from} onChange={e=>setOperationFlights(prev=>prev.map(x=>x.id===f.id?{...x,from:e.target.value.toUpperCase()}:x))}/></label>
+              <label className="field"><span>To</span><input disabled={!canEdit} maxLength={3} value={f.to} onChange={e=>setOperationFlights(prev=>prev.map(x=>x.id===f.id?{...x,to:e.target.value.toUpperCase()}:x))}/></label>
+              <label className="field"><span>Flight No.</span><input disabled={!canEdit} value={f.flightNo} onChange={e=>setOperationFlights(prev=>prev.map(x=>x.id===f.id?{...x,flightNo:e.target.value.toUpperCase()}:x))}/></label>
+              <label className="field"><span>Date</span><input disabled={!canEdit} type="date" value={f.date} onChange={e=>setOperationFlights(prev=>prev.map(x=>x.id===f.id?{...x,date:e.target.value}:x))}/></label>
+              <label className="field"><span>Departure</span><input disabled={!canEdit} type="time" value={f.departureTime} onChange={e=>setOperationFlights(prev=>prev.map(x=>x.id===f.id?{...x,departureTime:e.target.value}:x))}/></label>
+              <label className="field"><span>Arrival</span><input disabled={!canEdit} type="time" value={f.arrivalTime} onChange={e=>setOperationFlights(prev=>prev.map(x=>x.id===f.id?{...x,arrivalTime:e.target.value}:x))}/></label>
+              <label className="field inquiry-flight-remarks"><span>Remarks</span><input disabled={!canEdit} value={f.remarks} onChange={e=>setOperationFlights(prev=>prev.map(x=>x.id===f.id?{...x,remarks:e.target.value}:x))}/></label>
+            </div>
+          </div>)}
+          {canEdit&&<button className="btn" type="button" onClick={()=>setOperationFlights(prev=>[...prev,emptyFlight()])}>+ Add Operation Flight</button>}
+        </div>}
       </div>
 
       <div className="inquiry-requirement-grid operation-review-fields">
