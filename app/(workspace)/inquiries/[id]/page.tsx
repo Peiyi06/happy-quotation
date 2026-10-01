@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { internalDb, internalToken } from "@/lib/internalSession";
+import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
+import InquiryWorkflowAction from "@/components/InquiryWorkflowAction";
 
 export default async function InquiryDetailPage({params}:{params:Promise<{id:string}>}){
   const {id}=await params;
   const token=await internalToken();
   if(!token) notFound();
+  const user=await internalUser();
   const db=internalDb();
   const {data,error}=await db.rpc("staff_get_inquiry",{p_token:token,p_id:id});
   if(error||!data||!data.id) notFound();
@@ -13,12 +15,21 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
   const linkedQuotes=Array.isArray(linkedQuoteData)?linkedQuoteData:[];
 
   return <div>
-    <div className="page-head">
+    <div className="page-head inquiry-detail-head">
       <div><span className="page-kicker">INQUIRY DETAIL</span><h1>{data.customer_name||data.inquiry_no}</h1><p>{data.inquiry_no} · {data.status}</p></div>
-      <div className="detail-actions">
-        <Link className="btn" href="/inquiries">← Back</Link>
-        <Link className="btn" href={"/inquiries/"+id+"/operation"}>Operation Review</Link>
-        <Link className="btn primary" href={"/inquiries/"+id+"/edit"}>Edit Inquiry</Link>
+      <div className="inquiry-head-right">
+        <InquiryWorkflowAction
+          inquiryId={id}
+          supplierStatus={data.supplier_inquiry_status||"draft"}
+          canAdvance={Boolean(user&&(user.username==="long"||user.id===data.operation_assignee_id))}
+          hasQuotation={linkedQuotes.length>0}
+          firstQuotationId={linkedQuotes[0]?.id}
+        />
+        <div className="detail-actions">
+          <Link className="btn" href="/inquiries">← Back</Link>
+          <Link className="btn" href={"/inquiries/"+id+"/operation"}>Operation Review</Link>
+          <Link className="btn" href={"/inquiries/"+id+"/edit"}>Edit Inquiry</Link>
+        </div>
       </div>
     </div>
 
