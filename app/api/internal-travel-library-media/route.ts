@@ -108,8 +108,24 @@ async function extractPdf(bytes:Buffer,maxImages=36){
         const name=ops.argsArray[i]?.[0];
         if(!name) continue;
         obj=await new Promise(resolve=>{
-          try{page.objs.get(name,(value:any)=>resolve(value));}
-          catch{resolve(null);}
+          let settled=false;
+          const timer=setTimeout(()=>{
+            if(!settled){settled=true;resolve(null);}
+          },1500);
+          try{
+            page.objs.get(name,(value:any)=>{
+              if(settled) return;
+              settled=true;
+              clearTimeout(timer);
+              resolve(value);
+            });
+          }catch{
+            if(!settled){
+              settled=true;
+              clearTimeout(timer);
+              resolve(null);
+            }
+          }
         });
       }else{
         continue;
