@@ -23,7 +23,7 @@ export default async function InquiryListPage(){
     </div>
     <section className="panel">
       {error&&<div className="save-message">Unable to load inquiries: {error.message}</div>}
-      <div className="table-wrap"><table>
+      <div className="data-table-wrap"><table className="data-table">
         <thead><tr><th>Inquiry No.</th><th>Customer</th><th>Destination</th><th>Travel Date</th><th>Pax</th><th>Sales</th><th>Operation</th><th>Status</th></tr></thead>
         <tbody>{items.map((i:any)=><tr key={i.id}>
           <td><Link href={"/inquiries/"+i.id}>{i.inquiry_no}</Link></td><td>{i.customer_name||"—"}</td><td>{i.destination||"—"}</td>
