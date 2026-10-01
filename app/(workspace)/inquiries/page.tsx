@@ -24,12 +24,11 @@ export default async function InquiryListPage(){
     <section className="panel">
       {error&&<div className="save-message">Unable to load inquiries: {error.message}</div>}
       <div className="table-wrap"><table>
-        <thead><tr><th>Inquiry No.</th><th>Customer</th><th>Destination</th><th>Travel Date</th><th>Pax</th><th>Sales</th><th>Operation</th><th>Status</th><th></th></tr></thead>
+        <thead><tr><th>Inquiry No.</th><th>Customer</th><th>Destination</th><th>Travel Date</th><th>Pax</th><th>Sales</th><th>Operation</th><th>Status</th></tr></thead>
         <tbody>{items.map((i:any)=><tr key={i.id}>
-          <td><strong>{i.inquiry_no}</strong></td><td>{i.customer_name||"—"}</td><td>{i.destination||"—"}</td>
+          <td><Link href={"/inquiries/"+i.id}>{i.inquiry_no}</Link></td><td>{i.customer_name||"—"}</td><td>{i.destination||"—"}</td>
           <td>{i.travel_start_date||"—"}{i.travel_end_date?" → "+i.travel_end_date:""}</td><td>{i.pax||"—"}</td>
           <td>{i.sales_owner_name||"—"}</td><td>{i.operation_assignee_name||"—"}</td><td><span className={"status status-"+i.status}>{inquiryStatusLabels[i.status]||i.status}</span></td>
-          <td><Link className="btn" href={"/inquiries/"+i.id}>Open</Link></td>
         </tr>)}</tbody>
       </table></div>
       {!items.length&&<div className="empty">目前还没有 Inquiry。</div>}
