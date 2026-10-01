@@ -19,6 +19,7 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
           <Link href="/dashboard">Dashboard</Link>
           {user.username.toLowerCase() === "long" && <Link href="/ai-lab">AI Workspace Beta</Link>}
           <Link href="/inquiries">Inquiries</Link>
+          {user.role === "manager" && <Link href="/operation">Operation</Link>}
           <NewQuotationMenu compact />
           <Link href="/quotations">My Quotations</Link>
           <Link href="/tour-groups">Tour Groups</Link>
