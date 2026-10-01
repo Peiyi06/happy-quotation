@@ -64,10 +64,22 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
   const visibleQuotes=viewerMode==="sales"
     ?linkedQuotes.filter((q:any)=>["ready","sent","confirmed"].includes(q.status))
     :linkedQuotes;
-  const supplierComplete=supplierStatus==="quote_received"||visibleQuotes.length>0;
-  const quotationComplete=visibleQuotes.some((q:any)=>q.status==="confirmed");
-  const itineraryComplete=linkedItineraries.some((it:any)=>it.status==="confirmed");
-  const currentStep=!supplierComplete?"supplier":visibleQuotes.length===0?"quotation":!itineraryComplete?"itinerary":"done";
+  const approvedQuotes=linkedQuotes.filter((q:any)=>["ready","sent","confirmed"].includes(q.status));
+  const caseStatus=String(data.status||"new");
+  const operationComplete=["under_review","revision_required","ready","ready_customer","itinerary_ready","closed"].includes(caseStatus);
+  const quotationReady=["ready","ready_customer","itinerary_ready","closed"].includes(caseStatus);
+  const itineraryReady=caseStatus==="itinerary_ready"||linkedItineraries.some((it:any)=>it.status==="confirmed");
+  const salesCurrentStep=
+    caseStatus==="new"||caseStatus==="in_progress"||caseStatus==="waiting_quote"
+      ?"operation"
+      :caseStatus==="under_review"||caseStatus==="revision_required"
+        ?"quotation"
+        :itineraryReady
+          ?"done"
+          :"itinerary";
+  const operationState=caseStatus==="new"?"New":operationComplete?"✓ Completed":"In Progress";
+  const quotationState=caseStatus==="under_review"?"Under Review":caseStatus==="revision_required"?"Re-quote":quotationReady?"✓ Completed":"Preparing";
+  const itineraryState=itineraryReady?"✓ Completed":salesCurrentStep==="itinerary"?"Current":"Upcoming";
 
   return <div>
     <div className="page-head inquiry-detail-head">
@@ -119,61 +131,74 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
         <div>
           <span className="page-kicker">WORKFLOW</span>
           <h2>工作流程</h2>
-          <p className="panel-subtext">Supplier → Quotation → Itinerary。系统会突出当前下一步。</p>
+          <p className="panel-subtext">Operation → Quotation → Itinerary。只显示 Sales 需要掌握的案件进度。</p>
         </div>
-        {currentStep!=="done"&&<span className="workflow-current-label">Current Step</span>}
       </div>
 
       <div className="simple-workflow-grid">
-        <div className={"simple-workflow-card "+(supplierComplete?"complete":currentStep==="supplier"?"current":"upcoming")}>
+        <div className={"simple-workflow-card "+(operationComplete?"complete":salesCurrentStep==="operation"?"current":"upcoming")}>
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">01</span>
-            <span className="simple-workflow-state">{supplierComplete?"✓ Completed":currentStep==="supplier"?"Current":"Upcoming"}</span>
+            <span className="simple-workflow-state">{operationState}</span>
           </div>
           <div className="simple-workflow-title">
-            <h3>Supplier</h3>
-            <strong>{supplierStatusLabels[supplierStatus]||"Supplier Draft"}</strong>
+            <h3>Operation</h3>
+            <strong>{data.operation_assignee_name?"Assigned to "+data.operation_assignee_name:"Not Assigned"}</strong>
           </div>
-          <p>整理供应商可执行资料并管理询价状态。</p>
-          <div className="simple-workflow-actions">
-            <Link className={currentStep==="supplier"?"btn primary":"workflow-text-link"} href={"/inquiries/"+id+"/operation"}>Review Details</Link>
-            <Link className="workflow-text-link" href={"/inquiries/"+id+"/supplier-form"} target="_blank">Supplier Form</Link>
-          </div>
+          <p>{caseStatus==="new"
+            ?"Inquiry 已提交，等待 Operation 开始处理。"
+            :operationComplete
+              ?"Operation 前期处理已完成，案件已进入报价阶段。"
+              :"Operation 正在整理供应商资料、询价与报价成本。"}</p>
         </div>
 
         <div className="simple-workflow-arrow" aria-hidden="true">→</div>
 
-        <div className={"simple-workflow-card "+(quotationComplete?"complete":currentStep==="quotation"?"current":linkedQuotes.length>0?"active":"upcoming")}>
+        <div className={"simple-workflow-card "+(quotationReady?"complete":salesCurrentStep==="quotation"?"current":caseStatus==="in_progress"||caseStatus==="waiting_quote"?"active":"upcoming")}>
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">02</span>
-            <span className="simple-workflow-state">{quotationComplete?"✓ Completed":currentStep==="quotation"?"Current":linkedQuotes.length>0?"In Progress":"Upcoming"}</span>
+            <span className="simple-workflow-state">{quotationState}</span>
           </div>
           <div className="simple-workflow-title">
             <h3>Quotation</h3>
-            <strong>{visibleQuotes.length?visibleQuotes.length+" linked":viewerMode==="sales"&&data.status==="under_review"?"Under Review":"Not Ready"}</strong>
+            <strong>{caseStatus==="under_review"
+              ?"Waiting Management Approval"
+              :caseStatus==="revision_required"
+                ?"Quotation Requires Re-check"
+                :quotationReady
+                  ?"Final Quotation Ready"
+                  :"Preparing"}</strong>
           </div>
-          {visibleQuotes.length>0
+          {quotationReady&&approvedQuotes.length>0
             ? <div className="workflow-record-list">
-                {visibleQuotes.map((q:any)=><Link key={q.id} className="workflow-record-link" href={"/quotations/"+q.id}>
+                {approvedQuotes.map((q:any)=><Link key={q.id} className="workflow-record-link" href={"/quotations/"+q.id}>
                   <b>{q.quotation_no}</b>
-                  <span>{quotationStatusLabels[q.status]||q.status||"Draft"} · {q.owner_name||"—"}</span>
+                  <span>{quotationStatusLabels[q.status]||q.status||"Ready"} · {q.owner_name||"—"}</span>
                 </Link>)}
               </div>
-            : <p>{supplierStatus==="quote_received"?"Supplier quote received. Ready to prepare customer quotation.":"Available after supplier quotation is received."}</p>}
-          {viewerMode!=="sales"&&visibleQuotes.length===0&&supplierStatus==="quote_received"&&
-            <div className="simple-workflow-actions"><Link className="btn primary" href={"/quotations/new?sourceInquiry="+id}>Create Quotation</Link></div>}
+            : <p>{caseStatus==="under_review"
+                ?"Quotation 已提交管理层审核，通过后 Sales 才会看到最终报价。"
+                :caseStatus==="revision_required"
+                  ?"Quotation 正在重新调整与审核，暂时不要向客户使用旧报价。"
+                  :"Operation 正在准备报价；审核通过后会在这里显示最终版本。"}</p>}
         </div>
 
         <div className="simple-workflow-arrow" aria-hidden="true">→</div>
 
-        <div className={"simple-workflow-card "+(itineraryComplete?"complete":currentStep==="itinerary"?"current":"upcoming")}>
+        <div className={"simple-workflow-card "+(itineraryReady?"complete":salesCurrentStep==="itinerary"?"current":"upcoming")}>
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">03</span>
-            <span className="simple-workflow-state">{itineraryComplete?"✓ Completed":currentStep==="itinerary"?"Current":"Upcoming"}</span>
+            <span className="simple-workflow-state">{itineraryState}</span>
           </div>
           <div className="simple-workflow-title">
             <h3>Itinerary</h3>
-            <strong>{linkedItineraries.length?linkedItineraries.length+" linked":"Not Created"}</strong>
+            <strong>{itineraryReady
+              ?"Itinerary Ready"
+              :linkedItineraries.length
+                ?linkedItineraries.length+" Draft"
+                :quotationReady
+                  ?"Ready to Create"
+                  :"Available After Quotation"}</strong>
           </div>
           {linkedItineraries.length>0
             ? <div className="workflow-record-list">
@@ -182,11 +207,13 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
                   <span>{itineraryStatusLabels[it.status]||it.status||"Draft"} · {it.days_count}D{it.nights_count}N</span>
                 </Link>)}
               </div>
-            : <p>从 Inquiry 带入客户、日期、人数、团型和推荐航班。</p>}
-          <div className="simple-workflow-actions">
-            {linkedItineraries.length===0&&<Link className={currentStep==="itinerary"?"btn primary":"workflow-text-link"} href={"/itineraries/new?sourceInquiry="+id}>Create Itinerary</Link>}
+            : <p>{quotationReady
+                ?"Final Quotation 已准备完成，可以开始制作给客户的 Itinerary。"
+                :"Quotation 审核通过后，Sales 才进入 Itinerary 阶段。"}</p>}
+          {quotationReady&&!itineraryReady&&<div className="simple-workflow-actions">
+            {linkedItineraries.length===0&&<Link className="btn primary" href={"/itineraries/new?sourceInquiry="+id}>Create Itinerary</Link>}
             <Link className="workflow-text-link" href={"/ai-import?sourceInquiry="+id}>Import Supplier Itinerary</Link>
-          </div>
+          </div>}
         </div>
       </div>
     </section>
