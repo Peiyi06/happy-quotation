@@ -27,6 +27,7 @@ export default function AiSupplierImport(){
   const [creating,setCreating]=useState(false);
   const [error,setError]=useState("");
   const [model,setModel]=useState("");
+  const [adjustmentNotes,setAdjustmentNotes]=useState("");
 
   const [chatInput,setChatInput]=useState("");
   const [chatting,setChatting]=useState(false);
@@ -39,6 +40,7 @@ export default function AiSupplierImport(){
     try{
       const form=new FormData();
       form.set("file",file);
+      form.set("adjustmentNotes",adjustmentNotes.trim());
       const res=await fetch("/api/ai-import-supplier",{method:"POST",body:form});
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){setError(data?.error||"Unable to analyze supplier file.");return;}
@@ -133,7 +135,7 @@ export default function AiSupplierImport(){
           pax:result.pax??"",
           tourType:result.tourType||"",
           suggestedFlights,days,hotels,includedItems,notIncludedItems,reminders,
-          aiImportMeta:{sourceFileName:file?.name||"",model,warnings:result.warnings||[],importedAt:new Date().toISOString()}
+          aiImportMeta:{sourceFileName:file?.name||"",adjustmentNotes:adjustmentNotes.trim(),model,warnings:result.warnings||[],importedAt:new Date().toISOString()}
         }
       };
       const res=await fetch("/api/internal-itineraries",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:null,payload})});
@@ -160,7 +162,25 @@ export default function AiSupplierImport(){
           <strong>{file?file.name:"尚未选择文件"}</strong>
           <span>MVP 支持 PDF / Word / RTF / TXT / JPG / PNG / WEBP · 单个文件 ≤ 3.5MB</span>
         </div>
-        <button className="btn primary" type="button" disabled={!file||analyzing} onClick={()=>void analyze()}>{analyzing?"AI Analyzing...":"Analyze with AI"}</button>
+      </div>
+
+      <div className="ai-pre-adjustment">
+        <label className="field">
+          <span>Adjustment Notes｜调整备注 <small>Optional</small></span>
+          <textarea
+            value={adjustmentNotes}
+            onChange={e=>setAdjustmentNotes(e.target.value)}
+            placeholder={"例如：供应商原本是 6D5N，但实际航班为 7D6N。\nDay 1 上午抵达，请增加轻松行程；原供应商 Day 1 内容顺延。\nDay 7 晚班机，白天可继续安排市区活动。\n尽量保留原本主要景点和酒店结构。"}
+          />
+        </label>
+        <div className="ai-adjustment-hint">
+          <strong>AI 会在第一次分析时同时参考这段备注</strong>
+          <span>已知航班、天数变化、景点移动、节奏要求、酒店要求等都可以先写在这里。没有备注也可以直接分析。</span>
+        </div>
+      </div>
+
+      <div className="ai-import-primary-action">
+        <button className="btn primary" type="button" disabled={!file||analyzing} onClick={()=>void analyze()}>{analyzing?"AI Analyzing...":"Analyze & Generate Draft"}</button>
       </div>
       {error&&<div className="ai-import-error">{error}</div>}
     </section>
