@@ -149,7 +149,7 @@ export default function AiSupplierImport(){
 
       const payload={
         source_inquiry_id:inquiryContext?.id||"",
-        title:result.title||`AI Imported Itinerary - ${file?.name||"Supplier File"}`,
+        title:result.title||`AI Itinerary - ${file?.name||"Source File"}`,
         destination:result.destination||inquiryContext?.destination||"",
         days_count:Math.max(1,days.length),
         nights_count:Math.max(0,days.length-1),
@@ -188,13 +188,13 @@ export default function AiSupplierImport(){
     <section className="panel ai-import-upload-panel">
       <div className="panel-head">
         <div>
-          <h2>AI Import Supplier Itinerary</h2>
-          <p className="panel-subtext">Operation only｜上传供应商文件，AI 会生成客户版 Draft，并把疑似成本/内部资料分开显示。</p>
+          <h2>AI Itinerary Generator｜智能行程生成</h2>
+          <p className="panel-subtext">上传行程文件或结合 Inquiry 资料，AI 会快速整理并生成可编辑的客户版 Itinerary Draft，同时把疑似成本与内部资料分开显示。</p>
         </div>
       </div>
       <div className="ai-import-upload-box">
         <label className="field">
-          <span>Supplier File｜供应商文件</span>
+          <span>Source File｜行程来源文件</span>
           <input ref={supplierInputRef} type="file" accept=".pdf,.doc,.docx,.rtf,.txt,.jpg,.jpeg,.png,.webp" onChange={e=>{setFile(e.target.files?.[0]||null);setResult(null);setError("");setProposal(null);setChatMessages([]);}}/>
         </label>
         <div className="ai-import-file-note">
@@ -230,7 +230,7 @@ export default function AiSupplierImport(){
       </div>
 
       <div className="ai-import-primary-action">
-        <button className="btn primary" type="button" disabled={!file||analyzing} onClick={()=>void analyze()}>{analyzing?"AI Analyzing...":"Analyze & Generate Draft"}</button>
+        <button className="btn primary" type="button" disabled={!file||analyzing} onClick={()=>void analyze()}>{analyzing?"AI Generating...":"Generate Itinerary Draft"}</button>
       </div>
       {error&&<div className="ai-import-error">{error}</div>}
     </section>
@@ -238,7 +238,7 @@ export default function AiSupplierImport(){
     {result&&<>
       <section className="panel">
         <div className="panel-head">
-          <div><h2>Customer-facing Draft｜客户版草稿</h2><p className="panel-subtext">请 Operation 检查后再建立 Itinerary。AI 不确定的内容不会自行猜测。</p></div>
+          <div><h2>AI Itinerary Draft｜智能行程草稿</h2><p className="panel-subtext">AI 已根据来源资料生成可编辑行程，请检查内容后再建立正式 Itinerary。</p></div>
           {model&&<span className="ai-model-badge">{model}</span>}
         </div>
         <div className="ai-import-summary-grid">
