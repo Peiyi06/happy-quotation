@@ -1240,3 +1240,75 @@
   .operation-review-actions .btn{flex:1;text-align:center}
   .operation-review-actions .btn.primary{margin-left:0}
 }
+
+
+/* Unified form typography */
+input,select,textarea,button{
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "SF Pro Text",
+    "PingFang SC",
+    "Helvetica Neue",
+    "Segoe UI",
+    Arial,
+    sans-serif;
+}
+input,select,textarea{font-size:13px}
+input::placeholder,textarea::placeholder{font-family:inherit;color:#8b98a3}
+
+/* Operation Review form refinement */
+.operation-plan-panel .operation-subsection{
+  border-radius:14px;
+}
+.operation-plan-panel .operation-subsection:has(.operation-review-fields),
+.operation-internal-notes{
+  background:#f7f9fb;
+  border:1px solid #e3e9ee;
+  padding:16px;
+  margin-top:16px;
+}
+.operation-review-fields{
+  margin-top:0;
+  gap:12px;
+}
+.operation-review-fields .field,
+.operation-internal-notes .field{
+  display:grid;
+  gap:7px;
+}
+.operation-review-fields .field>span,
+.operation-internal-notes .field>span{
+  font-size:11px;
+  font-weight:800;
+  color:#4f6370;
+}
+.operation-review-fields textarea,
+.operation-internal-notes textarea{
+  min-height:108px;
+  border:1px solid #d7e0e6;
+  border-radius:12px;
+  background:#fcfdfe;
+  padding:12px 13px;
+  font:inherit;
+  font-size:13px;
+  line-height:1.55;
+  color:#243847;
+  outline:none;
+  box-shadow:inset 0 1px 1px rgba(16,43,61,.02);
+  transition:border-color .15s ease,box-shadow .15s ease,background .15s ease;
+}
+.operation-review-fields textarea:focus,
+.operation-internal-notes textarea:focus{
+  border-color:#9eb7c8;
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(37,83,120,.08);
+}
+.operation-review-fields textarea::placeholder,
+.operation-internal-notes textarea::placeholder{
+  color:#95a3ad;
+}
+.operation-internal-notes textarea{
+  min-height:92px;
+}
