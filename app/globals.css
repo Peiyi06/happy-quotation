@@ -671,3 +671,9 @@
   .traveller-summary-grid,.supplier-composition-grid{grid-template-columns:1fr 1fr}
   .supplier-composition-notes>div{grid-template-columns:1fr}
 }
+
+.customer-request-copy-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.copy-feedback{margin:0 0 14px;padding:9px 12px;border:1px solid #cfe5d6;border-radius:9px;background:#f1f8f4;color:#2f5d42;font-size:11px;font-weight:700}
+@media(max-width:800px){
+  .customer-request-copy-actions{width:100%;justify-content:flex-start}
+}
