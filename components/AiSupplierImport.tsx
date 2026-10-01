@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type ImportResult={
@@ -19,9 +19,8 @@ type AdjustmentProposal={reply:string;changeSummary:string[];revisedDraft:Omit<I
 
 const uid=()=>Math.random().toString(36).slice(2,10);
 
-export default function AiSupplierImport({inquiryContext=null,sourceInquiryId=""}:{inquiryContext?:any;sourceInquiryId?:string}){
+export default function AiSupplierImport(){
   const router=useRouter();
-  const [linkedInquiryContext,setLinkedInquiryContext]=useState<any>(inquiryContext);
   const [file,setFile]=useState<File|null>(null);
   const [result,setResult]=useState<ImportResult|null>(null);
   const [analyzing,setAnalyzing]=useState(false);
@@ -36,21 +35,6 @@ export default function AiSupplierImport({inquiryContext=null,sourceInquiryId=""
   const [chatMessages,setChatMessages]=useState<ChatMessage[]>([]);
   const [proposal,setProposal]=useState<AdjustmentProposal|null>(null);
 
-  useEffect(()=>{
-    if(inquiryContext){setLinkedInquiryContext(inquiryContext);return;}
-    if(!sourceInquiryId){setLinkedInquiryContext(null);return;}
-    let cancelled=false;
-    fetch("/api/internal-inquiry-context?id="+encodeURIComponent(sourceInquiryId),{cache:"no-store"})
-      .then(async res=>{
-        const data=await res.json().catch(()=>({}));
-        if(!cancelled&&res.ok&&data?.ok) setLinkedInquiryContext(data.context||null);
-      })
-      .catch(()=>{});
-    return ()=>{cancelled=true;};
-  },[inquiryContext,sourceInquiryId]);
-
-  const ctx=linkedInquiryContext;
-
   async function analyze(){
     if(!file) return;
     setAnalyzing(true);setError("");setResult(null);setProposal(null);setChatMessages([]);
@@ -58,22 +42,10 @@ export default function AiSupplierImport({inquiryContext=null,sourceInquiryId=""
       const form=new FormData();
       form.set("file",file);
       form.set("adjustmentNotes",adjustmentNotes.trim());
-      if(ctx) form.set("inquiryContext",JSON.stringify(ctx));
       const res=await fetch("/api/ai-import-supplier",{method:"POST",body:form});
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){setError(data?.error||"Unable to analyze supplier file.");return;}
-      const parsed=data.result as ImportResult;
-      const linked=ctx||{};
-      setResult({
-        ...parsed,
-        destination:parsed.destination||linked.destination||"",
-        departureCity:parsed.departureCity||linked.departureCity||"",
-        travelStartDate:parsed.travelStartDate||linked.travelStartDate||"",
-        travelEndDate:parsed.travelEndDate||linked.travelEndDate||"",
-        pax:parsed.pax??linked.pax??null,
-        tourType:parsed.tourType||linked.tourType||"",
-        suggestedFlights:(parsed.suggestedFlights||[]).length?parsed.suggestedFlights:(Array.isArray(linked.suggestedFlights)?linked.suggestedFlights:[])
-      });
+      setResult(data.result);
       setModel(data.model||"");
     }finally{setAnalyzing(false);}
   }
@@ -151,24 +123,19 @@ export default function AiSupplierImport({inquiryContext=null,sourceInquiryId=""
       const reminders=(result.reminders||[]).map(r=>({id:uid(),preset:"other",title:r.title,description:r.description}));
 
       const payload={
-        source_inquiry_id:ctx?.id||"",
         title:result.title||`AI Imported Itinerary - ${file?.name||"Supplier File"}`,
         destination:result.destination||"",
         days_count:Math.max(1,days.length),
         nights_count:Math.max(0,days.length-1),
-        customer_name:ctx?.customerName||"",
+        customer_name:"",
         status:"draft",
         itinerary_data:{
-          departureCity:result.departureCity||ctx?.departureCity||"",
-          travelStartDate:result.travelStartDate||ctx?.travelStartDate||"",
-          travelEndDate:result.travelEndDate||ctx?.travelEndDate||"",
-          pax:result.pax??ctx?.pax??"",
-          tourType:result.tourType||ctx?.tourType||"",
-          suggestedFlights:suggestedFlights.length?suggestedFlights:(Array.isArray(ctx?.suggestedFlights)?ctx.suggestedFlights.map((f:any)=>({id:uid(),...f})):[]),
-          days,hotels,includedItems,notIncludedItems,reminders,
-          sourceInquiryId:ctx?.id||"",
-          sourceInquiryNo:ctx?.inquiryNo||"",
-          sourceInquirySnapshot:ctx||null,
+          departureCity:result.departureCity||"",
+          travelStartDate:result.travelStartDate||"",
+          travelEndDate:result.travelEndDate||"",
+          pax:result.pax??"",
+          tourType:result.tourType||"",
+          suggestedFlights,days,hotels,includedItems,notIncludedItems,reminders,
           aiImportMeta:{sourceFileName:file?.name||"",adjustmentNotes:adjustmentNotes.trim(),model,warnings:result.warnings||[],importedAt:new Date().toISOString()}
         }
       };
@@ -180,14 +147,6 @@ export default function AiSupplierImport({inquiryContext=null,sourceInquiryId=""
   }
 
   return <div className="ai-import-workspace">
-    {ctx&&<section className="quote-source-inquiry">
-      <div>
-        <span>SOURCE INQUIRY｜来源询价</span>
-        <strong>{ctx.inquiryNo||"Linked Inquiry"}</strong>
-        <small>{[ctx.destination,ctx.daysCount&&ctx.nightsCount?`${ctx.daysCount}D${ctx.nightsCount}N`:"",ctx.pax?`${ctx.pax} Pax`:""].filter(Boolean).join(" · ")}</small>
-      </div>
-      <button className="btn" type="button" onClick={()=>router.push("/inquiries/"+ctx.id)}>Open Inquiry</button>
-    </section>
     <section className="panel ai-import-upload-panel">
       <div className="panel-head">
         <div>
