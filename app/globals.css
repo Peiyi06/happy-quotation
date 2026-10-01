@@ -1094,3 +1094,9 @@
 .ai-thread-list.archived .ai-thread-item{opacity:.82;background:#f8fafb}
 
 .ai-lab-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:inherit}
+
+.ai-lab-memory-autosaved{margin-top:12px;padding:11px;border:1px solid #b9d8c6;background:#f4fbf7;border-radius:11px;display:grid;gap:6px;color:#234c36}
+.ai-lab-memory-autosaved>span{font-size:9.5px;letter-spacing:.06em;font-weight:900;color:#2b7a4b}
+.ai-lab-memory-autosaved>strong{font-size:13px;color:#234c36}
+.ai-lab-memory-autosaved>p{margin:0;font-size:12px;line-height:1.55;color:#496657}
+.ai-lab-memory-autosaved>small{font-size:9.5px;color:#6f8176}
