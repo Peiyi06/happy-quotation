@@ -252,6 +252,32 @@ export async function POST(request:Request){
       return NextResponse.json(data);
     }
 
+    if(action==="verify_and_save"){
+      const id=String(body.id||"");
+      const {data:verified,error:verifyError}=await db.rpc("staff_verify_travel_library_document",{p_token:token,p_id:id});
+      if(verifyError||!verified?.ok) return NextResponse.json({error:verified?.error||verifyError?.message||"Unable to verify document"},{status:400});
+      const {data:saved,error:saveError}=await db.rpc("staff_confirm_travel_library_document",{p_token:token,p_id:id});
+      if(saveError||!saved?.ok) return NextResponse.json({error:saved?.error||saveError?.message||"Unable to save verified document"},{status:400});
+      return NextResponse.json({ok:true,id});
+    }
+
+    if(action==="delete"){
+      const id=String(body.id||"");
+      const {data:docData,error:docError}=await db.rpc("staff_get_travel_library_document",{p_token:token,p_id:id});
+      if(docError||!docData?.ok) return NextResponse.json({error:docData?.error||docError?.message||"Document not found"},{status:404});
+      const path=String(docData.document?.storagePath||"");
+      if(path){
+        const form=new FormData();
+        form.set("action","delete");
+        form.set("path",path);
+        const stored=await storageAction(token,form);
+        if(!stored.res.ok||!stored.data?.ok) return NextResponse.json({error:stored.data?.error||"Unable to delete source file"},{status:400});
+      }
+      const {data:deleted,error:deleteError}=await db.rpc("staff_delete_travel_library_document",{p_token:token,p_id:id});
+      if(deleteError||!deleted?.ok) return NextResponse.json({error:deleted?.error||deleteError?.message||"Unable to delete library document"},{status:400});
+      return NextResponse.json({ok:true,id});
+    }
+
     if(action==="sign"){
       const form=new FormData();
       form.set("action","sign");
