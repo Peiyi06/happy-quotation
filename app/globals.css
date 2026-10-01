@@ -1541,3 +1541,26 @@ input::placeholder,textarea::placeholder{font-family:inherit;color:#8b98a3}
     page-break-inside:avoid!important;
   }
 }
+
+
+/* Quotation management review */
+.quote-review-card{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:16px 0;padding:16px 18px;background:#fff;border:1px solid #dce5eb;border-radius:14px;box-shadow:0 6px 18px rgba(26,47,65,.05)}
+.quote-review-status{display:grid;gap:4px;min-width:0}
+.quote-review-status>span{font-size:10px;font-weight:900;letter-spacing:.12em;color:#7b8a95}
+.quote-review-status>strong{font-size:18px;color:var(--navy2)}
+.quote-review-status>small{font-size:11px;color:#6f7e89;line-height:1.45}
+.quote-review-actions{display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap}
+.quote-review-waiting,.quote-review-ready,.quote-editor-review-state{font-size:11px;font-weight:800;border-radius:999px;padding:8px 11px;background:#f1f5f8;color:#536776}
+.quote-review-ready,.quote-editor-review-state.ready{background:#eef7ef;color:#2f6b3b}
+.quote-status-readonly{display:flex;align-items:center;min-height:38px;padding:7px 10px;border:1px solid #d5dfe6;border-radius:8px;background:#f7f9fb;color:#415767;font-size:12px;font-weight:800}
+.quote-status-readonly.status-under_review{background:#fff8e8;color:#8a641a;border-color:#ead8a6}
+.quote-status-readonly.status-revision_required{background:#fff1ef;color:#9c4038;border-color:#edcbc7}
+.quote-status-readonly.status-ready{background:#eef7ef;color:#2f6b3b;border-color:#cfe3d2}
+.status-under_review{background:#fff8e8!important;color:#8a641a!important}
+.status-revision_required{background:#fff1ef!important;color:#9c4038!important}
+.status-ready{background:#eef7ef!important;color:#2f6b3b!important}
+
+@media(max-width:760px){
+  .quote-review-card{align-items:flex-start;flex-direction:column}
+  .quote-review-actions{width:100%;justify-content:flex-start}
+}
