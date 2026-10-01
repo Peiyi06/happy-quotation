@@ -27,13 +27,13 @@ export default async function QuotationsPage({ searchParams }:{searchParams:Prom
       <input name="q" defaultValue={sp.q||""} placeholder="Search quote / tour / customer" />
       <input name="destination" defaultValue={sp.destination||""} placeholder="Destination" />
       <select name="status" defaultValue={sp.status||""}>
-        <option value="">All Status</option><option value="draft">Draft</option><option value="ready">Ready</option><option value="sent">Sent</option><option value="revised">Revised</option><option value="confirmed">Confirmed</option><option value="lost">Lost</option><option value="archived">Archived</option>
+        <option value="">All Status</option><option value="draft">Draft</option><option value="under_review">Under Review</option><option value="revision_required">Revision Required</option><option value="ready">Ready</option><option value="sent">Sent</option><option value="revised">Revised</option><option value="confirmed">Confirmed</option><option value="lost">Lost</option><option value="archived">Archived</option>
       </select>
       <button className="btn">Filter</button>
     </form>
     <section className="panel">
       <div className="data-table-wrap"><table className="data-table"><thead><tr><th>Quote No</th><th>Tour</th><th>Group</th><th>Customer</th><th>Pax</th><th>Status</th><th>Selling</th><th>Margin</th><th>Updated</th><th>Action</th></tr></thead><tbody>
-        {quotes.map((x:any)=><tr key={x.id}><td><Link href={"/quotations/"+x.id}>{x.quotation_no}</Link></td><td><strong>{x.title}</strong><small>{x.destination||""}</small></td><td>{x.tour_group_name||"Unclassified"}</td><td>{x.customer_name||"—"}</td><td>{x.pax}</td><td><span className={"status status-"+x.status}>{x.status}</span></td><td>{money(Number(x.selling_price))}</td><td>{(Number(x.margin)*100).toFixed(1)}%</td><td>{new Date(x.updated_at).toLocaleDateString("en-MY")}</td><td><QuotationRowActions id={x.id}/></td></tr>)}
+        {quotes.map((x:any)=><tr key={x.id}><td><Link href={"/quotations/"+x.id}>{x.quotation_no}</Link></td><td><strong>{x.title}</strong><small>{x.destination||""}</small></td><td>{x.tour_group_name||"Unclassified"}</td><td>{x.customer_name||"—"}</td><td>{x.pax}</td><td><span className={"status status-"+x.status}>{x.status==="under_review"?"Under Review":x.status==="revision_required"?"Revision Required":x.status?.charAt(0).toUpperCase()+x.status?.slice(1)}</span></td><td>{money(Number(x.selling_price))}</td><td>{(Number(x.margin)*100).toFixed(1)}%</td><td>{new Date(x.updated_at).toLocaleDateString("en-MY")}</td><td><QuotationRowActions id={x.id}/></td></tr>)}
         {!quotes.length&&<tr><td colSpan={10} className="empty">没有符合条件的报价。</td></tr>}
       </tbody></table></div>
     </section>
