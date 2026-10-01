@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type LinkItem={label:string;href:string;kind:string};
 type PendingAction={type:string;inquiryId:string;label:string;confirmText:string;nextStatus:string};
 type MemorySuggestion={shouldSuggest:boolean;category:string;title:string;ruleText:string;reason:string};
-type Message={role:"user"|"assistant";text:string;links?:LinkItem[];action?:PendingAction;memorySuggestion?:MemorySuggestion};
+type Attachment={name:string;url:string};
+type Message={role:"user"|"assistant";text:string;links?:LinkItem[];action?:PendingAction;memorySuggestion?:MemorySuggestion;attachments?:Attachment[]};
 
 const starterPrompts=[
   "今天有什么需要我注意？",
@@ -26,22 +27,27 @@ export default function AiLabWorkspace(){
   const [memorySaving,setMemorySaving]=useState(false);
   const [contextInquiryId,setContextInquiryId]=useState("");
   const [contextTitle,setContextTitle]=useState("");
+  const [imageFiles,setImageFiles]=useState<File[]>([]);
+  const [imagePreviews,setImagePreviews]=useState<Attachment[]>([]);
+  const fileInputRef=useRef<HTMLInputElement|null>(null);
 
   const history=useMemo(()=>messages.slice(-8).map(m=>({role:m.role,text:m.text})),[messages]);
 
   async function send(text?:string){
     const message=(text??input).trim();
-    if(!message||loading) return;
-    const userMessage:Message={role:"user",text:message};
+    if((!message&&!imageFiles.length)||loading) return;
+    const attachments=imagePreviews.map(x=>({...x}));
+    const userMessage:Message={role:"user",text:message||"请分析这些图片",attachments};
     setMessages(prev=>[...prev,userMessage]);
     setInput("");
     setLoading(true);
     try{
-      const res=await fetch("/api/ai-lab/chat",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({message,history,contextInquiryId})
-      });
+      const form=new FormData();
+      form.set("message",message);
+      form.set("history",JSON.stringify(history));
+      form.set("contextInquiryId",contextInquiryId);
+      imageFiles.forEach(file=>form.append("images",file));
+      const res=await fetch("/api/ai-lab/chat",{method:"POST",body:form});
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){
         setMessages(prev=>[...prev,{role:"assistant",text:data?.error||"AI Lab 暂时无法回应，请稍后再试。"}]);
@@ -56,7 +62,12 @@ export default function AiLabWorkspace(){
         action:result.action?.type&&result.action.type!=="none"?result.action:undefined,
         memorySuggestion:result.memorySuggestion?.shouldSuggest?result.memorySuggestion:undefined
       }]);
-    }finally{setLoading(false);}
+    }finally{
+      setLoading(false);
+      setImageFiles([]);
+      setImagePreviews([]);
+      if(fileInputRef.current) fileInputRef.current.value="";
+    }
   }
 
   async function saveCompanyRule(suggestion:MemorySuggestion){
@@ -96,6 +107,24 @@ export default function AiLabWorkspace(){
     }finally{setActionLoading(false);}
   }
 
+  function addImages(files:FileList|null){
+    const next=Array.from(files||[]).filter(file=>["image/jpeg","image/png","image/webp"].includes(file.type));
+    if(!next.length) return;
+    const available=Math.max(0,4-imageFiles.length);
+    const accepted=next.slice(0,available).filter(file=>file.size<=5*1024*1024);
+    if(!accepted.length) return;
+    setImageFiles(prev=>[...prev,...accepted]);
+    setImagePreviews(prev=>[...prev,...accepted.map(file=>({name:file.name,url:URL.createObjectURL(file)}))]);
+    if(fileInputRef.current) fileInputRef.current.value="";
+  }
+
+  function removeImage(index:number){
+    const preview=imagePreviews[index];
+    if(preview?.url) URL.revokeObjectURL(preview.url);
+    setImageFiles(prev=>prev.filter((_,i)=>i!==index));
+    setImagePreviews(prev=>prev.filter((_,i)=>i!==index));
+  }
+
   function clearContext(){
     setContextInquiryId("");
     setContextTitle("");
@@ -112,7 +141,9 @@ export default function AiLabWorkspace(){
       <div className="ai-lab-chat">
         {messages.map((m,index)=><div key={index} className={"ai-lab-message "+m.role}>
           <div className="ai-lab-message-label">{m.role==="user"?"You":"Happy AI"}</div>
-          <div className="ai-lab-bubble"><p>{m.text}</p>
+          <div className="ai-lab-bubble">
+            {m.attachments&&m.attachments.length>0&&<div className="ai-lab-message-images">{m.attachments.map((a,i)=><img key={i} src={a.url} alt={a.name}/>)}</div>}
+            <p>{m.text}</p>
             {m.links&&m.links.length>0&&<div className="ai-lab-links">{m.links.map((link,i)=><button key={i} type="button" onClick={()=>router.push(link.href)}>{link.label}<span>→</span></button>)}</div>}
             {m.memorySuggestion&&<div className="ai-lab-memory-proposal">
               <span>COMPANY MEMORY｜建议保存</span>
@@ -135,11 +166,14 @@ export default function AiLabWorkspace(){
 
       {messages.length<=1&&<div className="ai-lab-starters">{starterPrompts.map(p=><button key={p} type="button" onClick={()=>void send(p)}>{p}</button>)}</div>}
 
+      {imagePreviews.length>0&&<div className="ai-lab-upload-previews">{imagePreviews.map((a,i)=><div key={a.url} className="ai-lab-upload-chip"><img src={a.url} alt={a.name}/><span>{a.name}</span><button type="button" aria-label={"Remove "+a.name} onClick={()=>removeImage(i)}>×</button></div>)}</div>}
       <div className="ai-lab-compose">
-        <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="例如：帮我看一下北海道那笔 Inquiry 现在做到哪里了…" onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();void send();}}}/>
-        <button type="button" className="workflow-primary-btn" disabled={!input.trim()||loading} onClick={()=>void send()}>{loading?"Thinking...":"Send"}</button>
+        <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onChange={e=>addImages(e.target.files)}/>
+        <button type="button" className="ai-lab-attach-btn" disabled={loading||imageFiles.length>=4} onClick={()=>fileInputRef.current?.click()}>＋</button>
+        <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="可以输入文字，或直接上传 WhatsApp / 航班 / 报价截图…" onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();void send();}}}/>
+        <button type="button" className="workflow-primary-btn" disabled={(!input.trim()&&!imageFiles.length)||loading} onClick={()=>void send()}>{loading?"Thinking...":"Send"}</button>
       </div>
-      <div className="ai-lab-compose-note">Enter 发送 · Shift + Enter 换行 · AI 不会未经确认修改系统资料</div>
+      <div className="ai-lab-compose-note">支持 JPG / PNG / WEBP · 最多 4 张 · 每张 ≤ 5MB · Enter 发送 · AI 修改系统前仍需确认</div>
     </section>
 
     <aside className="ai-lab-context">
