@@ -949,3 +949,7 @@
 .ai-intake-filechip>span{padding:0!important;border:0!important;background:transparent!important}
 .ai-intake-filechip button{border:0;background:transparent;color:#7b8791;font-size:14px;line-height:1;cursor:pointer;padding:0 1px}
 .ai-intake-filechip button:hover{color:#b14444}
+
+.ai-import-file-note-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ai-import-remove-file{border:0;background:transparent;color:#9b3f3f;font-size:10px;font-weight:800;cursor:pointer;padding:2px 0}
+.ai-import-remove-file:hover{text-decoration:underline}
