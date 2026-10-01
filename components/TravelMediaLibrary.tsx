@@ -4,7 +4,7 @@ import { useEffect,useMemo,useRef,useState } from "react";
 
 type Doc={
   id:string;title:string;fileName:string;storagePath:string;mimeType:string;fileSize:number;
-  sourceType:string;status:string;verificationStatus?:string;destination:string;summary:string;extraction:any;createdAt:string;updatedAt:string;
+  sourceType:string;status:string;verificationStatus?:string;mediaExtractionStatus?:string;mediaExtractionSummary?:any;destination:string;summary:string;extraction:any;createdAt:string;updatedAt:string;
 };
 
 const fmtSize=(n:number)=>{
@@ -28,7 +28,12 @@ export default function TravelMediaLibrary(){
   const [inspectorMessage,setInspectorMessage]=useState("");
   const [preview,setPreview]=useState<any>(null);
   const [model,setModel]=useState("");
+  const [mediaReview,setMediaReview]=useState<any[]>([]);
+  const [mediaProcessing,setMediaProcessing]=useState(false);
+  const [mediaReviewBusyId,setMediaReviewBusyId]=useState("");
+  const [mediaBackfillMessage,setMediaBackfillMessage]=useState("");
   const inputRef=useRef<HTMLInputElement|null>(null);
+  const mediaBackfillStartedRef=useRef(false);
 
   async function load(){
     setLoading(true);
@@ -41,6 +46,70 @@ export default function TravelMediaLibrary(){
   }
 
   useEffect(()=>{void load();},[]);
+
+  async function loadMediaReview(){
+    try{
+      const res=await fetch("/api/internal-travel-library-media",{cache:"no-store"});
+      const data=await res.json().catch(()=>({}));
+      if(res.ok&&data?.ok) setMediaReview(Array.isArray(data.candidates)?data.candidates:[]);
+    }catch{}
+  }
+
+  async function processMediaBacklog(){
+    if(mediaBackfillStartedRef.current) return;
+    mediaBackfillStartedRef.current=true;
+    setMediaProcessing(true);
+    setMediaBackfillMessage("Checking existing Library Sources...");
+    try{
+      for(let i=0;i<20;i++){
+        const res=await fetch("/api/internal-travel-library-media",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({action:"process_next"})
+        });
+        const data=await res.json().catch(()=>({}));
+        if(!res.ok){
+          setMediaBackfillMessage("Some Library Sources need attention: "+String(data?.error||"media extraction failed"));
+          continue;
+        }
+        if(data?.done){
+          setMediaBackfillMessage(i===0?"Existing Library Sources are up to date.":"Existing Library Sources media extraction completed.");
+          break;
+        }
+        const s=data?.summary||{};
+        setMediaBackfillMessage(
+          String(data?.title||"Library Source")+" · "+Number(s.found||0)+" photos found · "+Number(s.matched||0)+" matched"
+        );
+        await loadMediaReview();
+        await load();
+      }
+    }finally{
+      setMediaProcessing(false);
+      await loadMediaReview();
+      await load();
+    }
+  }
+
+  useEffect(()=>{
+    void loadMediaReview();
+    void processMediaBacklog();
+  },[]);
+
+  async function reviewMediaCandidate(id:string,action:"confirm"|"ignore"){
+    setMediaReviewBusyId(id);setError("");
+    try{
+      const res=await fetch("/api/internal-travel-library-media",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({action,id})
+      });
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok||!data?.ok){setError(data?.error||"Unable to update extracted media.");return;}
+      await loadMediaReview();
+      await load();
+      if(inspectorQuery.trim()) await searchInspector();
+    }finally{setMediaReviewBusyId("");}
+  }
 
   async function analyze(file:File|null){
     if(!file) return;
@@ -218,6 +287,77 @@ export default function TravelMediaLibrary(){
       </div>}
     </section>
 
+    <section className="panel travel-library-document-media">
+      <div className="panel-head">
+        <div>
+          <span className="page-kicker">DOCUMENT MEDIA EXTRACTION</span>
+          <h2>Document Media Review｜文件图片匹配审核</h2>
+          <p className="panel-subtext">PDF / DOCX 内嵌照片会先拆出并由 AI 结合页内文字与视觉判断。你确认后才会进入正式 Travel Media Library。</p>
+        </div>
+        <div className="travel-library-document-media-status">
+          {mediaProcessing&&<span className="status status-under_review">Processing...</span>}
+          <span className="status status-ready">{mediaReview.length} To Review</span>
+        </div>
+      </div>
+
+      {mediaBackfillMessage&&<div className="travel-library-inspector-message">{mediaBackfillMessage}</div>}
+
+      {mediaReview.length>0?<div className="travel-library-document-media-grid">
+        {mediaReview.map((item:any)=><article className="travel-library-document-media-card" key={item.id}>
+          <div className="travel-library-document-media-image">
+            <img src={item.imageUrl} alt={item.suggestedName||item.originalName||"Extracted media"}/>
+            <span>{item.sourcePage?"Page "+item.sourcePage:"DOCX"}</span>
+          </div>
+          <div className="travel-library-document-media-body">
+            <div className="travel-library-document-media-title">
+              <div>
+                <small>{item.documentTitle||item.fileName||"Library Source"}</small>
+                <strong>{item.suggestedName||"Needs manual review"}</strong>
+              </div>
+              <span className={"status "+(item.suggestedPlaceId?"status-ready":"status-under_review")}>
+                {Math.round(Number(item.confidence||0)*100)}%
+              </span>
+            </div>
+            <div className="travel-library-document-media-meta">
+              <div><span>Type</span><strong>{item.suggestedType||"unknown"}</strong></div>
+              <div><span>Match</span><strong>{item.suggestedPlaceId?"Library Record Found":"No confident record"}</strong></div>
+              <div><span>Method</span><strong>{String(item.matchMethod||"").replaceAll("_"," ")||"—"}</strong></div>
+              <div><span>Source</span><strong>{item.sourcePage?"Page "+item.sourcePage:"Document"}</strong></div>
+            </div>
+            <p>{item.reason||"—"}</p>
+            {item.nearbyText&&<details>
+              <summary>Show page context</summary>
+              <div>{item.nearbyText}</div>
+            </details>}
+            <div className="travel-library-document-media-actions">
+              <a className="btn compact" href={item.imageUrl} target="_blank" rel="noreferrer">Open</a>
+              <button
+                className="btn compact primary"
+                type="button"
+                disabled={!item.suggestedPlaceId||mediaReviewBusyId===item.id}
+                onClick={()=>void reviewMediaCandidate(item.id,"confirm")}
+              >
+                {mediaReviewBusyId===item.id?"Saving...":"✓ Confirm to Library"}
+              </button>
+              <button
+                className="btn compact danger"
+                type="button"
+                disabled={mediaReviewBusyId===item.id}
+                onClick={()=>void reviewMediaCandidate(item.id,"ignore")}
+              >
+                Ignore / Delete
+              </button>
+            </div>
+            {!item.suggestedPlaceId&&<div className="travel-library-verification-note">
+              AI 没有找到足够可信的景点 / 酒店记录，所以不能直接确认。先 Ignore，或之后加入手动改配功能。
+            </div>}
+          </div>
+        </article>)}
+      </div>:<div className="travel-library-inspector-empty">
+        {mediaProcessing?"正在重新分析现有 Library Sources...":"目前没有待审核的 PDF / DOCX 内嵌照片。"}
+      </div>}
+    </section>
+
     {preview&&<section className="panel travel-library-review">
       <div className="panel-head">
         <div>
@@ -299,13 +439,20 @@ export default function TravelMediaLibrary(){
 
       <div className="travel-library-table-wrap">
         <table className="data-table travel-library-table">
-          <thead><tr><th>Source</th><th>Type</th><th>Destination</th><th>Status</th><th>AI Extracted</th><th>Updated</th><th></th></tr></thead>
+          <thead><tr><th>Source</th><th>Type</th><th>Destination</th><th>Status</th><th>Media Extraction</th><th>AI Extracted</th><th>Updated</th><th></th></tr></thead>
           <tbody>
             {docs.map(doc=><tr key={doc.id}>
               <td><strong>{doc.title||doc.fileName}</strong><small>{doc.fileName} · {fmtSize(doc.fileSize)}</small></td>
               <td>{doc.sourceType||"other"}</td>
               <td>{doc.destination||"—"}</td>
               <td><span className={"status "+(doc.status==="saved"?"status-ready":"status-under_review")}>{doc.status==="saved"?"Saved":"Pending Review"}</span></td>
+              <td><small>{doc.mediaExtractionStatus==="review"
+                ? Number(doc.mediaExtractionSummary?.found||0)+" found · "+Number(doc.mediaExtractionSummary?.matched||0)+" matched"
+                : doc.mediaExtractionStatus==="processing"?"Processing..."
+                : doc.mediaExtractionStatus==="completed"?"Completed"
+                : doc.mediaExtractionStatus==="queued"?"Queued"
+                : doc.mediaExtractionStatus==="failed"?"Failed"
+                :"Not Processed"}</small></td>
               <td><small>{doc.extraction?.places?.length||0} places · {doc.extraction?.hotels?.length||0} hotels · {doc.extraction?.prices?.length||0} prices</small></td>
               <td>{doc.updatedAt?new Date(doc.updatedAt).toLocaleDateString("en-MY"):"—"}</td>
               <td><div className="row-actions">
@@ -314,7 +461,7 @@ export default function TravelMediaLibrary(){
                 {doc.status==="pending_review"&&<button type="button" onClick={()=>void confirm(doc.id)} disabled={savingId===doc.id}>{savingId===doc.id?"Saving...":"Save"}</button>}
               </div></td>
             </tr>)}
-            {!loading&&!docs.length&&<tr><td colSpan={7} className="empty">还没有资料。上传第一份行程、报价、酒店资料或图片。</td></tr>}
+            {!loading&&!docs.length&&<tr><td colSpan={8} className="empty">还没有资料。上传第一份行程、报价、酒店资料或图片。</td></tr>}
           </tbody>
         </table>
       </div>
