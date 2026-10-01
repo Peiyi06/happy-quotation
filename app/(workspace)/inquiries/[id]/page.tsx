@@ -13,7 +13,11 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
   return <div>
     <div className="page-head">
       <div><span className="page-kicker">INQUIRY DETAIL</span><h1>{data.customer_name||data.inquiry_no}</h1><p>{data.inquiry_no} · {data.status}</p></div>
-      <div className="detail-actions"><Link className="btn" href="/inquiries">← Back</Link><Link className="btn primary" href={"/inquiries/"+id+"/edit"}>Edit Inquiry</Link></div>
+      <div className="detail-actions">
+        <Link className="btn" href="/inquiries">← Back</Link>
+        <Link className="btn" href={"/inquiries/"+id+"/operation"}>Operation Review</Link>
+        <Link className="btn primary" href={"/inquiries/"+id+"/edit"}>Edit Inquiry</Link>
+      </div>
     </div>
 
     <section className="dashboard-cards itinerary-summary-cards">
@@ -39,12 +43,40 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
       </div>
     </section>
 
-    <section className="panel inquiry-next-actions">
-      <div className="panel-head"><div><h2>Next Step｜下一步</h2><p className="panel-subtext">第一阶段先建立案件母档案；下一阶段会把这些入口正式关联到同一个 Inquiry。</p></div></div>
+    <section className="panel">
+      <div className="panel-head">
+        <div>
+          <h2>Operation & Supplier｜操作与供应商</h2>
+          <p className="panel-subtext">Sales 原始 Inquiry 保留不变；Operation Review 与 Supplier Inquiry Form 使用独立版本。</p>
+        </div>
+      </div>
       <div className="inquiry-flow-actions">
-        <div><strong>Create Itinerary</strong><span>从 Inquiry 自动带入客户基本资料</span><button className="btn" disabled>Coming next</button></div>
-        <div><strong>AI Supplier Import</strong><span>Operation 上传供应商行程并生成 Draft</span><Link className="btn" href="/ai-import">Open AI Import</Link></div>
-        <div><strong>Quotation</strong><span>成本、利润与 Selling Price</span><button className="btn" disabled>Coming next</button></div>
+        <div>
+          <strong>Operation Review</strong>
+          <span>由 {data.operation_assignee_name||"Operation"} 整理供应商可执行版本。</span>
+          <Link className="btn" href={"/inquiries/"+id+"/operation"}>Open Review</Link>
+        </div>
+        <div>
+          <strong>Supplier Inquiry Form</strong>
+          <span>Status: {data.supplier_inquiry_status||"draft"}</span>
+          <Link className="btn" href={"/inquiries/"+id+"/supplier-form"} target="_blank">Preview / Export</Link>
+        </div>
+        <div>
+          <strong>Outbound Quotation</strong>
+          <span>{data.supplier_inquiry_status==="quote_received"?"Supplier quote received. Ready for costing.":"Supplier quote received 后进入成本与售价计算。"}</span>
+          {data.supplier_inquiry_status==="quote_received"
+            ? <Link className="btn" href="/quotations/new">Create Outbound Quotation</Link>
+            : <button className="btn" disabled>Waiting Supplier Quote</button>}
+        </div>
+      </div>
+    </section>
+
+    <section className="panel inquiry-next-actions">
+      <div className="panel-head"><div><h2>Downstream｜后续流程</h2><p className="panel-subtext">收到供应商报价后，再进入现有 Quotation 与 Itinerary 流程。</p></div></div>
+      <div className="inquiry-flow-actions">
+        <div><strong>Create Itinerary</strong><span>下一阶段：从 Inquiry 自动带入客户基本资料</span><button className="btn" disabled>Coming next</button></div>
+        <div><strong>AI Supplier Import</strong><span>上传供应商行程 + Adjustment Notes</span><Link className="btn" href="/ai-import">Open AI Import</Link></div>
+        <div><strong>Customer Proposal</strong><span>Quotation + Itinerary 完成后组合为对客文件</span><button className="btn" disabled>Coming later</button></div>
       </div>
     </section>
   </div>;
