@@ -150,7 +150,12 @@ export default async function SupplierInquiryFormPage({
           englishReady={englishReady}
           chineseReady={chineseReady}
         />
-        <PrintSupplierFormButton/>
+        <PrintSupplierFormButton
+          inquiryNo={data.inquiry_no||""}
+          destination={String(destination||"")}
+          customerName={String(data.customer_name||"")}
+          startDate={String(startDate||"")}
+        />
       </div>
     </div>
 
