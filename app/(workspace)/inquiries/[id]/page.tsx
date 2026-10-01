@@ -9,6 +9,8 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
   const db=internalDb();
   const {data,error}=await db.rpc("staff_get_inquiry",{p_token:token,p_id:id});
   if(error||!data||!data.id) notFound();
+  const {data:linkedQuoteData}=await db.rpc("staff_list_quotes_for_inquiry",{p_token:token,p_inquiry_id:id});
+  const linkedQuotes=Array.isArray(linkedQuoteData)?linkedQuoteData:[];
 
   return <div>
     <div className="page-head">
@@ -63,10 +65,22 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
         </div>
         <div>
           <strong>Outbound Quotation</strong>
-          <span>{data.supplier_inquiry_status==="quote_received"?"Supplier quote received. Ready for costing.":"Supplier quote received 后进入成本与售价计算。"}</span>
-          {data.supplier_inquiry_status==="quote_received"
-            ? <Link className="btn" href="/quotations/new">Create Outbound Quotation</Link>
-            : <button className="btn" disabled>Waiting Supplier Quote</button>}
+          {linkedQuotes.length>0
+            ? <>
+                <span>{linkedQuotes.length} linked quotation{linkedQuotes.length>1?"s":""} · 建立后会保留与 Inquiry 的来源关联。</span>
+                <div className="linked-quotation-list">
+                  {linkedQuotes.map((q:any)=><Link key={q.id} className="linked-quotation-item" href={"/quotations/"+q.id}>
+                    <span><b>{q.quotation_no}</b><small>{q.owner_name||"—"} · {q.status||"draft"}</small></span>
+                    <strong>Open →</strong>
+                  </Link>)}
+                </div>
+              </>
+            : <>
+                <span>{data.supplier_inquiry_status==="quote_received"?"Supplier quote received. Ready for costing.":"Supplier quote received 后进入成本与售价计算。"}</span>
+                {data.supplier_inquiry_status==="quote_received"
+                  ? <Link className="btn" href={"/quotations/new?sourceInquiry="+id}>Create Outbound Quotation</Link>
+                  : <button className="btn" disabled>Waiting Supplier Quote</button>}
+              </>}
         </div>
       </div>
     </section>
