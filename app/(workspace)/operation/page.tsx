@@ -61,6 +61,16 @@ export default async function OperationWorkspacePage({
     items:assigned.filter((x:any)=>queueFor(x)===key)
   }));
 
+  const expandedQueue=(Object.keys(queueMeta) as QueueKey[]).includes(sp.queue as QueueKey)?sp.queue as QueueKey:undefined;
+  const queueHref=(queue?:QueueKey)=>{
+    const params=new URLSearchParams();
+    if(requestedScope==="all") params.set("scope","all");
+    if(sp.q) params.set("q",sp.q);
+    if(queue) params.set("queue",queue);
+    const query=params.toString();
+    return "/operation"+(query?"?"+query:"");
+  };
+
   return <div>
     <div className="page-head operation-workspace-head">
       <div>
@@ -97,13 +107,22 @@ export default async function OperationWorkspacePage({
     </section>}
 
     <div className="operation-queue-grid">
-      {queues.map(queue=><section className="panel operation-queue-panel" key={queue.key}>
-        <div className="panel-head operation-queue-title">
-          <div><h2>{queue.title}</h2><p className="panel-subtext">{queue.subtitle}</p></div>
-          <span className="operation-count">{queue.items.length}</span>
-        </div>
-        {queue.items.length?<OperationRows items={queue.items}/>:<div className="operation-empty">No cases in this queue.</div>}
-      </section>)}
+      {queues.map(queue=>{
+        const expanded=expandedQueue===queue.key;
+        const visibleItems=expanded?queue.items:queue.items.slice(0,3);
+        return <section className={"panel operation-queue-panel "+(expanded?"expanded":"")} key={queue.key}>
+          <div className="panel-head operation-queue-title">
+            <div><h2>{queue.title}</h2><p className="panel-subtext">{queue.subtitle}</p></div>
+            <span className="operation-count">{queue.items.length}</span>
+          </div>
+          {queue.items.length?<OperationRows items={visibleItems}/>:<div className="operation-empty">No cases in this queue.</div>}
+          {queue.items.length>3&&<div className="operation-queue-footer">
+            <Link href={expanded?queueHref():queueHref(queue.key)}>
+              {expanded?"Show Less":"View All "+queue.items.length+" Cases →"}
+            </Link>
+          </div>}
+        </section>;
+      })}
     </div>
   </div>;
 }
