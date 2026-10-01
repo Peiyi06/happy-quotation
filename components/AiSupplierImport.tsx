@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type ImportResult={
@@ -34,6 +34,20 @@ export default function AiSupplierImport(){
   const [chatting,setChatting]=useState(false);
   const [chatMessages,setChatMessages]=useState<ChatMessage[]>([]);
   const [proposal,setProposal]=useState<AdjustmentProposal|null>(null);
+  const [inquiryContext,setInquiryContext]=useState<any>(null);
+
+  useEffect(()=>{
+    const sourceInquiry=new URLSearchParams(window.location.search).get("sourceInquiry");
+    if(!sourceInquiry) return;
+    let cancelled=false;
+    fetch("/api/internal-inquiry-context?id="+encodeURIComponent(sourceInquiry),{cache:"no-store"})
+      .then(async res=>{
+        const data=await res.json().catch(()=>({}));
+        if(!cancelled&&res.ok&&data?.ok) setInquiryContext(data.context||null);
+      })
+      .catch(()=>{});
+    return ()=>{cancelled=true;};
+  },[]);
 
   async function analyze(){
     if(!file) return;
@@ -45,7 +59,18 @@ export default function AiSupplierImport(){
       const res=await fetch("/api/ai-import-supplier",{method:"POST",body:form});
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){setError(data?.error||"Unable to analyze supplier file.");return;}
-      setResult(data.result);
+      const parsed=data.result as ImportResult;
+      const linked=inquiryContext||{};
+      setResult({
+        ...parsed,
+        destination:parsed.destination||linked.destination||"",
+        departureCity:parsed.departureCity||linked.departureCity||"",
+        travelStartDate:parsed.travelStartDate||linked.travelStartDate||"",
+        travelEndDate:parsed.travelEndDate||linked.travelEndDate||"",
+        pax:parsed.pax??linked.pax??null,
+        tourType:parsed.tourType||linked.tourType||"",
+        suggestedFlights:(parsed.suggestedFlights||[]).length?parsed.suggestedFlights:(Array.isArray(linked.suggestedFlights)?linked.suggestedFlights:[])
+      });
       setModel(data.model||"");
     }finally{setAnalyzing(false);}
   }
@@ -123,19 +148,24 @@ export default function AiSupplierImport(){
       const reminders=(result.reminders||[]).map(r=>({id:uid(),preset:"other",title:r.title,description:r.description}));
 
       const payload={
+        source_inquiry_id:inquiryContext?.id||"",
         title:result.title||`AI Imported Itinerary - ${file?.name||"Supplier File"}`,
-        destination:result.destination||"",
+        destination:result.destination||inquiryContext?.destination||"",
         days_count:Math.max(1,days.length),
         nights_count:Math.max(0,days.length-1),
-        customer_name:"",
+        customer_name:inquiryContext?.customerName||"",
         status:"draft",
         itinerary_data:{
-          departureCity:result.departureCity||"",
-          travelStartDate:result.travelStartDate||"",
-          travelEndDate:result.travelEndDate||"",
-          pax:result.pax??"",
-          tourType:result.tourType||"",
-          suggestedFlights,days,hotels,includedItems,notIncludedItems,reminders,
+          departureCity:result.departureCity||inquiryContext?.departureCity||"",
+          travelStartDate:result.travelStartDate||inquiryContext?.travelStartDate||"",
+          travelEndDate:result.travelEndDate||inquiryContext?.travelEndDate||"",
+          pax:result.pax??inquiryContext?.pax??"",
+          tourType:result.tourType||inquiryContext?.tourType||"",
+          suggestedFlights:suggestedFlights.length?suggestedFlights:(Array.isArray(inquiryContext?.suggestedFlights)?inquiryContext.suggestedFlights.map((f:any)=>({id:uid(),...f})):[]),
+          days,hotels,includedItems,notIncludedItems,reminders,
+          sourceInquiryId:inquiryContext?.id||"",
+          sourceInquiryNo:inquiryContext?.inquiryNo||"",
+          sourceInquirySnapshot:inquiryContext||null,
           aiImportMeta:{sourceFileName:file?.name||"",adjustmentNotes:adjustmentNotes.trim(),model,warnings:result.warnings||[],importedAt:new Date().toISOString()}
         }
       };
@@ -147,6 +177,14 @@ export default function AiSupplierImport(){
   }
 
   return <div className="ai-import-workspace">
+    {inquiryContext&&<section className="quote-source-inquiry">
+      <div>
+        <span>SOURCE INQUIRY｜来源询价</span>
+        <strong>{inquiryContext.inquiryNo||"Linked Inquiry"}</strong>
+        <small>{[inquiryContext.destination,inquiryContext.daysCount&&inquiryContext.nightsCount?`${inquiryContext.daysCount}D${inquiryContext.nightsCount}N`:"",inquiryContext.pax?`${inquiryContext.pax} Pax`:""].filter(Boolean).join(" · ")}</small>
+      </div>
+      <button className="btn" type="button" onClick={()=>router.push("/inquiries/"+inquiryContext.id)}>Open Inquiry</button>
+    </section>}
     <section className="panel ai-import-upload-panel">
       <div className="panel-head">
         <div>
