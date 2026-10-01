@@ -944,3 +944,8 @@
   .supplier-long-section .supplier-pro-table{break-inside:auto!important;page-break-inside:auto!important}
   .supplier-long-section .supplier-pro-row{break-inside:avoid!important;page-break-inside:avoid!important}
 }
+
+.ai-intake-filechip{display:inline-flex!important;align-items:center;gap:6px}
+.ai-intake-filechip>span{padding:0!important;border:0!important;background:transparent!important}
+.ai-intake-filechip button{border:0;background:transparent;color:#7b8791;font-size:14px;line-height:1;cursor:pointer;padding:0 1px}
+.ai-intake-filechip button:hover{color:#b14444}
