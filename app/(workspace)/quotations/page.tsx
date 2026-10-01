@@ -19,7 +19,7 @@ export default async function QuotationsPage({ searchParams }:{searchParams:Prom
   if(q) quotes=quotes.filter((x:any)=>[x.quotation_no,x.title,x.customer_name].some((v:any)=>(v||"").toLowerCase().includes(q)));
 
   return <div>
-    <div className="page-head">
+    <div className="page-head page-compact-header">
       <div><span className="page-kicker">QUOTATIONS</span><h1>Quotation Library</h1><p>按团型、目的地、客户和状态管理历史报价。</p></div>
       <NewQuotationMenu />
     </div>
