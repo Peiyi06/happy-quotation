@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type LinkItem={label:string;href:string;kind:string};
-type PendingAction={type:string;inquiryId:string;label:string;confirmText:string;nextStatus:string};
+type PendingAction={type:string;inquiryId:string;targetId:string;label:string;confirmText:string;nextStatus:string;payloadJson:string};
 type MemorySuggestion={shouldSuggest:boolean;category:string;title:string;ruleText:string;reason:string};
 type Attachment={name:string;url?:string;type?:string;size?:number};
 type WorkThread={id:string;title:string;linked_inquiry_id?:string|null;context_title?:string;inquiry_no?:string|null;destination?:string|null;inquiry_status?:string|null;last_active_at?:string;archived?:boolean};
@@ -172,21 +172,50 @@ export default function AiLabWorkspace(){
   }
 
   async function confirmAction(action:PendingAction){
-    if(actionLoading||action.type!=="update_supplier_status") return;
+    if(actionLoading||action.type==="none") return;
     setActionLoading(true);
     try{
-      const res=await fetch("/api/internal-inquiry-workflow",{
+      const isWorkflow=action.type==="update_supplier_status";
+      const res=await fetch(isWorkflow?"/api/internal-inquiry-workflow":"/api/ai-lab/execute",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({id:action.inquiryId,supplierStatus:action.nextStatus})
+        body:JSON.stringify(isWorkflow
+          ? {id:action.inquiryId,supplierStatus:action.nextStatus}
+          : {
+              type:action.type,
+              targetId:action.targetId||action.inquiryId||"",
+              payloadJson:action.payloadJson||"{}",
+              contextInquiryId,
+              threadId
+            })
       });
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){
         setMessages(prev=>[...prev,{role:"assistant",text:"操作没有执行："+(data?.error||"Unknown error")}]);
         return;
       }
-      await clearSavedProposal("action");
-      setMessages(prev=>prev.map(m=>m.action===action?{...m,action:undefined}:m).concat({role:"assistant",text:"已确认执行。系统状态已经更新。你可以继续问我「下一步是什么？」"}));
+
+      if(isWorkflow){
+        await clearSavedProposal("action");
+        setMessages(prev=>prev.map(m=>m.action===action?{...m,action:undefined}:m).concat({role:"assistant",text:"已确认执行。系统状态已经更新。你可以继续问我「下一步是什么？」"}));
+      }else{
+        if(data.contextInquiryId) setContextInquiryId(String(data.contextInquiryId));
+        if(data.contextTitle) setContextTitle(String(data.contextTitle));
+        const successText=data.type==="create_inquiry"
+          ?"Inquiry 已建立："+(data.recordNo||data.id)
+          :data.type==="update_inquiry"
+            ?"Inquiry 已更新："+(data.recordNo||data.id)
+            :data.type==="create_itinerary"
+              ?"Itinerary Draft 已建立："+(data.recordNo||data.id)
+              :"Itinerary 已更新："+(data.recordNo||data.id);
+        setMessages(prev=>prev.map(m=>m.action===action?{...m,action:undefined}:m).concat({
+          role:"assistant",
+          text:successText,
+          links:data.href?[{label:data.type.includes("itinerary")?"Open Itinerary":"Open Inquiry",href:data.href,kind:data.type.includes("itinerary")?"itinerary":"inquiry"}]:[]
+        }));
+        setSaveState("saved");
+        await loadThreads();
+      }
       router.refresh();
     }finally{setActionLoading(false);}
   }
@@ -239,7 +268,7 @@ export default function AiLabWorkspace(){
             {m.action&&<div className="ai-lab-action-card">
               <span>PROPOSED ACTION｜待确认操作</span>
               <strong>{m.action.confirmText}</strong>
-              <div><button type="button" className="btn" disabled={actionLoading} onClick={()=>setMessages(prev=>prev.map(x=>x===m?{...x,action:undefined}:x))}>Cancel</button><button type="button" className="workflow-primary-btn" disabled={actionLoading} onClick={()=>void confirmAction(m.action!)}>{actionLoading?"Updating...":m.action.label||"Confirm"}</button></div>
+              <div><button type="button" className="btn" disabled={actionLoading} onClick={()=>setMessages(prev=>prev.map(x=>x===m?{...x,action:undefined}:x))}>Cancel</button><button type="button" className="workflow-primary-btn" disabled={actionLoading} onClick={()=>void confirmAction(m.action!)}>{actionLoading?"Working...":m.action.label||"Confirm"}</button></div>
             </div>}
           </div>
         </div>)}
