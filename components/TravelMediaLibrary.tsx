@@ -21,8 +21,11 @@ export default function TravelMediaLibrary(){
   const [analyzing,setAnalyzing]=useState(false);
   const [savingId,setSavingId]=useState("");
   const [deletingId,setDeletingId]=useState("");
-  const [signedUrls,setSignedUrls]=useState<Record<string,string>>({});
   const [error,setError]=useState("");
+  const [inspectorQuery,setInspectorQuery]=useState("");
+  const [inspectorResults,setInspectorResults]=useState<any[]>([]);
+  const [inspectorLoading,setInspectorLoading]=useState(false);
+  const [inspectorMessage,setInspectorMessage]=useState("");
   const [preview,setPreview]=useState<any>(null);
   const [model,setModel]=useState("");
   const inputRef=useRef<HTMLInputElement|null>(null);
@@ -71,51 +74,40 @@ export default function TravelMediaLibrary(){
     }finally{setSavingId("");}
   }
 
-  async function verifyAndSave(id:string){
-    setSavingId(id);setError("");
+  async function searchInspector(){
+    const query=inspectorQuery.trim();
+    if(!query){setInspectorResults([]);setInspectorMessage("请输入景点或酒店关键字。");return;}
+    setInspectorLoading(true);setInspectorMessage("");setError("");
     try{
-      const res=await fetch("/api/internal-travel-library",{
-        method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({action:"verify_and_save",id})
-      });
+      const res=await fetch("/api/internal-travel-media-inspector?q="+encodeURIComponent(query),{cache:"no-store"});
       const data=await res.json().catch(()=>({}));
-      if(!res.ok||!data?.ok){setError(data?.error||"Unable to verify and save.");return;}
-      if(preview?.id===id) setPreview((p:any)=>p?{...p,saved:true}:p);
-      await load();
-    }finally{setSavingId("");}
+      if(!res.ok||!data?.ok){setError(data?.error||"Unable to search Media Library.");return;}
+      const results=Array.isArray(data.results)?data.results:[];
+      setInspectorResults(results);
+      if(!results.length) setInspectorMessage("没有找到相关景点、酒店或已存档照片。");
+    }finally{setInspectorLoading(false);}
   }
 
-  async function deleteDocument(doc:Doc){
-    const ok=window.confirm("Delete this test source and its private Storage file? This cannot be undone.");
+  async function mutateInspectorImage(imageId:string,action:"remove"|"delete"){
+    const permanent=action==="delete";
+    const ok=window.confirm(
+      permanent
+        ?"Permanently delete this image from the Travel Media Library and Storage? This cannot be undone."
+        :"Remove this image from this place/hotel? The underlying file will not be deleted."
+    );
     if(!ok) return;
-    setDeletingId(doc.id);setError("");
+    setDeletingId(imageId);setError("");setInspectorMessage("");
     try{
-      const res=await fetch("/api/internal-travel-library",{
-        method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({action:"delete",id:doc.id})
+      const res=await fetch("/api/internal-travel-media-inspector",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({action,imageId})
       });
       const data=await res.json().catch(()=>({}));
-      if(!res.ok||!data?.ok){setError(data?.error||"Unable to delete source.");return;}
-      if(preview?.id===doc.id) setPreview(null);
-      setSignedUrls(current=>{
-        const next={...current};
-        delete next[doc.id];
-        return next;
-      });
-      await load();
+      if(!res.ok||!data?.ok){setError(data?.error||"Unable to update image.");return;}
+      setInspectorMessage(permanent?"Image deleted permanently.":"Image removed from this Library record.");
+      await searchInspector();
     }finally{setDeletingId("");}
-  }
-
-  async function signedUrlFor(doc:Doc){
-    if(signedUrls[doc.id]) return signedUrls[doc.id];
-    const res=await fetch("/api/internal-travel-library",{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({action:"sign",path:doc.storagePath})
-    });
-    const data=await res.json().catch(()=>({}));
-    if(!res.ok||!data?.ok||!data.url) return "";
-    setSignedUrls(current=>({...current,[doc.id]:data.url}));
-    return data.url as string;
   }
 
   async function openSource(doc:Doc){
@@ -130,13 +122,6 @@ export default function TravelMediaLibrary(){
 
   const savedCount=useMemo(()=>docs.filter(x=>x.status==="saved").length,[docs]);
   const pendingCount=useMemo(()=>docs.filter(x=>x.status==="pending_review").length,[docs]);
-  const photoQueue=useMemo(()=>docs.filter(x=>x.mimeType?.startsWith("image/")&&x.status==="pending_review"),[docs]);
-
-  useEffect(()=>{
-    for(const doc of photoQueue.slice(0,12)){
-      if(!signedUrls[doc.id]) void signedUrlFor(doc);
-    }
-  },[photoQueue]);
 
   return <div className="travel-library-workspace">
     <div className="travel-library-toolbar">
@@ -161,56 +146,76 @@ export default function TravelMediaLibrary(){
 
     {error&&<div className="ai-import-error">{error}</div>}
 
-    <section className="panel travel-library-verification">
+    <section className="panel travel-library-inspector">
       <div className="panel-head">
         <div>
-          <span className="page-kicker">CALIBRATION MODE</span>
-          <h2>Verification Queue｜照片验证窗口</h2>
-          <p className="panel-subtext">逐张检查 AI 判断。确认正确后才正式存档；错误或测试资料可以直接删除。</p>
+          <span className="page-kicker">MEDIA INSPECTOR</span>
+          <h2>Library Search & Validation｜资料库检查</h2>
+          <p className="panel-subtext">搜索已经正式存档的景点或酒店，检查系统目前关联的照片是否正确。</p>
         </div>
-        <span className="status status-under_review">{photoQueue.length} To Verify</span>
       </div>
 
-      {photoQueue.length>0?<div className="travel-library-verification-grid">
-        {photoQueue.map(doc=>{
-          const match=doc.extraction?.photoMatch||{};
-          const url=signedUrls[doc.id]||"";
-          return <article className={"travel-library-verification-card "+(match.status==="matched"?"matched":"review")} key={doc.id}>
-            <div className="travel-library-verification-image">
-              {url?<img src={url} alt={match.identifiedName||doc.fileName}/>:<div className="travel-library-verification-loading">Loading photo...</div>}
+      <div className="travel-library-inspector-search">
+        <input
+          value={inspectorQuery}
+          onChange={e=>setInspectorQuery(e.target.value)}
+          onKeyDown={e=>{if(e.key==="Enter") void searchInspector();}}
+          placeholder="例如：清水寺 / Kiyomizu-dera / DoubleTree Kyoto..."
+        />
+        <button className="btn primary" type="button" disabled={inspectorLoading} onClick={()=>void searchInspector()}>
+          {inspectorLoading?"Searching...":"Search Library"}
+        </button>
+      </div>
+
+      {inspectorMessage&&<div className="travel-library-inspector-message">{inspectorMessage}</div>}
+
+      {inspectorResults.length>0&&<div className="travel-library-inspector-results">
+        {inspectorResults.map((place:any)=><article className="travel-library-inspector-place" key={place.placeId}>
+          <div className="travel-library-inspector-place-head">
+            <div>
+              <span className="page-kicker">{String(place.type||"PLACE").toUpperCase()}</span>
+              <h3>{place.canonicalName||"Unnamed Place"}</h3>
+              <p>{[place.destination,place.cityArea].filter(Boolean).join(" · ")||"—"}</p>
             </div>
-            <div className="travel-library-verification-body">
-              <div className="travel-library-verification-top">
-                <div>
-                  <span>AI Identified</span>
-                  <strong>{match.identifiedName||"Unknown"}</strong>
-                </div>
-                <span className={"status "+(match.status==="matched"?"status-ready":"status-under_review")}>
-                  {Math.round(Number(match.confidence||0)*100)}%
-                </span>
-              </div>
-              <div className="travel-library-verification-details">
-                <div><span>Matched Record</span><strong>{match.matchedName||"No confident match"}</strong></div>
-                <div><span>Method</span><strong>{match.method==="ai_semantic"?"AI Semantic":match.method==="fuzzy"?"Fuzzy":match.method==="exact"?"Exact":"AI Identification Only"}</strong></div>
-                <div><span>Destination</span><strong>{match.destination||doc.destination||"—"}</strong></div>
-                <div><span>Type</span><strong>{match.identifiedType||doc.sourceType||"unknown"}</strong></div>
-              </div>
-              <p>{match.reason||doc.summary||"—"}</p>
-              <small>{doc.fileName}</small>
-              <div className="travel-library-verification-actions">
-                <button className="btn" type="button" onClick={()=>void openSource(doc)}>Open Photo</button>
-                <button className="btn primary" type="button" disabled={savingId===doc.id||match.status!=="matched"} onClick={()=>void verifyAndSave(doc.id)}>
-                  {savingId===doc.id?"Saving...":"✓ Verify & Save"}
-                </button>
-                <button className="btn danger" type="button" disabled={deletingId===doc.id} onClick={()=>void deleteDocument(doc)}>
-                  {deletingId===doc.id?"Deleting...":"Delete"}
-                </button>
-              </div>
-              {match.status!=="matched"&&<div className="travel-library-verification-note">AI 没有达到自动匹配门槛，因此 Verify & Save 暂时锁定。可先删除测试资料，或从下方 Review 查看判断内容。</div>}
+            <div className="travel-library-inspector-badges">
+              <span className="status status-ready">{Array.isArray(place.images)?place.images.length:0} Photos</span>
+              <span className="travel-library-score">{Math.round(Number(place.score||0)*100)}% Name Match</span>
             </div>
-          </article>;
-        })}
-      </div>:<div className="travel-library-verification-empty">目前没有待验证照片。上传一张测试照片后会自动出现在这里。</div>}
+          </div>
+
+          {Array.isArray(place.aliases)&&place.aliases.length>0&&<div className="travel-library-inspector-aliases">
+            <span>Aliases</span>
+            <div>{place.aliases.map((a:string,i:number)=><em key={i}>{a}</em>)}</div>
+          </div>}
+
+          {Array.isArray(place.images)&&place.images.length>0
+            ? <div className="travel-library-inspector-gallery">
+                {place.images.map((img:any)=><figure key={img.imageId}>
+                  <div className="travel-library-inspector-photo">
+                    <img src={img.url} alt={img.name||place.canonicalName}/>
+                  </div>
+                  <figcaption>
+                    <strong>{img.name||"Library Image"}</strong>
+                    <span>{img.createdAt?new Date(img.createdAt).toLocaleDateString("en-MY"):"Stored Library Image"}</span>
+                    <div>
+                      <a className="btn compact" href={img.url} target="_blank" rel="noreferrer">Open</a>
+                      <button className="btn compact" type="button" disabled={deletingId===img.imageId} onClick={()=>void mutateInspectorImage(img.imageId,"remove")}>
+                        Remove from Place
+                      </button>
+                      <button className="btn compact danger" type="button" disabled={deletingId===img.imageId} onClick={()=>void mutateInspectorImage(img.imageId,"delete")}>
+                        {deletingId===img.imageId?"Deleting...":"Delete"}
+                      </button>
+                    </div>
+                  </figcaption>
+                </figure>)}
+              </div>
+            : <div className="travel-library-inspector-empty">这个景点 / 酒店名称已经存档，但目前没有关联照片。</div>}
+        </article>)}
+      </div>}
+
+      {!inspectorLoading&&!inspectorResults.length&&!inspectorMessage&&<div className="travel-library-inspector-empty">
+        输入景点或酒店关键字，例如「清水寺」、「Kiyomizu」或酒店名称，系统会搜索已经存档的 Library Record 与照片。
+      </div>}
     </section>
 
     {preview&&<section className="panel travel-library-review">
