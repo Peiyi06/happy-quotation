@@ -117,7 +117,7 @@ export async function POST(request:Request){
   ].join("\n");
 
   const input=[
-    ...history.map((m:any)=>({role:m.role==="assistant"?"assistant":"user",content:[{type:"input_text",text:String(m.text||"").slice(0,4000)}]})),
+    ...history.map((m:any)=>({role:m.role==="assistant"?"assistant":"user",content:[{type:m.role==="assistant"?"output_text":"input_text",text:String(m.text||"").slice(0,4000)}]})),
     {role:"user",content:[{type:"input_text",text:message}]}
   ];
 
