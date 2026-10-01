@@ -2183,3 +2183,160 @@ button,
 .ai-thread-archive:not(.icon-action-btn){
   border:1px solid var(--btn-border);
 }
+
+
+/* =========================================================
+   Unified Workspace Page Headers
+   Hero Header: editors / review / builders
+   Compact Header: libraries / dashboard / workspaces
+   ========================================================= */
+.page-hero-header,
+.page-compact-header{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(135deg,var(--navy2),var(--navy));
+  color:#fff;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 14px 34px rgba(24,49,69,.10);
+}
+
+.page-hero-header{
+  min-height:154px;
+  padding:28px 32px;
+  border-radius:22px;
+  align-items:center;
+  margin-bottom:22px;
+}
+
+.page-compact-header{
+  min-height:108px;
+  padding:20px 24px;
+  border-radius:18px;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.page-hero-header .page-kicker,
+.page-compact-header .page-kicker{
+  color:#e5c991;
+  font-size:11px;
+  letter-spacing:.18em;
+  font-weight:800;
+}
+
+.page-hero-header h1,
+.page-compact-header h1{
+  color:#fff;
+  margin:5px 0 6px;
+  line-height:1.08;
+  font-weight:750;
+}
+
+.page-hero-header h1{
+  font-size:34px;
+}
+
+.page-compact-header h1{
+  font-size:28px;
+}
+
+.page-hero-header p,
+.page-compact-header p{
+  color:#dbe6ee;
+  margin:0;
+  line-height:1.45;
+}
+
+.page-hero-header p{
+  font-size:14px;
+}
+
+.page-compact-header p{
+  font-size:13px;
+}
+
+/* Header actions follow the same button system as the Quotation hero */
+.page-hero-header .detail-actions,
+.page-compact-header .detail-actions{
+  align-items:center;
+  justify-content:flex-end;
+}
+
+.page-hero-header .btn:not(.primary):not(.danger),
+.page-compact-header .btn:not(.primary):not(.danger){
+  background:#fff;
+  color:var(--navy2);
+  border-color:#d8e1e8;
+}
+
+.page-hero-header .btn:not(.primary):not(.danger):hover,
+.page-compact-header .btn:not(.primary):not(.danger):hover{
+  background:#f5f8fa;
+  color:var(--navy2);
+  border-color:#c4d0d9;
+}
+
+.page-hero-header .btn.danger,
+.page-compact-header .btn.danger{
+  background:#fff8f7;
+  color:var(--btn-danger-text);
+  border-color:#e9c9c5;
+}
+
+/* Keep compact workspace switches legible on navy */
+.page-compact-header .operation-scope-switch{
+  border-color:rgba(255,255,255,.24);
+  background:rgba(255,255,255,.08);
+}
+.page-compact-header .operation-scope-switch a{
+  color:#dce7ef;
+  text-decoration:none!important;
+}
+.page-compact-header .operation-scope-switch a.active{
+  background:#fff;
+  color:var(--navy2);
+}
+
+/* Hero Review page can host the compact current-status card naturally */
+.page-hero-header .inquiry-head-right{
+  align-items:flex-end;
+}
+.page-hero-header .inquiry-status-card{
+  background:#fff;
+}
+
+/* Quotation hero remains the master visual reference */
+.topbar{
+  min-height:154px;
+  align-items:center;
+}
+.topbar h1{
+  line-height:1.08;
+  font-weight:750;
+}
+.topbar .eyebrow{
+  letter-spacing:.18em;
+}
+.topbar .quote-top-actions{
+  align-items:center;
+}
+
+@media(max-width:760px){
+  .page-hero-header,
+  .page-compact-header{
+    min-height:0;
+    padding:22px;
+    align-items:flex-start;
+  }
+  .page-hero-header h1{
+    font-size:29px;
+  }
+  .page-compact-header h1{
+    font-size:25px;
+  }
+  .page-hero-header .detail-actions,
+  .page-compact-header .detail-actions{
+    width:100%;
+    justify-content:flex-start;
+  }
+}
