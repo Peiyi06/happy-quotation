@@ -251,7 +251,7 @@ async function processOne(token:string,db:any,doc:any,key:string){
   let images:ExtractedImage[]=[];
   if(String(doc.mimeType)==="application/pdf"){
     const prevProcessed=Math.max(0,Number(doc.mediaExtractionSummary?.processed||0));
-    images=await extractPdf(sourceBytes,prevProcessed+1);
+    images=await extractPdf(sourceBytes,prevProcessed+2);
   }else if(String(doc.mimeType)==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
     images=await extractDocx(sourceBytes,contextText);
   }else{
