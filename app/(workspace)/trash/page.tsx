@@ -12,7 +12,7 @@ export default async function TrashPage(){
   const items=Array.isArray(data)?data:[];
 
   return <div>
-    <div className="page-head">
+    <div className="page-head page-compact-header">
       <div><span className="page-kicker">TRASH</span><h1>Deleted Quotations</h1><p>这里显示被隐藏的报价。资料仍保留，可由 Manager 恢复。</p></div>
     </div>
     <section className="panel">
