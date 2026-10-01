@@ -30,6 +30,8 @@ export default function AiLabWorkspace(){
   const [contextTitle,setContextTitle]=useState("");
   const [threadId,setThreadId]=useState("");
   const [threads,setThreads]=useState<WorkThread[]>([]);
+  const [archivedThreads,setArchivedThreads]=useState<WorkThread[]>([]);
+  const [showArchived,setShowArchived]=useState(false);
   const [threadsLoading,setThreadsLoading]=useState(false);
   const [saveState,setSaveState]=useState<"saved"|"saving"|"">("");
   const [imageFiles,setImageFiles]=useState<File[]>([]);
@@ -40,9 +42,14 @@ export default function AiLabWorkspace(){
   async function loadThreads(){
     setThreadsLoading(true);
     try{
-      const res=await fetch("/api/ai-lab/threads",{cache:"no-store"});
-      const data=await res.json().catch(()=>({}));
-      if(res.ok&&data?.ok) setThreads(Array.isArray(data.threads)?data.threads:[]);
+      const [activeRes,archivedRes]=await Promise.all([
+        fetch("/api/ai-lab/threads",{cache:"no-store"}),
+        fetch("/api/ai-lab/threads?archived=true",{cache:"no-store"})
+      ]);
+      const activeData=await activeRes.json().catch(()=>({}));
+      const archivedData=await archivedRes.json().catch(()=>({}));
+      if(activeRes.ok&&activeData?.ok) setThreads(Array.isArray(activeData.threads)?activeData.threads:[]);
+      if(archivedRes.ok&&archivedData?.ok) setArchivedThreads(Array.isArray(archivedData.threads)?archivedData.threads:[]);
     }finally{setThreadsLoading(false);}
   }
 
@@ -80,16 +87,25 @@ export default function AiLabWorkspace(){
     setSaveState("saved");
   }
 
-  async function archiveThread(id:string){
+  async function setThreadArchived(id:string,archived:boolean){
     const res=await fetch("/api/ai-lab/threads",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({id,archived:true})
+      body:JSON.stringify({id,archived})
     });
     const data=await res.json().catch(()=>({}));
     if(!res.ok||!data?.ok) return;
-    if(threadId===id) newThread();
+    if(archived&&threadId===id) newThread();
     await loadThreads();
+  }
+
+  async function clearSavedProposal(key:"action"|"memorySuggestion"){
+    if(!threadId) return;
+    await fetch("/api/ai-lab/threads",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({mode:"clearPayload",id:threadId,key})
+    }).catch(()=>null);
   }
 
   async function send(text?:string){
@@ -150,6 +166,7 @@ export default function AiLabWorkspace(){
         setMessages(prev=>[...prev,{role:"assistant",text:data?.error||"Company Rule 保存失败。"}]);
         return;
       }
+      await clearSavedProposal("memorySuggestion");
       setMessages(prev=>prev.map(m=>m.memorySuggestion===suggestion?{...m,memorySuggestion:undefined}:m).concat({role:"assistant",text:"已保存为 Company Memory。以后遇到相关情况，我会参考这条公司规则。"}));
     }finally{setMemorySaving(false);}
   }
@@ -168,6 +185,7 @@ export default function AiLabWorkspace(){
         setMessages(prev=>[...prev,{role:"assistant",text:"操作没有执行："+(data?.error||"Unknown error")}]);
         return;
       }
+      await clearSavedProposal("action");
       setMessages(prev=>prev.map(m=>m.action===action?{...m,action:undefined}:m).concat({role:"assistant",text:"已确认执行。系统状态已经更新。你可以继续问我「下一步是什么？」"}));
       router.refresh();
     }finally{setActionLoading(false);}
@@ -192,9 +210,7 @@ export default function AiLabWorkspace(){
   }
 
   function clearContext(){
-    setContextInquiryId("");
-    setContextTitle("");
-    setMessages([{role:"assistant",text:"Current Case 已清除。你可以重新告诉我想找哪一笔 Inquiry。"}]);
+    newThread();
   }
 
   return <div className="ai-lab-shell">
@@ -253,9 +269,21 @@ export default function AiLabWorkspace(){
               <span>{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
               <small>{t.last_active_at?new Date(t.last_active_at).toLocaleString(): ""}</small>
             </button>
-            <button type="button" className="ai-thread-archive" title="Archive Thread" onClick={()=>void archiveThread(t.id)}>×</button>
+            <button type="button" className="ai-thread-archive" title="Archive Thread" onClick={()=>void setThreadArchived(t.id,true)}>×</button>
           </div>)}
         </div>:<p className="ai-lab-context-empty">还没有保存的工作对话。第一次发送消息后会自动建立 Thread。</p>}
+        <div className="ai-thread-archived">
+          <button type="button" onClick={()=>setShowArchived(v=>!v)}>Archived ({archivedThreads.length}) {showArchived?"▴":"▾"}</button>
+          {showArchived&&archivedThreads.length>0&&<div className="ai-thread-list archived">
+            {archivedThreads.map(t=><div key={t.id} className="ai-thread-item">
+              <button type="button" className="ai-thread-open" onClick={()=>void openThread(t.id)}>
+                <strong>{t.title||"Untitled Thread"}</strong>
+                <span>{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
+              </button>
+              <button type="button" className="ai-thread-archive" title="Restore Thread" onClick={()=>void setThreadArchived(t.id,false)}>↺</button>
+            </div>)}
+          </div>}
+        </div>
       </div>
 
       <div className="ai-lab-context-head"><span>CURRENT CONTEXT</span><strong>{contextInquiryId?"Current Case":"No case selected"}</strong></div>
