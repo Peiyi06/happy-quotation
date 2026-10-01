@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type LinkItem={label:string;href:string;kind:string};
@@ -36,7 +36,6 @@ export default function AiLabWorkspace(){
   const [imagePreviews,setImagePreviews]=useState<Attachment[]>([]);
   const fileInputRef=useRef<HTMLInputElement|null>(null);
 
-  const history=useMemo(()=>messages.slice(-8).map(m=>({role:m.role,text:m.text})),[messages]);
 
   async function loadThreads(){
     setThreadsLoading(true);
