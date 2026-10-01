@@ -36,6 +36,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
   const [status,setStatus]=useState(initialInquiry?.status||"new");
   const [saving,setSaving]=useState(false);
   const [message,setMessage]=useState("");
+  const [copyMessage,setCopyMessage]=useState("");
 
   useEffect(()=>{
     if(!/^\d{4}-\d{2}-\d{2}$/.test(startDate)||!/^\d{4}-\d{2}-\d{2}$/.test(endDate)) return;
@@ -50,6 +51,64 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
   const compositionTotal=(Number(adultCount)||0)+(Number(seniorCount)||0)+(Number(childCount)||0);
   const compositionHasValues=adultCount!==""||seniorCount!==""||childCount!=="";
   const compositionMismatch=compositionHasValues&&pax!==""&&compositionTotal!==Number(pax);
+
+  async function copyText(text:string,label:string){
+    try{
+      await navigator.clipboard.writeText(text);
+      setCopyMessage(label+" copied ✓");
+      window.setTimeout(()=>setCopyMessage(""),1800);
+    }catch{
+      setCopyMessage("Unable to copy. Please copy manually.");
+      window.setTimeout(()=>setCopyMessage(""),2200);
+    }
+  }
+
+  function basicRequestText(){
+    return [
+      "您好，为了方便我们为您规划合适的旅游行程与报价，请提供以下资料：",
+      "",
+      "1. 出发城市：",
+      "2. 旅游目的地：",
+      "3. 出发日期：",
+      "4. 回程日期：",
+      "5. 总人数：",
+      "6. 成人：",
+      "7. 老人：",
+      "8. 小孩：",
+      "9. 小孩年龄：",
+      "10. 预算范围：",
+      "11. 想去的景点 / 特别要求：",
+      "12. 如有老人行动不便、轮椅需求、婴儿车等，请注明：",
+      "",
+      "收到资料后，我们会根据您的需求进一步规划，谢谢 😊"
+    ].join("\n");
+  }
+
+  function detailedRequestText(){
+    return [
+      "您好，为了方便我们为您安排更完整的旅游行程与报价，请提供以下资料：",
+      "",
+      "1. 出发城市：",
+      "2. 旅游目的地：",
+      "3. 出发日期：",
+      "4. 回程日期：",
+      "5. 总人数：",
+      "6. 成人：",
+      "7. 老人：",
+      "8. 小孩：",
+      "9. 小孩年龄：",
+      "10. 预算范围：",
+      "11. 酒店要求（星级 / 房型 / 地点）：",
+      "12. 餐食要求：",
+      "13. 航班要求 / 是否已有推荐航班：",
+      "14. 想去的景点 / 特别要求：",
+      "15. 老人情况（年龄 / 行动情况）：",
+      "16. 小孩特别需求（儿童餐 / 儿童座椅 / 婴儿车等）：",
+      "17. 其他行动或照顾需求：",
+      "",
+      "收到以上资料后，我们会根据您的需求进一步规划与报价，谢谢 😊"
+    ].join("\n");
+  }
 
   async function save(){
     setSaving(true);setMessage("");
@@ -78,7 +137,12 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
     <section className="panel">
       <div className="panel-head">
         <div><h2>Customer Request｜客户需求</h2><p className="panel-subtext">Sales 只需在 Inquiry 输入一次，后续 Itinerary / Quotation 会复用这些资料。</p></div>
+        <div className="customer-request-copy-actions">
+          <button className="btn" type="button" onClick={()=>void copyText(basicRequestText(),"Basic request")}>Copy Basic Request</button>
+          <button className="btn" type="button" onClick={()=>void copyText(detailedRequestText(),"Detailed request")}>Copy Detailed Request</button>
+        </div>
       </div>
+      {copyMessage&&<div className="copy-feedback">{copyMessage}</div>}
       <div className="itinerary-meta-grid">
         <label className="field"><span>Customer / Company</span><input value={customerName} onChange={e=>setCustomerName(e.target.value)}/></label>
         <label className="field"><span>Contact</span><input value={contact} onChange={e=>setContact(e.target.value)} placeholder="Phone / WhatsApp / Email"/></label>
