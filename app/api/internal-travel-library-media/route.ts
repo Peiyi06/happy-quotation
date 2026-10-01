@@ -86,7 +86,7 @@ async function imageObjectToJpeg(obj:any){
   return {bytes:out.data,width:out.info.width,height:out.info.height};
 }
 
-async function extractPdf(bytes:Buffer){
+async function extractPdf(bytes:Buffer,maxImages=36){
   const pdfjs:any=await import("pdfjs-dist/legacy/build/pdf.mjs");
   const pdf=await pdfjs.getDocument({data:new Uint8Array(bytes),disableWorker:true,useWorkerFetch:false,isEvalSupported:false}).promise;
   const results:ExtractedImage[]=[];
@@ -127,7 +127,7 @@ async function extractPdf(bytes:Buffer){
           width:converted.width,height:converted.height,nearbyText:pageText,
           originalName:`Page ${pageNo} Image ${index}`
         });
-        if(results.length>=36) return results;
+        if(results.length>=maxImages) return results;
       }catch{}
     }
   }
@@ -250,7 +250,8 @@ async function processOne(token:string,db:any,doc:any,key:string){
 
   let images:ExtractedImage[]=[];
   if(String(doc.mimeType)==="application/pdf"){
-    images=await extractPdf(sourceBytes);
+    const prevProcessed=Math.max(0,Number(doc.mediaExtractionSummary?.processed||0));
+    images=await extractPdf(sourceBytes,prevProcessed+1);
   }else if(String(doc.mimeType)==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
     images=await extractDocx(sourceBytes,contextText);
   }else{
@@ -270,7 +271,7 @@ async function processOne(token:string,db:any,doc:any,key:string){
     return summary;
   }
 
-  const chunk=images.filter(x=>x.imageIndex>processed).slice(0,4);
+  const chunk=images.filter(x=>x.imageIndex>processed).slice(0,1);
   if(!chunk.length){
     const summary={
       found:images.length,processed:images.length,matched:previousMatched,
