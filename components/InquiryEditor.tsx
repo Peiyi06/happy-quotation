@@ -34,7 +34,6 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
   const [hotelRequirement,setHotelRequirement]=useState(initialInquiry?.hotel_requirement||"");
   const [mealRequirement,setMealRequirement]=useState(initialInquiry?.meal_requirement||"");
   const [specialRequest,setSpecialRequest]=useState(initialInquiry?.special_request||"");
-  const [status,setStatus]=useState(initialInquiry?.status||"new");
   const [saving,setSaving]=useState(false);
   const [message,setMessage]=useState("");
   const [copyMessage,setCopyMessage]=useState("");
@@ -60,8 +59,8 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
   const editorSnapshot=useMemo(()=>JSON.stringify({
     customerName,contact,destination,departureCity,startDate,endDate,days,nights,pax,budget,tourType,
     adultCount,seniorCount,childCount,seniorNotes,childAges,childNotes,mobilityNotes,
-    flightRequirement,suggestedFlights,hotelRequirement,mealRequirement,specialRequest,status
-  }),[customerName,contact,destination,departureCity,startDate,endDate,days,nights,pax,budget,tourType,adultCount,seniorCount,childCount,seniorNotes,childAges,childNotes,mobilityNotes,flightRequirement,suggestedFlights,hotelRequirement,mealRequirement,specialRequest,status]);
+    flightRequirement,suggestedFlights,hotelRequirement,mealRequirement,specialRequest
+  }),[customerName,contact,destination,departureCity,startDate,endDate,days,nights,pax,budget,tourType,adultCount,seniorCount,childCount,seniorNotes,childAges,childNotes,mobilityNotes,flightRequirement,suggestedFlights,hotelRequirement,mealRequirement,specialRequest]);
 
   useEffect(()=>{
     if(!baselineRef.current){
@@ -219,7 +218,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
         customer_name:customerName,contact,destination,departure_city:departureCity,
         travel_start_date:startDate,travel_end_date:endDate,days_count:days,nights_count:nights,
         pax,budget,tour_type:tourType,flight_requirement:flightRequirement,hotel_requirement:hotelRequirement,
-        meal_requirement:mealRequirement,special_request:specialRequest,status,
+        meal_requirement:mealRequirement,special_request:specialRequest,
         inquiry_data:{...(initialInquiry?.inquiry_data||{}),suggestedFlights,travellerComposition:{
           adultCount:adultCount===""?null:Number(adultCount),
           seniorCount:seniorCount===""?null:Number(seniorCount),
