@@ -149,6 +149,7 @@ export default async function SupplierInquiryFormPage({
           chineseReady={chineseReady}
         />
         <PrintSupplierFormButton
+          inquiryId={id}
           inquiryNo={data.inquiry_no||""}
           destination={String(destination||"")}
           customerName={String(data.customer_name||"")}
