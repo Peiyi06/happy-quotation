@@ -38,7 +38,7 @@ export default async function SupplierInquiryFormPage({params}:{params:Promise<{
   const transport=pick("transportRequirement","")||"";
   const itinerary=pick("itineraryRequirement","")||"";
   const salesFlights=Array.isArray(data?.inquiry_data?.suggestedFlights)?data.inquiry_data.suggestedFlights:[];
-  const finalFlights=Array.isArray(r?.suggestedFlights)?r.suggestedFlights:salesFlights;
+  const finalFlights=r?.overrideSuggestedFlights===true&&Array.isArray(r?.suggestedFlights)?r.suggestedFlights:salesFlights;
 
   const rows=[
     ["Destination｜目的地",destination],
