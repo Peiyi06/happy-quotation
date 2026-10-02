@@ -32,6 +32,8 @@ export default function TravelMediaLibrary(){
   const [mediaProcessing,setMediaProcessing]=useState(false);
   const [mediaReviewBusyId,setMediaReviewBusyId]=useState("");
   const [mediaBackfillMessage,setMediaBackfillMessage]=useState("");
+  const [keywordDrafts,setKeywordDrafts]=useState<Record<string,string>>({});
+  const [keywordBusyId,setKeywordBusyId]=useState("");
   const inputRef=useRef<HTMLInputElement|null>(null);
   const mediaBackfillStartedRef=useRef(false);
   const reviewedMediaIdsRef=useRef<Set<string>>(new Set());
@@ -202,6 +204,36 @@ export default function TravelMediaLibrary(){
       setInspectorResults(results);
       if(!results.length) setInspectorMessage("没有找到相关景点、酒店或已存档照片。");
     }finally{setInspectorLoading(false);}
+  }
+
+  async function updateMatchKeywords(placeId:string,keywords:string[]){
+    if(!placeId) return;
+    const cleaned=Array.from(new Set(keywords.map(x=>String(x||"").trim()).filter(Boolean)));
+    setKeywordBusyId(placeId);setError("");
+    try{
+      const res=await fetch("/api/internal-travel-media-inspector",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({action:"update_keywords",placeId,keywords:cleaned})
+      });
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok||!data?.ok){setError(data?.error||"Unable to update match keywords.");return;}
+      const saved=Array.isArray(data.matchKeywords)?data.matchKeywords:cleaned;
+      setMediaReview(current=>current.map((item:any)=>
+        String(item.suggestedPlaceId||"")===placeId?{...item,matchKeywords:saved}:item
+      ));
+      setInspectorResults(current=>current.map((place:any)=>
+        String(place.placeId||"")===placeId?{...place,matchKeywords:saved}:place
+      ));
+      setKeywordDrafts(current=>({...current,[placeId]:""}));
+    }finally{setKeywordBusyId("");}
+  }
+
+  function addMatchKeyword(placeId:string,currentKeywords:any[]){
+    const draft=String(keywordDrafts[placeId]||"").trim();
+    if(!draft) return;
+    const additions=draft.split(/[,，\n]+/).map(x=>x.trim()).filter(Boolean);
+    void updateMatchKeywords(placeId,[...(Array.isArray(currentKeywords)?currentKeywords:[]),...additions]);
   }
 
   async function mutateInspectorImage(imageId:string,action:"remove"|"delete"){
@@ -387,6 +419,41 @@ export default function TravelMediaLibrary(){
               <div><span>Method</span><strong>{String(item.matchMethod||"").replaceAll("_"," ")||"—"}</strong></div>
               <div><span>Source</span><strong>{item.sourcePage?"Page "+item.sourcePage:"Document"}</strong></div>
             </div>
+            {item.suggestedPlaceId&&<div className="travel-library-keywords">
+              <div className="travel-library-keywords-head">
+                <div>
+                  <strong>Match Keywords｜匹配关键词</strong>
+                  <span>帮助后续 AI 将不同写法匹配到同一个景点 / 酒店。</span>
+                </div>
+              </div>
+              <div className="travel-library-keyword-chips">
+                {(Array.isArray(item.matchKeywords)?item.matchKeywords:[]).map((keyword:string)=><button
+                  type="button"
+                  className="travel-library-keyword-chip"
+                  key={keyword}
+                  title="Remove keyword"
+                  disabled={keywordBusyId===String(item.suggestedPlaceId)}
+                  onClick={()=>void updateMatchKeywords(
+                    String(item.suggestedPlaceId),
+                    (Array.isArray(item.matchKeywords)?item.matchKeywords:[]).filter((x:string)=>x!==keyword)
+                  )}
+                >{keyword}<span>×</span></button>)}
+                {(!Array.isArray(item.matchKeywords)||item.matchKeywords.length===0)&&<em>No custom keywords yet</em>}
+              </div>
+              <div className="travel-library-keyword-input">
+                <input
+                  value={keywordDrafts[String(item.suggestedPlaceId)]||""}
+                  onChange={e=>setKeywordDrafts(current=>({...current,[String(item.suggestedPlaceId)]:e.target.value}))}
+                  onKeyDown={e=>{if(e.key==="Enter"){e.preventDefault();addMatchKeyword(String(item.suggestedPlaceId),item.matchKeywords||[]);}}}
+                  placeholder="例如：京都三得利，三得利酒厂..."
+                />
+                <button className="btn compact" type="button"
+                  disabled={keywordBusyId===String(item.suggestedPlaceId)||!String(keywordDrafts[String(item.suggestedPlaceId)]||"").trim()}
+                  onClick={()=>addMatchKeyword(String(item.suggestedPlaceId),item.matchKeywords||[])}>
+                  {keywordBusyId===String(item.suggestedPlaceId)?"Saving...":"＋ Add Keyword"}
+                </button>
+              </div>
+            </div>}
             <p>{item.reason||"—"}</p>
             {item.nearbyText&&<details>
               <summary>Show page context</summary>
@@ -462,6 +529,42 @@ export default function TravelMediaLibrary(){
             <span>Aliases</span>
             <div>{place.aliases.map((a:string,i:number)=><em key={i}>{a}</em>)}</div>
           </div>}
+
+          <div className="travel-library-keywords">
+            <div className="travel-library-keywords-head">
+              <div>
+                <strong>Match Keywords｜匹配关键词</strong>
+                <span>内部匹配词，不会改变正式景点 / 酒店名称。</span>
+              </div>
+            </div>
+            <div className="travel-library-keyword-chips">
+              {(Array.isArray(place.matchKeywords)?place.matchKeywords:[]).map((keyword:string)=><button
+                type="button"
+                className="travel-library-keyword-chip"
+                key={keyword}
+                title="Remove keyword"
+                disabled={keywordBusyId===String(place.placeId)}
+                onClick={()=>void updateMatchKeywords(
+                  String(place.placeId),
+                  (Array.isArray(place.matchKeywords)?place.matchKeywords:[]).filter((x:string)=>x!==keyword)
+                )}
+              >{keyword}<span>×</span></button>)}
+              {(!Array.isArray(place.matchKeywords)||place.matchKeywords.length===0)&&<em>No custom keywords yet</em>}
+            </div>
+            <div className="travel-library-keyword-input">
+              <input
+                value={keywordDrafts[String(place.placeId)]||""}
+                onChange={e=>setKeywordDrafts(current=>({...current,[String(place.placeId)]:e.target.value}))}
+                onKeyDown={e=>{if(e.key==="Enter"){e.preventDefault();addMatchKeyword(String(place.placeId),place.matchKeywords||[]);}}}
+                placeholder="Add matching keyword..."
+              />
+              <button className="btn compact" type="button"
+                disabled={keywordBusyId===String(place.placeId)||!String(keywordDrafts[String(place.placeId)]||"").trim()}
+                onClick={()=>addMatchKeyword(String(place.placeId),place.matchKeywords||[])}>
+                {keywordBusyId===String(place.placeId)?"Saving...":"＋ Add Keyword"}
+              </button>
+            </div>
+          </div>
 
           {Array.isArray(place.images)&&place.images.length>0
             ? <div className="travel-library-inspector-gallery">
