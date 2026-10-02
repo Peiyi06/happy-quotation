@@ -2,13 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 
 export default function DuplicateQuotationButton({id}:{id:string}){
   const router=useRouter();
   const [busy,setBusy]=useState(false);
+  const {language}=useWorkspaceLanguage();
+  const t=(en:string,zh:string)=>language==="zh"?zh:en;
 
   async function duplicate(){
-    if(!confirm("Duplicate this quotation as a new draft?")) return;
+    if(!confirm(t("Duplicate this quotation as a new draft?","将此报价复制为新的草稿吗？"))) return;
     setBusy(true);
     try{
       const res=await fetch("/api/internal-quotation-duplicate",{
@@ -18,7 +21,7 @@ export default function DuplicateQuotationButton({id}:{id:string}){
       });
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){
-        alert(data?.error||"Unable to duplicate quotation.");
+        alert(data?.error||t("Unable to duplicate quotation.","无法复制报价。"));
         return;
       }
       router.push("/quotations/"+data.id+"/edit");
@@ -29,6 +32,6 @@ export default function DuplicateQuotationButton({id}:{id:string}){
   }
 
   return <button className="btn" type="button" onClick={duplicate} disabled={busy}>
-    {busy?"Duplicating...":"Duplicate Quotation"}
+    {busy?t("Duplicating...","复制中..."):t("Duplicate Quotation","复制报价")}
   </button>;
 }
