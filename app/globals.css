@@ -5202,3 +5202,46 @@ button,
   padding:0 10px;
   font-size:10.5px;
 }
+
+
+/* Quotation workflow — compact hierarchy */
+.quotation-workflow-compact-head{
+  margin-bottom:12px!important;
+}
+.quotation-workflow-compact{
+  align-items:stretch;
+}
+.quotation-workflow-compact .simple-workflow-card{
+  min-height:128px;
+  padding:14px 15px!important;
+  gap:10px!important;
+}
+.quotation-workflow-compact .simple-workflow-card-head{
+  min-height:28px;
+}
+.quotation-workflow-compact .simple-workflow-index{
+  width:28px;
+  height:28px;
+}
+.quotation-workflow-compact .simple-workflow-title{
+  margin-top:1px;
+}
+.quotation-workflow-compact .simple-workflow-title>strong{
+  font-size:15px!important;
+  line-height:1.25!important;
+}
+.quotation-workflow-compact .simple-workflow-actions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  padding-top:1px!important;
+}
+.quotation-workflow-compact .simple-workflow-actions .btn{
+  min-height:32px;
+  padding:6px 10px!important;
+}
+.quotation-workflow-compact .quotation-workflow-waiting{
+  margin-top:auto;
+  font-size:11px;
+  color:#71828d;
+}
