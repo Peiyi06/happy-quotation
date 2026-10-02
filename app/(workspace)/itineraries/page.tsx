@@ -18,7 +18,7 @@ export default async function ItinerariesPage({searchParams}:{searchParams:Promi
     </div>
 
     <form className="filter-bar">
-      <input name="q" defaultValue={sp.q||""} placeholder="Search itinerary / destination / customer"/>
+      <input name="q" defaultValue={sp.q||""} placeholder="Search itinerary, customer or destination"/>
       <select name="status" defaultValue={sp.status||""}><option value="">All Status</option><option value="draft">Draft</option><option value="ready">Ready</option><option value="confirmed">Confirmed</option><option value="archived">Archived</option></select>
       <button className="btn">Filter</button>
     </form>
