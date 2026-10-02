@@ -308,7 +308,7 @@ export default function AiLabWorkspace(){
         <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder={t("Ask about an Inquiry, Quotation or Itinerary…","询问 Inquiry、Quotation 或 Itinerary…")} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();void send();}}}/>
         <button type="button" className="workflow-primary-btn ai-lab-send-primary" disabled={(!input.trim()&&!imageFiles.length)||loading} onClick={()=>void send()}>{loading?t("Thinking...","思考中..."):t("Send","发送")}</button>
       </div>
-      <div className="ai-lab-compose-note">{t("JPG / PNG / WEBP · Up to 4 images · Max 5MB each · Conversations auto-save · Enter to send · AI changes still require confirmation","支持 JPG / PNG / WEBP · 最多 4 张 · 每张 ≤ 5MB · 对话自动保存 · Enter 发送 · AI 修改系统前仍需确认")}</div>
+      <div className="ai-lab-compose-note">{t("Up to 4 images · Enter to send","最多 4 张图片 · Enter 发送")}</div>
     </section>
 
     <aside className="ai-lab-context">
