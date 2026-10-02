@@ -34,6 +34,7 @@ export default function TravelMediaLibrary(){
   const [mediaBackfillMessage,setMediaBackfillMessage]=useState("");
   const inputRef=useRef<HTMLInputElement|null>(null);
   const mediaBackfillStartedRef=useRef(false);
+  const reviewedMediaIdsRef=useRef<Set<string>>(new Set());
 
   async function load(){
     setLoading(true);
@@ -51,7 +52,13 @@ export default function TravelMediaLibrary(){
     try{
       const res=await fetch("/api/internal-travel-library-media",{cache:"no-store"});
       const data=await res.json().catch(()=>({}));
-      if(res.ok&&data?.ok) setMediaReview(Array.isArray(data.candidates)?data.candidates:[]);
+      if(res.ok&&data?.ok){
+        const candidates=Array.isArray(data.candidates)?data.candidates:[];
+        setMediaReview(candidates.filter((item:any)=>
+          String(item?.status||"pending_review")==="pending_review" &&
+          !reviewedMediaIdsRef.current.has(String(item?.id||""))
+        ));
+      }
     }catch{}
   }
 
@@ -134,7 +141,8 @@ export default function TravelMediaLibrary(){
       });
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){setError(data?.error||"Unable to update extracted media.");return;}
-      setMediaReview(current=>current.filter((item:any)=>item.id!==id));
+      reviewedMediaIdsRef.current.add(String(id));
+      setMediaReview(current=>current.filter((item:any)=>String(item.id)!==String(id)));
       await load();
       if(inspectorQuery.trim()) await searchInspector();
       void loadMediaReview();
@@ -357,8 +365,8 @@ export default function TravelMediaLibrary(){
 
       {mediaBackfillMessage&&<div className="travel-library-inspector-message">{mediaBackfillMessage}</div>}
 
-      {mediaReview.length>0?<div className="travel-library-document-media-grid">
-        {mediaReview.map((item:any)=><article className="travel-library-document-media-card" key={item.id}>
+      {mediaReview.filter((item:any)=>String(item?.status||"pending_review")==="pending_review"&&!reviewedMediaIdsRef.current.has(String(item?.id||""))).length>0?<div className="travel-library-document-media-grid">
+        {mediaReview.filter((item:any)=>String(item?.status||"pending_review")==="pending_review"&&!reviewedMediaIdsRef.current.has(String(item?.id||""))).map((item:any)=><article className="travel-library-document-media-card" key={item.id}>
           <div className="travel-library-document-media-image">
             <img src={item.imageUrl} alt={item.suggestedName||item.originalName||"Extracted media"}/>
             <span>{item.sourcePage?"Page "+item.sourcePage:"DOCX"}</span>
