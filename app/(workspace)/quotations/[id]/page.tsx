@@ -168,15 +168,6 @@ export default async function QuotationDetailPage({
       <Link className="btn" href={"/inquiries/"+data.source_inquiry_id+"?returnTo="+encodeURIComponent(currentQuoteHref)}>Open Inquiry</Link>
     </section>}
 
-    <QuotationReviewActions
-      quotationId={id}
-      status={data.status||"draft"}
-      canSubmit={canSubmit}
-      canReview={canReview}
-      reviewNote={data.review_note||""}
-      reviewedAt={data.reviewed_at||""}
-    />
-
     <section className="final-price-grid">
       <div className="quote-result-hero">
         <span>成人价格 · Twin Sharing{hasLeader?" · 含领队":""}</span>
@@ -307,6 +298,17 @@ export default async function QuotationDetailPage({
         <Detail label="Updated" value={data.updated_at?new Date(data.updated_at).toLocaleString("en-MY"):"—"}/>
       </div>
     </section>
+
+    <QuotationReviewActions
+      quotationId={id}
+      status={data.status||"draft"}
+      canSubmit={canSubmit}
+      canReview={canReview}
+      reviewNote={data.review_note||""}
+      reviewedBy={data.reviewed_by_name||""}
+      reviewedAt={data.reviewed_at||""}
+      sourceInquiryId={data.source_inquiry_id||null}
+    />
   </div>;
 }
 
