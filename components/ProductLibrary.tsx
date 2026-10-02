@@ -166,8 +166,8 @@ export default function ProductLibrary({initialProducts,canCreate}:{initialProdu
               <td className="product-name-cell"><strong>{p.name}</strong><small>{p.product_code}</small></td>
               <td>{p.destination||"—"}</td>
               <td>{p.days_count}D{p.nights_count}N</td>
-              <td>{p.selling_price===null||p.selling_price===undefined?"—":\`RM \${Number(p.selling_price).toLocaleString("en-MY",{minimumFractionDigits:0,maximumFractionDigits:2})} / pax\`}</td>
-              <td>{p.pax_basis?\`\${p.pax_basis} pax\`:"—"}</td>
+              <td>{p.selling_price===null||p.selling_price===undefined?"—":"RM "+Number(p.selling_price).toLocaleString("en-MY",{minimumFractionDigits:0,maximumFractionDigits:2})+" / pax"}</td>
+              <td>{p.pax_basis?String(p.pax_basis)+" pax":"—"}</td>
               <td><span className={"product-readiness "+(p.quotation_ready?"ready":"empty")}>{p.quotation_ready?"Ready":"—"}</span></td>
               <td><span className={"product-readiness "+(p.itinerary_ready?"ready":"empty")}>{p.itinerary_ready?"Ready":"—"}</span></td>
               <td><span className={"product-status status-"+p.status}>{statusLabel[p.status]||p.status}</span></td>
