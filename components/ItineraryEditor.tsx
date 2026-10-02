@@ -908,38 +908,53 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
             </div>
 
             {day.attractions.length>0 && <div className="itinerary-attraction-list">
-              {day.attractions.map((attraction,aIndex)=><div className="itinerary-attraction-row" key={attraction.id}>
-                <div className="itinerary-attraction-index">{String(aIndex+1).padStart(2,"0")}</div>
-                <label className="field">
-                  <span>Attraction Name｜景点名称</span>
-                  <input value={attraction.name} onChange={e=>patchAttraction(day.id,attraction.id,{name:e.target.value})} onBlur={e=>void autoMatchAttraction(day.id,attraction.id,e.target.value)} placeholder="仙女山风景区"/>
-                </label>
-                <div className="field itinerary-upload-field">
-                  <span>Upload Images｜上传景点图片</span>
-                  <label className="itinerary-upload-control">
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
-                      multiple
-                      disabled={uploadingAttraction===attraction.id||attraction.images.length>=3}
-                      onChange={e=>{void uploadAttractionImages(day.id,attraction.id,e.target.files);e.currentTarget.value="";}}
-                    />
-                    <b>{uploadingAttraction===attraction.id?"Uploading...":attraction.images.length>=3?"Maximum 3 Images":"+ Attach Images"}</b>
-                    <small>{attraction.images.length}/3 · JPG, PNG, WEBP, HEIC · Max 10MB each</small>
-                  </label>
-                </div>
-                <div className="itinerary-attraction-previews">
-                  {attraction.images.map((image,imageIndex)=><div className="itinerary-attraction-preview" key={image.path||image.url||imageIndex}>
-                    <img src={image.url} alt={attraction.name||image.name||"Attraction"}/>
-                    <button className="icon-action-btn icon-action-remove" type="button" aria-label="Delete image" onClick={()=>void deleteAttractionImage(day.id,attraction.id,imageIndex)}>×</button>
-                  </div>)}
-                </div>
-                <div className="itinerary-attraction-actions">
-                  <button type="button" onClick={()=>moveAttraction(day.id,aIndex,-1)} disabled={aIndex===0}>↑</button>
-                  <button type="button" onClick={()=>moveAttraction(day.id,aIndex,1)} disabled={aIndex===day.attractions.length-1}>↓</button>
-                  <button type="button" className="danger-link" onClick={()=>removeAttraction(day.id,attraction.id)}>Delete</button>
-                </div>
-              </div>)}
+              {day.attractions.map((attraction,aIndex)=>{
+                const expanded=expandedAttractions.has(attraction.id);
+                return <div className={"itinerary-attraction-row "+(expanded?"expanded":"collapsed")} key={attraction.id}>
+                  <div className="itinerary-attraction-summary">
+                    <div className="itinerary-attraction-index">{String(aIndex+1).padStart(2,"0")}</div>
+                    {attraction.images[0]
+                      ? <img className="itinerary-attraction-summary-image" src={attraction.images[0].url} alt={attraction.name||"Attraction"}/>
+                      : <div className="itinerary-attraction-summary-image placeholder" aria-hidden="true">⌁</div>}
+                    <div className="itinerary-attraction-summary-copy">
+                      <strong>{attraction.name||"New Attraction"}</strong>
+                      <span>{attraction.images.length} photo{attraction.images.length===1?"":"s"}</span>
+                    </div>
+                    <div className="itinerary-attraction-summary-actions">
+                      <button type="button" className="disclosure-action" onClick={()=>toggleAttractionEditor(attraction.id)}>{expanded?"Done":"Edit"}</button>
+                      <button type="button" aria-label="Move attraction up" title="Move up" onClick={()=>moveAttraction(day.id,aIndex,-1)} disabled={aIndex===0}>↑</button>
+                      <button type="button" aria-label="Move attraction down" title="Move down" onClick={()=>moveAttraction(day.id,aIndex,1)} disabled={aIndex===day.attractions.length-1}>↓</button>
+                      <button type="button" className="danger-link" onClick={()=>removeAttraction(day.id,attraction.id)}>Delete</button>
+                    </div>
+                  </div>
+                  {expanded&&<div className="itinerary-attraction-editor">
+                    <label className="field">
+                      <span>Attraction Name｜景点名称</span>
+                      <input value={attraction.name} onChange={e=>patchAttraction(day.id,attraction.id,{name:e.target.value})} onBlur={e=>void autoMatchAttraction(day.id,attraction.id,e.target.value)} placeholder="仙女山风景区"/>
+                    </label>
+                    <div className="field itinerary-upload-field">
+                      <span>Upload Images｜上传景点图片</span>
+                      <label className="itinerary-upload-control">
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+                          multiple
+                          disabled={uploadingAttraction===attraction.id||attraction.images.length>=3}
+                          onChange={e=>{void uploadAttractionImages(day.id,attraction.id,e.target.files);e.currentTarget.value="";}}
+                        />
+                        <b>{uploadingAttraction===attraction.id?"Uploading...":attraction.images.length>=3?"Maximum 3 Images":"+ Attach Images"}</b>
+                        <small>{attraction.images.length}/3 · JPG, PNG, WEBP, HEIC · Max 10MB each</small>
+                      </label>
+                    </div>
+                    {attraction.images.length>0&&<div className="itinerary-attraction-previews">
+                      {attraction.images.map((image,imageIndex)=><div className="itinerary-attraction-preview" key={image.path||image.url||imageIndex}>
+                        <img src={image.url} alt={attraction.name||image.name||"Attraction"}/>
+                        <button className="icon-action-btn icon-action-remove" type="button" aria-label="Delete image" onClick={()=>void deleteAttractionImage(day.id,attraction.id,imageIndex)}>×</button>
+                      </div>)}
+                    </div>}
+                  </div>}
+                </div>;
+              })}
             </div>}
 
             {!day.attractions.length && <div className="itinerary-attraction-empty">当天尚未加入景点。</div>}
@@ -956,56 +971,72 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       </div>
 
       {hotels.length>0 ? <div className="itinerary-hotel-list">
-        {hotels.map((hotel,index)=><article className="itinerary-hotel-card" key={hotel.id}>
-          <div className="itinerary-hotel-head">
-            <div><span>HOTEL {String(index+1).padStart(2,"0")}</span><strong>{hotel.name||"New Hotel"}</strong></div>
-            <div className="itinerary-day-actions">
-              <button type="button" onClick={()=>moveHotel(index,-1)} disabled={index===0}>↑</button>
-              <button type="button" onClick={()=>moveHotel(index,1)} disabled={index===hotels.length-1}>↓</button>
-              <button type="button" onClick={()=>duplicateHotel(index)}>Duplicate</button>
-              <button type="button" className="danger-link" onClick={()=>void removeHotel(index)}>Delete</button>
-            </div>
-          </div>
-
-          <div className="itinerary-hotel-grid">
-            <label className="field"><span>Hotel Name｜酒店名称</span><input value={hotel.name} onChange={e=>patchHotel(hotel.id,{name:e.target.value})} onBlur={e=>void autoMatchHotel(hotel.id,e.target.value)} placeholder="重庆伊美大酒店"/></label>
-            <label className="field"><span>City / Area｜城市 / 地区</span><input value={hotel.cityArea} onChange={e=>patchHotel(hotel.id,{cityArea:e.target.value})} placeholder="Chongqing / Guanyinqiao"/></label>
-            <label className="field"><span>Star Rating｜星级</span><input value={hotel.starRating} onChange={e=>patchHotel(hotel.id,{starRating:e.target.value})} placeholder="4 Star / 4 星级"/></label>
-            <label className="field"><span>Stay Nights｜入住晚数</span><input value={hotel.stayNights} onChange={e=>patchHotel(hotel.id,{stayNights:e.target.value})} placeholder="Night 1 / 3 / 4 / 5"/></label>
-            <label className="field"><span>Room Size｜房间面积</span><div className="unit-input-wrap"><input type="number" min="0" step="0.1" value={hotel.roomSize} onChange={e=>patchHotel(hotel.id,{roomSize:e.target.value===""?"":Math.max(0,Number(e.target.value))})} placeholder="28"/><b>m²</b></div></label>
-            <label className="field"><span>Opening Year｜开业年份</span><input inputMode="numeric" value={hotel.openingYear} onChange={e=>patchHotel(hotel.id,{openingYear:e.target.value.replace(/\D/g,"").slice(0,4)})} placeholder="2013"/></label>
-            <label className="field"><span>Renovation Year｜装修年份</span><input inputMode="numeric" value={hotel.renovationYear} onChange={e=>patchHotel(hotel.id,{renovationYear:e.target.value.replace(/\D/g,"").slice(0,4)})} placeholder="2024 / 留空"/></label>
-          </div>
-
-          <label className="field">
-            <span>Nearby / Location Notes｜周边 / 地理位置说明</span>
-            <textarea value={hotel.nearbyNotes} onChange={e=>patchHotel(hotel.id,{nearbyNotes:e.target.value})} placeholder="例如：距离观音桥约 2km，步行约 15 分钟。"/>
-          </label>
-
-          <div className="itinerary-hotel-images">
-            <div className="field itinerary-upload-field">
-              <span>Hotel Images｜酒店图片</span>
-              <label className="itinerary-upload-control">
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
-                  multiple
-                  disabled={uploadingHotel===hotel.id||hotel.images.length>=5}
-                  onChange={e=>{void uploadHotelImages(hotel.id,e.target.files);e.currentTarget.value="";}}
-                />
-                <b>{uploadingHotel===hotel.id?"Uploading...":hotel.images.length>=5?"Maximum 5 Images":"+ Attach Hotel Images"}</b>
-                <small>{hotel.images.length}/5 · JPG, PNG, WEBP, HEIC · Max 10MB each</small>
-              </label>
+        {hotels.map((hotel,index)=>{
+          const expanded=expandedHotels.has(hotel.id);
+          const summaryMeta=[hotel.cityArea,hotel.starRating,hotel.stayNights,hotel.images.length?hotel.images.length+" Photos":""].filter(Boolean).join(" · ");
+          return <article className={"itinerary-hotel-card "+(expanded?"expanded":"collapsed")} key={hotel.id}>
+            <div className="itinerary-hotel-head">
+              <div className="itinerary-hotel-summary-copy">
+                <span>HOTEL {String(index+1).padStart(2,"0")}</span>
+                <strong>{hotel.name||"New Hotel"}</strong>
+                <small>{summaryMeta||"Hotel details not completed"}</small>
+              </div>
+              <div className="itinerary-day-actions">
+                <button type="button" className="disclosure-action" onClick={()=>toggleHotelEditor(hotel.id)}>{expanded?"Done":"Edit"}</button>
+                <button type="button" aria-label="Move hotel up" title="Move up" onClick={()=>moveHotel(index,-1)} disabled={index===0}>↑</button>
+                <button type="button" aria-label="Move hotel down" title="Move down" onClick={()=>moveHotel(index,1)} disabled={index===hotels.length-1}>↓</button>
+                <button type="button" onClick={()=>duplicateHotel(index)}>Duplicate</button>
+                <button type="button" className="danger-link" onClick={()=>void removeHotel(index)}>Delete</button>
+              </div>
             </div>
 
-            {hotel.images.length>0&&<div className="itinerary-hotel-image-grid">
-              {hotel.images.map((image,imageIndex)=><div className="itinerary-hotel-image" key={image.path||image.url||imageIndex}>
-                <img src={image.url} alt={hotel.name||image.name||"Hotel"}/>
-                <button className="icon-action-btn icon-action-remove" type="button" aria-label="Delete image" onClick={()=>void deleteHotelImage(hotel.id,imageIndex)}>×</button>
-              </div>)}
+            {!expanded&&hotel.images.length>0&&<div className="itinerary-hotel-summary-images">
+              {hotel.images.slice(0,3).map((image,imageIndex)=><img key={image.path||image.url||imageIndex} src={image.url} alt={hotel.name||"Hotel"}/>)}
+              {hotel.images.length>3&&<span>+{hotel.images.length-3}</span>}
             </div>}
-          </div>
-        </article>)}
+
+            {expanded&&<div className="itinerary-hotel-editor">
+              <div className="itinerary-hotel-grid">
+                <label className="field"><span>Hotel Name｜酒店名称</span><input value={hotel.name} onChange={e=>patchHotel(hotel.id,{name:e.target.value})} onBlur={e=>void autoMatchHotel(hotel.id,e.target.value)} placeholder="重庆伊美大酒店"/></label>
+                <label className="field"><span>City / Area｜城市 / 地区</span><input value={hotel.cityArea} onChange={e=>patchHotel(hotel.id,{cityArea:e.target.value})} placeholder="Chongqing / Guanyinqiao"/></label>
+                <label className="field"><span>Star Rating｜星级</span><input value={hotel.starRating} onChange={e=>patchHotel(hotel.id,{starRating:e.target.value})} placeholder="4 Star / 4 星级"/></label>
+                <label className="field"><span>Stay Nights｜入住晚数</span><input value={hotel.stayNights} onChange={e=>patchHotel(hotel.id,{stayNights:e.target.value})} placeholder="Night 1 / 3 / 4 / 5"/></label>
+                <label className="field"><span>Room Size｜房间面积</span><div className="unit-input-wrap"><input type="number" min="0" step="0.1" value={hotel.roomSize} onChange={e=>patchHotel(hotel.id,{roomSize:e.target.value===""?"":Math.max(0,Number(e.target.value))})} placeholder="28"/><b>m²</b></div></label>
+                <label className="field"><span>Opening Year｜开业年份</span><input inputMode="numeric" value={hotel.openingYear} onChange={e=>patchHotel(hotel.id,{openingYear:e.target.value.replace(/\D/g,"").slice(0,4)})} placeholder="2013"/></label>
+                <label className="field"><span>Renovation Year｜装修年份</span><input inputMode="numeric" value={hotel.renovationYear} onChange={e=>patchHotel(hotel.id,{renovationYear:e.target.value.replace(/\D/g,"").slice(0,4)})} placeholder="2024 / 留空"/></label>
+              </div>
+
+              <label className="field">
+                <span>Nearby / Location Notes｜周边 / 地理位置说明</span>
+                <textarea value={hotel.nearbyNotes} onChange={e=>patchHotel(hotel.id,{nearbyNotes:e.target.value})} placeholder="例如：距离观音桥约 2km，步行约 15 分钟。"/>
+              </label>
+
+              <div className="itinerary-hotel-images">
+                <div className="field itinerary-upload-field">
+                  <span>Hotel Images｜酒店图片</span>
+                  <label className="itinerary-upload-control">
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+                      multiple
+                      disabled={uploadingHotel===hotel.id||hotel.images.length>=5}
+                      onChange={e=>{void uploadHotelImages(hotel.id,e.target.files);e.currentTarget.value="";}}
+                    />
+                    <b>{uploadingHotel===hotel.id?"Uploading...":hotel.images.length>=5?"Maximum 5 Images":"+ Attach Hotel Images"}</b>
+                    <small>{hotel.images.length}/5 · JPG, PNG, WEBP, HEIC · Max 10MB each</small>
+                  </label>
+                </div>
+
+                {hotel.images.length>0&&<div className="itinerary-hotel-image-grid">
+                  {hotel.images.map((image,imageIndex)=><div className="itinerary-hotel-image" key={image.path||image.url||imageIndex}>
+                    <img src={image.url} alt={hotel.name||image.name||"Hotel"}/>
+                    <button className="icon-action-btn icon-action-remove" type="button" aria-label="Delete image" onClick={()=>void deleteHotelImage(hotel.id,imageIndex)}>×</button>
+                  </div>)}
+                </div>}
+              </div>
+            </div>}
+          </article>;
+        })}
       </div> : <div className="itinerary-attraction-empty">尚未加入酒店资料。需要时点击 “+ Add Hotel”。</div>}
     </section>
 
