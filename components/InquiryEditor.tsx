@@ -364,13 +364,15 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
           <div className="simple-workflow-title">
             <strong>{t("Operation","运营")}</strong>
           </div>
+          <div className="simple-workflow-actions">
+            <button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>
+              {saving?t("Creating...","建立中..."):t("Create Inquiry & Send to Operation","建立 Inquiry 并交给 Operation")}
+            </button>
+          </div>
         </div>
       </div>
       <div className="new-inquiry-workflow-actions">
         <button className="btn" type="button" onClick={()=>requestNavigate(backHref)}>{t("← Back","← 返回")}</button>
-        <button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>
-          {saving?t("Creating...","建立中..."):t("Create Inquiry & Send to Operation","建立 Inquiry 并交给 Operation")}
-        </button>
       </div>
       {message&&<div className="save-message">{message}</div>}
     </section>}
