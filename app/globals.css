@@ -10024,3 +10024,174 @@ td,
     justify-content:center;
   }
 }
+
+
+/* =========================================================
+   AI ITINERARY — FINAL GENERATOR POLISH
+   Compact Apple/iOS-style upload + single-column instructions.
+   ========================================================= */
+.ai-foundation-section-generator{
+  padding-bottom:22px!important;
+}
+.ai-generator-form{
+  display:grid;
+  gap:16px;
+  max-width:980px;
+}
+.ai-upload-field{
+  display:grid;
+  gap:7px;
+}
+.ai-generator-label{
+  color:var(--color-text-secondary);
+  font-size:11px;
+  font-weight:650;
+}
+.ai-upload-control{
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  width:100%;
+  min-height:64px;
+  padding:10px 12px;
+  border:1px solid var(--color-border-default);
+  border-radius:var(--radius-md);
+  background:var(--color-bg-surface);
+  color:var(--color-text-primary);
+  text-align:left;
+  cursor:pointer;
+  box-shadow:none;
+}
+.ai-upload-control:hover{
+  background:var(--color-bg-soft);
+  border-color:var(--color-border-strong);
+}
+.ai-upload-control:focus-visible{
+  outline:2px solid var(--color-focus-ring);
+  outline-offset:2px;
+}
+.ai-upload-icon{
+  display:grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  background:var(--color-brand-primary-soft);
+  color:var(--color-brand-primary);
+  font-size:18px;
+  font-weight:700;
+}
+.ai-upload-copy{
+  min-width:0;
+  display:grid;
+  gap:2px;
+}
+.ai-upload-copy strong{
+  color:var(--color-text-primary);
+  font-size:12.5px;
+  font-weight:650;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ai-upload-copy small{
+  color:var(--color-text-tertiary);
+  font-size:10.5px;
+  line-height:1.35;
+}
+.ai-upload-action{
+  min-height:32px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 10px;
+  border:1px solid var(--color-border-default);
+  border-radius:var(--radius-sm);
+  background:var(--color-bg-surface);
+  color:var(--color-info-text);
+  font-size:11px;
+  font-weight:650;
+  white-space:nowrap;
+}
+.ai-upload-native-input{
+  display:none!important;
+}
+.ai-upload-remove{
+  justify-self:start;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:var(--color-danger-text);
+  font-size:10.5px;
+  font-weight:600;
+  cursor:pointer;
+}
+.ai-upload-remove:hover{
+  text-decoration:underline;
+}
+
+.ai-adjustment-field{
+  display:grid;
+  gap:7px;
+}
+.ai-adjustment-field textarea{
+  min-height:132px;
+  resize:vertical;
+}
+.ai-adjustment-field>span{
+  color:var(--color-text-secondary);
+  font-size:11px;
+  font-weight:650;
+}
+.ai-adjustment-field>span small{
+  color:var(--color-text-tertiary);
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.ai-adjustment-helper{
+  color:var(--color-text-tertiary);
+  font-size:10.5px;
+  line-height:1.45;
+}
+
+.ai-generator-form .ai-import-primary-action{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:0!important;
+  padding-top:2px;
+}
+.ai-generator-form .ai-import-primary-action .btn{
+  min-height:40px;
+  padding:0 14px;
+}
+
+/* Neutralize the old two-column generator pieces if legacy CSS still targets them. */
+.ai-foundation-section-generator .ai-import-upload-box,
+.ai-foundation-section-generator .ai-pre-adjustment,
+.ai-foundation-section-generator .ai-adjustment-hint,
+.ai-foundation-section-generator .ai-import-file-note{
+  display:none!important;
+}
+
+@media(max-width:760px){
+  .ai-generator-form{
+    max-width:none;
+  }
+  .ai-upload-control{
+    grid-template-columns:34px minmax(0,1fr);
+  }
+  .ai-upload-action{
+    grid-column:1/-1;
+    width:100%;
+  }
+  .ai-generator-form .ai-import-primary-action{
+    justify-content:stretch;
+  }
+  .ai-generator-form .ai-import-primary-action .btn{
+    width:100%;
+    justify-content:center;
+  }
+}
