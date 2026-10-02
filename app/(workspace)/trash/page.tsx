@@ -13,8 +13,8 @@ export default async function TrashPage(){
   const items=Array.isArray(data)?data:[];
 
   return <div>
-    <div className="page-head page-compact-header">
-      <div><span className="page-kicker"><UiText en="TRASH" zh="回收站" /></span><h1><UiText en="Deleted Quotations" zh="已删除报价" /></h1><p><UiText en="Hidden quotations are kept here and can be restored by a Manager." zh="这里显示被隐藏的报价。资料仍保留，可由 Manager 恢复。" /></p></div>
+    <div className="page-head workspace-flat-head">
+      <div><h1><UiText en="Deleted Quotations" zh="已删除报价" /></h1><p><UiText en="Hidden quotations are kept here and can be restored by a Manager." zh="这里显示被隐藏的报价。资料仍保留，可由 Manager 恢复。" /></p></div>
     </div>
     <section className="panel">
       <div className="data-table-wrap"><table className="data-table"><thead><tr><th><UiText en="Quote No" zh="报价编号" /></th><th><UiText en="Tour" zh="行程" /></th><th><UiText en="Sales" zh="销售" /></th><th><UiText en="Customer" zh="客户" /></th><th><UiText en="Pax" zh="人数" /></th><th><UiText en="Selling" zh="售价" /></th><th><UiText en="Deleted By" zh="删除者" /></th><th><UiText en="Deleted" zh="删除时间" /></th><th><UiText en="Action" zh="操作" /></th></tr></thead><tbody>
