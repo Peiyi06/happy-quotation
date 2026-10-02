@@ -5413,3 +5413,125 @@ button,
     opacity:.35;
   }
 }
+
+
+/* =========================================================
+   SYSTEM TYPOGRAPHY MASTER
+   Four levels only: Page / Section / Body / Meta.
+   ========================================================= */
+:root{
+  --type-page:34px;
+  --type-section:20px;
+  --type-body:14px;
+  --type-meta:12px;
+}
+
+.workspace-main .page-head h1,
+.workspace-main .topbar h1{
+  font-size:var(--type-page)!important;
+  line-height:1.08;
+  font-weight:780;
+  letter-spacing:-.02em;
+}
+
+.workspace-main .page-kicker,
+.workspace-main .eyebrow{
+  font-size:var(--type-body)!important;
+  line-height:1.2;
+  font-weight:800;
+  letter-spacing:.16em;
+}
+
+.workspace-main .panel-head h2,
+.workspace-main .section h2,
+.workspace-main .flight-info-head h3,
+.workspace-main .quote-flight-card h3,
+.workspace-main .inquiry-version-card h3,
+.quotation-type-head h2{
+  font-size:var(--type-section)!important;
+  line-height:1.2;
+  font-weight:760;
+}
+
+.workspace-main .field span,
+.workspace-main .detail-item strong,
+.workspace-main .simple-workflow-title>strong,
+.workspace-main .simple-workflow-title h3,
+.workspace-main .inquiry-version-field strong,
+.workspace-main .inquiry-version-field p,
+.workspace-main .btn,
+.workspace-main td,
+.workspace-main .panel,
+.sidebar-nav a,
+.sidebar-module-btn{
+  font-size:var(--type-body);
+}
+
+.workspace-main .status,
+.workspace-main .simple-workflow-state,
+.workspace-main .detail-item span,
+.workspace-main .dash-card span,
+.workspace-main .summary-card span,
+.workspace-main .inquiry-version-kicker,
+.workspace-main .inquiry-version-badge,
+.workspace-main small,
+.workspace-main footer{
+  font-size:var(--type-meta)!important;
+}
+
+/* Module title descriptions are intentionally removed system-wide. */
+.panel-head .panel-subtext{
+  display:none!important;
+}
+
+/* Settings */
+.settings-page-head{
+  margin-bottom:18px;
+}
+.settings-panel{
+  max-width:760px;
+}
+.language-choice-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.language-choice{
+  min-height:92px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  padding:18px;
+  text-align:left;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:5px;
+}
+.language-choice strong{
+  font-size:var(--section-title,20px);
+  color:var(--navy2);
+}
+.language-choice span{
+  font-size:var(--type-meta);
+  color:var(--muted);
+}
+.language-choice.active{
+  border-color:#91b3ca;
+  background:#f4f9fc;
+  box-shadow:0 8px 22px rgba(38,82,112,.08);
+}
+.settings-language-note{
+  margin-top:14px;
+  padding:14px 16px;
+  border-radius:12px;
+  background:#f6f8fa;
+  color:var(--muted);
+  font-size:var(--type-body);
+  line-height:1.55;
+}
+@media(max-width:700px){
+  :root{--type-page:30px;--type-section:19px;--type-body:14px;--type-meta:12px}
+  .language-choice-grid{grid-template-columns:1fr}
+}
