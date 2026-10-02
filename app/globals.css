@@ -4307,3 +4307,236 @@ button,
     text-align:left;
   }
 }
+
+
+/* Reusable iOS Form Card / Grouped Form Pattern */
+.ios-form-card{
+  border-radius:20px!important;
+  border:1px solid #e2e8ec!important;
+  background:#fff!important;
+  box-shadow:0 8px 30px rgba(31,53,67,.035)!important;
+}
+.ios-form-card .panel-head h2,
+.ios-form-subsection .operation-subsection-head h3{
+  font-weight:700;
+  letter-spacing:-.01em;
+  color:var(--navy2);
+}
+.ios-form-card .field,
+.ios-form-subsection .field{
+  display:grid;
+  gap:7px;
+}
+.ios-form-card .field>span,
+.ios-form-subsection .field>span{
+  font-size:13px;
+  line-height:1.25;
+  font-weight:650;
+  color:#405562;
+  letter-spacing:-.005em;
+}
+.ios-form-card .field input,
+.ios-form-card .field select,
+.ios-form-subsection .field input,
+.ios-form-subsection .field select{
+  min-height:48px;
+  border:1px solid transparent!important;
+  border-radius:14px!important;
+  background:#f2f5f7!important;
+  padding:0 14px!important;
+  color:#203846!important;
+  font-size:14px!important;
+  font-weight:600;
+  outline:none;
+  box-shadow:none!important;
+  transition:background .14s ease,border-color .14s ease,box-shadow .14s ease;
+}
+.ios-form-card .field textarea,
+.ios-form-subsection .field textarea{
+  min-height:104px;
+  resize:vertical;
+  border:1px solid transparent!important;
+  border-radius:16px!important;
+  background:#f2f5f7!important;
+  padding:13px 14px!important;
+  color:#243d4a!important;
+  font-size:14px!important;
+  line-height:1.55!important;
+  outline:none;
+  box-shadow:none!important;
+  transition:background .14s ease,border-color .14s ease,box-shadow .14s ease;
+}
+.ios-form-card .field input:hover,
+.ios-form-card .field select:hover,
+.ios-form-card .field textarea:hover,
+.ios-form-subsection .field input:hover,
+.ios-form-subsection .field select:hover,
+.ios-form-subsection .field textarea:hover{
+  background:#edf2f5!important;
+}
+.ios-form-card .field input:focus,
+.ios-form-card .field select:focus,
+.ios-form-card .field textarea:focus,
+.ios-form-subsection .field input:focus,
+.ios-form-subsection .field select:focus,
+.ios-form-subsection .field textarea:focus{
+  background:#fff!important;
+  border-color:#8db8d7!important;
+  box-shadow:0 0 0 3px rgba(69,136,186,.12)!important;
+}
+.ios-form-card .field textarea::placeholder,
+.ios-form-card .field input::placeholder,
+.ios-form-subsection .field textarea::placeholder,
+.ios-form-subsection .field input::placeholder{
+  color:#97a7b0!important;
+  opacity:1;
+}
+
+/* Edit Inquiry — Suggested Flights */
+.inquiry-flights-ios .inquiry-flight-list{
+  gap:14px;
+}
+.inquiry-flights-ios .inquiry-flight-card{
+  border:1px solid #e2e8ec;
+  border-radius:17px;
+  background:#f8fafb;
+  padding:15px;
+}
+.inquiry-flights-ios .inquiry-flight-card-head{
+  margin-bottom:13px;
+}
+.inquiry-flights-ios .inquiry-flight-card-head strong{
+  font-size:14px;
+  font-weight:700;
+}
+.inquiry-flights-ios .itinerary-meta-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.inquiry-flights-ios .inquiry-flight-remarks{
+  grid-column:span 3;
+}
+
+/* Edit Inquiry — Travel Requirements */
+.inquiry-requirements-ios .inquiry-requirement-grid{
+  gap:14px;
+}
+.inquiry-requirements-ios .field textarea{
+  min-height:112px;
+}
+
+/* Operation Review — grouped form treatment */
+.operation-plan-panel .ios-form-subsection{
+  margin-top:16px!important;
+  padding:16px!important;
+  border:1px solid #e2e8ec!important;
+  border-radius:18px!important;
+  background:#f9fbfc!important;
+}
+.operation-plan-panel>.ios-form-subsection:first-of-type{
+  margin-top:0!important;
+}
+.operation-trip-ios .itinerary-meta-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.operation-requirements-ios .operation-review-fields{
+  margin-top:0;
+  gap:14px;
+}
+.operation-requirements-ios .field textarea{
+  min-height:108px;
+}
+.operation-notes-ios{
+  background:#f5f7f8!important;
+}
+.operation-notes-ios .operation-subsection-head p{
+  color:#7b8991;
+}
+.operation-notes-ios .field textarea{
+  min-height:96px;
+}
+
+/* Supplier Inquiry — iOS switch + grouped form */
+.operation-supplier-ios .operation-supplier-grid{
+  align-items:center;
+}
+.operation-supplier-ios .supplier-remarks{
+  margin-top:16px;
+}
+.operation-supplier-ios .supplier-remarks textarea{
+  min-height:96px;
+}
+.operation-supplier-ios .operation-budget-toggle{
+  min-height:48px;
+  border:0!important;
+  border-radius:14px!important;
+  background:#f2f5f7!important;
+  padding:0 14px!important;
+  display:flex!important;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  color:#405562;
+  font-size:13px;
+  font-weight:650;
+}
+.operation-supplier-ios .operation-budget-toggle input{
+  appearance:none;
+  -webkit-appearance:none;
+  width:42px!important;
+  height:25px!important;
+  flex:0 0 42px;
+  margin:0;
+  border:0!important;
+  border-radius:999px!important;
+  background:#c8d0d5!important;
+  position:relative;
+  cursor:pointer;
+  box-shadow:none!important;
+  transition:background .16s ease;
+}
+.operation-supplier-ios .operation-budget-toggle input:before{
+  content:"";
+  position:absolute;
+  top:2px;
+  left:2px;
+  width:21px;
+  height:21px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 1px 3px rgba(26,43,54,.20);
+  transition:transform .16s ease;
+}
+.operation-supplier-ios .operation-budget-toggle input:checked{
+  background:#6c9f7b!important;
+}
+.operation-supplier-ios .operation-budget-toggle input:checked:before{
+  transform:translateX(17px);
+}
+.operation-supplier-ios .operation-budget-toggle input:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+@media(max-width:1100px){
+  .inquiry-flights-ios .itinerary-meta-grid,
+  .operation-trip-ios .itinerary-meta-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .inquiry-flights-ios .inquiry-flight-remarks{
+    grid-column:1/-1;
+  }
+}
+@media(max-width:700px){
+  .ios-form-card{
+    border-radius:18px!important;
+  }
+  .inquiry-flights-ios .itinerary-meta-grid,
+  .operation-trip-ios .itinerary-meta-grid{
+    grid-template-columns:1fr;
+  }
+  .inquiry-flights-ios .inquiry-flight-remarks{
+    grid-column:auto;
+  }
+}
