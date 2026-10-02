@@ -1,9 +1,12 @@
 "use client";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 
 export default function TourGroupCreator(){
   const router=useRouter();
+  const {language}=useWorkspaceLanguage();
+  const t=(en:string,zh:string)=>language==="zh"?zh:en;
   const [open,setOpen]=useState(false);
   const [saving,setSaving]=useState(false);
   const [message,setMessage]=useState("");
@@ -15,19 +18,19 @@ export default function TourGroupCreator(){
       name:fd.get("name"),destination:fd.get("destination"),business_type:fd.get("business_type"),description:fd.get("description")
     })});
     const data=await res.json();
-    if(!res.ok){setMessage(data.error||"Unable to save");setSaving(false);return;}
+    if(!res.ok){setMessage(data.error||t("Unable to save","无法保存"));setSaving(false);return;}
     setSaving(false); setOpen(false); router.refresh();
   }
 
   return <div className="panel compact-panel">
-    {!open?<button className="btn primary" onClick={()=>setOpen(true)}>＋ Add Tour Group</button>:
+    {!open?<button className="btn primary" onClick={()=>setOpen(true)}>{t("＋ Add Tour Group","＋ 新增旅游团")}</button>:
     <form className="inline-form" onSubmit={submit}>
-      <input name="name" required placeholder="例如：江西 8D7N" />
-      <input name="destination" placeholder="China / Japan / Thailand" />
-      <input name="business_type" placeholder="Private / Corporate / Family" />
-      <input name="description" placeholder="备注" />
-      <button className="btn primary" disabled={saving}>{saving?"Saving...":"Save"}</button>
-      <button className="btn" type="button" onClick={()=>setOpen(false)}>Cancel</button>
+      <input name="name" required placeholder={t("e.g. Jiangxi 8D7N","例如：江西 8D7N")} />
+      <input name="destination" placeholder={t("China / Japan / Thailand","中国 / 日本 / 泰国")} />
+      <input name="business_type" placeholder={t("Private / Corporate / Family","私人团 / 企业团 / 家庭团")} />
+      <input name="description" placeholder={t("Notes","备注")} />
+      <button className="btn primary" disabled={saving}>{saving?t("Saving...","保存中..."):t("Save","保存")}</button>
+      <button className="btn" type="button" onClick={()=>setOpen(false)}>{t("Cancel","取消")}</button>
     </form>}
     {message&&<div className="auth-message">{message}</div>}
   </div>;
