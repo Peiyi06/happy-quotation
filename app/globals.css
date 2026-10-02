@@ -12507,3 +12507,46 @@ td,
   color:var(--color-brand-primary);
   text-decoration:underline;
 }
+
+
+/* =========================================================
+   AI LAB — EMPTY STATE DOCK
+   Keep the center quiet; move quick actions next to the composer.
+   ========================================================= */
+@media(min-width:821px){
+  .ai-lab-main:has(> .ai-lab-chat:empty){
+    grid-template-rows:auto minmax(72px,1fr) auto auto auto auto!important;
+  }
+
+  .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-starter-wrap{
+    grid-row:3!important;
+    width:min(calc(100% - 24px),820px)!important;
+    margin:0 auto 8px!important;
+  }
+
+  .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-starters{
+    gap:6px!important;
+  }
+
+  .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-starters button{
+    min-height:38px!important;
+    padding:0 12px!important;
+    border-radius:11px!important;
+    background:rgba(255,255,255,.68)!important;
+    font-size:10.75px!important;
+  }
+
+  .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-upload-previews{
+    grid-row:4!important;
+    width:min(calc(100% - 24px),820px)!important;
+    margin:0 auto 6px!important;
+  }
+
+  .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-compose{
+    grid-row:5!important;
+  }
+
+  .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-compose-note{
+    grid-row:6!important;
+  }
+}
