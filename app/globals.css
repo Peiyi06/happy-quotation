@@ -6847,3 +6847,343 @@ td,
     font-size:32px!important;
   }
 }
+
+
+/* =========================================================
+   OPERATION FOUNDATION AUDIT v1
+   Workspace queue + review editor alignment with Foundation v1.
+   ========================================================= */
+
+/* Workspace header */
+.operation-workspace-template .operation-workspace-head{
+  align-items:flex-start;
+  margin-bottom:var(--space-lg);
+  padding:4px 0 20px;
+  border-bottom:1px solid var(--color-border-default);
+}
+.operation-workspace-template .operation-workspace-title-block{
+  display:grid;
+  gap:6px;
+}
+.operation-workspace-template .operation-workspace-title-block h1{
+  margin:0!important;
+  font-size:34px!important;
+  line-height:1.08!important;
+  letter-spacing:-.025em;
+  color:var(--color-brand-primary)!important;
+}
+.operation-workspace-template .operation-workspace-title-block p{
+  margin:0;
+  color:var(--color-text-secondary);
+  font-size:14px;
+}
+
+/* Scope switch behaves like a soft segmented selection, not a set of primary buttons */
+.operation-workspace-template .operation-scope-switch{
+  padding:3px;
+  gap:3px;
+  border:1px solid var(--color-border-default);
+  border-radius:10px;
+  background:var(--color-neutral-status-soft);
+}
+.operation-workspace-template .operation-scope-switch a{
+  min-height:34px;
+  padding:0 11px;
+  border:0;
+  border-radius:7px;
+  background:transparent;
+  color:var(--color-text-secondary);
+  box-shadow:none;
+}
+.operation-workspace-template .operation-scope-switch a:hover{
+  background:rgba(255,255,255,.72);
+  color:var(--color-text-primary);
+}
+.operation-workspace-template .operation-scope-switch a.active{
+  background:var(--color-bg-surface);
+  color:var(--color-brand-primary);
+  border:0;
+  box-shadow:var(--shadow-soft);
+}
+
+/* Toolbar */
+.operation-workspace-template .operation-toolbar{
+  margin:0 0 var(--space-lg);
+  padding:12px 14px;
+  border:1px solid var(--color-border-default);
+  border-radius:var(--radius-md);
+  background:var(--color-bg-surface);
+  box-shadow:none;
+}
+.operation-workspace-template .operation-toolbar strong{
+  color:var(--color-text-primary);
+}
+.operation-workspace-template .operation-toolbar span{
+  color:var(--color-text-secondary);
+}
+
+/* Queue surfaces */
+.operation-workspace-template .operation-queue-grid{
+  gap:var(--space-md);
+}
+.operation-workspace-template .operation-queue-panel{
+  position:relative;
+  overflow:hidden;
+  margin:0;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:var(--radius-md)!important;
+  background:var(--color-bg-surface)!important;
+  box-shadow:none!important;
+}
+.operation-workspace-template .operation-queue-panel:before{
+  height:3px;
+  background:var(--color-border-default);
+}
+.operation-workspace-template .operation-queue-new:before{
+  background:var(--color-border-strong);
+}
+.operation-workspace-template .operation-queue-in_progress:before,
+.operation-workspace-template .operation-queue-under_review:before{
+  background:var(--color-info-text);
+}
+.operation-workspace-template .operation-queue-revision_required:before{
+  background:var(--color-warning-text);
+}
+.operation-workspace-template .operation-queue-ready:before{
+  background:var(--color-success-text);
+}
+.operation-workspace-template .operation-queue-title{
+  margin-bottom:12px;
+}
+.operation-workspace-template .operation-count{
+  border:0!important;
+  background:var(--color-neutral-status-soft)!important;
+  color:var(--color-neutral-status-text)!important;
+}
+.operation-workspace-template .operation-queue-in_progress .operation-count,
+.operation-workspace-template .operation-queue-under_review .operation-count{
+  background:var(--color-info-soft)!important;
+  color:var(--color-info-text)!important;
+}
+.operation-workspace-template .operation-queue-revision_required .operation-count{
+  background:var(--color-warning-soft)!important;
+  color:var(--color-warning-text)!important;
+}
+.operation-workspace-template .operation-queue-ready .operation-count{
+  background:var(--color-success-soft)!important;
+  color:var(--color-success-text)!important;
+}
+
+/* Case rows: calm, static, readable */
+.operation-workspace-template .operation-case-list{
+  gap:8px;
+}
+.operation-workspace-template .operation-case-row{
+  padding:13px 14px;
+  border:1px solid var(--color-border-default);
+  border-radius:var(--radius-md);
+  background:var(--color-bg-soft);
+  box-shadow:none;
+  transform:none;
+}
+.operation-workspace-template .operation-case-row:hover{
+  background:var(--color-bg-surface);
+  border-color:var(--color-border-strong);
+  box-shadow:none;
+  transform:none;
+}
+.operation-workspace-template .operation-case-field>span,
+.operation-workspace-template .operation-case-state small{
+  color:var(--color-text-tertiary);
+}
+.operation-workspace-template .operation-case-field>strong{
+  color:var(--color-text-primary);
+}
+.operation-workspace-template .operation-case-no>strong{
+  color:var(--color-brand-primary);
+}
+.operation-workspace-template .operation-case-state small.attention{
+  color:var(--color-warning-text);
+}
+.operation-workspace-template .operation-empty{
+  border-color:var(--color-border-default);
+  background:var(--color-bg-soft);
+  color:var(--color-text-tertiary);
+}
+.operation-workspace-template .operation-queue-footer{
+  border-top-color:var(--color-border-default);
+}
+.operation-workspace-template .operation-queue-footer a{
+  color:var(--color-info-text);
+}
+
+/* Unassigned is attention, not danger */
+.operation-workspace-template .operation-unassigned{
+  border-color:#E7D6B5!important;
+  box-shadow:none!important;
+}
+.operation-workspace-template .operation-unassigned .operation-count{
+  background:var(--color-warning-soft)!important;
+  color:var(--color-warning-text)!important;
+}
+
+/* Operation Review follows the shared detail-page header language */
+.operation-review-template .operation-review-head{
+  align-items:flex-start;
+  margin-bottom:var(--space-lg);
+  padding:4px 0 22px;
+  border-bottom:1px solid var(--color-border-default);
+}
+.operation-review-template .operation-review-title-block{
+  display:grid;
+  gap:7px;
+}
+.operation-review-template .operation-review-title-block h1{
+  margin:0!important;
+  font-size:36px!important;
+  line-height:1.08!important;
+  font-weight:700!important;
+  letter-spacing:-.028em!important;
+  color:var(--color-brand-primary)!important;
+}
+.operation-review-template .operation-review-meta-line{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  color:var(--color-text-secondary);
+  font-size:14px;
+}
+.operation-review-template .operation-review-status{
+  text-transform:none;
+}
+.operation-review-template .operation-review-back{
+  background:transparent!important;
+  border-color:transparent!important;
+  color:var(--color-text-secondary)!important;
+  padding-left:0;
+}
+
+/* Review page panels */
+.operation-review-template .operation-review-simplified{
+  gap:var(--space-lg);
+}
+.operation-review-template .panel{
+  background:var(--color-bg-surface);
+  border-color:var(--color-border-default);
+  box-shadow:none!important;
+}
+.operation-review-template .operation-customer-brief,
+.operation-review-template .operation-plan-panel,
+.operation-review-template .operation-supplier-panel{
+  border-radius:var(--radius-md);
+}
+.operation-review-template .operation-brief-grid>div,
+.operation-review-template .operation-brief-requirements>div,
+.operation-review-template .operation-flight-summary,
+.operation-review-template .operation-budget-toggle,
+.operation-review-template .operation-traveller-line span{
+  background:var(--color-bg-soft);
+  border-color:var(--color-border-default);
+  border-radius:var(--radius-sm);
+}
+.operation-review-template .operation-brief-grid span,
+.operation-review-template .operation-brief-requirements span,
+.operation-review-template .operation-flight-summary em{
+  color:var(--color-text-tertiary);
+}
+.operation-review-template .operation-brief-grid strong,
+.operation-review-template .operation-subsection-head h3,
+.operation-review-template .operation-traveller-line b,
+.operation-review-template .operation-flight-summary b{
+  color:var(--color-text-primary);
+}
+.operation-review-template .operation-brief-requirements p,
+.operation-review-template .operation-flight-summary span,
+.operation-review-template .operation-subsection-head p{
+  color:var(--color-text-secondary);
+}
+.operation-review-template .operation-full-sales,
+.operation-review-template .operation-subsection{
+  border-top-color:var(--color-border-default);
+}
+
+/* Inputs and textareas inherit Foundation interaction language */
+.operation-review-template input,
+.operation-review-template select,
+.operation-review-template textarea{
+  background:var(--color-bg-surface)!important;
+  border-color:var(--color-border-default)!important;
+  color:var(--color-text-primary)!important;
+  border-radius:var(--radius-sm)!important;
+  box-shadow:none!important;
+}
+.operation-review-template input:hover,
+.operation-review-template select:hover,
+.operation-review-template textarea:hover{
+  border-color:var(--color-border-strong)!important;
+}
+.operation-review-template input:focus,
+.operation-review-template select:focus,
+.operation-review-template textarea:focus{
+  outline:0!important;
+  border-color:var(--color-info-text)!important;
+  box-shadow:0 0 0 3px var(--color-focus-soft)!important;
+}
+.operation-review-template input:disabled,
+.operation-review-template select:disabled,
+.operation-review-template textarea:disabled{
+  background:var(--color-bg-soft)!important;
+  color:var(--color-text-secondary)!important;
+  opacity:1;
+}
+
+/* Secondary controls stay secondary; save remains the page primary */
+.operation-review-template .operation-secondary-btn,
+.operation-review-template .operation-subsection-actions .btn,
+.operation-review-template .operation-flight-editor-actions .btn:not(.primary),
+.operation-review-template .operation-supplier-panel .btn{
+  background:var(--color-bg-surface)!important;
+  border-color:var(--color-border-default)!important;
+  color:var(--color-text-primary)!important;
+  box-shadow:none!important;
+}
+.operation-review-template .operation-secondary-btn:hover,
+.operation-review-template .operation-subsection-actions .btn:hover,
+.operation-review-template .operation-flight-editor-actions .btn:not(.primary):hover,
+.operation-review-template .operation-supplier-panel .btn:hover{
+  background:var(--color-bg-page)!important;
+  border-color:var(--color-border-strong)!important;
+}
+.operation-review-template .operation-review-actions{
+  padding-top:4px;
+}
+.operation-review-template .operation-review-actions .btn.primary{
+  background:var(--color-brand-primary)!important;
+  border-color:var(--color-brand-primary)!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+
+/* Supplier controls */
+.operation-review-template .supplier-budget-toggle{
+  background:var(--color-bg-soft);
+  border-color:var(--color-border-default);
+}
+.operation-review-template .operation-inline-empty{
+  background:var(--color-bg-soft);
+  border-color:var(--color-border-default);
+  color:var(--color-text-tertiary);
+}
+
+@media(max-width:760px){
+  .operation-workspace-template .operation-workspace-head{
+    gap:16px;
+  }
+  .operation-workspace-template .operation-scope-switch{
+    width:100%;
+  }
+  .operation-review-template .operation-review-title-block h1{
+    font-size:32px!important;
+  }
+}
