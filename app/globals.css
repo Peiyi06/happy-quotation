@@ -5313,3 +5313,21 @@ button,
     opacity:.35;
   }
 }
+
+
+/* Quotation Detail workflow shares the latest compact energy-flow system */
+.quotation-workflow-panel .quotation-workflow-compact .simple-workflow-arrow::after{
+  opacity:1;
+  animation:quotation-energy-flow 2.35s cubic-bezier(.42,0,.32,1) infinite!important;
+}
+.quotation-workflow-panel .quotation-workflow-compact .simple-workflow-arrow + .simple-workflow-card + .simple-workflow-arrow::after{
+  animation-delay:.72s!important;
+}
+@media(max-width:1050px){
+  .quotation-workflow-panel .quotation-workflow-compact .simple-workflow-arrow::after{
+    animation:quotation-energy-flow-vertical 2.35s cubic-bezier(.42,0,.32,1) infinite!important;
+  }
+  .quotation-workflow-panel .quotation-workflow-compact .simple-workflow-arrow + .simple-workflow-card + .simple-workflow-arrow::after{
+    animation-delay:.72s!important;
+  }
+}
