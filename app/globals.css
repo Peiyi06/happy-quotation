@@ -14419,3 +14419,91 @@ td,
     padding:0 12px;
   }
 }
+
+
+/* =========================================================
+   INQUIRIES — FINAL QUEUE GEOMETRY PASS
+   Remove desktop overflow and tighten toolbar / primary action.
+   ========================================================= */
+
+.inquiry-list-header .btn.primary{
+  min-height:36px!important;
+  height:36px!important;
+  padding:0 12px!important;
+  border-radius:9px!important;
+  font-size:10.5px!important;
+}
+
+.inquiry-list-toolbar{
+  min-height:42px!important;
+  padding:0 14px!important;
+}
+
+.inquiry-list-toolbar strong{
+  font-size:11px!important;
+}
+
+.inquiry-list-toolbar span{
+  font-size:9px!important;
+}
+
+.inquiry-list-table-wrap{
+  width:100%!important;
+  overflow-x:hidden!important;
+}
+
+.inquiry-list-table{
+  width:100%!important;
+  min-width:0!important;
+  table-layout:fixed!important;
+}
+
+.inquiry-list-table th,
+.inquiry-list-table td{
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+
+/* Deliberate information hierarchy by column width */
+.inquiry-list-table th:nth-child(1),
+.inquiry-list-table td:nth-child(1){width:17%!important;}
+
+.inquiry-list-table th:nth-child(2),
+.inquiry-list-table td:nth-child(2){width:16%!important;}
+
+.inquiry-list-table th:nth-child(3),
+.inquiry-list-table td:nth-child(3){width:11%!important;}
+
+.inquiry-list-table th:nth-child(4),
+.inquiry-list-table td:nth-child(4){width:23%!important;}
+
+.inquiry-list-table th:nth-child(5),
+.inquiry-list-table td:nth-child(5){width:6%!important;text-align:center!important;}
+
+.inquiry-list-table th:nth-child(6),
+.inquiry-list-table td:nth-child(6){width:7%!important;}
+
+.inquiry-list-table th:nth-child(7),
+.inquiry-list-table td:nth-child(7){width:8%!important;}
+
+.inquiry-list-table th:nth-child(8),
+.inquiry-list-table td:nth-child(8){width:12%!important;}
+
+.inquiry-list-table td:first-child a{
+  font-size:11.5px!important;
+  font-weight:680!important;
+  color:#2f628b!important;
+}
+
+@media(max-width:980px){
+  .inquiry-list-table-wrap{
+    overflow-x:auto!important;
+  }
+
+  .inquiry-list-table{
+    min-width:900px!important;
+    table-layout:auto!important;
+  }
+}
