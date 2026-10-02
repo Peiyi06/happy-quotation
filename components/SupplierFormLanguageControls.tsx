@@ -7,25 +7,29 @@ export default function SupplierFormLanguageControls({
   inquiryId,
   currentLanguage,
   englishReady,
-  chineseReady
+  chineseReady,
+  returnTo="/inquiries"
 }:{
   inquiryId:string;
   currentLanguage:"original"|"en"|"zh";
   englishReady:boolean;
   chineseReady:boolean;
+  returnTo?:string;
 }){
   const router=useRouter();
   const [loading,setLoading]=useState<""|"en"|"zh">("");
   const [error,setError]=useState("");
+  const returnParam=encodeURIComponent(returnTo);
+  const basePath="/inquiries/"+inquiryId+"/supplier-form";
 
   function go(language:"original"|"en"|"zh"){
     if(language==="original"){
-      router.push("/inquiries/"+inquiryId+"/supplier-form");
+      router.push(basePath+"?returnTo="+returnParam);
       return;
     }
     const ready=language==="en"?englishReady:chineseReady;
     if(ready){
-      router.push("/inquiries/"+inquiryId+"/supplier-form?lang="+language);
+      router.push(basePath+"?lang="+language+"&returnTo="+returnParam);
       return;
     }
     void translate(language);
@@ -41,7 +45,7 @@ export default function SupplierFormLanguageControls({
       });
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){setError(data?.error||"Unable to translate.");return;}
-      router.push("/inquiries/"+inquiryId+"/supplier-form?lang="+language);
+      router.push(basePath+"?lang="+language+"&returnTo="+returnParam);
       router.refresh();
     }finally{setLoading("");}
   }
