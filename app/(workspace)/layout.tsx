@@ -4,12 +4,14 @@ import { internalUser } from "@/lib/internalSession";
 import WorkspaceUserMenu from "@/components/WorkspaceUserMenu";
 import NewQuotationMenu from "@/components/NewQuotationMenu";
 import WorkspaceModuleMenu from "@/components/WorkspaceModuleMenu";
+import {UiText, WorkspaceLanguageProvider} from "@/components/WorkspaceLanguage";
 
 export default async function WorkspaceLayout({ children }: { children: React.ReactNode }) {
   const user = await internalUser();
   if (!user) redirect("/login");
 
   return (
+    <WorkspaceLanguageProvider>
     <div className="workspace">
       <aside className="sidebar">
         <div className="sidebar-brand">
@@ -17,41 +19,39 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
           <div><strong>Happy Express</strong><span>Quotation Workspace</span></div>
         </div>
         <nav className="sidebar-nav">
-          <Link href="/dashboard">Dashboard</Link>
+          <Link href="/dashboard"><UiText en="Dashboard" zh="仪表板" /></Link>
           {user.username.toLowerCase() === "long" && <Link href="/ai-lab">AI Workspace Beta</Link>}
-          <Link href="/inquiries">Inquiry</Link>
-          {user.role === "manager" && <Link href="/operation">Operation</Link>}
-          <Link href="/products">Product</Link>
+          <Link href="/inquiries"><UiText en="Inquiry" zh="询价" /></Link>
+          {user.role === "manager" && <Link href="/operation"><UiText en="Operation" zh="运营" /></Link>}
+          <Link href="/products"><UiText en="Product" zh="产品" /></Link>
           <NewQuotationMenu compact />
-          <Link href="/tour-groups">Tour Group</Link>
+          <Link href="/tour-groups"><UiText en="Tour Group" zh="旅游团" /></Link>
 
           <WorkspaceModuleMenu
-            label="Itinerary"
-            kicker="ITINERARY"
-            title="Itinerary Workspace"
-            description="选择行程模板、AI 行程工具或媒体资料库。"
+            label={{en:"Itinerary",zh:"行程"}}
+            kicker={{en:"ITINERARY",zh:"行程"}}
+            title={{en:"Itinerary Workspace",zh:"行程工作区"}}
             items={[
-              {title:"Itinerary Templates",description:"View, create and manage itinerary templates.",href:"/itineraries",action:"Open Templates →"},
+              {title:{en:"Itinerary Templates",zh:"行程模板"},href:"/itineraries",action:{en:"Open →",zh:"打开 →"}},
               ...(["jess","long"].includes(user.username.toLowerCase())
-                ? [{title:"AI Itinerary",description:"AI-assisted itinerary import and structuring.",href:"/ai-import",action:"Open AI Itinerary →"}]
+                ? [{title:{en:"AI Itinerary",zh:"AI 行程"},href:"/ai-import",action:{en:"Open →",zh:"打开 →"}}]
                 : []),
-              {title:"Travel Media Library",description:"Manage destination, hotel and attraction media records.",href:"/travel-library",action:"Open Media Library →"},
+              {title:{en:"Travel Media Library",zh:"旅游媒体库"},href:"/travel-library",action:{en:"Open →",zh:"打开 →"}},
             ]}
           />
 
           <WorkspaceModuleMenu
-            label="Settings"
-            kicker="SETTINGS"
-            title="Workspace Settings"
-            description="管理系统工具与管理功能。"
+            label={{en:"Settings",zh:"设置"}}
+            kicker={{en:"SETTINGS",zh:"设置"}}
+            title={{en:"Workspace Settings",zh:"系统设置"}}
             items={[
               ...(user.role === "manager"
                 ? [
-                    {title:"Staff Accounts",description:"Manage staff access, roles and account status.",href:"/team",action:"Open Staff Accounts →"},
-                    {title:"Trash",description:"Review and manage deleted workspace records.",href:"/trash",action:"Open Trash →"},
+                    {title:{en:"Staff Accounts",zh:"员工账号"},href:"/team",action:{en:"Open →",zh:"打开 →"}},
+                    {title:{en:"Trash",zh:"回收站"},href:"/trash",action:{en:"Open →",zh:"打开 →"}},
                   ]
                 : []),
-              {title:"Coming Soon",description:"More workspace preferences and administration tools.",coming:true},
+              {title:{en:"Language & Display",zh:"语言与显示"},href:"/settings",action:{en:"Open →",zh:"打开 →"}},
             ]}
           />
         </nav>
@@ -59,5 +59,6 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
       </aside>
       <main className="workspace-main">{children}</main>
     </div>
+    </WorkspaceLanguageProvider>
   );
 }
