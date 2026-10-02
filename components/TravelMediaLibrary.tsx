@@ -34,6 +34,7 @@ export default function TravelMediaLibrary(){
   const [mediaBackfillMessage,setMediaBackfillMessage]=useState("");
   const [keywordDrafts,setKeywordDrafts]=useState<Record<string,string>>({});
   const [keywordBusyId,setKeywordBusyId]=useState("");
+  const [showLibrarySources,setShowLibrarySources]=useState(false);
   const inputRef=useRef<HTMLInputElement|null>(null);
   const mediaBackfillStartedRef=useRef(false);
   const reviewedMediaIdsRef=useRef<Set<string>>(new Set());
@@ -654,12 +655,23 @@ export default function TravelMediaLibrary(){
       </div>}
     </section>
 
-    <section className="panel">
+    <section className="panel travel-library-sources-toggle">
       <div className="panel-head">
-        <div><h2>Library Sources</h2><p className="panel-subtext">原始 Word / PDF / 图片会保存在私有 Supabase Storage；价格只作为历史参考。</p></div>
+        <div>
+          <h2>Library Sources</h2>
+          <p className="panel-subtext">原始 Word / PDF / 图片会保存在私有 Supabase Storage；价格只作为历史参考。</p>
+        </div>
+        <button
+          className="btn"
+          type="button"
+          aria-expanded={showLibrarySources}
+          onClick={()=>setShowLibrarySources(current=>!current)}
+        >
+          {showLibrarySources?"Hide Sources":"Show Sources"}
+        </button>
       </div>
 
-      <div className="travel-library-source-list">
+      {showLibrarySources&&<div className="travel-library-source-list">
         {docs.map(doc=><article className="travel-library-source-card" key={doc.id}>
           <div className="travel-library-source-main">
             <div>
@@ -688,6 +700,6 @@ export default function TravelMediaLibrary(){
           </div>
         </article>)}
         {!loading&&!docs.length&&<div className="travel-library-inspector-empty">还没有资料。上传第一份行程、报价、酒店资料或图片。</div>}
-      </div>
+      </div>}
     </section>
   </div>;}
