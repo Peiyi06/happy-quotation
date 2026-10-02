@@ -95,7 +95,7 @@ export default function ProductLibrary({initialProducts,canCreate}:{initialProdu
         <p>{t("Operation can create and maintain reusable travel products in advance.","Operation 预先建立与维护可重复销售的常规旅游产品。")}</p>
       </div>
       {canCreate&&<div className="detail-actions">
-        <button className="btn primary product-create-btn" type="button" onClick={()=>setCreating(v=>!v)}>
+        <button className={"btn product-create-btn "+(creating?"":"primary")} type="button" onClick={()=>setCreating(v=>!v)}>
           {creating?t("Close","关闭"):t("＋ Create Product","＋ 建立产品")}
         </button>
       </div>}
