@@ -686,7 +686,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <div className="top-actions quote-top-actions no-print">
         {workspaceMode && isDirty && <span className="unsaved-badge">Unsaved changes</span>}
         {workspaceMode && <button className="btn primary" onClick={()=>void saveQuotation()} disabled={saving}>{saving?"Saving...":"Save Quotation"}</button>}
-        {workspaceMode&&quotationId&&(displayStatus==="draft"||displayStatus==="revision_required")&&<button className="btn ghost" onClick={()=>void submitForReview()} disabled={saving}>{saving?"Working...":displayStatus==="revision_required"?"Resubmit for Review":"Submit for Review"}</button>}
         {workspaceMode&&displayStatus==="under_review"&&<span className="quote-editor-review-state">Under Review</span>}
         {workspaceMode&&displayStatus==="ready"&&<span className="quote-editor-review-state ready">Ready</span>}
         {workspaceMode&&status==="ready"&&commercialDirty&&<span className="quote-commercial-change-note">Commercial changes pending save</span>}
@@ -914,6 +913,82 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         {matrix.map(([label,a,b])=><tr key={label}><td className="label-cell">{label}</td><td>{money(a.cost)}</td><td>{money(a.profit)}</td><td className="sale">{money(a.suggested)}</td>{hasLeader&&<><td>{money(b.cost)}</td><td>{money(b.profit)}</td><td className="sale">{money(b.suggested)}</td></>}</tr>)}
       </tbody></table></div>
     </Section>
+
+    {workspaceMode&&<section className="panel inquiry-workflow-panel quotation-editor-workflow">
+      <div className="panel-head inquiry-workflow-panel-head">
+        <div>
+          <span className="page-kicker">WORKFLOW</span>
+          <h2>工作流程</h2>
+          <p className="panel-subtext">Quotation → Management Review → Itinerary。完成本页后，从这里推进下一步。</p>
+        </div>
+      </div>
+
+      <div className="simple-workflow-grid">
+        <div className={"simple-workflow-card "+((displayStatus==="under_review"||displayStatus==="ready")?"complete":"current")}>
+          <div className="simple-workflow-card-head">
+            <span className="simple-workflow-index">01</span>
+            <span className="simple-workflow-state">{(displayStatus==="under_review"||displayStatus==="ready")?"✓ Completed":"Current"}</span>
+          </div>
+          <div className="simple-workflow-title">
+            <h3>Quotation</h3>
+            <strong>{displayStatus==="revision_required"?"Revision Required":displayStatus==="under_review"||displayStatus==="ready"?"Quotation Submitted":"Prepare Final Quotation"}</strong>
+          </div>
+          <p>{displayStatus==="revision_required"
+            ?"根据 Management 意见完成修改，再重新提交审核。"
+            :displayStatus==="under_review"||displayStatus==="ready"
+              ?"Quotation 已保存并提交，当前编辑阶段已完成。"
+              :"确认成本、利润与最终售价，然后提交 Management Review。"}</p>
+          {(displayStatus==="draft"||displayStatus==="revision_required")&&<div className="simple-workflow-actions">
+            <button className="btn" type="button" disabled={saving||!isDirty} onClick={()=>void saveQuotation()}>
+              {saving?"Saving...":isDirty?"Save Quotation":"Saved ✓"}
+            </button>
+            {quotationId&&<button className="btn primary" type="button" disabled={saving} onClick={()=>void submitForReview()}>
+              {saving?"Working...":displayStatus==="revision_required"?"Resubmit for Review":"Submit for Review"}
+            </button>}
+          </div>}
+        </div>
+
+        <div className="simple-workflow-arrow" aria-hidden="true">→</div>
+
+        <div className={"simple-workflow-card "+(displayStatus==="ready"?"complete":displayStatus==="under_review"?"current":"upcoming")}>
+          <div className="simple-workflow-card-head">
+            <span className="simple-workflow-index">02</span>
+            <span className="simple-workflow-state">{displayStatus==="ready"?"✓ Completed":displayStatus==="under_review"?"Current":"Upcoming"}</span>
+          </div>
+          <div className="simple-workflow-title">
+            <h3>Management Review</h3>
+            <strong>{displayStatus==="ready"?"Quotation Approved":displayStatus==="under_review"?"Waiting Management Approval":"Available After Submission"}</strong>
+          </div>
+          <p>{displayStatus==="ready"
+            ?"Management 已批准报价。"
+            :displayStatus==="under_review"
+              ?"等待 Management 审核；如需修改会退回 Revision Required。"
+              :"提交 Quotation 后进入 Management Review。"}</p>
+          {displayStatus==="under_review"&&<div className="quotation-workflow-waiting">Waiting Management Review</div>}
+        </div>
+
+        <div className="simple-workflow-arrow" aria-hidden="true">→</div>
+
+        <div className={"simple-workflow-card "+(displayStatus==="ready"?"current":"upcoming")}>
+          <div className="simple-workflow-card-head">
+            <span className="simple-workflow-index">03</span>
+            <span className="simple-workflow-state">{displayStatus==="ready"?"Current":"Upcoming"}</span>
+          </div>
+          <div className="simple-workflow-title">
+            <h3>Itinerary</h3>
+            <strong>{displayStatus==="ready"?"Ready to Create":"Available After Approval"}</strong>
+          </div>
+          <p>{displayStatus==="ready"
+            ?"Final Quotation 已批准，可以继续制作给客户的 Itinerary。"
+            :"Management 批准 Quotation 后才进入 Itinerary 阶段。"}</p>
+          {displayStatus==="ready"&&resolvedSourceInquiryId&&<div className="simple-workflow-actions">
+            <button className="btn primary" type="button" onClick={()=>router.push("/itineraries/new?sourceInquiry="+resolvedSourceInquiryId)}>Create Itinerary</button>
+            <button className="btn" type="button" onClick={()=>router.push("/ai-import?sourceInquiry="+resolvedSourceInquiryId)}>AI Itinerary</button>
+          </div>}
+          {displayStatus==="ready"&&!resolvedSourceInquiryId&&<div className="quotation-workflow-waiting">Quotation Ready · No linked Inquiry</div>}
+        </div>
+      </div>
+    </section>}
 
     {pendingHref && <div className="unsaved-overlay no-print" role="dialog" aria-modal="true">
       <div className="unsaved-dialog">
