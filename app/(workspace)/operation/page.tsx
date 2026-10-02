@@ -108,7 +108,7 @@ export default async function OperationWorkspacePage({
         <div><h2>Unassigned</h2><p className="panel-subtext">这些 active Inquiry 尚未分配 Operation，需要先安排负责人。</p></div>
         <span className="operation-count">{unassigned.length}</span>
       </div>
-      <OperationRows items={unassigned}/>
+      <OperationRows items={unassigned} returnTo={queueHref(expandedQueue)}/>
     </section>}
 
     <div className="operation-queue-grid">
@@ -120,7 +120,7 @@ export default async function OperationWorkspacePage({
             <div><h2>{queue.title}</h2><p className="panel-subtext">{queue.subtitle}</p></div>
             <span className="operation-count">{queue.items.length}</span>
           </div>
-          {queue.items.length?<OperationRows items={visibleItems}/>:<div className="operation-empty">No cases in this queue.</div>}
+          {queue.items.length?<OperationRows items={visibleItems} returnTo={queueHref(expandedQueue)}/>:<div className="operation-empty">No cases in this queue.</div>}
           {queue.items.length>3&&<div className="operation-queue-footer">
             <Link href={expanded?queueHref():queueHref(queue.key)}>
               {expanded?"Show Less":"View All "+queue.items.length+" Cases →"}
@@ -132,9 +132,9 @@ export default async function OperationWorkspacePage({
   </div>;
 }
 
-function OperationRows({items}:{items:any[]}){
+function OperationRows({items,returnTo}:{items:any[];returnTo:string}){
   return <div className="operation-case-list">
-    {items.map((item:any)=><Link className="operation-case-row" href={"/inquiries/"+item.id} key={item.id}>
+    {items.map((item:any)=><Link className="operation-case-row" href={"/inquiries/"+item.id+"?returnTo="+encodeURIComponent(returnTo)} key={item.id}>
       <div className="operation-case-field operation-case-no">
         <span>Inquiry No.</span>
         <strong>{item.inquiry_no}</strong>
