@@ -134,7 +134,14 @@ export default function TravelMediaLibrary(){
   },[]);
 
   async function reviewMediaCandidate(id:string,action:"confirm"|"ignore"){
+    const candidate=mediaReview.find((item:any)=>String(item.id)===String(id))||null;
     setMediaReviewBusyId(id);setError("");
+
+    // Optimistically remove reviewed media immediately. Background refreshes are
+    // prevented from re-inserting it while the server mutation is in flight.
+    reviewedMediaIdsRef.current.add(String(id));
+    setMediaReview(current=>current.filter((item:any)=>String(item.id)!==String(id)));
+
     try{
       const res=await fetch("/api/internal-travel-library-media",{
         method:"POST",
@@ -142,12 +149,31 @@ export default function TravelMediaLibrary(){
         body:JSON.stringify({action,id})
       });
       const data=await res.json().catch(()=>({}));
-      if(!res.ok||!data?.ok){setError(data?.error||"Unable to update extracted media.");return;}
-      reviewedMediaIdsRef.current.add(String(id));
-      setMediaReview(current=>current.filter((item:any)=>String(item.id)!==String(id)));
+      if(!res.ok||!data?.ok){
+        reviewedMediaIdsRef.current.delete(String(id));
+        if(candidate){
+          setMediaReview(current=>{
+            if(current.some((item:any)=>String(item.id)===String(id))) return current;
+            return [candidate,...current];
+          });
+        }
+        setError(data?.error||"Unable to update extracted media.");
+        return;
+      }
+
       await load();
       if(inspectorQuery.trim()) await searchInspector();
-      void loadMediaReview();
+      // Do not immediately reload the review queue here. The local queue is the
+      // authoritative UI state for this completed review and avoids stale GET races.
+    }catch(err:any){
+      reviewedMediaIdsRef.current.delete(String(id));
+      if(candidate){
+        setMediaReview(current=>{
+          if(current.some((item:any)=>String(item.id)===String(id))) return current;
+          return [candidate,...current];
+        });
+      }
+      setError(String(err?.message||"Unable to update extracted media."));
     }finally{setMediaReviewBusyId("");}
   }
 
