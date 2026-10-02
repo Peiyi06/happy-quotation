@@ -314,8 +314,8 @@ export default function AiLabWorkspace(){
             <strong>Active Conversations</strong>
           </div>
           <div className="ai-thread-panel-actions">
-            <button type="button" className="ai-thread-collapse-btn" aria-label="Collapse sidebar" title="Collapse sidebar" onClick={()=>setSidebarCollapsed(true)}>›</button>
             <button type="button" onClick={newThread}>＋ New</button>
+            <button type="button" className="ai-thread-collapse-btn" aria-label="Collapse sidebar" title="Collapse sidebar" onClick={()=>setSidebarCollapsed(true)}>›</button>
           </div>
         </div>
 
