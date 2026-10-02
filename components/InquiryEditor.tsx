@@ -376,17 +376,12 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
     </section>}
 
     {initialInquiry?.id&&<>
-      <div className={"inquiry-save-state "+(isDirty?"unsaved":"saved")}>
+      <div className={"inquiry-save-state edit-inquiry-save-state "+(isDirty?"unsaved":"saved")}>
         <div>
           <strong>{isDirty?t("● Unsaved Changes","● 有未存档修改"):t("✓ All changes saved","✓ 所有修改已存档")}</strong>
           <span>{isDirty?t("Save Inquiry before leaving, refreshing or closing this page.","离开、刷新或关闭页面前请先保存 Inquiry。"):t("The current page is saved.","目前页面资料已存档。")}</span>
         </div>
         {isDirty&&<button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>{saving?t("Saving...","保存中..."):t("Save Inquiry","保存 Inquiry")}</button>}
-      </div>
-
-      <div className="detail-actions inquiry-save-actions">
-        <button className="btn" type="button" onClick={()=>requestNavigate(backHref)}>{t("← Back","← 返回")}</button>
-        <button className="btn primary" type="button" disabled={saving||!isDirty} onClick={()=>void save()}>{saving?t("Saving...","保存中..."):isDirty?t("Save Inquiry","保存 Inquiry"):t("Saved ✓","已保存 ✓")}</button>
       </div>
       {message&&<div className="save-message">{message}</div>}
     </>}
