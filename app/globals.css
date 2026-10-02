@@ -13841,3 +13841,307 @@ td,
     opacity:1!important;
   }
 }
+
+
+/* =========================================================
+   FOUNDATION SYSTEM — CROSS PAGE PASS
+   Inquiries / Edit Inquiry / AI Intake / Library / Supplier Form
+   ========================================================= */
+
+/* Shared page hierarchy */
+.workspace-main .page-head:not(.page-hero-header):not(.page-compact-header),
+.workspace-main .travel-library-page-head{
+  align-items:flex-end!important;
+  gap:18px!important;
+  margin-bottom:18px!important;
+}
+.workspace-main .page-head:not(.page-hero-header):not(.page-compact-header) h1,
+.workspace-main .travel-library-page-head h1{
+  margin:2px 0 4px!important;
+  font-size:28px!important;
+  line-height:1.08!important;
+  font-weight:720!important;
+  letter-spacing:-.025em!important;
+}
+.workspace-main .page-head:not(.page-hero-header):not(.page-compact-header) p,
+.workspace-main .travel-library-page-head p{
+  max-width:720px!important;
+  font-size:11.5px!important;
+  line-height:1.5!important;
+  color:var(--color-text-secondary,var(--muted))!important;
+}
+.workspace-main .page-kicker{
+  font-size:9px!important;
+  line-height:1!important;
+  font-weight:700!important;
+  letter-spacing:.10em!important;
+  color:var(--color-text-tertiary,var(--muted))!important;
+}
+
+/* Buttons: one primary, quiet utilities */
+.workspace-main .btn,
+.supplier-form-toolbar button,
+.supplier-form-toolbar a{
+  min-height:36px!important;
+  border-radius:10px!important;
+  box-shadow:none!important;
+  font-weight:650!important;
+}
+.workspace-main .btn:not(.primary),
+.supplier-form-toolbar button:not(.primary),
+.supplier-form-toolbar a:not(.primary){
+  background:#fff!important;
+  border-color:var(--color-border-default,var(--line))!important;
+  color:var(--color-text-secondary,var(--navy2))!important;
+}
+.workspace-main .btn:not(.primary):hover,
+.supplier-form-toolbar button:not(.primary):hover,
+.supplier-form-toolbar a:not(.primary):hover{
+  background:var(--color-bg-soft,#f5f7f9)!important;
+  color:var(--color-text-primary,var(--navy2))!important;
+}
+
+/* Edit Inquiry: form sections, not stacked dashboard cards */
+.inquiry-editor{
+  gap:14px!important;
+}
+.inquiry-editor>.panel{
+  border:1px solid var(--color-border-default,var(--line))!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+.inquiry-editor>.panel>.panel-head{
+  padding-bottom:10px!important;
+  border-bottom:1px solid var(--color-border-default,var(--line))!important;
+}
+.inquiry-editor>.panel>.panel-head h2{
+  font-size:14px!important;
+  line-height:1.2!important;
+  font-weight:680!important;
+}
+.inquiry-editor .field>span{
+  font-size:9.5px!important;
+  font-weight:650!important;
+  color:var(--color-text-secondary,var(--muted))!important;
+}
+.inquiry-editor input,
+.inquiry-editor select,
+.inquiry-editor textarea{
+  border-radius:10px!important;
+  box-shadow:none!important;
+}
+.inquiry-save-actions{
+  gap:8px!important;
+}
+
+/* Inquiries detail / queue density */
+.inquiry-detail-grid{
+  gap:10px!important;
+}
+.inquiry-detail-grid>div{
+  border:1px solid var(--color-border-default,var(--line))!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  padding:11px 12px!important;
+  box-shadow:none!important;
+}
+.inquiry-detail-grid span{
+  margin-bottom:4px!important;
+  font-size:9px!important;
+  font-weight:650!important;
+  color:var(--color-text-tertiary,var(--muted))!important;
+}
+.inquiry-detail-grid strong,
+.inquiry-detail-grid p{
+  font-size:11.5px!important;
+  line-height:1.45!important;
+}
+.inquiry-flow-actions{
+  gap:10px!important;
+}
+.inquiry-flow-actions>div{
+  border:1px solid var(--color-border-default,var(--line))!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  padding:12px!important;
+  box-shadow:none!important;
+}
+
+/* AI Intake: assisted form workspace */
+.ai-intake-overlay{
+  background:rgba(12,26,39,.34)!important;
+  backdrop-filter:blur(8px)!important;
+}
+.ai-intake-modal{
+  width:min(1120px,94vw)!important;
+  border:1px solid rgba(120,139,154,.18)!important;
+  border-radius:20px!important;
+  background:#f6f8fa!important;
+  box-shadow:0 24px 70px rgba(16,34,49,.18)!important;
+  padding:20px!important;
+}
+.ai-intake-head{
+  padding-bottom:14px!important;
+  border-bottom:1px solid var(--color-border-default,var(--line))!important;
+}
+.ai-intake-head h2{
+  margin:3px 0 4px!important;
+  font-size:24px!important;
+  line-height:1.1!important;
+  letter-spacing:-.02em!important;
+}
+.ai-intake-head p{
+  max-width:720px!important;
+  font-size:11px!important;
+  line-height:1.5!important;
+}
+.ai-intake-input-grid{
+  gap:12px!important;
+  margin-top:14px!important;
+}
+.ai-intake-upload{
+  margin-top:12px!important;
+  padding:12px!important;
+  border:1px dashed #c9d3db!important;
+  border-radius:12px!important;
+  background:rgba(255,255,255,.72)!important;
+}
+.ai-intake-actionbar{
+  margin-top:12px!important;
+}
+.ai-intake-results{
+  gap:12px!important;
+  margin-top:14px!important;
+}
+.ai-intake-result-section{
+  border:1px solid var(--color-border-default,var(--line))!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+.ai-intake-warning,
+.ai-intake-missing{
+  border-radius:10px!important;
+  font-size:10.5px!important;
+  line-height:1.45!important;
+}
+.ai-intake-missing{
+  background:#f5f8fa!important;
+  border-color:#dce5eb!important;
+  color:#516674!important;
+}
+
+/* Library workspace: search-first asset browser */
+.travel-library-workspace{
+  gap:14px!important;
+}
+.travel-library-toolbar{
+  border:1px solid var(--color-border-default,var(--line))!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+  padding:12px 14px!important;
+}
+.travel-library-toolbar strong{
+  font-size:13px!important;
+  font-weight:680!important;
+}
+.travel-library-toolbar span{
+  font-size:10px!important;
+  color:var(--color-text-tertiary,var(--muted))!important;
+}
+.travel-library-toolbar input,
+.travel-library-toolbar select{
+  min-height:36px!important;
+  border-radius:10px!important;
+  box-shadow:none!important;
+}
+.travel-library-review,
+.travel-library-table-wrap{
+  border-radius:14px!important;
+  box-shadow:none!important;
+}
+
+/* Supplier Inquiry Form: document workspace toolbar */
+.supplier-form-page{
+  max-width:1180px!important;
+  padding:20px 24px!important;
+}
+.supplier-form-toolbar{
+  align-items:center!important;
+  margin-bottom:14px!important;
+}
+.supplier-form-toolbar-right{
+  gap:8px!important;
+}
+.supplier-form-sheet{
+  border:1px solid #dfe6eb!important;
+  border-radius:16px!important;
+  box-shadow:0 8px 26px rgba(22,44,61,.055)!important;
+  padding:32px 34px!important;
+}
+.supplier-form-header{
+  padding-bottom:18px!important;
+}
+.supplier-form-header h1{
+  margin:5px 0 4px!important;
+  font-size:30px!important;
+  line-height:1.08!important;
+  letter-spacing:.015em!important;
+}
+.supplier-form-header p{
+  font-size:13px!important;
+}
+.supplier-form-intro{
+  gap:10px!important;
+  margin:18px 0!important;
+}
+.supplier-form-intro>div{
+  padding:10px 12px!important;
+  border:1px solid #e0e7ec!important;
+  border-radius:10px!important;
+  background:#fbfcfd!important;
+}
+.supplier-form-intro span{
+  margin-bottom:4px!important;
+  font-size:9px!important;
+  font-weight:650!important;
+  color:#7e8d98!important;
+}
+.supplier-form-intro strong{
+  font-size:12.5px!important;
+}
+.supplier-form-details{
+  border-color:#e0e7ec!important;
+  border-radius:11px!important;
+}
+.supplier-form-row{
+  grid-template-columns:200px minmax(0,1fr)!important;
+  border-bottom-color:#e9eef1!important;
+}
+.supplier-form-row>span{
+  padding:11px 14px!important;
+  background:#f7f9fb!important;
+  font-size:11.5px!important;
+  font-weight:700!important;
+}
+.supplier-form-row>p{
+  padding:11px 14px!important;
+  font-size:12.5px!important;
+  line-height:1.5!important;
+}
+
+/* Keep responsive behavior clean */
+@media(max-width:820px){
+  .workspace-main .page-head:not(.page-hero-header):not(.page-compact-header),
+  .workspace-main .travel-library-page-head{
+    align-items:flex-start!important;
+  }
+  .supplier-form-page{
+    padding:10px!important;
+  }
+  .supplier-form-sheet{
+    padding:20px!important;
+  }
+}
