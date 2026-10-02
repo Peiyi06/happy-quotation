@@ -195,45 +195,44 @@ export default function AiSupplierImport(){
           <p className="panel-subtext">{t("Upload an itinerary file or combine it with Inquiry data. AI will create an editable customer-facing draft while separating suspected cost and internal content.","上传行程文件或结合 Inquiry 资料，AI 会快速整理并生成可编辑的客户版 Itinerary Draft，同时把疑似成本与内部资料分开显示。")}</p>
         </div>
       </div>
-      <div className="ai-import-upload-box">
-        <label className="field">
-          <span>{t("Source File","行程来源文件")}</span>
-          <input ref={supplierInputRef} type="file" accept=".pdf,.doc,.docx,.rtf,.txt,.jpg,.jpeg,.png,.webp" onChange={e=>{setFile(e.target.files?.[0]||null);setResult(null);setError("");setProposal(null);setChatMessages([]);}}/>
-        </label>
-        <div className="ai-import-file-note">
-          <div className="ai-import-file-note-head">
-            <strong>{file?file.name:t("No file selected","尚未选择文件")}</strong>
-            {file&&<button className="ai-import-remove-file" type="button" onClick={()=>{
-              setFile(null);
-              setResult(null);
-              setError("");
-              setProposal(null);
-              setChatMessages([]);
-              setModel("");
-              if(supplierInputRef.current) supplierInputRef.current.value="";
-            }}>{t("× Remove File","× 移除文件")}</button>}
-          </div>
-          <span>{t("MVP supports PDF / Word / RTF / TXT / JPG / PNG / WEBP · Maximum 3.5MB per file","MVP 支持 PDF / Word / RTF / TXT / JPG / PNG / WEBP · 单个文件 ≤ 3.5MB")}</span>
+      <div className="ai-generator-form">
+        <div className="ai-upload-field">
+          <span className="ai-generator-label">{t("Source File","行程来源文件")}</span>
+          <button className="ai-upload-control" type="button" onClick={()=>supplierInputRef.current?.click()}>
+            <span className="ai-upload-icon">＋</span>
+            <span className="ai-upload-copy">
+              <strong>{file?file.name:t("Choose itinerary source file","选择行程来源文件")}</strong>
+              <small>{t("PDF / Word / RTF / TXT / JPG / PNG / WEBP · Maximum 3.5MB","PDF / Word / RTF / TXT / JPG / PNG / WEBP · 最大 3.5MB")}</small>
+            </span>
+            <span className="ai-upload-action">{file?t("Change File","更换文件"):t("Choose File","选择文件")}</span>
+          </button>
+          <input ref={supplierInputRef} className="ai-upload-native-input" type="file" accept=".pdf,.doc,.docx,.rtf,.txt,.jpg,.jpeg,.png,.webp" onChange={e=>{setFile(e.target.files?.[0]||null);setResult(null);setError("");setProposal(null);setChatMessages([]);}}/>
+          {file&&<button className="ai-upload-remove" type="button" onClick={()=>{
+            setFile(null);
+            setResult(null);
+            setError("");
+            setProposal(null);
+            setChatMessages([]);
+            setModel("");
+            if(supplierInputRef.current) supplierInputRef.current.value="";
+          }}>{t("Remove file","移除文件")}</button>}
         </div>
-      </div>
 
-      <div className="ai-pre-adjustment">
-        <label className="field">
+        <label className="field ai-adjustment-field">
           <span>{t("Adjustment Notes","调整备注")} <small>{t("Optional","选填")}</small></span>
           <textarea
             value={adjustmentNotes}
             onChange={e=>setAdjustmentNotes(e.target.value)}
             placeholder={t("e.g. Supplier itinerary is 6D5N but actual flights make it 7D6N.\nDay 1 arrives in the morning; add light activities and shift the original Day 1 plan.\nDay 7 has an evening flight, so daytime city activities are still possible.\nKeep the main attractions and hotel structure where possible.","例如：供应商原本是 6D5N，但实际航班为 7D6N。\nDay 1 上午抵达，请增加轻松行程；原供应商 Day 1 内容顺延。\nDay 7 晚班机，白天可继续安排市区活动。\n尽量保留原本主要景点和酒店结构。")}
           />
+          <small className="ai-adjustment-helper">
+            {t("AI uses these notes during the first analysis. Add known flight details, duration changes, attraction moves, pacing or hotel requirements here. You can also analyze without notes.","AI 会在第一次分析时参考这些备注。可填写已知航班、天数变化、景点调整、节奏或酒店要求；没有备注也可以直接分析。")}
+          </small>
         </label>
-        <div className="ai-adjustment-hint">
-          <strong>{t("AI will use these notes during the first analysis","AI 会在第一次分析时同时参考这段备注")}</strong>
-          <span>{t("Add known flight details, duration changes, attraction moves, pacing or hotel requirements here. You can also analyze without notes.","已知航班、天数变化、景点移动、节奏要求、酒店要求等都可以先写在这里。没有备注也可以直接分析。")}</span>
-        </div>
-      </div>
 
-      <div className="ai-import-primary-action">
-        <button className={"btn "+(result?"":"primary")} type="button" disabled={!file||analyzing} onClick={()=>void analyze()}>{analyzing?t("AI Generating...","AI 生成中..."):t("Generate Itinerary Draft","生成行程草稿")}</button>
+        <div className="ai-import-primary-action">
+          <button className={"btn "+(result?"":"primary")} type="button" disabled={!file||analyzing} onClick={()=>void analyze()}>{analyzing?t("AI Generating...","AI 生成中..."):t("Generate Itinerary Draft","生成行程草稿")}</button>
+        </div>
       </div>
       {error&&<div className="ai-import-error">{error}</div>}
     </section>
