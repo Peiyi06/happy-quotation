@@ -102,6 +102,22 @@ export default async function InquiryDetailPage({
   const currentInquiryHref="/inquiries/"+id+"?returnTo="+returnParam;
   const currentInquiryParam=encodeURIComponent(currentInquiryHref);
 
+  // Presentation-only comparison between the Sales original inquiry and the
+  // separately stored Operation review. This does not alter workflow/status.
+  const operationReview=data.operation_review&&typeof data.operation_review==="object"?data.operation_review:{};
+  const hasOperationVersion=Object.keys(operationReview).length>0;
+  const opValue=(key:string,fallback:any)=>Object.prototype.hasOwnProperty.call(operationReview,key)?operationReview[key]:fallback;
+  const displayValue=(value:any)=>value===null||value===undefined||value===""?"—":String(value);
+  const salesRequirements=[
+    {key:"departureCity",label:"Departure City",sales:data.departure_city,op:opValue("departureCity",data.departure_city)},
+    {key:"budget",label:"Budget",sales:data.budget,op:opValue("budget",data.budget)},
+    {key:"tourType",label:"Tour Type",sales:data.tour_type,op:opValue("tourType",data.tour_type)},
+    {key:"flightRequirement",label:"Flight Requirement",sales:data.flight_requirement,op:opValue("flightRequirement",data.flight_requirement),long:true},
+    {key:"hotelRequirement",label:"Hotel Requirement",sales:data.hotel_requirement,op:opValue("hotelRequirement",data.hotel_requirement),long:true},
+    {key:"mealRequirement",label:"Meal Requirement",sales:data.meal_requirement,op:opValue("mealRequirement",data.meal_requirement),long:true},
+    {key:"specialRequest",label:"Special Request",sales:data.special_request,op:opValue("specialRequest",data.special_request),long:true}
+  ];
+
   return <div>
     <div className="page-head inquiry-detail-head">
       <div><span className="page-kicker">INQUIRY DETAIL</span><h1>{data.customer_name||data.inquiry_no}</h1><p>{data.inquiry_no} · {inquiryStatusLabels[data.status]||data.status}</p></div>
@@ -133,17 +149,72 @@ export default async function InquiryDetailPage({
       <div className="dash-card"><span>Operation</span><b>{data.operation_assignee_name||"—"}</b></div>
     </section>
 
-    <section className="panel">
-      <div className="panel-head"><h2>Customer Requirements｜客户需求</h2></div>
-      <div className="inquiry-detail-grid">
-        <div><span>Contact</span><strong>{data.contact||"—"}</strong></div>
-        <div><span>Departure City</span><strong>{data.departure_city||"—"}</strong></div>
-        <div><span>Budget</span><strong>{data.budget||"—"}</strong></div>
-        <div><span>Tour Type</span><strong>{data.tour_type||"—"}</strong></div>
-        <div><span>Flight Requirement</span><p>{data.flight_requirement||"—"}</p></div>
-        <div><span>Hotel Requirement</span><p>{data.hotel_requirement||"—"}</p></div>
-        <div><span>Meal Requirement</span><p>{data.meal_requirement||"—"}</p></div>
-        <div><span>Special Request</span><p>{data.special_request||"—"}</p></div>
+    <section className="panel inquiry-requirements-panel">
+      <div className="panel-head">
+        <div>
+          <h2>Customer Requirements｜客户需求</h2>
+          <p className="panel-subtext">
+            {hasOperationVersion
+              ?"Sales 原始资料与 Operation 执行版本分开显示，方便快速核对差异。"
+              :"目前显示 Sales 原始资料；Operation 首次保存 Review 后会自动出现执行版本。"}
+          </p>
+        </div>
+      </div>
+
+      <div className={"inquiry-version-grid "+(hasOperationVersion?"has-operation":"single")}>
+        <article className="inquiry-version-card sales-original">
+          <div className="inquiry-version-card-head">
+            <div>
+              <span className="inquiry-version-kicker">SALES ORIGINAL</span>
+              <h3>Original Inquiry</h3>
+            </div>
+            <span className="inquiry-version-badge">Original</span>
+          </div>
+          <div className="inquiry-version-meta">
+            <div><span>Contact</span><strong>{data.contact||"—"}</strong></div>
+            <div><span>Sales Owner</span><strong>{data.sales_owner_name||"—"}</strong></div>
+          </div>
+          <div className="inquiry-version-fields">
+            {salesRequirements.map((field:any)=><div className={"inquiry-version-field "+(field.long?"long":"")} key={field.key}>
+              <span>{field.label}</span>
+              {field.long?<p>{displayValue(field.sales)}</p>:<strong>{displayValue(field.sales)}</strong>}
+            </div>)}
+          </div>
+        </article>
+
+        {hasOperationVersion&&<article className="inquiry-version-card operation-version">
+          <div className="inquiry-version-card-head">
+            <div>
+              <span className="inquiry-version-kicker">OPERATION VERSION</span>
+              <h3>Execution Version</h3>
+            </div>
+            <span className="inquiry-version-badge operation">Updated by OP</span>
+          </div>
+          <div className="inquiry-version-meta">
+            <div><span>Operation</span><strong>{data.operation_assignee_name||"—"}</strong></div>
+            <div><span>Purpose</span><strong>Supplier / Execution</strong></div>
+          </div>
+          <div className="inquiry-version-fields">
+            {salesRequirements.map((field:any)=>{
+              const changed=displayValue(field.op)!==displayValue(field.sales);
+              return <div className={"inquiry-version-field "+(field.long?"long ":"")+(changed?"changed":"same")} key={field.key}>
+                <div className="inquiry-version-field-label">
+                  <span>{field.label}</span>
+                  <em>{changed?"Updated":"Same as Sales"}</em>
+                </div>
+                {field.long?<p>{displayValue(field.op)}</p>:<strong>{displayValue(field.op)}</strong>}
+              </div>;
+            })}
+            {operationReview.transportRequirement&&<div className="inquiry-version-field long operation-only">
+              <div className="inquiry-version-field-label"><span>Transportation Requirement</span><em>OP Only</em></div>
+              <p>{displayValue(operationReview.transportRequirement)}</p>
+            </div>}
+            {operationReview.itineraryRequirement&&<div className="inquiry-version-field long operation-only">
+              <div className="inquiry-version-field-label"><span>Itinerary Requirement</span><em>OP Only</em></div>
+              <p>{displayValue(operationReview.itineraryRequirement)}</p>
+            </div>}
+          </div>
+        </article>}
       </div>
     </section>
 
