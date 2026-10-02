@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { internalDb,internalToken,internalUser } from "@/lib/internalSession";
 import OperationReviewEditor from "@/components/OperationReviewEditor";
-import InquiryWorkflowAction from "@/components/InquiryWorkflowAction";
 
 export default async function OperationReviewPage({
   params,
@@ -29,27 +28,18 @@ export default async function OperationReviewPage({
   const returnParam=encodeURIComponent(returnTo);
   const inquiryHref="/inquiries/"+id+"?returnTo="+returnParam;
 
-  return <div>
-    <div className="page-head inquiry-detail-head page-hero-header">
-      <div>
-        <span className="page-kicker">OPERATION REVIEW</span>
-        <h1>{data.inquiry_no}</h1>
-        <p>{data.customer_name||"Customer"} · {data.destination||"Destination"}</p>
-      </div>
-      <div className="inquiry-head-right">
-        <InquiryWorkflowAction
-          inquiryId={id}
-          mainStatus={data.status||"new"}
-          supplierStatus={data.supplier_inquiry_status||"draft"}
-          canAdvance={Boolean(user&&(user.username==="long"||user.id===data.operation_assignee_id))}
-          canUpdateStatus={false}
-          hasQuotation={linkedQuotes.length>0}
-          viewerMode={user.role==="manager"||user.username.toLowerCase()==="long"?"management":"operation"}
-          firstQuotationId={linkedQuotes[0]?.id}
-        />
-        <div className="detail-actions">
-          <Link className="btn" href={inquiryHref}>← Inquiry</Link>
+  return <div className="operation-review-template">
+    <div className="page-head inquiry-detail-head operation-review-head">
+      <div className="operation-review-title-block">
+        <h1>{data.customer_name||data.inquiry_no}</h1>
+        <div className="operation-review-meta-line">
+          <span>{data.inquiry_no}</span>
+          <span className={"status operation-review-status status-"+String(data.status||"new")}>{data.status==="under_review"?"Under Review":data.status==="revision_required"?"Revision Required":data.status==="ready"||data.status==="ready_customer"?"Ready":data.status==="in_progress"||data.status==="waiting_quote"?"In Progress":data.status==="new"?"New":data.status||"New"}</span>
+          <span>{data.destination||"—"}</span>
         </div>
+      </div>
+      <div className="detail-actions">
+        <Link className="btn operation-review-back" href={inquiryHref}>← Inquiry</Link>
       </div>
     </div>
     <OperationReviewEditor inquiry={data} canEdit={canEdit} returnTo={returnTo}/>
