@@ -8561,3 +8561,208 @@ td,
     grid-template-columns:1fr;
   }
 }
+
+
+/* =========================================================
+   ITINERARY EDITOR FOUNDATION — PHASE 3
+   Package / reminder disclosure, empty states, destructive actions.
+   ========================================================= */
+.itinerary-editor .itinerary-package-columns{
+  gap:14px;
+}
+.itinerary-editor .itinerary-package-card{
+  padding:14px;
+  border:1px solid var(--color-border-default);
+  border-radius:var(--radius-md);
+  box-shadow:none;
+}
+.itinerary-editor .itinerary-package-card.included{
+  background:var(--color-success-soft);
+  border-top:1px solid var(--color-success-text);
+}
+.itinerary-editor .itinerary-package-card.excluded{
+  background:var(--color-bg-soft);
+  border-top:1px solid var(--color-danger-text);
+}
+.itinerary-editor .itinerary-package-list{
+  gap:8px;
+}
+.itinerary-editor .itinerary-package-row{
+  display:block;
+  padding:0;
+  border:1px solid var(--color-border-default);
+  border-radius:var(--radius-md);
+  background:var(--color-bg-surface);
+  overflow:hidden;
+}
+.itinerary-editor .itinerary-package-summary{
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  min-height:54px;
+  padding:8px 10px;
+}
+.itinerary-editor .itinerary-package-summary-copy{
+  min-width:0;
+  display:grid;
+  gap:2px;
+}
+.itinerary-editor .itinerary-package-summary-copy strong{
+  color:var(--color-text-primary);
+  font-size:12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.itinerary-editor .itinerary-package-summary-copy span{
+  color:var(--color-text-secondary);
+  font-size:10px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.itinerary-editor .itinerary-package-actions{
+  justify-content:flex-end;
+}
+.itinerary-editor .itinerary-package-actions button,
+.itinerary-editor .itinerary-reminder-actions button{
+  min-height:30px;
+  padding:0 8px;
+  border:1px solid var(--color-border-default);
+  border-radius:var(--radius-sm);
+  background:transparent;
+  color:var(--color-text-secondary);
+  font-size:10px;
+  font-weight:650;
+}
+.itinerary-editor .itinerary-package-actions .disclosure-action,
+.itinerary-editor .itinerary-reminder-actions .disclosure-action{
+  border-color:transparent;
+  color:var(--color-link);
+}
+.itinerary-editor .itinerary-package-actions .danger-link,
+.itinerary-editor .itinerary-reminder-actions .danger-link{
+  border-color:transparent!important;
+  background:transparent!important;
+  color:var(--color-danger-text)!important;
+}
+.itinerary-editor .itinerary-package-editor{
+  display:grid;
+  grid-template-columns:minmax(150px,.8fr) minmax(220px,1.2fr);
+  gap:12px;
+  padding:12px;
+  border-top:1px solid var(--color-border-default);
+  background:var(--color-bg-soft);
+}
+
+/* Reminder list reads like content first, form second. */
+.itinerary-editor .itinerary-reminder-list{
+  gap:8px;
+}
+.itinerary-editor .itinerary-reminder-row{
+  display:block;
+  padding:0;
+  border:1px solid var(--color-border-default);
+  border-radius:var(--radius-md);
+  background:var(--color-bg-surface);
+  overflow:hidden;
+}
+.itinerary-editor .itinerary-reminder-summary{
+  display:grid;
+  grid-template-columns:32px minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  min-height:60px;
+  padding:9px 10px;
+}
+.itinerary-editor .itinerary-reminder-summary-copy{
+  min-width:0;
+  display:grid;
+  gap:3px;
+}
+.itinerary-editor .itinerary-reminder-summary-copy strong{
+  color:var(--color-text-primary);
+  font-size:12px;
+}
+.itinerary-editor .itinerary-reminder-summary-copy span{
+  color:var(--color-text-secondary);
+  font-size:10px;
+  line-height:1.45;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.itinerary-editor .itinerary-reminder-editor{
+  display:grid;
+  grid-template-columns:minmax(160px,.7fr) minmax(220px,1fr);
+  gap:12px;
+  padding:12px;
+  border-top:1px solid var(--color-border-default);
+  background:var(--color-bg-soft);
+}
+.itinerary-editor .itinerary-reminder-editor .itinerary-reminder-description{
+  grid-column:1/-1;
+}
+.itinerary-editor .itinerary-reminder-editor .itinerary-reminder-description textarea{
+  min-height:90px;
+}
+
+/* Empty states become quiet placeholders instead of mini-cards. */
+.itinerary-editor .itinerary-editor-empty{
+  padding:12px 0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  color:var(--color-text-tertiary);
+  text-align:left;
+  font-size:11px;
+}
+.itinerary-editor .itinerary-upload-control{
+  background:var(--color-bg-surface);
+  border-color:var(--color-border-default);
+  box-shadow:none;
+}
+.itinerary-editor .itinerary-upload-control:hover{
+  background:var(--color-bg-soft);
+  border-color:var(--color-border-strong);
+}
+
+/* Destructive actions remain visible but never compete with primary work. */
+.itinerary-editor .danger-link{
+  color:var(--color-danger-text)!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.itinerary-editor .danger-link:hover:not(:disabled){
+  background:var(--color-danger-soft)!important;
+}
+.itinerary-editor .icon-action-remove{
+  background:rgba(29,29,31,.72)!important;
+  color:#fff!important;
+}
+
+@media(max-width:1000px){
+  .itinerary-editor .itinerary-package-columns{
+    grid-template-columns:1fr;
+  }
+}
+@media(max-width:760px){
+  .itinerary-editor .itinerary-package-summary,
+  .itinerary-editor .itinerary-reminder-summary{
+    grid-template-columns:30px minmax(0,1fr);
+  }
+  .itinerary-editor .itinerary-package-actions,
+  .itinerary-editor .itinerary-reminder-actions{
+    grid-column:1/-1;
+    justify-content:flex-start;
+  }
+  .itinerary-editor .itinerary-package-editor,
+  .itinerary-editor .itinerary-reminder-editor{
+    grid-template-columns:1fr;
+  }
+  .itinerary-editor .itinerary-reminder-editor .itinerary-reminder-description{
+    grid-column:auto;
+  }
+}
