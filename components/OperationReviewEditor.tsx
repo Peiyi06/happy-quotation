@@ -23,9 +23,13 @@ function FlightSummary({flights}:{flights:InquiryFlight[]}){
 
 export default function OperationReviewEditor({
   inquiry,
-  canEdit
-}:{inquiry:any;canEdit:boolean}){
+  canEdit,
+  returnTo="/inquiries"
+}:{inquiry:any;canEdit:boolean;returnTo?:string}){
   const router=useRouter();
+  const returnParam=encodeURIComponent(returnTo);
+  const inquiryHref="/inquiries/"+inquiry.id+"?returnTo="+returnParam;
+  const supplierFormHref="/inquiries/"+inquiry.id+"/supplier-form?returnTo="+returnParam;
   const initial=inquiry.operation_review||{};
   const initialSupplier=inquiry.supplier_inquiry||{};
   const salesComposition=inquiry?.inquiry_data?.travellerComposition||{};
@@ -257,7 +261,7 @@ export default function OperationReviewEditor({
           <h2>Supplier Inquiry｜供应商询价</h2>
           <p className="panel-subtext">这里只设置发给 Supplier 前需要确认的内容；Status 统一在页面右上角管理。</p>
         </div>
-        <button className="btn" type="button" onClick={()=>window.open("/inquiries/"+inquiry.id+"/supplier-form","_blank")}>Preview Supplier Form</button>
+        <button className="btn" type="button" onClick={()=>window.open(supplierFormHref,"_blank")}>Preview Supplier Form</button>
       </div>
       <div className="operation-supplier-grid">
         <label className="field"><span>Quotation Deadline｜报价截止</span><input disabled={!canEdit} type="date" value={quoteDeadline} onChange={e=>setQuoteDeadline(e.target.value)}/></label>
@@ -270,7 +274,7 @@ export default function OperationReviewEditor({
     </section>
 
     <div className="detail-actions operation-review-actions">
-      <button className="btn" type="button" onClick={()=>router.push("/inquiries/"+inquiry.id)}>← Inquiry</button>
+      <button className="btn" type="button" onClick={()=>router.push(inquiryHref)}>← Inquiry</button>
       {canEdit&&<button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>{saving?"Saving...":"Save Operation Review"}</button>}
     </div>
     {message&&<div className="save-message">{message}</div>}
