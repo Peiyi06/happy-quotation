@@ -9542,3 +9542,203 @@ td,
     justify-content:space-between;
   }
 }
+
+
+/* =========================================================
+   STAFF + TRASH + SHARED FOUNDATION POLISH
+   ========================================================= */
+
+/* Staff Accounts: create form reads like a real form, not an inline toolbar. */
+.staff-accounts-panel{
+  padding:0!important;
+  overflow:hidden;
+  border-radius:var(--radius-md)!important;
+  box-shadow:none!important;
+}
+.staff-accounts-panel>.panel-head{
+  margin:0;
+  padding:16px 18px;
+  border-bottom:1px solid var(--color-border-default);
+}
+.staff-create-trigger:not(.primary){
+  background:var(--color-bg-surface)!important;
+  border-color:var(--color-border-default)!important;
+  color:var(--color-text-primary)!important;
+}
+.staff-create-shell{
+  display:grid;
+  grid-template-columns:minmax(160px,.7fr) minmax(0,1.6fr);
+  gap:24px;
+  padding:18px;
+  border-bottom:1px solid var(--color-border-default);
+  background:var(--color-bg-soft);
+}
+.staff-create-copy{
+  display:grid;
+  align-content:start;
+  gap:5px;
+  padding-top:2px;
+}
+.staff-create-copy strong{
+  color:var(--color-text-primary);
+  font-size:14px;
+  font-weight:700;
+}
+.staff-create-copy span{
+  color:var(--color-text-secondary);
+  font-size:12px;
+  line-height:1.45;
+}
+.staff-create-form{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+.staff-create-actions{
+  grid-column:1/-1;
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  padding-top:2px;
+}
+.staff-accounts-panel .data-table-wrap{
+  border:0;
+  border-radius:0;
+}
+.staff-accounts-panel .data-table th{
+  background:var(--color-bg-surface)!important;
+  font-weight:600;
+}
+.staff-accounts-panel .row-actions{
+  gap:5px;
+}
+.staff-accounts-panel .row-actions button{
+  min-height:30px;
+  height:30px;
+  padding:0 9px;
+  background:transparent;
+  color:var(--color-text-secondary);
+  border-color:var(--color-border-default);
+}
+.staff-accounts-panel .row-actions button:hover{
+  background:var(--color-bg-soft);
+  color:var(--color-text-primary);
+}
+
+/* Trash stays a quiet management table. */
+.trash-table-panel{
+  padding:0!important;
+  overflow:hidden;
+  border-radius:var(--radius-md)!important;
+  box-shadow:none!important;
+}
+.trash-table-panel .data-table-wrap{
+  border:0;
+  border-radius:0;
+}
+.trash-table th{
+  background:var(--color-bg-surface)!important;
+  color:var(--color-text-secondary)!important;
+  font-weight:600;
+}
+.trash-table td{
+  font-weight:400;
+}
+.trash-table .btn{
+  min-height:32px;
+  height:32px;
+  padding:0 10px;
+  background:var(--color-bg-surface);
+  color:var(--color-text-secondary);
+  border-color:var(--color-border-default);
+}
+.trash-table .btn:hover{
+  background:var(--color-bg-soft);
+  color:var(--color-text-primary);
+}
+
+/* Shared navigation: functional interaction uses Foundation blue/neutral, not Gold. */
+.sidebar-nav>a,
+.sidebar-new-quote,
+.sidebar-module-btn{
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+.sidebar-nav>a:hover,
+.sidebar-new-quote:hover,
+.sidebar-module-btn:hover{
+  background:rgba(255,255,255,.08)!important;
+  border-color:rgba(255,255,255,.12)!important;
+  box-shadow:none!important;
+}
+.sidebar-nav>a:focus-visible,
+.sidebar-new-quote:focus-visible,
+.sidebar-module-btn:focus-visible,
+.sidebar-user button:focus-visible{
+  outline:2px solid var(--color-focus-ring)!important;
+  outline-offset:2px;
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+.sidebar-module-chevron,
+.sidebar-module-btn:hover .sidebar-module-chevron{
+  color:#BFD1DE!important;
+}
+
+/* Workspace module modal uses neutral/blue interaction; Gold is no longer functional. */
+.workspace-module-modal .page-kicker{
+  color:var(--color-text-tertiary)!important;
+}
+.workspace-module-grid .quotation-type-card{
+  border-color:var(--color-border-default)!important;
+  box-shadow:none!important;
+}
+.workspace-module-grid .quotation-type-card.available:hover{
+  border-color:var(--color-border-strong)!important;
+  background:var(--color-bg-soft)!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+.workspace-module-grid .quotation-type-enter{
+  color:var(--color-info-text)!important;
+}
+.workspace-module-grid .quotation-type-status.available{
+  background:var(--color-success-soft)!important;
+  color:var(--color-success-text)!important;
+}
+
+/* Foundation containment:
+   shared working surfaces and controls always finish on semantic tokens. */
+.workspace-main .panel,
+.workspace-main .section{
+  box-shadow:none;
+}
+.workspace-main .btn.primary{
+  background:var(--color-brand-primary)!important;
+  border-color:var(--color-brand-primary)!important;
+  color:#fff!important;
+}
+.workspace-main .btn.primary:hover{
+  background:var(--color-brand-primary-hover)!important;
+  border-color:var(--color-brand-primary-hover)!important;
+}
+.workspace-main input,
+.workspace-main select,
+.workspace-main textarea{
+  accent-color:var(--color-brand-primary);
+}
+
+@media(max-width:900px){
+  .staff-create-shell{
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+}
+@media(max-width:760px){
+  .staff-create-form{
+    grid-template-columns:1fr;
+  }
+  .staff-create-actions{
+    grid-column:auto;
+  }
+}
