@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 
 type LinkItem={label:string;href:string;kind:string};
 type PendingAction={type:string;inquiryId:string;targetId:string;label:string;confirmText:string;nextStatus:string;payloadJson:string};
@@ -11,17 +12,18 @@ type WorkThread={id:string;title:string;linked_inquiry_id?:string|null;context_t
 type AutoMemorySaved={id?:string;title:string;ruleText:string;duplicate?:boolean};
 type Message={role:"user"|"assistant";text:string;links?:LinkItem[];action?:PendingAction;memorySuggestion?:MemorySuggestion;autoMemorySaved?:AutoMemorySaved;attachments?:Attachment[]};
 
-const starterPrompts=[
-  "今天有什么需要我注意？",
-  "哪些 Inquiry 还在等 Supplier Quote？",
-  "帮我找最近更新的 Inquiry",
-  "有哪些 Quotation 还在 Draft？"
-];
-
 export default function AiLabWorkspace(){
   const router=useRouter();
+  const {language}=useWorkspaceLanguage();
+  const t=(en:string,zh:string)=>language==="zh"?zh:en;
+  const starterPrompts=[
+    t("What needs my attention today?","今天有什么需要我注意？"),
+    t("Which Inquiries are still waiting for Supplier Quote?","哪些 Inquiry 还在等 Supplier Quote？"),
+    t("Find the most recently updated Inquiries","帮我找最近更新的 Inquiry"),
+    t("Which Quotations are still in Draft?","有哪些 Quotation 还在 Draft？")
+  ];
   const [messages,setMessages]=useState<Message[]>([
-    {role:"assistant",text:"这是独立的 AI Lab Beta。现有系统页面不会被改变。你可以直接问我 Inquiry、Quotation、Itinerary 的状态，或让我带你去下一步。"}
+    {role:"assistant",text:t("This is the independent AI Lab Beta. Existing system pages are unchanged. Ask about Inquiry, Quotation or Itinerary status, or let me guide you to the next step.","这是独立的 AI Lab Beta。现有系统页面不会被改变。你可以直接问我 Inquiry、Quotation、Itinerary 的状态，或让我带你去下一步。")}
   ]);
   const [input,setInput]=useState("");
   const [loading,setLoading]=useState(false);
@@ -62,7 +64,7 @@ export default function AiLabWorkspace(){
     setThreadId("");
     setContextInquiryId("");
     setContextTitle("");
-    setMessages([{role:"assistant",text:"新的工作对话已经准备好。直接告诉我你要处理什么；第一次发送后会自动建立并保存 Thread。"}]);
+    setMessages([{role:"assistant",text:t("A new work conversation is ready. Tell me what you want to handle; the Thread will be created and saved after the first message.","新的工作对话已经准备好。直接告诉我你要处理什么；第一次发送后会自动建立并保存 Thread。")}]);
     setSaveState("");
   }
 
@@ -87,7 +89,7 @@ export default function AiLabWorkspace(){
     setThreadId(String(t.id||id));
     setContextInquiryId(String(t.linked_inquiry_id||""));
     setContextTitle(String(t.context_title||""));
-    setMessages(loaded.length?loaded:[{role:"assistant",text:"这个 Thread 还没有消息。"}]);
+    setMessages(loaded.length?loaded:[{role:"assistant",text:t("This Thread has no messages yet.","这个 Thread 还没有消息。")}]);
     setSaveState("saved");
   }
 
@@ -116,7 +118,7 @@ export default function AiLabWorkspace(){
     const message=(text??input).trim();
     if((!message&&!imageFiles.length)||loading) return;
     const attachments=imagePreviews.map(x=>({...x}));
-    const userMessage:Message={role:"user",text:message||"请分析这些图片",attachments};
+    const userMessage:Message={role:"user",text:message||t("Please analyze these images","请分析这些图片"),attachments};
     setMessages(prev=>[...prev,userMessage]);
     setInput("");
     setLoading(true);
@@ -132,7 +134,7 @@ export default function AiLabWorkspace(){
       if(!res.ok||!data?.ok){
         if(data?.threadId&&!threadId) setThreadId(String(data.threadId));
         setSaveState(data?.saved?"saved":"");
-        setMessages(prev=>[...prev,{role:"assistant",text:data?.error||"AI Lab 暂时无法回应，请稍后再试。"}]);
+        setMessages(prev=>[...prev,{role:"assistant",text:data?.error||t("AI Lab is temporarily unavailable. Please try again later.","AI Lab 暂时无法回应，请稍后再试。")}]);
         await loadThreads();
         return;
       }
@@ -142,7 +144,7 @@ export default function AiLabWorkspace(){
       if(result.contextInquiryId){setContextInquiryId(result.contextInquiryId);setContextTitle(result.contextTitle||"Current Inquiry");}
       setMessages(prev=>[...prev,{
         role:"assistant",
-        text:result.reply||"我已经检查了系统资料。",
+        text:result.reply||t("I checked the system data.","我已经检查了系统资料。"),
         links:Array.isArray(result.links)?result.links:[],
         action:result.action?.type&&result.action.type!=="none"?result.action:undefined,
         memorySuggestion:result.memorySuggestion?.shouldSuggest?result.memorySuggestion:undefined,
@@ -168,11 +170,11 @@ export default function AiLabWorkspace(){
       });
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){
-        setMessages(prev=>[...prev,{role:"assistant",text:data?.error||"Company Rule 保存失败。"}]);
+        setMessages(prev=>[...prev,{role:"assistant",text:data?.error||t("Unable to save Company Rule.","Company Rule 保存失败。")}]);
         return;
       }
       await clearSavedProposal("memorySuggestion");
-      setMessages(prev=>prev.map(m=>m.memorySuggestion===suggestion?{...m,memorySuggestion:undefined}:m).concat({role:"assistant",text:"已保存为 Company Memory。以后遇到相关情况，我会参考这条公司规则。"}));
+      setMessages(prev=>prev.map(m=>m.memorySuggestion===suggestion?{...m,memorySuggestion:undefined}:m).concat({role:"assistant",text:t("Saved to Company Memory. I will reference this company rule in relevant future cases.","已保存为 Company Memory。以后遇到相关情况，我会参考这条公司规则。")}));
     }finally{setMemorySaving(false);}
   }
 
@@ -196,27 +198,27 @@ export default function AiLabWorkspace(){
       });
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){
-        setMessages(prev=>[...prev,{role:"assistant",text:"操作没有执行："+(data?.error||"Unknown error")}]);
+        setMessages(prev=>[...prev,{role:"assistant",text:t("Action was not executed: ","操作没有执行：")+(data?.error||t("Unknown error","未知错误"))}]);
         return;
       }
 
       if(isWorkflow){
         await clearSavedProposal("action");
-        setMessages(prev=>prev.map(m=>m.action===action?{...m,action:undefined}:m).concat({role:"assistant",text:"已确认执行。系统状态已经更新。你可以继续问我「下一步是什么？」"}));
+        setMessages(prev=>prev.map(m=>m.action===action?{...m,action:undefined}:m).concat({role:"assistant",text:t("Action confirmed. The system status has been updated. You can continue by asking “What’s next?”","已确认执行。系统状态已经更新。你可以继续问我「下一步是什么？」")}));
       }else{
         if(data.contextInquiryId) setContextInquiryId(String(data.contextInquiryId));
         if(data.contextTitle) setContextTitle(String(data.contextTitle));
         const successText=data.type==="create_inquiry"
-          ?"Inquiry 已建立："+(data.recordNo||data.id)
+          ?t("Inquiry created: ","Inquiry 已建立：")+(data.recordNo||data.id)
           :data.type==="update_inquiry"
-            ?"Inquiry 已更新："+(data.recordNo||data.id)
+            ?t("Inquiry updated: ","Inquiry 已更新：")+(data.recordNo||data.id)
             :data.type==="create_itinerary"
-              ?"Itinerary Draft 已建立："+(data.recordNo||data.id)
-              :"Itinerary 已更新："+(data.recordNo||data.id);
+              ?t("Itinerary Draft created: ","Itinerary Draft 已建立：")+(data.recordNo||data.id)
+              :t("Itinerary updated: ","Itinerary 已更新：")+(data.recordNo||data.id);
         setMessages(prev=>prev.map(m=>m.action===action?{...m,action:undefined}:m).concat({
           role:"assistant",
           text:successText,
-          links:data.href?[{label:data.type.includes("itinerary")?"Open Itinerary":"Open Inquiry",href:data.href,kind:data.type.includes("itinerary")?"itinerary":"inquiry"}]:[]
+          links:data.href?[{label:data.type.includes("itinerary")?t("Open Itinerary","打开行程"):t("Open Inquiry","打开询价"),href:data.href,kind:data.type.includes("itinerary")?"itinerary":"inquiry"}]:[]
         }));
         setSaveState("saved");
         await loadThreads();
@@ -250,13 +252,13 @@ export default function AiLabWorkspace(){
   return <div className={"ai-lab-shell "+(sidebarCollapsed?"sidebar-collapsed":"")}>
     <section className="ai-lab-main">
       <div className="ai-lab-hero">
-        <div><span>HAPPY AI LAB · BETA</span><h1>What would you like to work on?</h1><p>先实验 AI 操作方式；现有 Inquiry / Quotation / Itinerary 页面全部保留。</p></div>
-        <span className="ai-lab-mode">READ-MOSTLY · CONFIRM BEFORE WRITE</span>
+        <div><span>HAPPY AI LAB · BETA</span><h1>{t("What would you like to work on?","你想处理什么？")}</h1><p>{t("Experiment with AI workflows here; existing Inquiry / Quotation / Itinerary pages remain unchanged.","先实验 AI 操作方式；现有 Inquiry / Quotation / Itinerary 页面全部保留。")}</p></div>
+        <span className="ai-lab-mode">{t("READ-MOSTLY · CONFIRM BEFORE WRITE","以读取为主 · 写入前需确认")}</span>
       </div>
 
       <div className="ai-lab-chat">
         {messages.map((m,index)=><div key={index} className={"ai-lab-message "+m.role}>
-          <div className="ai-lab-message-label">{m.role==="user"?"You":"Happy AI"}</div>
+          <div className="ai-lab-message-label">{m.role==="user"?t("You","你"):"Happy AI"}</div>
           <div className="ai-lab-bubble">
             {m.attachments&&m.attachments.length>0&&<div className="ai-lab-message-images">{m.attachments.map((a,i)=>a.url?<img key={i} src={a.url} alt={a.name}/>:<span key={i} className="ai-lab-restored-attachment">📎 {a.name}</span>)}</div>}
             <p>{m.text}</p>
@@ -267,135 +269,135 @@ export default function AiLabWorkspace(){
               return <a key={i} href={href}>{link.label}<span>→</span></a>;
             })}</div>}
             {m.autoMemorySaved&&<div className="ai-lab-memory-autosaved">
-              <span>✓ COMPANY RULE 已自动保存</span>
+              <span>{t("✓ COMPANY RULE AUTO-SAVED","✓ COMPANY RULE 已自动保存")}</span>
               <strong>{m.autoMemorySaved.title}</strong>
               <p>{m.autoMemorySaved.ruleText}</p>
-              {m.autoMemorySaved.duplicate&&<small>这条规则之前已经保存过，因此没有重复建立。</small>}
+              {m.autoMemorySaved.duplicate&&<small>{t("This rule was already saved, so no duplicate was created.","这条规则之前已经保存过，因此没有重复建立。")}</small>}
             </div>}
             {m.memorySuggestion&&<div className="ai-lab-memory-proposal">
-              <span>COMPANY MEMORY｜建议保存</span>
+              <span>{t("COMPANY MEMORY · SAVE SUGGESTION","COMPANY MEMORY · 建议保存")}</span>
               <strong>{m.memorySuggestion.title}</strong>
               <p>{m.memorySuggestion.ruleText}</p>
               <div>
-                <button type="button" className="btn" disabled={memorySaving} onClick={()=>setMessages(prev=>prev.map(x=>x===m?{...x,memorySuggestion:undefined}:x))}>Ignore</button>
-                <button type="button" className="workflow-primary-btn" disabled={memorySaving} onClick={()=>void saveCompanyRule(m.memorySuggestion!)}>{memorySaving?"Saving...":"Save as Company Rule"}</button>
+                <button type="button" className="btn" disabled={memorySaving} onClick={()=>setMessages(prev=>prev.map(x=>x===m?{...x,memorySuggestion:undefined}:x))}>{t("Ignore","忽略")}</button>
+                <button type="button" className="workflow-primary-btn" disabled={memorySaving} onClick={()=>void saveCompanyRule(m.memorySuggestion!)}>{memorySaving?t("Saving...","保存中..."):t("Save as Company Rule","保存为 Company Rule")}</button>
               </div>
             </div>}
             {m.action&&<div className="ai-lab-action-card">
-              <span>PROPOSED ACTION｜待确认操作</span>
+              <span>{t("PROPOSED ACTION","待确认操作")}</span>
               <strong>{m.action.confirmText}</strong>
-              <div><button type="button" className="btn" disabled={actionLoading} onClick={()=>setMessages(prev=>prev.map(x=>x===m?{...x,action:undefined}:x))}>Cancel</button><button type="button" className="workflow-primary-btn" disabled={actionLoading} onClick={()=>void confirmAction(m.action!)}>{actionLoading?"Working...":m.action.label||"Confirm"}</button></div>
+              <div><button type="button" className="btn" disabled={actionLoading} onClick={()=>setMessages(prev=>prev.map(x=>x===m?{...x,action:undefined}:x))}>{t("Cancel","取消")}</button><button type="button" className="workflow-primary-btn" disabled={actionLoading} onClick={()=>void confirmAction(m.action!)}>{actionLoading?t("Working...","处理中..."):m.action.label||t("Confirm","确认")}</button></div>
             </div>}
           </div>
         </div>)}
-        {loading&&<div className="ai-lab-message assistant"><div className="ai-lab-message-label">Happy AI</div><div className="ai-lab-bubble thinking">正在读取系统资料...</div></div>}
+        {loading&&<div className="ai-lab-message assistant"><div className="ai-lab-message-label">Happy AI</div><div className="ai-lab-bubble thinking">{t("Reading system data...","正在读取系统资料...")}</div></div>}
       </div>
 
       {messages.length<=1&&<div className="ai-lab-starters">{starterPrompts.map(p=><button key={p} type="button" onClick={()=>void send(p)}>{p}</button>)}</div>}
 
-      {imagePreviews.length>0&&<div className="ai-lab-upload-previews">{imagePreviews.map((a,i)=><div key={a.url} className="ai-lab-upload-chip"><img src={a.url} alt={a.name}/><span>{a.name}</span><button className="icon-action-btn icon-action-remove" type="button" aria-label={"Remove "+a.name} onClick={()=>removeImage(i)}>×</button></div>)}</div>}
+      {imagePreviews.length>0&&<div className="ai-lab-upload-previews">{imagePreviews.map((a,i)=><div key={a.url} className="ai-lab-upload-chip"><img src={a.url} alt={a.name}/><span>{a.name}</span><button className="icon-action-btn icon-action-remove" type="button" aria-label={t("Remove ","移除 ")+a.name} onClick={()=>removeImage(i)}>×</button></div>)}</div>}
       <div className="ai-lab-compose">
         <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onChange={e=>addImages(e.target.files)}/>
         <button type="button" className="ai-lab-attach-btn" disabled={loading||imageFiles.length>=4} onClick={()=>fileInputRef.current?.click()}>＋</button>
-        <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="可以输入文字，或直接上传 WhatsApp / 航班 / 报价截图…" onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();void send();}}}/>
-        <button type="button" className="workflow-primary-btn" disabled={(!input.trim()&&!imageFiles.length)||loading} onClick={()=>void send()}>{loading?"Thinking...":"Send"}</button>
+        <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder={t("Type a message, or upload WhatsApp / flight / quotation screenshots...","可以输入文字，或直接上传 WhatsApp / 航班 / 报价截图…")} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();void send();}}}/>
+        <button type="button" className="workflow-primary-btn" disabled={(!input.trim()&&!imageFiles.length)||loading} onClick={()=>void send()}>{loading?t("Thinking...","思考中..."):t("Send","发送")}</button>
       </div>
-      <div className="ai-lab-compose-note">支持 JPG / PNG / WEBP · 最多 4 张 · 每张 ≤ 5MB · 对话自动保存 · Enter 发送 · AI 修改系统前仍需确认</div>
+      <div className="ai-lab-compose-note">{t("JPG / PNG / WEBP · Up to 4 images · Max 5MB each · Conversations auto-save · Enter to send · AI changes still require confirmation","支持 JPG / PNG / WEBP · 最多 4 张 · 每张 ≤ 5MB · 对话自动保存 · Enter 发送 · AI 修改系统前仍需确认")}</div>
     </section>
 
     <aside className="ai-lab-context">
       {sidebarCollapsed&&<button
         type="button"
         className="ai-lab-sidebar-restore"
-        aria-label="Expand sidebar"
-        title="Expand sidebar"
+        aria-label={t("Expand sidebar","展开侧栏")}
+        title={t("Expand sidebar","展开侧栏")}
         onClick={()=>setSidebarCollapsed(false)}
       >‹</button>}
 
       <div className="ai-thread-panel">
         <div className="ai-thread-panel-head">
           <div>
-            <span>WORK THREADS</span>
-            <strong>Active Conversations</strong>
+            <span>{t("WORK THREADS","工作对话")}</span>
+            <strong>{t("Active Conversations","进行中的对话")}</strong>
           </div>
           <div className="ai-thread-panel-actions">
-            <button type="button" onClick={newThread}>＋ New</button>
-            <button type="button" className="ai-thread-collapse-btn" aria-label="Collapse sidebar" title="Collapse sidebar" onClick={()=>setSidebarCollapsed(true)}>›</button>
+            <button type="button" onClick={newThread}>{t("＋ New","＋ 新建")}</button>
+            <button type="button" className="ai-thread-collapse-btn" aria-label={t("Collapse sidebar","收起侧栏")} title={t("Collapse sidebar","收起侧栏")} onClick={()=>setSidebarCollapsed(true)}>›</button>
           </div>
         </div>
 
         <div className="ai-thread-save-state">
           <i aria-hidden="true"/>
-          <span>{saveState==="saving"?"Saving...":saveState==="saved"?"Saved":"Auto-save"}</span>
+          <span>{saveState==="saving"?t("Saving...","保存中..."):saveState==="saved"?t("Saved","已保存"):t("Auto-save","自动保存")}</span>
         </div>
 
-        <div className="ai-thread-view-switch ios-segmented-control" aria-label="Thread view">
+        <div className="ai-thread-view-switch ios-segmented-control" aria-label={t("Thread view","对话视图")}>
           <button type="button" className={!showArchived?"active":""} onClick={()=>setShowArchived(false)}>
-            Active <span>{threads.length}</span>
+            {t("Active","进行中")} <span>{threads.length}</span>
           </button>
           <button type="button" className={showArchived?"active":""} onClick={()=>setShowArchived(true)}>
-            Archived <span>{archivedThreads.length}</span>
+            {t("Archived","已归档")} <span>{archivedThreads.length}</span>
           </button>
         </div>
 
         {threadsLoading
-          ? <p className="ai-lab-context-empty">Loading threads...</p>
+          ? <p className="ai-lab-context-empty">{t("Loading threads...","加载对话中...")}</p>
           : !showArchived
             ? threads.length>0
               ? <div className="ai-thread-list">
                   {threads.map(t=><div key={t.id} className={"ai-thread-item "+(threadId===t.id?"active":"")}>
                     <button type="button" className="ai-thread-open" onClick={()=>void openThread(t.id)}>
-                      <span className="ai-thread-title">{t.title||"Untitled Thread"}</span>
-                      <span className="ai-thread-meta">{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
+                      <span className="ai-thread-title">{t.title||t("Untitled Thread","未命名对话")}</span>
+                      <span className="ai-thread-meta">{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||t("Unlinked","未关联")}</span>
                       <span className="ai-thread-time">{t.last_active_at?new Date(t.last_active_at).toLocaleString(): ""}</span>
                     </button>
-                    <button type="button" className="ai-thread-archive" aria-label="Archive thread" title="Archive Thread" onClick={()=>void setThreadArchived(t.id,true)}>
+                    <button type="button" className="ai-thread-archive" aria-label={t("Archive thread","归档对话")} title={t("Archive Thread","归档对话")} onClick={()=>void setThreadArchived(t.id,true)}>
                       <span aria-hidden="true">⌄</span>
                     </button>
                   </div>)}
                 </div>
-              : <p className="ai-lab-context-empty">还没有保存的工作对话。第一次发送消息后会自动建立 Thread。</p>
+              : <p className="ai-lab-context-empty">{t("No saved work conversations yet. A Thread will be created automatically after the first message.","还没有保存的工作对话。第一次发送消息后会自动建立 Thread。")}</p>
             : archivedThreads.length>0
               ? <div className="ai-thread-list archived">
                   {archivedThreads.map(t=><div key={t.id} className="ai-thread-item archived-item">
                     <button type="button" className="ai-thread-open" onClick={()=>void openThread(t.id)}>
-                      <span className="ai-thread-title">{t.title||"Untitled Thread"}</span>
-                      <span className="ai-thread-meta">{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
+                      <span className="ai-thread-title">{t.title||t("Untitled Thread","未命名对话")}</span>
+                      <span className="ai-thread-meta">{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||t("Unlinked","未关联")}</span>
                       <span className="ai-thread-time">{t.last_active_at?new Date(t.last_active_at).toLocaleString(): ""}</span>
                     </button>
-                    <button type="button" className="ai-thread-archive restore" aria-label="Restore thread" title="Restore Thread" onClick={()=>void setThreadArchived(t.id,false)}>
+                    <button type="button" className="ai-thread-archive restore" aria-label={t("Restore thread","恢复对话")} title={t("Restore Thread","恢复对话")} onClick={()=>void setThreadArchived(t.id,false)}>
                       <span aria-hidden="true">↺</span>
                     </button>
                   </div>)}
                 </div>
-              : <p className="ai-lab-context-empty">No archived threads.</p>}
+              : <p className="ai-lab-context-empty">{t("No archived threads.","没有已归档的对话。")}</p>}
       </div>
 
       <div className="ai-lab-context-section">
         <div className="ai-lab-context-head">
-          <span>CURRENT CONTEXT</span>
-          <strong>{contextInquiryId?"Current Case":"No case selected"}</strong>
+          <span>{t("CURRENT CONTEXT","当前上下文")}</span>
+          <strong>{contextInquiryId?t("Current Case","当前案件"):t("No case selected","未选择案件")}</strong>
         </div>
         {contextInquiryId
           ? <div className="ai-lab-current-case">
-              <span>INQUIRY</span>
+              <span>{t("INQUIRY","询价")}</span>
               <strong>{contextTitle||contextInquiryId}</strong>
               <small>{contextInquiryId}</small>
-              <a className="btn ai-lab-nav-link" href={"/inquiries/"+contextInquiryId+"?returnTo="+encodeURIComponent("/ai-lab")}>Open Inquiry</a>
-              <button className="ai-lab-clear" type="button" onClick={clearContext}>Clear Context</button>
+              <a className="btn ai-lab-nav-link" href={"/inquiries/"+contextInquiryId+"?returnTo="+encodeURIComponent("/ai-lab")}>{t("Open Inquiry","打开询价")}</a>
+              <button className="ai-lab-clear" type="button" onClick={clearContext}>{t("Clear Context","清除上下文")}</button>
             </div>
-          : <p className="ai-lab-context-empty">当你提到一笔 Inquiry 后，它会留在这里。之后可以直接说「继续这笔」或「下一步」。</p>}
+          : <p className="ai-lab-context-empty">{t("Once you mention an Inquiry, it stays here as context. You can then say “continue this case” or “what’s next?”","当你提到一笔 Inquiry 后，它会留在这里。之后可以直接说「继续这笔」或「下一步」。")}</p>}
       </div>
 
       <div className={"ai-lab-safety "+(showSafety?"open":"")}>
         <button type="button" className="ai-lab-safety-toggle" onClick={()=>setShowSafety(v=>!v)}>
-          <span><i aria-hidden="true"/> Safety</span>
+          <span><i aria-hidden="true"/> {t("Safety","安全")}</span>
           <b>{showSafety?"⌃":"›"}</b>
         </button>
         {showSafety&&<div className="ai-lab-safety-body">
-          <span>查询 / 导航可以直接做。</span>
-          <span>真正修改状态时必须由你确认。</span>
-          <span>非 Quotation 长期规则会自动保存并提示；Quotation 规则仍需你手动确认。</span>
+          <span>{t("Queries and navigation can be done directly.","查询 / 导航可以直接做。")}</span>
+          <span>{t("Any actual status change requires your confirmation.","真正修改状态时必须由你确认。")}</span>
+          <span>{t("Long-term non-Quotation rules may be auto-saved with a notice; Quotation rules still require manual confirmation.","非 Quotation 长期规则会自动保存并提示；Quotation 规则仍需你手动确认。")}</span>
         </div>}
       </div>
     </aside>
