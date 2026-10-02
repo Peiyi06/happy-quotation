@@ -13386,3 +13386,108 @@ td,
 .ai-thread-panel .ai-thread-view-switch.ios-segmented-control>button>span{
   flex:0 0 auto!important;
 }
+
+
+/* =========================================================
+   AI LAB — FULL PAGE POLISH PASS
+   Final alignment pass after full-page visual review.
+   ========================================================= */
+
+/* 1. Thread rows: one consistent left scan line. */
+.ai-thread-item{
+  text-align:left!important;
+}
+.ai-thread-open{
+  width:100%!important;
+  display:grid!important;
+  justify-items:start!important;
+  text-align:left!important;
+}
+.ai-thread-title,
+.ai-thread-meta{
+  width:100%!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  text-align:left!important;
+  justify-self:start!important;
+}
+
+/* 2. Row action: present only when the row is being acted on. */
+.ai-thread-archive{
+  opacity:.06!important;
+  color:var(--color-text-tertiary)!important;
+  background:transparent!important;
+  border:0!important;
+  transition:
+    opacity .14s ease,
+    background-color .14s ease,
+    color .14s ease!important;
+}
+.ai-thread-item:hover .ai-thread-archive,
+.ai-thread-item.active .ai-thread-archive,
+.ai-thread-archive:focus-visible{
+  opacity:.58!important;
+}
+.ai-thread-archive:hover{
+  opacity:.9!important;
+  background:var(--color-bg-soft)!important;
+  color:var(--color-text-secondary)!important;
+}
+
+/* 3. Thread scrollbar: quieter, slimmer, no heavy chrome. */
+.ai-thread-list{
+  scrollbar-width:thin;
+  scrollbar-color:rgba(87,103,116,.30) transparent;
+}
+.ai-thread-list::-webkit-scrollbar{
+  width:6px;
+}
+.ai-thread-list::-webkit-scrollbar-track{
+  background:transparent;
+}
+.ai-thread-list::-webkit-scrollbar-thumb{
+  min-height:36px;
+  border-radius:999px;
+  background:rgba(87,103,116,.26);
+}
+.ai-thread-list:hover::-webkit-scrollbar-thumb{
+  background:rgba(87,103,116,.42);
+}
+.ai-thread-list::-webkit-scrollbar-button{
+  width:0;
+  height:0;
+  display:none;
+}
+
+/* 4. Empty workspace: keep breathing room, but bring the action dock upward. */
+@media(min-width:821px){
+  .ai-lab-main:has(> .ai-lab-chat:empty){
+    box-sizing:border-box!important;
+    padding-bottom:52px!important;
+  }
+  .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-starter-wrap{
+    margin-bottom:6px!important;
+  }
+}
+
+/* 5. Collapse is a secondary utility, not a peer to + New. */
+.ai-thread-panel-actions .ai-thread-collapse-btn{
+  border-color:transparent!important;
+  background:transparent!important;
+  color:var(--color-text-tertiary)!important;
+  opacity:.72;
+}
+.ai-thread-panel-actions .ai-thread-collapse-btn:hover{
+  border-color:transparent!important;
+  background:var(--color-bg-soft)!important;
+  color:var(--color-text-secondary)!important;
+  opacity:1;
+}
+.ai-thread-panel-actions .ai-thread-collapse-btn:focus{
+  border-color:transparent!important;
+  background:transparent!important;
+}
+.ai-thread-panel-actions .ai-thread-collapse-btn:focus-visible{
+  background:var(--color-bg-soft)!important;
+  opacity:1;
+}
