@@ -88,9 +88,8 @@ export default function ProductLibrary({initialProducts,canCreate}:{initialProdu
   }
 
   return <div className="product-library-page">
-    <div className="page-head page-compact-header product-page-head">
+    <div className="page-head workspace-flat-head product-page-head">
       <div>
-        <span className="page-kicker">{t("PRODUCT LIBRARY","产品资料库")}</span>
         <h1>{t("Products","产品")}</h1>
         <p>{t("Operation can create and maintain reusable travel products in advance.","Operation 预先建立与维护可重复销售的常规旅游产品。")}</p>
       </div>
