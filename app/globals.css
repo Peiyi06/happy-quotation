@@ -5250,11 +5250,11 @@ button,
 /* Quotation workflow — always-visible energy flow
    Keep the status rail, but let a subtle blue pulse continuously travel
    across both connectors so the workflow visibly feels alive at every stage. */
-.quotation-editor-workflow .simple-workflow-arrow::after{
+.quotation-workflow-compact .simple-workflow-arrow::after{
   opacity:1;
   animation:quotation-energy-flow 2.35s cubic-bezier(.42,0,.32,1) infinite!important;
 }
-.quotation-editor-workflow .simple-workflow-arrow:nth-of-type(4)::after{
+.quotation-workflow-compact .simple-workflow-arrow + .simple-workflow-card + .simple-workflow-arrow::after{
   animation-delay:.72s!important;
 }
 
@@ -5279,10 +5279,10 @@ button,
 }
 
 @media(max-width:1050px){
-  .quotation-editor-workflow .simple-workflow-arrow::after{
+  .quotation-workflow-compact .simple-workflow-arrow::after{
     animation:quotation-energy-flow-vertical 2.35s cubic-bezier(.42,0,.32,1) infinite!important;
   }
-  .quotation-editor-workflow .simple-workflow-arrow:nth-of-type(4)::after{
+  .quotation-workflow-compact .simple-workflow-arrow + .simple-workflow-card + .simple-workflow-arrow::after{
     animation-delay:.72s!important;
   }
 }
@@ -5308,7 +5308,7 @@ button,
 }
 
 @media(prefers-reduced-motion:reduce){
-  .quotation-editor-workflow .simple-workflow-arrow::after{
+  .quotation-workflow-compact .simple-workflow-arrow::after{
     animation:none!important;
     opacity:.35;
   }
