@@ -218,6 +218,14 @@ export default function TravelMediaLibrary(){
     }finally{setSavingId("");}
   }
 
+  function clearInspector(){
+    setInspectorQuery("");
+    setInspectorResults([]);
+    setInspectorMessage("");
+    setKeywordDrafts({});
+    setError("");
+  }
+
   async function searchInspector(){
     const query=inspectorQuery.trim();
     if(!query){setInspectorResults([]);setInspectorMessage("请输入景点或酒店关键字。");return;}
@@ -534,12 +542,28 @@ export default function TravelMediaLibrary(){
       <div className="travel-library-inspector-search">
         <input
           value={inspectorQuery}
-          onChange={e=>setInspectorQuery(e.target.value)}
+          onChange={e=>{
+            const value=e.target.value;
+            setInspectorQuery(value);
+            if(!value.trim()){
+              setInspectorResults([]);
+              setInspectorMessage("");
+              setKeywordDrafts({});
+            }
+          }}
           onKeyDown={e=>{if(e.key==="Enter") void searchInspector();}}
           placeholder="例如：清水寺 / Kiyomizu-dera / DoubleTree Kyoto..."
         />
         <button className="btn primary" type="button" disabled={inspectorLoading} onClick={()=>void searchInspector()}>
           {inspectorLoading?"Searching...":"Search Library"}
+        </button>
+        <button
+          className="btn"
+          type="button"
+          disabled={inspectorLoading||(!inspectorQuery&&!inspectorResults.length&&!inspectorMessage)}
+          onClick={clearInspector}
+        >
+          Clear
         </button>
       </div>
 
