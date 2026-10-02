@@ -15135,3 +15135,218 @@ td,
     min-width:0!important;
   }
 }
+
+
+/* =========================================================
+   NEW INQUIRY — LAYOUT & DENSITY CLEANUP
+   Second-pass refinement scoped only to New Inquiry.
+   ========================================================= */
+
+/* 1. Keep the form at a deliberate reading width and avoid right-edge clipping. */
+.new-inquiry-template{
+  width:100%;
+  max-width:1480px;
+  margin:0 auto;
+}
+
+.new-inquiry-template .inquiry-editor{
+  width:100%;
+  min-width:0;
+}
+
+.new-inquiry-template .inquiry-editor>.panel{
+  width:100%;
+  min-width:0;
+}
+
+/* Customer Request grid: adaptive instead of forcing overly wide columns. */
+.new-inquiry-template .inquiry-editor>.panel:first-child .itinerary-meta-grid{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:12px 14px!important;
+}
+
+.new-inquiry-template .customer-request-copy-actions{
+  max-width:100%;
+}
+
+.new-inquiry-template .customer-request-copy-actions .btn{
+  white-space:nowrap!important;
+}
+
+/* System metadata should feel informational, not like large editable fields. */
+.new-inquiry-template .system-fixed-input{
+  height:38px!important;
+  min-height:38px!important;
+  background:#f4f6f8!important;
+  border-color:#e0e6ea!important;
+  color:#425564!important;
+  font-weight:650!important;
+}
+
+@media(max-width:1320px){
+  .new-inquiry-template .inquiry-editor>.panel:first-child .itinerary-meta-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+}
+
+@media(max-width:980px){
+  .new-inquiry-template .inquiry-editor>.panel:first-child .itinerary-meta-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
+
+/* 2. Traveller composition: compact numeric fields, calmer notes. */
+.new-inquiry-template .inquiry-editor>.panel:nth-of-type(2)>.itinerary-meta-grid{
+  grid-template-columns:repeat(3,minmax(140px,220px))!important;
+  justify-content:start!important;
+  gap:12px!important;
+}
+
+.new-inquiry-template .inquiry-editor>.panel:nth-of-type(2)>.itinerary-meta-grid .field input{
+  max-width:220px!important;
+}
+
+.new-inquiry-template .traveller-composition-notes{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:12px 14px!important;
+}
+
+.new-inquiry-template .traveller-composition-notes textarea{
+  min-height:72px!important;
+  height:72px!important;
+}
+
+/* 3. Composition total: compact summary instead of a full-width alert banner. */
+.new-inquiry-template .traveller-composition-check{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:18px!important;
+  width:max-content!important;
+  max-width:100%!important;
+  min-width:0!important;
+  padding:9px 12px!important;
+}
+
+.new-inquiry-template .traveller-composition-total{
+  display:flex!important;
+  align-items:baseline!important;
+  gap:8px!important;
+}
+
+.new-inquiry-template .traveller-composition-total span{
+  margin:0!important;
+  font-size:9.5px!important;
+}
+
+.new-inquiry-template .traveller-composition-total strong{
+  font-size:17px!important;
+  line-height:1!important;
+}
+
+.new-inquiry-template .traveller-composition-match{
+  display:flex!important;
+  align-items:center!important;
+  gap:7px!important;
+  font-size:10px!important;
+  white-space:nowrap!important;
+}
+
+/* 4. Suggested Flights: collapse the empty-state vertical gap. */
+.new-inquiry-template .inquiry-flights-ios{
+  min-height:0!important;
+}
+
+.new-inquiry-template .inquiry-flights-ios>.panel-head{
+  margin-bottom:10px!important;
+}
+
+.new-inquiry-template .inquiry-flight-list{
+  min-height:0!important;
+}
+
+.new-inquiry-template .inquiry-flight-list>.empty{
+  margin:0!important;
+  padding:6px 0 2px!important;
+  min-height:0!important;
+  line-height:1.45!important;
+}
+
+/* 5. Travel Requirements: supportive, not dominant. */
+.new-inquiry-template .inquiry-requirements-ios .inquiry-requirement-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:12px 14px!important;
+}
+
+.new-inquiry-template .inquiry-requirements-ios textarea{
+  min-height:74px!important;
+  height:74px!important;
+}
+
+/* 6. Next Step: compact confirmation strip. */
+.new-inquiry-template .new-inquiry-workflow-panel{
+  padding-top:18px!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-card{
+  min-height:74px!important;
+  padding:11px 12px!important;
+  border-radius:11px!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-card-head{
+  min-height:24px!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-index{
+  width:26px!important;
+  height:26px!important;
+  font-size:9.5px!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-state{
+  min-height:22px!important;
+  padding:0 8px!important;
+  font-size:9px!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-title strong{
+  font-size:12px!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-actions{
+  margin-top:12px!important;
+  padding-top:12px!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-actions .btn.primary{
+  min-width:0!important;
+  padding:0 16px!important;
+}
+
+@media(max-width:760px){
+  .new-inquiry-template .inquiry-editor>.panel:nth-of-type(2)>.itinerary-meta-grid{
+    grid-template-columns:1fr!important;
+  }
+
+  .new-inquiry-template .inquiry-editor>.panel:nth-of-type(2)>.itinerary-meta-grid .field input{
+    max-width:none!important;
+  }
+
+  .new-inquiry-template .traveller-composition-notes,
+  .new-inquiry-template .inquiry-requirements-ios .inquiry-requirement-grid{
+    grid-template-columns:1fr!important;
+  }
+
+  .new-inquiry-template .traveller-composition-check{
+    width:100%!important;
+    align-items:flex-start!important;
+    flex-direction:column!important;
+    gap:7px!important;
+  }
+
+  .new-inquiry-template .traveller-composition-match{
+    white-space:normal!important;
+  }
+}
