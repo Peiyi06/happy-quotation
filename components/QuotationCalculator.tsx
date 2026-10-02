@@ -668,7 +668,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     ["小孩不加床", calc.childNoBedNoLeader, calc.childNoBedLeader],
   ] as const;
 
-  return <main className="app-shell">
+  return <main className={"app-shell "+(workspaceMode?"quotation-editor-shell":"")}>
     {workspaceMode&&resolvedSourceInquiryId&&<section className="quote-source-inquiry">
       <div>
         <span>SOURCE INQUIRY｜来源询价</span>
@@ -677,15 +677,15 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </div>
       <button className="btn" type="button" onClick={()=>{const href="/inquiries/"+resolvedSourceInquiryId;if(isDirty)setPendingHref(href);else router.push(href);}}>Open Inquiry</button>
     </section>}
-    <header className="topbar">
+    <header className={"topbar "+(workspaceMode?"quotation-editor-header":"")}>
       <div>
-        <div className="eyebrow">HAPPY EXPRESS TRAVEL</div>
+        {!workspaceMode&&<div className="eyebrow">HAPPY EXPRESS TRAVEL</div>}
         <h1>Outbound Quotation</h1>
-        <p>Outbound Tour Quotation Calculator</p>
+        <p>{workspaceMode?"Quotation workspace":"Outbound Tour Quotation Calculator"}</p>
       </div>
       <div className="top-actions quote-top-actions no-print">
         {workspaceMode && isDirty && <span className="unsaved-badge">Unsaved changes</span>}
-        {workspaceMode && <button className="btn primary" onClick={()=>void saveQuotation()} disabled={saving}>{saving?"Saving...":"Save Quotation"}</button>}
+        {workspaceMode && <button className="btn quote-header-save" onClick={()=>void saveQuotation()} disabled={saving}>{saving?"Saving...":"Save Quotation"}</button>}
         {workspaceMode&&displayStatus==="under_review"&&<span className="quote-editor-review-state">Under Review</span>}
         {workspaceMode&&displayStatus==="ready"&&<span className="quote-editor-review-state ready">Ready</span>}
         {workspaceMode&&status==="ready"&&commercialDirty&&<span className="quote-commercial-change-note">Commercial changes pending save</span>}
@@ -833,7 +833,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </div>
     </Section>
 
-    <Section title="② 旅客成本输入" action={<button className="btn primary no-print" onClick={addTraveler}>＋ Add Cost Row</button>}>
+    <Section title="② 旅客成本输入" action={<button className="btn no-print" onClick={addTraveler}>＋ Add Cost Row</button>}>
       <div className="table-wrap"><table><thead><tr><th>成本项目</th><th>类型｜Type</th><th>计算方式</th><th>单价</th><th>数量 / 天数</th><th>币种</th><th>汇率</th><th>总成本</th><th>每人成本</th><th>儿童比例</th><th>备注</th><th className="no-print">操作</th></tr></thead>
       <tbody>{travelerRows.map((r,index)=>{
         const isGroundQuote=index===0;
@@ -917,8 +917,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     {workspaceMode&&<section className="panel inquiry-workflow-panel quotation-editor-workflow">
       <div className="panel-head inquiry-workflow-panel-head quotation-workflow-compact-head">
         <div>
-          <span className="page-kicker">WORKFLOW</span>
-          <h2>工作流程</h2>
+          <h2>Workflow</h2>
         </div>
       </div>
 
