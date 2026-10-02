@@ -251,7 +251,7 @@ export default function AiLabWorkspace(){
 
   return <div className={"ai-lab-shell "+(sidebarCollapsed?"sidebar-collapsed":"")}>
     <section className="ai-lab-main">
-      <div className="ai-lab-hero">
+      <div className="ai-lab-hero ai-lab-workbench-head">
         <div><span>HAPPY AI LAB · BETA</span><h1>{t("What would you like to work on?","你想处理什么？")}</h1><p>{t("Experiment with AI workflows here; existing Inquiry / Quotation / Itinerary pages remain unchanged.","先实验 AI 操作方式；现有 Inquiry / Quotation / Itinerary 页面全部保留。")}</p></div>
         <span className="ai-lab-mode">{t("READ-MOSTLY · CONFIRM BEFORE WRITE","以读取为主 · 写入前需确认")}</span>
       </div>
@@ -280,13 +280,13 @@ export default function AiLabWorkspace(){
               <p>{m.memorySuggestion.ruleText}</p>
               <div>
                 <button type="button" className="btn" disabled={memorySaving} onClick={()=>setMessages(prev=>prev.map(x=>x===m?{...x,memorySuggestion:undefined}:x))}>{t("Ignore","忽略")}</button>
-                <button type="button" className="workflow-primary-btn" disabled={memorySaving} onClick={()=>void saveCompanyRule(m.memorySuggestion!)}>{memorySaving?t("Saving...","保存中..."):t("Save as Company Rule","保存为 Company Rule")}</button>
+                <button type="button" className="btn ai-lab-memory-save" disabled={memorySaving} onClick={()=>void saveCompanyRule(m.memorySuggestion!)}>{memorySaving?t("Saving...","保存中..."):t("Save as Company Rule","保存为 Company Rule")}</button>
               </div>
             </div>}
             {m.action&&<div className="ai-lab-action-card">
               <span>{t("PROPOSED ACTION","待确认操作")}</span>
               <strong>{m.action.confirmText}</strong>
-              <div><button type="button" className="btn" disabled={actionLoading} onClick={()=>setMessages(prev=>prev.map(x=>x===m?{...x,action:undefined}:x))}>{t("Cancel","取消")}</button><button type="button" className="workflow-primary-btn" disabled={actionLoading} onClick={()=>void confirmAction(m.action!)}>{actionLoading?t("Working...","处理中..."):m.action.label||t("Confirm","确认")}</button></div>
+              <div><button type="button" className="btn" disabled={actionLoading} onClick={()=>setMessages(prev=>prev.map(x=>x===m?{...x,action:undefined}:x))}>{t("Cancel","取消")}</button><button type="button" className="workflow-primary-btn ai-lab-action-confirm" disabled={actionLoading} onClick={()=>void confirmAction(m.action!)}>{actionLoading?t("Working...","处理中..."):m.action.label||t("Confirm","确认")}</button></div>
             </div>}
           </div>
         </div>)}
@@ -300,7 +300,7 @@ export default function AiLabWorkspace(){
         <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onChange={e=>addImages(e.target.files)}/>
         <button type="button" className="ai-lab-attach-btn" disabled={loading||imageFiles.length>=4} onClick={()=>fileInputRef.current?.click()}>＋</button>
         <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder={t("Type a message, or upload WhatsApp / flight / quotation screenshots...","可以输入文字，或直接上传 WhatsApp / 航班 / 报价截图…")} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();void send();}}}/>
-        <button type="button" className="workflow-primary-btn" disabled={(!input.trim()&&!imageFiles.length)||loading} onClick={()=>void send()}>{loading?t("Thinking...","思考中..."):t("Send","发送")}</button>
+        <button type="button" className="workflow-primary-btn ai-lab-send-primary" disabled={(!input.trim()&&!imageFiles.length)||loading} onClick={()=>void send()}>{loading?t("Thinking...","思考中..."):t("Send","发送")}</button>
       </div>
       <div className="ai-lab-compose-note">{t("JPG / PNG / WEBP · Up to 4 images · Max 5MB each · Conversations auto-save · Enter to send · AI changes still require confirmation","支持 JPG / PNG / WEBP · 最多 4 张 · 每张 ≤ 5MB · 对话自动保存 · Enter 发送 · AI 修改系统前仍需确认")}</div>
     </section>
