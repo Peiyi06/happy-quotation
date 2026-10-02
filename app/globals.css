@@ -12143,3 +12143,38 @@ td,
   font-size:8.75px!important;
   font-weight:500!important;
 }
+
+
+/* =========================================================
+   AI LAB — THREAD FINAL CLEANUP
+   Left-aligned scanning, hidden unlinked noise, quieter row tools.
+   ========================================================= */
+.ai-thread-item{
+  text-align:left!important;
+}
+.ai-thread-open{
+  width:100%;
+  text-align:left!important;
+  justify-items:start!important;
+}
+.ai-thread-title,
+.ai-thread-meta{
+  width:100%;
+  text-align:left!important;
+}
+.ai-thread-archive{
+  opacity:.18;
+  transition:opacity .16s ease, color .16s ease, background .16s ease;
+}
+.ai-thread-item:hover .ai-thread-archive,
+.ai-thread-item.active .ai-thread-archive,
+.ai-thread-archive:focus-visible{
+  opacity:.78;
+}
+.ai-thread-archive:hover{
+  color:var(--color-info-text)!important;
+  background:var(--color-bg-soft)!important;
+}
+.ai-lab-context-empty{
+  max-width:280px;
+}
