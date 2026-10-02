@@ -12079,3 +12079,67 @@ td,
     max-height:360px!important;
   }
 }
+
+
+/* =========================================================
+   AI LAB — THREAD SIMPLIFICATION
+   Reduce repeated labels and make the sidebar easier to scan.
+   ========================================================= */
+.ai-thread-panel-head{
+  padding-bottom:8px!important;
+}
+.ai-thread-panel-head>div{
+  display:flex!important;
+  align-items:center!important;
+}
+.ai-thread-panel-head>div>strong{
+  font-size:16px!important;
+  line-height:1.2!important;
+}
+.ai-thread-panel-head>div>span{
+  display:none!important;
+}
+.ai-thread-save-state{
+  gap:5px!important;
+  padding:0 12px 6px!important;
+  color:var(--color-text-tertiary)!important;
+  font-size:8.5px!important;
+  opacity:.75;
+}
+.ai-thread-save-state i{
+  width:6px!important;
+  height:6px!important;
+}
+.ai-thread-save-state.is-saving{
+  opacity:1;
+  color:var(--color-info-text)!important;
+}
+.ai-thread-view-switch{
+  margin-top:0!important;
+}
+.ai-thread-view-switch button{
+  font-weight:550!important;
+}
+.ai-thread-view-switch button>span{
+  margin-left:3px;
+  color:var(--color-text-tertiary)!important;
+  font-size:9px!important;
+  font-weight:500!important;
+}
+.ai-thread-item{
+  min-height:56px!important;
+}
+.ai-thread-title{
+  font-size:10.75px!important;
+  font-weight:650!important;
+}
+.ai-thread-meta{
+  color:var(--color-text-secondary)!important;
+  font-size:9.25px!important;
+  font-weight:500!important;
+}
+.ai-thread-meta.is-unlinked{
+  color:var(--color-text-tertiary)!important;
+  font-size:8.75px!important;
+  font-weight:500!important;
+}
