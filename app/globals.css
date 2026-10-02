@@ -8055,3 +8055,304 @@ td,
     border-bottom:0;
   }
 }
+
+
+/* =========================================================
+   ITINERARY EDITOR FOUNDATION — PHASE 1
+   Header, basic information groups, day hierarchy/actions.
+   ========================================================= */
+.itinerary-editor .itinerary-editor-head{
+  align-items:flex-start;
+  margin-bottom:var(--space-lg);
+  padding:4px 0 22px;
+  border-bottom:1px solid var(--color-border-default);
+}
+.itinerary-editor .itinerary-editor-title-block{
+  display:grid;
+  gap:7px;
+}
+.itinerary-editor .itinerary-editor-title-block h1{
+  margin:0!important;
+  font-size:36px!important;
+  line-height:1.08!important;
+  font-weight:700!important;
+  letter-spacing:-.028em!important;
+  color:var(--color-brand-primary)!important;
+}
+.itinerary-editor .itinerary-editor-meta-line{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  color:var(--color-text-secondary);
+  font-size:14px;
+}
+.itinerary-editor .itinerary-editor-actions{
+  align-items:center;
+}
+.itinerary-editor .itinerary-editor-actions .unsaved-badge{
+  display:inline-flex;
+  align-items:center;
+  min-height:32px;
+  padding:0 10px;
+  border-radius:999px;
+  background:var(--color-warning-soft);
+  color:var(--color-warning-text);
+  font-size:11px;
+  font-weight:750;
+}
+.itinerary-editor .itinerary-editor-actions .itinerary-editor-back{
+  background:transparent;
+  border-color:transparent;
+  color:var(--color-text-secondary);
+}
+.itinerary-editor .itinerary-editor-actions .btn.primary{
+  background:var(--color-brand-primary);
+  border-color:var(--color-brand-primary);
+  color:#fff;
+}
+
+/* Basic information is one section with three lightweight groups. */
+.itinerary-editor .itinerary-editor-basics{
+  padding:20px 22px;
+  box-shadow:none;
+}
+.itinerary-editor .itinerary-editor-basics>.panel-head{
+  margin-bottom:0;
+  padding-bottom:16px;
+  border-bottom:1px solid var(--color-border-default);
+}
+.itinerary-editor .itinerary-code-preview{
+  color:var(--color-text-secondary);
+  letter-spacing:.04em;
+  font-weight:750;
+}
+.itinerary-editor .itinerary-basic-group{
+  display:grid;
+  grid-template-columns:150px minmax(0,1fr);
+  gap:22px;
+  padding:20px 0;
+  border-bottom:1px solid var(--color-border-default);
+}
+.itinerary-editor .itinerary-basic-group:last-child{
+  padding-bottom:0;
+  border-bottom:0;
+}
+.itinerary-editor .itinerary-basic-group-head{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  padding-top:2px;
+}
+.itinerary-editor .itinerary-basic-group-head strong{
+  color:var(--color-text-primary);
+  font-size:14px;
+}
+.itinerary-editor .itinerary-basic-group-head span{
+  color:var(--color-text-secondary);
+  font-size:11px;
+  line-height:1.45;
+}
+.itinerary-editor .itinerary-basic-grid{
+  display:grid;
+  gap:14px;
+}
+.itinerary-editor .itinerary-basic-trip{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+.itinerary-editor .itinerary-basic-booking{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+.itinerary-editor .itinerary-basic-document{
+  grid-template-columns:minmax(0,2fr) minmax(180px,.7fr);
+}
+.itinerary-editor .itinerary-duration-control{
+  grid-column:1/-1;
+  display:grid;
+  grid-template-columns:minmax(110px,.65fr) minmax(100px,.55fr) minmax(100px,.55fr) auto;
+  gap:12px;
+  align-items:end;
+  padding:12px 14px;
+  border:1px solid var(--color-border-default);
+  border-radius:var(--radius-md);
+  background:var(--color-bg-soft);
+}
+.itinerary-editor .itinerary-duration-control>div:first-child{
+  align-self:center;
+}
+.itinerary-editor .itinerary-duration-control>div:first-child span{
+  display:block;
+  margin-bottom:4px;
+  color:var(--color-text-secondary);
+  font-size:10px;
+  font-weight:700;
+}
+.itinerary-editor .itinerary-duration-control>div:first-child strong{
+  color:var(--color-text-primary);
+  font-size:17px;
+}
+.itinerary-editor .itinerary-duration-control .field span{
+  font-size:10px;
+}
+.itinerary-editor .itinerary-duration-control .field input{
+  height:40px;
+}
+.itinerary-editor .itinerary-sync-btn{
+  min-height:40px!important;
+  height:40px;
+  padding:0 13px;
+  background:var(--color-bg-surface)!important;
+  border:1px solid var(--color-border-default)!important;
+  color:var(--color-text-secondary)!important;
+  box-shadow:none!important;
+}
+
+/* Day remains the meaningful card; its controls recede. */
+.itinerary-editor .itinerary-day-card{
+  padding:0;
+  gap:0;
+  overflow:hidden;
+  background:var(--color-bg-surface);
+  border:1px solid var(--color-border-default);
+  border-radius:var(--radius-md);
+  box-shadow:none;
+}
+.itinerary-editor .itinerary-day-head{
+  min-height:64px;
+  padding:14px 16px;
+  border-bottom:1px solid var(--color-border-default);
+  background:var(--color-bg-surface);
+}
+.itinerary-editor .itinerary-day-title-wrap{
+  gap:10px;
+}
+.itinerary-editor .itinerary-day-title-wrap>div{
+  gap:1px;
+}
+.itinerary-editor .itinerary-day-head .itinerary-day-title-wrap>div>span{
+  color:var(--color-text-secondary)!important;
+  letter-spacing:.08em;
+  font-size:10px;
+}
+.itinerary-editor .itinerary-day-head strong{
+  color:var(--color-text-primary);
+  font-size:15px;
+}
+.itinerary-editor .itinerary-day-status{
+  min-height:24px;
+  padding:0 8px;
+  letter-spacing:0!important;
+}
+.itinerary-editor .itinerary-day-status.draft{
+  background:var(--color-neutral-status-soft);
+  color:var(--color-neutral-status-text)!important;
+}
+.itinerary-editor .itinerary-day-status.completed{
+  background:var(--color-success-soft);
+  color:var(--color-success-text)!important;
+}
+.itinerary-editor .itinerary-day-actions{
+  gap:5px;
+  align-items:center;
+}
+.itinerary-editor .itinerary-day-actions button{
+  min-height:32px;
+  padding:0 9px;
+  border:1px solid var(--color-border-default);
+  border-radius:var(--radius-sm);
+  background:var(--color-bg-surface);
+  color:var(--color-text-secondary);
+  box-shadow:none;
+  font-size:11px;
+  font-weight:650;
+}
+.itinerary-editor .itinerary-day-actions button:hover:not(:disabled){
+  background:var(--color-bg-soft);
+  color:var(--color-text-primary);
+}
+.itinerary-editor .itinerary-day-actions .day-complete-btn{
+  border-color:var(--color-success-text)!important;
+  background:var(--color-success-soft)!important;
+  color:var(--color-success-text)!important;
+}
+.itinerary-editor .itinerary-day-actions .day-status-btn{
+  border-color:var(--color-border-default)!important;
+  background:var(--color-neutral-status-soft)!important;
+  color:var(--color-neutral-status-text)!important;
+}
+.itinerary-editor .itinerary-day-actions .day-collapse-btn{
+  border-color:transparent!important;
+  background:transparent!important;
+  color:var(--color-link)!important;
+}
+.itinerary-editor .itinerary-day-actions .day-icon-action{
+  width:32px;
+  padding:0;
+  font-size:14px;
+}
+.itinerary-editor .itinerary-day-actions .day-secondary-action{
+  background:transparent;
+}
+.itinerary-editor .itinerary-day-actions .danger-link{
+  border-color:transparent!important;
+  background:transparent!important;
+  color:var(--color-danger-text)!important;
+}
+.itinerary-editor .itinerary-day-collapsed-summary{
+  padding:13px 16px;
+  border-top:0;
+  background:var(--color-bg-soft);
+  border-radius:0;
+}
+.itinerary-editor .day-summary-chips span{
+  min-height:24px;
+  padding:0 7px;
+  border:0;
+  background:var(--color-neutral-status-soft);
+  color:var(--color-text-secondary);
+  font-weight:650;
+}
+.itinerary-editor .itinerary-day-card>:not(.itinerary-day-head):not(.itinerary-day-collapsed-summary){
+  margin-left:16px;
+  margin-right:16px;
+}
+.itinerary-editor .itinerary-day-card>.itinerary-day-main-grid{
+  margin-top:16px;
+}
+.itinerary-editor .itinerary-day-card>.itinerary-attraction-section{
+  margin-bottom:16px;
+}
+
+@media(max-width:1100px){
+  .itinerary-editor .itinerary-basic-booking{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .itinerary-editor .itinerary-duration-control{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .itinerary-editor .itinerary-duration-control .itinerary-sync-btn{
+    width:max-content;
+  }
+}
+@media(max-width:760px){
+  .itinerary-editor .itinerary-editor-title-block h1{
+    font-size:32px!important;
+  }
+  .itinerary-editor .itinerary-basic-group{
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  .itinerary-editor .itinerary-basic-trip,
+  .itinerary-editor .itinerary-basic-booking,
+  .itinerary-editor .itinerary-basic-document,
+  .itinerary-editor .itinerary-duration-control{
+    grid-template-columns:1fr;
+  }
+  .itinerary-editor .itinerary-duration-control .itinerary-sync-btn{
+    width:100%;
+  }
+  .itinerary-editor .itinerary-day-head{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+}
