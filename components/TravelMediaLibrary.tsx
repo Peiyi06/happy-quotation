@@ -167,8 +167,17 @@ export default function TravelMediaLibrary(){
       });
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){setError(data?.error||"Unable to save to library.");return;}
-      if(preview?.id===id) setPreview((p:any)=>p?{...p,saved:true}:p);
+      const savedPreview=preview?.id===id?preview:null;
+      if(savedPreview) setPreview((p:any)=>p?{...p,saved:true}:p);
       await load();
+
+      const mime=String(savedPreview?.file?.mimeType||"");
+      if(
+        mime==="application/pdf"||
+        mime==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      ){
+        window.setTimeout(()=>{ void processMediaBacklog(); },250);
+      }
     }finally{setSavingId("");}
   }
 
