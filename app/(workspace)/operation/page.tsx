@@ -76,12 +76,11 @@ export default async function OperationWorkspacePage({
     return "/operation"+(query?"?"+query:"");
   };
 
-  return <div>
-    <div className="page-head operation-workspace-head page-compact-header">
-      <div>
-        <span className="page-kicker">OPERATION WORKSPACE</span>
+  return <div className="operation-workspace-template">
+    <div className="page-head operation-workspace-head">
+      <div className="operation-workspace-title-block">
         <h1>Operation</h1>
-        <p>以案件进度为中心查看 Operation 工作：New → In Progress → Under Review → Ready。</p>
+        <p>{assigned.length} active case{assigned.length===1?"":"s"}</p>
       </div>
       <div className="operation-scope-switch">
         <Link className={requestedScope==="mine"?"active":""} href="/operation">My Operations</Link>
