@@ -145,17 +145,19 @@ export default async function QuotationDetailPage({
   const returnLabel=returnTo.startsWith("/inquiries/")?"← Inquiry":"← Back";
   const currentQuoteHref="/quotations/"+id+"?returnTo="+encodeURIComponent(returnTo);
 
-  return <div>
+  return <div className="quotation-detail-template">
     <div className="page-head quote-detail-head">
-      <div>
-        <span className="page-kicker">QUOTATION DETAIL</span>
+      <div className="quotation-detail-title-block">
         <h1>{data.title||data.quotation_no}</h1>
-        <p>{data.quotation_no} · {data.status||"draft"}</p>
+        <div className="quotation-detail-meta-line">
+          <span>{data.quotation_no}</span>
+          <span className={"status quotation-header-status status-"+String(data.status||"draft")}>{data.status||"draft"}</span>
+        </div>
       </div>
       <div className="detail-actions">
-        <Link className="btn" href={returnTo}>{returnLabel}</Link>
+        <Link className="btn quotation-back-action" href={returnTo}>{returnLabel}</Link>
         <DuplicateQuotationButton id={id} />
-        <Link className="btn primary" href={"/quotations/"+id+"/edit"}>Edit Quotation</Link>
+        <Link className="btn" href={"/quotations/"+id+"/edit"}>Edit Quotation</Link>
       </div>
     </div>
 
