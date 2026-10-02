@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
 import InquiryWorkflowAction from "@/components/InquiryWorkflowAction";
+import {UiText} from "@/components/WorkspaceLanguage";
 
 const inquiryStatusLabels:Record<string,string>={
   new:"New",
@@ -120,7 +121,7 @@ export default async function InquiryDetailPage({
 
   return <div>
     <div className="page-head inquiry-detail-head">
-      <div><span className="page-kicker">INQUIRY DETAIL</span><h1>{data.customer_name||data.inquiry_no}</h1><p>{data.inquiry_no} · {inquiryStatusLabels[data.status]||data.status}</p></div>
+      <div><span className="page-kicker"><UiText en="INQUIRY" zh="询价" /></span><h1>{data.customer_name||data.inquiry_no}</h1><p>{data.inquiry_no} · {inquiryStatusLabels[data.status]||data.status}</p></div>
       <div className="inquiry-head-right">
         <InquiryWorkflowAction
           inquiryId={id}
@@ -134,30 +135,25 @@ export default async function InquiryDetailPage({
         />
         <div className="detail-actions">
           <Link className="btn" href={returnTo}>{returnLabel}</Link>
-          <Link className="btn" href={"/inquiries/"+id+"/operation?returnTo="+returnParam}>Operation Review</Link>
-          <Link className="btn" href={"/inquiries/"+id+"/edit?returnTo="+returnParam}>Edit Inquiry</Link>
+          <Link className="btn" href={"/inquiries/"+id+"/operation?returnTo="+returnParam}><UiText en="Operation Review" zh="运营审核" /></Link>
+          <Link className="btn" href={"/inquiries/"+id+"/edit?returnTo="+returnParam}><UiText en="Edit Inquiry" zh="编辑询价" /></Link>
         </div>
       </div>
     </div>
 
     <section className="dashboard-cards itinerary-summary-cards">
-      <div className="dash-card"><span>Destination</span><b>{data.destination||"—"}</b></div>
-      <div className="dash-card"><span>Travel Dates</span><b>{data.travel_start_date||"—"}{data.travel_end_date?" → "+data.travel_end_date:""}</b></div>
-      <div className="dash-card"><span>Duration</span><b>{data.days_count}D{data.nights_count}N</b></div>
-      <div className="dash-card"><span>Pax</span><b>{data.pax||"—"}</b></div>
-      <div className="dash-card"><span>Sales Owner</span><b>{data.sales_owner_name||"—"}</b></div>
-      <div className="dash-card"><span>Operation</span><b>{data.operation_assignee_name||"—"}</b></div>
+      <div className="dash-card"><span><UiText en="Destination" zh="目的地" /></span><b>{data.destination||"—"}</b></div>
+      <div className="dash-card"><span><UiText en="Travel Dates" zh="旅游日期" /></span><b>{data.travel_start_date||"—"}{data.travel_end_date?" → "+data.travel_end_date:""}</b></div>
+      <div className="dash-card"><span><UiText en="Duration" zh="天数" /></span><b>{data.days_count}D{data.nights_count}N</b></div>
+      <div className="dash-card"><span><UiText en="Pax" zh="人数" /></span><b>{data.pax||"—"}</b></div>
+      <div className="dash-card"><span><UiText en="Sales Owner" zh="销售负责人" /></span><b>{data.sales_owner_name||"—"}</b></div>
+      <div className="dash-card"><span><UiText en="Operation" zh="运营负责人" /></span><b>{data.operation_assignee_name||"—"}</b></div>
     </section>
 
     <section className="panel inquiry-requirements-panel">
       <div className="panel-head">
         <div>
-          <h2>Customer Requirements｜客户需求</h2>
-          <p className="panel-subtext">
-            {hasOperationVersion
-              ?"Sales 原始资料与 Operation 执行版本分开显示，方便快速核对差异。"
-              :"目前显示 Sales 原始资料；Operation 首次保存 Review 后会自动出现执行版本。"}
-          </p>
+          <h2><UiText en="Customer Requirements" zh="客户需求" /></h2>
         </div>
       </div>
 
@@ -165,10 +161,10 @@ export default async function InquiryDetailPage({
         <article className="inquiry-version-card sales-original">
           <div className="inquiry-version-card-head">
             <div>
-              <span className="inquiry-version-kicker">SALES ORIGINAL</span>
-              <h3>Original Inquiry</h3>
+              <span className="inquiry-version-kicker"><UiText en="ORIGINAL" zh="原始版本" /></span>
+              <h3><UiText en="Original Inquiry" zh="原始询价" /></h3>
             </div>
-            <span className="inquiry-version-badge">Original</span>
+            <span className="inquiry-version-badge"><UiText en="Original" zh="原始" /></span>
           </div>
           <div className="inquiry-version-meta">
             <div><span>Contact</span><strong>{data.contact||"—"}</strong></div>
@@ -185,10 +181,10 @@ export default async function InquiryDetailPage({
         {hasOperationVersion&&<article className="inquiry-version-card operation-version">
           <div className="inquiry-version-card-head">
             <div>
-              <span className="inquiry-version-kicker">OPERATION VERSION</span>
-              <h3>Execution Version</h3>
+              <span className="inquiry-version-kicker"><UiText en="OPERATION" zh="运营版本" /></span>
+              <h3><UiText en="Execution Version" zh="执行版本" /></h3>
             </div>
-            <span className="inquiry-version-badge operation">Updated by OP</span>
+            <span className="inquiry-version-badge operation"><UiText en="Updated by OP" zh="运营更新" /></span>
           </div>
           <div className="inquiry-version-meta">
             <div><span>Operation</span><strong>{data.operation_assignee_name||"—"}</strong></div>
@@ -221,8 +217,8 @@ export default async function InquiryDetailPage({
     <section className="panel inquiry-workflow-panel">
       <div className="panel-head inquiry-workflow-panel-head system-workflow-head">
         <div>
-          <span className="page-kicker">WORKFLOW</span>
-          <h2>工作流程</h2>
+          <span className="page-kicker"><UiText en="WORKFLOW" zh="流程" /></span>
+          <h2><UiText en="Workflow" zh="工作流程" /></h2>
           
         </div>
       </div>
@@ -231,10 +227,10 @@ export default async function InquiryDetailPage({
         <div className={"simple-workflow-card "+(operationComplete?"complete":salesCurrentStep==="operation"?"current":"upcoming")}>
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">01</span>
-            <span className="simple-workflow-state">{operationState}</span>
+            <span className="simple-workflow-state"><UiText en={operationState} zh={operationComplete?"✓ 完成":caseStatus==="new"?"当前":"当前"} /></span>
           </div>
           <div className="simple-workflow-title">
-            <h3>Operation</h3>
+            <h3><UiText en="Operation" zh="运营" /></h3>
             <strong>{data.operation_assignee_name?"Assigned to "+data.operation_assignee_name:"Not Assigned"}</strong>
           </div>
           <p>{caseStatus==="new"
@@ -249,10 +245,10 @@ export default async function InquiryDetailPage({
         <div className={"simple-workflow-card "+(quotationReady?"complete":salesCurrentStep==="quotation"?"current":caseStatus==="in_progress"||caseStatus==="waiting_quote"?"active":"upcoming")}>
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">02</span>
-            <span className="simple-workflow-state">{quotationState}</span>
+            <span className="simple-workflow-state"><UiText en={quotationState} zh={caseStatus==="under_review"?"审核中":caseStatus==="revision_required"?"修改":quotationReady?"✓ 完成":"下一步"} /></span>
           </div>
           <div className="simple-workflow-title">
-            <h3>Quotation</h3>
+            <h3><UiText en="Quotation" zh="报价" /></h3>
             <strong>{caseStatus==="under_review"
               ?"Waiting Management Approval"
               :caseStatus==="revision_required"
@@ -288,10 +284,10 @@ export default async function InquiryDetailPage({
         <div className={"simple-workflow-card "+(itineraryReady?"complete":salesCurrentStep==="itinerary"?"current":"upcoming")}>
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">03</span>
-            <span className="simple-workflow-state">{itineraryState}</span>
+            <span className="simple-workflow-state"><UiText en={itineraryState} zh={itineraryReady?"✓ 完成":salesCurrentStep==="itinerary"?"当前":"下一步"} /></span>
           </div>
           <div className="simple-workflow-title">
-            <h3>Itinerary</h3>
+            <h3><UiText en="Itinerary" zh="行程" /></h3>
             <strong>{itineraryReady
               ?"Itinerary Ready"
               :linkedItineraries.length
