@@ -121,7 +121,7 @@ export default async function InquiryDetailPage({
 
   return <div className="inquiry-detail-template">
     <div className="page-head inquiry-detail-head">
-      <div><span className="page-kicker"><UiText en="INQUIRY" zh="询价" /></span><h1>{data.customer_name||data.inquiry_no}</h1><p>{data.inquiry_no} · {inquiryStatusLabels[data.status]||data.status}</p></div>
+      <div className="inquiry-detail-title-block"><h1>{data.customer_name||data.inquiry_no}</h1><p>{data.inquiry_no} · {inquiryStatusLabels[data.status]||data.status}</p></div>
       <div className="inquiry-head-right">
         <InquiryWorkflowAction
           inquiryId={id}
@@ -217,9 +217,7 @@ export default async function InquiryDetailPage({
     <section className="panel inquiry-workflow-panel inquiry-elevated-section">
       <div className="panel-head inquiry-workflow-panel-head system-workflow-head">
         <div>
-          <span className="page-kicker"><UiText en="WORKFLOW" zh="流程" /></span>
           <h2><UiText en="Workflow" zh="工作流程" /></h2>
-          
         </div>
       </div>
 
