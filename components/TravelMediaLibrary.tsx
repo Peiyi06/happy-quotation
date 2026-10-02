@@ -76,7 +76,9 @@ export default function TravelMediaLibrary(){
       }
 
       setMediaBackfillMessage("Queued "+Number(queueData.queued||0)+" source(s). Processing...");
-      for(let i=0;i<20;i++){
+      // Each server invocation processes one media chunk. Keep consuming until the queue is empty.
+      // 120 passes is intentionally above the normal backlog size so one Library open can finish all queued documents.
+      for(let i=0;i<120;i++){
         const res=await fetch("/api/internal-travel-library-media",{
           method:"POST",
           headers:{"Content-Type":"application/json"},
@@ -87,6 +89,8 @@ export default function TravelMediaLibrary(){
           failures++;
           lastError=String(data?.error||"media extraction failed");
           setMediaBackfillMessage("Media extraction failed: "+lastError);
+          // Avoid a hot retry loop when one source repeatedly fails.
+          await new Promise(resolve=>window.setTimeout(resolve,1200));
           continue;
         }
         if(data?.done){
