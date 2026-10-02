@@ -127,6 +127,14 @@ export default async function OperationWorkspacePage({
           </div>}
         </section>;
       })}
+
+      <section className="operation-queue-section operation-queue-panel operation-queue-itinerary_ready operation-coming-soon" aria-disabled="true">
+        <div className="panel-head operation-queue-title">
+          <div><h2>Itinerary Ready</h2><p className="panel-subtext">Completed itinerary tracking will be available here.</p></div>
+          <span className="operation-coming-soon-badge">Coming Soon</span>
+        </div>
+        <div className="operation-empty">Coming soon.</div>
+      </section>
     </div>
   </div>;
 }
