@@ -8,7 +8,7 @@ type InquiryFlight={id:string;from:string;to:string;flightNo:string;date:string;
 const flightUid=()=>Math.random().toString(36).slice(2,10);
 const emptyFlight=():InquiryFlight=>({id:flightUid(),from:"",to:"",flightNo:"",date:"",departureTime:"",arrivalTime:"",remarks:""});
 
-export default function InquiryEditor({initialInquiry,currentStaffName}:{initialInquiry?:any;currentStaffName:string}){
+export default function InquiryEditor({initialInquiry,currentStaffName,backHref="/inquiries"}:{initialInquiry?:any;currentStaffName:string;backHref?:string}){
   const router=useRouter();
   const [customerName,setCustomerName]=useState(initialInquiry?.customer_name||"");
   const [contact,setContact]=useState(initialInquiry?.contact||"");
@@ -337,7 +337,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
     </div>
 
     <div className="detail-actions inquiry-save-actions">
-      <button className="btn" type="button" onClick={()=>requestNavigate("/inquiries")}>← Back</button>
+      <button className="btn" type="button" onClick={()=>requestNavigate(backHref)}>← Back</button>
       <button className="btn primary" type="button" disabled={saving||!isDirty} onClick={()=>void save()}>{saving?"Saving...":isDirty?"Save Inquiry":"Saved ✓"}</button>
     </div>
     {message&&<div className="save-message">{message}</div>}
@@ -350,7 +350,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName}:{initial
         <div className="detail-actions">
           <button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>{saving?"Saving...":"Stay & Save"}</button>
           <button className="btn" type="button" onClick={()=>{
-            const href=pendingHref||"/inquiries";
+            const href=pendingHref||backHref;
             baselineRef.current=editorSnapshot;
             setIsDirty(false);
             setShowUnsavedPrompt(false);
