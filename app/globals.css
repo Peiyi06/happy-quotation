@@ -15689,3 +15689,106 @@ td,
     --foundation-type-section:19px;
   }
 }
+
+
+/* =========================================================
+   FOUNDATION COMPONENT TYPOGRAPHY — SIDEBAR CONTEXT
+   Main workspace keeps 34 / 20 / 14 / 12 / 11.
+   Sidebars use a tighter contextual scale: 22 / 14 / 13 / 12 / 11.
+   ========================================================= */
+:root{
+  --foundation-sidebar-title:22px;
+  --foundation-sidebar-action:14px;
+  --foundation-sidebar-item:13px;
+  --foundation-sidebar-helper:12px;
+  --foundation-sidebar-meta:11px;
+}
+
+/* AI Workspace sidebar title */
+.ai-lab-sidebar .ai-lab-sidebar-head h2,
+.ai-lab-sidebar .ai-thread-title,
+.ai-lab-sidebar h2{
+  font-size:var(--foundation-sidebar-title)!important;
+  line-height:1.15!important;
+  font-weight:700!important;
+  letter-spacing:-.015em!important;
+}
+
+/* Primary sidebar actions */
+.ai-lab-sidebar .btn,
+.ai-lab-sidebar button,
+.ai-lab-sidebar a{
+  font-size:var(--foundation-sidebar-action)!important;
+}
+
+/* Segmented control and thread items */
+.ai-lab-sidebar .ai-thread-filter button,
+.ai-lab-sidebar .ai-thread-tabs button,
+.ai-lab-sidebar .segmented-control button,
+.ai-lab-sidebar .ai-thread-item,
+.ai-lab-sidebar .ai-thread-item strong,
+.ai-lab-sidebar .ai-thread-row,
+.ai-lab-sidebar .ai-thread-row strong{
+  font-size:var(--foundation-sidebar-item)!important;
+  line-height:1.3!important;
+}
+
+/* Current Context primary value */
+.ai-lab-sidebar .ai-lab-context-head>strong{
+  font-size:var(--foundation-sidebar-item)!important;
+  line-height:1.25!important;
+  font-weight:600!important;
+}
+
+/* Helper copy */
+.ai-lab-sidebar .ai-lab-context-section>.ai-lab-context-empty,
+.ai-lab-sidebar .ai-lab-context-section p,
+.ai-lab-sidebar .ai-lab-safety-toggle>span{
+  font-size:var(--foundation-sidebar-helper)!important;
+  line-height:1.4!important;
+}
+
+/* Uppercase metadata / counts / tertiary labels */
+.ai-lab-sidebar .ai-lab-context-head>span,
+.ai-lab-sidebar .ai-thread-count,
+.ai-lab-sidebar .ai-thread-meta,
+.ai-lab-sidebar .ai-thread-time,
+.ai-lab-sidebar small{
+  font-size:var(--foundation-sidebar-meta)!important;
+  line-height:1.3!important;
+}
+
+/* Segmented control should stay compact even with readable text. */
+.ai-lab-sidebar .ai-thread-filter,
+.ai-lab-sidebar .ai-thread-tabs,
+.ai-lab-sidebar .segmented-control{
+  min-height:38px!important;
+}
+
+.ai-lab-sidebar .ai-thread-filter button,
+.ai-lab-sidebar .ai-thread-tabs button,
+.ai-lab-sidebar .segmented-control button{
+  min-height:34px!important;
+  padding:0 12px!important;
+}
+
+/* Utility rows keep Apple-sized touch targets without oversized text. */
+.ai-lab-sidebar .ai-lab-safety-toggle{
+  min-height:46px!important;
+}
+
+.ai-lab-sidebar .ai-lab-safety-toggle>b{
+  font-size:var(--foundation-sidebar-helper)!important;
+}
+
+/* Sidebar-only override: prevent global Page/Section typography leaking in. */
+.ai-lab-sidebar .page-kicker,
+.ai-lab-sidebar .eyebrow{
+  font-size:var(--foundation-sidebar-meta)!important;
+}
+
+@media(max-width:760px){
+  :root{
+    --foundation-sidebar-title:20px;
+  }
+}
