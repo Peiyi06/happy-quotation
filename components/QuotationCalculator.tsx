@@ -843,7 +843,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             <input type="number" min="0" value={flightTotalPrice} onChange={e=>setFlightTotalPrice(e.target.value===""?"":Number(e.target.value))} placeholder="0.00" />
           </Field>
           <Field label={t("Currency","币种")}>
-            <select value={flightPriceCurrency} onChange={e=>setFlightPriceCurrency(e.target.value as Currency)}>{currencies.map(cur=><option key={cur}>{cur}</option>)}</select>
+            <select value={flightPriceCurrency} onChange={e=>setFlightPriceCurrency(e.target.value as Currency)}>{currencies.map(cur=><option key={cur} value={cur}>{currencyLabel(cur)}</option>)}</select>
           </Field>
           <div className="field">
             <span>{t("Ticket Type","机票类型")}</span>
@@ -864,9 +864,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         <Field label="OP"><input value={op || currentStaffName} readOnly /></Field>
         <Field label={t("Supplier","供应商")}><input value={supplier} onChange={e=>setSupplier(e.target.value)} /></Field>
         <Field label={t("Pax","人数")}><input type="number" min="1" value={pax} onChange={e=>setPax(Number(e.target.value)||1)} /></Field>
-        <Field label={t("Main Currency","主要币种")}><select value={mainCurrency} onChange={e=>setMainCurrency(e.target.value as Currency)}>{currencies.map(c=><option key={c}>{c}</option>)}</select></Field>
+        <Field label={t("Main Currency","主要币种")}><select value={mainCurrency} onChange={e=>setMainCurrency(e.target.value as Currency)}>{currencies.map(c=><option key={c} value={c}>{currencyLabel(c)}</option>)}</select></Field>
         <Field label={t("Main Exchange Rate → RM","主要汇率 → RM")}><input type="number" step="0.0001" value={mainRate} onChange={e=>setMainRate(Number(e.target.value)||0)} /></Field>
-        <Field label={t("Profit Method","利润方式")}><select value={profitMode} onChange={e=>setProfitMode(e.target.value as ProfitMode)}>{profitModes.map(x=><option key={x}>{x}</option>)}</select></Field>
+        <Field label={t("Profit Method","利润方式")}><select value={profitMode} onChange={e=>setProfitMode(e.target.value as ProfitMode)}>{profitModes.map(x=><option key={x} value={x}>{profitModeLabel(x)}</option>)}</select></Field>
         <Field label={t("Profit Rate","利润率")}><input type="number" step="0.01" value={profitRate} onChange={e=>setProfitRate(Number(e.target.value)||0)} /></Field>
         <Field label={t("Minimum Profit / Pax","最低毛利 / 人")}><input type="number" value={minProfit} onChange={e=>setMinProfit(e.target.value===""?"":Number(e.target.value))} placeholder={t("Optional","可留空")} /></Field>
         <Field label={t("Maximum Profit / Pax","最高毛利 / 人")}><input type="number" value={maxProfit} onChange={e=>setMaxProfit(e.target.value===""?"":Number(e.target.value))} placeholder={t("Optional","可留空")} /></Field>
@@ -876,28 +876,28 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     </Section>
 
     <Section title={t("② Traveller Cost Input","② 旅客成本输入")} action={<button className="btn no-print" onClick={addTraveler}>{t("+ Add Cost Row","+ 新增成本项目")}</button>}>
-      <div className="table-wrap"><table><thead><tr><th>成本项目</th><th>类型｜Type</th><th>计算方式</th><th>单价</th><th>数量 / 天数</th><th>币种</th><th>汇率</th><th>总成本</th><th>每人成本</th><th>儿童比例</th><th>备注</th><th className="no-print">操作</th></tr></thead>
+      <div className="table-wrap"><table><thead><tr><th>{t("Cost Item","成本项目")}</th><th>{t("Type","类型")}</th><th>{t("Calculation","计算方式")}</th><th>{t("Unit Price","单价")}</th><th>{t("Qty / Days","数量 / 天数")}</th><th>{t("Currency","币种")}</th><th>{t("Rate","汇率")}</th><th>{t("Total Cost","总成本")}</th><th>{t("Cost / Pax","每人成本")}</th><th>{t("Child Ratio","儿童比例")}</th><th>{t("Remarks","备注")}</th><th className="no-print">{t("Action","操作")}</th></tr></thead>
       <tbody>{travelerRows.map((r,index)=>{
         const isGroundQuote=index===0;
         const rate=currencyRate(r.currency,mainCurrency,mainRate); const total=travelerRowTotal(r,pax,mainCurrency,mainRate); const pp=travelerRowPerPax(r,pax,mainCurrency,mainRate);
         return <tr key={r.id}>
           <td>{isGroundQuote
             ? <input value={t("Ground Package","地接报价")} readOnly className="system-fixed-input" />
-            : <input value={r.item} onChange={e=>setTraveler(r.id,{item:e.target.value})}/>}</td>
+            : <input value={costItemDisplay(r.item)} onChange={e=>setTraveler(r.id,{item:e.target.value})}/>}</td>
           <td>{isGroundQuote
             ? <select value="cost" disabled className="system-fixed-input"><option value="cost">{t("Cost +","成本 +")}</option></select>
             : <select value={r.direction||"cost"} onChange={e=>setTraveler(r.id,{direction:e.target.value as "cost"|"deduction"})}>
                 <option value="cost">{t("Cost +","成本 +")}</option>
                 <option value="deduction">{t("Deduction −","扣减 −")}</option>
               </select>}</td>
-          <td><select value={r.mode} onChange={e=>setTraveler(r.id,{mode:e.target.value as CalcMode})}>{calcModes.map(x=><option key={x}>{x}</option>)}</select></td>
+          <td><select value={r.mode} onChange={e=>setTraveler(r.id,{mode:e.target.value as CalcMode})}>{calcModes.map(x=><option key={x} value={x}>{calcModeLabel(x)}</option>)}</select></td>
           <td><input type="number" min="0" value={r.unitPrice} onChange={e=>setTraveler(r.id,{unitPrice:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/></td>
           <td><input type="number" value={r.qty} onChange={e=>setTraveler(r.id,{qty:e.target.value===""?"":Number(e.target.value)})}/></td>
           <td>{isGroundQuote
-            ? <select value={mainCurrency} disabled className="system-fixed-input">{currencies.map(c=><option key={c}>{c}</option>)}</select>
-            : <select value={r.currency} onChange={e=>setTraveler(r.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c}>{c}</option>)}</select>}</td>
+            ? <select value={mainCurrency} disabled className="system-fixed-input">{currencies.map(c=><option key={c} value={c}>{currencyLabel(c)}</option>)}</select>
+            : <select value={r.currency} onChange={e=>setTraveler(r.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c} value={c}>{currencyLabel(c)}</option>)}</select>}</td>
           <td className={rate===0?"warn":""}>{rate || "—"}</td><td className={total<0?"deduction-value":""}>{money(total)}</td><td className={pp<0?"deduction-value":""}>{money(pp)}</td>
-          <td><select value={r.childRatioApplicable?"是":"否"} onChange={e=>setTraveler(r.id,{childRatioApplicable:e.target.value==="是"})}><option>是</option><option>否</option></select></td>
+          <td><select value={r.childRatioApplicable?"yes":"no"} onChange={e=>setTraveler(r.id,{childRatioApplicable:e.target.value==="yes"})}><option value="yes">{t("Yes","是")}</option><option value="no">{t("No","否")}</option></select></td>
           <td><input value={r.note} onChange={e=>setTraveler(r.id,{note:e.target.value})}/></td>
           <td className="row-actions no-print">{isGroundQuote
             ? <span className="fixed-row-label">{t("Fixed","固定")}</span>
@@ -909,7 +909,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <div className="section-head"><h2>{t("Single Room","单人房")}</h2></div>
       <div className="single-room-grid">
         <Field label={t("Manual Amount","手动填写数额")}><input type="number" min="0" value={singleRoomAmount} onChange={e=>setSingleRoomAmount(e.target.value===""?"":Number(e.target.value))} placeholder="0.00" /></Field>
-        <Field label={t("Currency","币种")}><select value={singleRoomCurrency} onChange={e=>setSingleRoomCurrency(e.target.value as Currency)}>{currencies.map(cur=><option key={cur}>{cur}</option>)}</select></Field>
+        <Field label={t("Currency","币种")}><select value={singleRoomCurrency} onChange={e=>setSingleRoomCurrency(e.target.value as Currency)}>{currencies.map(cur=><option key={cur} value={cur}>{currencyLabel(cur)}</option>)}</select></Field>
       </div>
     </section>
 
@@ -920,30 +920,30 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             {t("Tour Leader","领队陪同")}
           </button>
         </div>
-        {leaderOpen && <div className="table-wrap"><table><thead><tr><th>项目</th><th>单价</th><th>数量 / 天数</th><th>币种</th><th>总成本</th><th>每人分摊</th><th>备注</th></tr></thead>
+        {leaderOpen && <div className="table-wrap"><table><thead><tr><th>{t("Item","项目")}</th><th>{t("Unit Price","单价")}</th><th>{t("Qty / Days","数量 / 天数")}</th><th>{t("Currency","币种")}</th><th>{t("Total Cost","总成本")}</th><th>{t("Per-Pax Allocation","每人分摊")}</th><th>{t("Remarks","备注")}</th></tr></thead>
         <tbody>{leaderRows.map(r=>{const total=leaderRowTotal(r,mainCurrency,mainRate);return <tr key={r.id}>
-          <td><input value={r.item} onChange={e=>setLeader(r.id,{item:e.target.value})}/></td>
+          <td><input value={costItemDisplay(r.item)} onChange={e=>setLeader(r.id,{item:e.target.value})}/></td>
           <td><input type="number" value={r.unitPrice} onChange={e=>setLeader(r.id,{unitPrice:e.target.value===""?"":Number(e.target.value)})}/></td>
           <td><input type="number" value={r.qty} onChange={e=>setLeader(r.id,{qty:e.target.value===""?"":Number(e.target.value)})}/></td>
-          <td><select value={r.currency} onChange={e=>setLeader(r.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c}>{c}</option>)}</select></td>
+          <td><select value={r.currency} onChange={e=>setLeader(r.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c} value={c}>{currencyLabel(c)}</option>)}</select></td>
           <td>{money(total)}</td><td>{money(total/Math.max(1,pax))}</td><td><input value={r.note} onChange={e=>setLeader(r.id,{note:e.target.value})}/></td>
         </tr>})}</tbody></table></div>}
       </section>
 
       <Section title={t("③ Child Cost Settings","③ 儿童成本设置")}>
         <div className="child-grid">
-          <ChildCard title="小孩加床｜与2位成人同房 + 1张加床" mode={childBedMode} setMode={setChildBedMode} manual={childBedManual} setManual={setChildBedManual} currency={childBedCurrency} setCurrency={setChildBedCurrency} />
-          <ChildCard title="小孩不加床｜与2位成人同房，不另加床" mode={childNoBedMode} setMode={setChildNoBedMode} manual={childNoBedManual} setManual={setChildNoBedManual} currency={childNoBedCurrency} setCurrency={setChildNoBedCurrency} />
+          <ChildCard title={t("Child with Bed · Shares with 2 adults + 1 extra bed","小孩加床 · 与2位成人同房 + 1张加床")} t={t} mode={childBedMode} setMode={setChildBedMode} manual={childBedManual} setManual={setChildBedManual} currency={childBedCurrency} setCurrency={setChildBedCurrency} />
+          <ChildCard title={t("Child without Bed · Shares with 2 adults, no extra bed","小孩不加床 · 与2位成人同房，不另加床")} t={t} mode={childNoBedMode} setMode={setChildNoBedMode} manual={childNoBedManual} setManual={setChildNoBedManual} currency={childNoBedCurrency} setCurrency={setChildNoBedCurrency} />
         </div>
       </Section>
     </div>
 
     <Section title={t("④ Customer Quotation","④ 对客报价")}>
       <div className="quote-panel">
-        <Field label={t("Traveller Type","旅客类型")}><select value={effectiveSelectedType} onChange={e=>{setSelectedType(e.target.value as TravelerType);setManualQuote("")}}>{travelerTypes.filter(x=>hasLeader || x.includes("不含领队")).map(x=><option key={x} value={x}>{travelerTypeLabel(x)}</option>)}</select></Field>
+        <Field label={t("Traveller Type","旅客类型")}><select value={effectiveSelectedType} onChange={e=>{setSelectedType(e.target.value as TravelerType);setManualQuote("")}}>{travelerTypes.filter(x=>hasLeader || x.includes("不含领队")).map(x=><option key={x} value={x}>{travelerTypeDisplay(x)}</option>)}</select></Field>
         <Metric label={t("Cost","成本")} value={money(selected.cost)} />
         <Metric label={t("System Suggested Price","系统建议价")} value={money(selected.suggested)} />
-        <Field label={t("Manual Final Quote","手动最终报价")}><input type="number" value={manualQuote} onChange={e=>setManualQuote(e.target.value===""?"":Number(e.target.value))} placeholder={`自动取整 ${roundUnit}`} /></Field>
+        <Field label={t("Manual Final Quote","手动最终报价")}><input type="number" value={manualQuote} onChange={e=>setManualQuote(e.target.value===""?"":Number(e.target.value))} placeholder={t(`Auto round ${roundUnit}`,`自动取整 ${roundUnit}`)} /></Field>
         <Metric label={t("Final Quote","最终报价")} value={money(finalQuote)} strong />
         <Metric label={t("Final Profit","最终毛利")} value={money(finalProfit)} />
         <Metric label={t("Margin","毛利率")} value={pct(finalMargin)} />
@@ -951,8 +951,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     </Section>
 
     <Section title={t("Final Quotation Matrix","最终报价矩阵")}>
-      <div className="matrix-wrap"><table className="matrix"><thead><tr><th>旅客类型</th><th>不含领队成本</th><th>不含领队利润</th><th>不含领队建议售价</th>{hasLeader&&<><th>含领队成本</th><th>含领队利润</th><th>含领队建议售价</th></>}</tr></thead><tbody>
-        {matrix.map(([label,a,b])=><tr key={label}><td className="label-cell">{label}</td><td>{money(a.cost)}</td><td>{money(a.profit)}</td><td className="sale">{money(a.suggested)}</td>{hasLeader&&<><td>{money(b.cost)}</td><td>{money(b.profit)}</td><td className="sale">{money(b.suggested)}</td></>}</tr>)}
+      <div className="matrix-wrap"><table className="matrix"><thead><tr><th>{t("Traveller Type","旅客类型")}</th><th>{t("Cost · Excl. Leader","不含领队成本")}</th><th>{t("Profit · Excl. Leader","不含领队利润")}</th><th>{t("Suggested Price · Excl. Leader","不含领队建议售价")}</th>{hasLeader&&<><th>{t("Cost · Incl. Leader","含领队成本")}</th><th>{t("Profit · Incl. Leader","含领队利润")}</th><th>{t("Suggested Price · Incl. Leader","含领队建议售价")}</th></>}</tr></thead><tbody>
+        {matrix.map(([label,a,b])=><tr key={label}><td className="label-cell">{label==="成人（双人一房）"?t("Adult · Twin Sharing","成人（双人一房）"):label==="小孩加床"?t("Child with Bed","小孩加床"):t("Child without Bed","小孩不加床")}</td><td>{money(a.cost)}</td><td>{money(a.profit)}</td><td className="sale">{money(a.suggested)}</td>{hasLeader&&<><td>{money(b.cost)}</td><td>{money(b.profit)}</td><td className="sale">{money(b.suggested)}</td></>}</tr>)}
       </tbody></table></div>
     </Section>
 
@@ -1033,9 +1033,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   </main>
 }
 
-function Section({title,children,action}:{title:string;children:React.ReactNode;action?:React.ReactNode}){return <section className="section"><div className="section-head"><h2>{title}</h2>{action}</div>{children}</section>}
-function Field({label,children}:{label:string;children:React.ReactNode}){return <label className="field"><span>{label}</span>{children}</label>}
-function TimeField({label,value,setValue}:{label:string;value:string;setValue:(v:string)=>void}){
+function Section({title,children,action}:{title:React.ReactNode;children:React.ReactNode;action?:React.ReactNode}){return <section className="section"><div className="section-head"><h2>{title}</h2>{action}</div>{children}</section>}
+function Field({label,children}:{label:React.ReactNode;children:React.ReactNode}){return <label className="field"><span>{label}</span>{children}</label>}
+function TimeField({label,value,setValue}:{label:React.ReactNode;value:string;setValue:(v:string)=>void}){
   const normalize=(raw:string)=>{
     const digits=raw.replace(/\D/g,"").slice(0,4);
     if(digits.length<=2) return digits;
@@ -1070,8 +1070,8 @@ function TimeField({label,value,setValue}:{label:string;value:string;setValue:(v
   </label>;
 }
 
-function Summary({label,value,strong}:{label:string;value:string;strong?:boolean}){return <div className={`summary-card ${strong?"strong":""}`}><span>{label}</span><b>{value}</b></div>}
-function Metric({label,value,strong}:{label:string;value:string;strong?:boolean}){return <div className={`metric ${strong?"strong":""}`}><span>{label}</span><b>{value}</b></div>}
-function ChildCard({title,mode,setMode,manual,setManual,currency,setCurrency}:{title:string;mode:ChildMode;setMode:(v:ChildMode)=>void;manual:number;setManual:(v:number)=>void;currency:Currency;setCurrency:(v:Currency)=>void}){
-  return <div className="child-card"><h3>{title}</h3><Field label="计算模式"><select value={mode} onChange={e=>setMode(e.target.value as ChildMode)}>{childModes.map(x=><option key={x}>{x}</option>)}</select></Field>{mode==="手动成本"&&<><Field label="手动成本 / 人"><input type="number" value={manual} onChange={e=>setManual(Number(e.target.value)||0)}/></Field><Field label={t("Currency","币种")}><select value={currency} onChange={e=>setCurrency(e.target.value as Currency)}>{currencies.map(c=><option key={c}>{c}</option>)}</select></Field></>}</div>
+function Summary({label,value,strong}:{label:React.ReactNode;value:string;strong?:boolean}){return <div className={`summary-card ${strong?"strong":""}`}><span>{label}</span><b>{value}</b></div>}
+function Metric({label,value,strong}:{label:React.ReactNode;value:string;strong?:boolean}){return <div className={`metric ${strong?"strong":""}`}><span>{label}</span><b>{value}</b></div>}
+function ChildCard({title,t,mode,setMode,manual,setManual,currency,setCurrency}:{title:React.ReactNode;t:(en:string,zh:string)=>string;mode:ChildMode;setMode:(v:ChildMode)=>void;manual:number;setManual:(v:number)=>void;currency:Currency;setCurrency:(v:Currency)=>void}){
+  return <div className="child-card"><h3>{title}</h3><Field label={t("Calculation Mode","计算模式")}><select value={mode} onChange={e=>setMode(e.target.value as ChildMode)}>{childModes.map(x=><option key={x} value={x}>{x==="手动成本"?t("Manual Cost","手动成本"):x}</option>)}</select></Field>{mode==="手动成本"&&<><Field label={t("Manual Cost / Pax","手动成本 / 人")}><input type="number" value={manual} onChange={e=>setManual(Number(e.target.value)||0)}/></Field><Field label={t("Currency","币种")}><select value={currency} onChange={e=>setCurrency(e.target.value as Currency)}>{currencies.map(c=><option key={c} value={c}>{currencyLabel(c)}</option>)}</select></Field></>}</div>
 }
