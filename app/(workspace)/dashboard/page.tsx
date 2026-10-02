@@ -38,7 +38,7 @@ export default async function DashboardPage() {
     <section className="panel">
       <div className="panel-head"><h2>Recent Quotations</h2><Link href="/quotations">View all</Link></div>
       <div className="data-table-wrap"><table className="data-table"><thead><tr><th>Quote No</th><th>Tour</th><th>Type</th><th>Pax</th><th>Status</th><th>Selling</th><th>Margin</th><th>Updated</th></tr></thead><tbody>
-        {recent.map((q:any)=><tr key={q.id}><td><Link href={"/quotations/"+q.id}>{q.quotation_no}</Link></td><td>{q.title}</td><td>{q.business_type||"—"}</td><td>{q.pax}</td><td><span className={"status status-"+q.status}>{q.status}</span></td><td>{money(Number(q.selling_price))}</td><td>{(Number(q.margin)*100).toFixed(1)}%</td><td>{new Date(q.updated_at).toLocaleDateString("en-MY")}</td></tr>)}
+        {recent.map((q:any)=><tr key={q.id}><td><Link href={"/quotations/"+q.id+"?returnTo="+encodeURIComponent("/dashboard")}>{q.quotation_no}</Link></td><td>{q.title}</td><td>{q.business_type||"—"}</td><td>{q.pax}</td><td><span className={"status status-"+q.status}>{q.status}</span></td><td>{money(Number(q.selling_price))}</td><td>{(Number(q.margin)*100).toFixed(1)}%</td><td>{new Date(q.updated_at).toLocaleDateString("en-MY")}</td></tr>)}
         {!recent.length && <tr><td colSpan={8} className="empty">还没有报价。先建立第一张报价。</td></tr>}
       </tbody></table></div>
     </section>
