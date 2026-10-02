@@ -24,7 +24,7 @@ export default async function QuotationsPage({ searchParams }:{searchParams:Prom
       <NewQuotationMenu />
     </div>
     <form className="filter-bar">
-      <input name="q" defaultValue={sp.q||""} placeholder="Search quote / tour / customer" />
+      <input name="q" defaultValue={sp.q||""} placeholder="Search quotation, customer or destination" />
       <input name="destination" defaultValue={sp.destination||""} placeholder="Destination" />
       <select name="status" defaultValue={sp.status||""}>
         <option value="">All Status</option><option value="draft">Draft</option><option value="under_review">Under Review</option><option value="revision_required">Revision Required</option><option value="ready">Ready</option><option value="sent">Sent</option><option value="revised">Revised</option><option value="confirmed">Confirmed</option><option value="lost">Lost</option><option value="archived">Archived</option>
