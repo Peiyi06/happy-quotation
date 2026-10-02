@@ -878,7 +878,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
           <td><input value={f.remarks} onChange={e=>patchFlight(f.id,{remarks:e.target.value})} placeholder="Sichuan Airlines"/></td>
           <td><button type="button" className="danger-link" onClick={()=>removeFlight(f.id)}>Delete</button></td>
         </tr>)}</tbody>
-      </table></div> : <div className="itinerary-attraction-empty">尚未填写建议航班。需要时点击 “+ Add Flight”。</div>}
+      </table></div> : <div className="itinerary-attraction-empty itinerary-editor-empty">尚未填写建议航班。需要时点击 “+ Add Flight”。</div>}
     </section>
 
     <section className="panel">
@@ -1001,7 +1001,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
               })}
             </div>}
 
-            {!day.attractions.length && <div className="itinerary-attraction-empty">当天尚未加入景点。</div>}
+            {!day.attractions.length && <div className="itinerary-attraction-empty itinerary-editor-empty">当天尚未加入景点。</div>}
           </div>
           </>}
         </article>)}
@@ -1081,7 +1081,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
             </div>}
           </article>;
         })}
-      </div> : <div className="itinerary-attraction-empty">尚未加入酒店资料。需要时点击 “+ Add Hotel”。</div>}
+      </div> : <div className="itinerary-attraction-empty itinerary-editor-empty">尚未加入酒店资料。需要时点击 “+ Add Hotel”。</div>}
     </section>
 
     <section className="panel">
@@ -1099,26 +1099,38 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
             <button className="btn" type="button" onClick={()=>addPackageItem("included")}>+ Add Item</button>
           </div>
           {includedItems.length>0 ? <div className="itinerary-package-list">
-            {includedItems.map((item,index)=><div className="itinerary-package-row" key={item.id}>
-              <div className="itinerary-package-index">{String(index+1).padStart(2,"0")}</div>
-              <label className="field">
-                <span>Preset｜常用项目</span>
-                <select value={item.preset} onChange={e=>selectPackagePreset("included",item.id,e.target.value)}>
-                  {includedPresets.map(([value,label])=><option key={value} value={value}>{label}</option>)}
-                </select>
-              </label>
-              <label className="field itinerary-package-name">
-                <span>Item Name｜项目名称</span>
-                <input value={item.name} onChange={e=>patchPackageItem("included",item.id,{name:e.target.value})} placeholder={item.preset==="other"?"手动输入项目名称":"可继续修改项目名称"}/>
-              </label>
-              <div className="itinerary-package-actions">
-                <button type="button" onClick={()=>movePackageItem("included",index,-1)} disabled={index===0}>↑</button>
-                <button type="button" onClick={()=>movePackageItem("included",index,1)} disabled={index===includedItems.length-1}>↓</button>
-                <button type="button" onClick={()=>duplicatePackageItem("included",index)}>Duplicate</button>
-                <button type="button" className="danger-link" onClick={()=>removePackageItem("included",item.id)}>Delete</button>
-              </div>
-            </div>)}
-          </div> : <div className="itinerary-attraction-empty">尚未加入 Included 项目。</div>}
+            {includedItems.map((item,index)=>{
+              const expanded=expandedPackageItems.has("included:"+item.id);
+              return <div className={"itinerary-package-row "+(expanded?"expanded":"collapsed")} key={item.id}>
+                <div className="itinerary-package-summary">
+                  <div className="itinerary-package-index">{String(index+1).padStart(2,"0")}</div>
+                  <div className="itinerary-package-summary-copy">
+                    <strong>{item.name||"New Included Item"}</strong>
+                    <span>{item.preset==="other"?"Custom item":presetLabel("included",item.preset)}</span>
+                  </div>
+                  <div className="itinerary-package-actions">
+                    <button type="button" className="disclosure-action" onClick={()=>togglePackageItem("included",item.id)}>{expanded?"Done":"Edit"}</button>
+                    <button type="button" aria-label="Move item up" onClick={()=>movePackageItem("included",index,-1)} disabled={index===0}>↑</button>
+                    <button type="button" aria-label="Move item down" onClick={()=>movePackageItem("included",index,1)} disabled={index===includedItems.length-1}>↓</button>
+                    <button type="button" onClick={()=>duplicatePackageItem("included",index)}>Duplicate</button>
+                    <button type="button" className="danger-link" onClick={()=>removePackageItem("included",item.id)}>Delete</button>
+                  </div>
+                </div>
+                {expanded&&<div className="itinerary-package-editor">
+                  <label className="field">
+                    <span>Preset｜常用项目</span>
+                    <select value={item.preset} onChange={e=>selectPackagePreset("included",item.id,e.target.value)}>
+                      {includedPresets.map(([value,label])=><option key={value} value={value}>{label}</option>)}
+                    </select>
+                  </label>
+                  <label className="field itinerary-package-name">
+                    <span>Item Name｜项目名称</span>
+                    <input value={item.name} onChange={e=>patchPackageItem("included",item.id,{name:e.target.value})} placeholder={item.preset==="other"?"手动输入项目名称":"可继续修改项目名称"}/>
+                  </label>
+                </div>}
+              </div>;
+            })}
+          </div> : <div className="itinerary-attraction-empty itinerary-editor-empty">尚未加入 Included 项目。</div>}
         </div>
 
         <div className="itinerary-package-card excluded">
@@ -1127,26 +1139,38 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
             <button className="btn" type="button" onClick={()=>addPackageItem("excluded")}>+ Add Item</button>
           </div>
           {notIncludedItems.length>0 ? <div className="itinerary-package-list">
-            {notIncludedItems.map((item,index)=><div className="itinerary-package-row" key={item.id}>
-              <div className="itinerary-package-index">{String(index+1).padStart(2,"0")}</div>
-              <label className="field">
-                <span>Preset｜常用项目</span>
-                <select value={item.preset} onChange={e=>selectPackagePreset("excluded",item.id,e.target.value)}>
-                  {excludedPresets.map(([value,label])=><option key={value} value={value}>{label}</option>)}
-                </select>
-              </label>
-              <label className="field itinerary-package-name">
-                <span>Item Name｜项目名称</span>
-                <input value={item.name} onChange={e=>patchPackageItem("excluded",item.id,{name:e.target.value})} placeholder={item.preset==="other"?"手动输入项目名称":"可继续修改项目名称"}/>
-              </label>
-              <div className="itinerary-package-actions">
-                <button type="button" onClick={()=>movePackageItem("excluded",index,-1)} disabled={index===0}>↑</button>
-                <button type="button" onClick={()=>movePackageItem("excluded",index,1)} disabled={index===notIncludedItems.length-1}>↓</button>
-                <button type="button" onClick={()=>duplicatePackageItem("excluded",index)}>Duplicate</button>
-                <button type="button" className="danger-link" onClick={()=>removePackageItem("excluded",item.id)}>Delete</button>
-              </div>
-            </div>)}
-          </div> : <div className="itinerary-attraction-empty">尚未加入 Not Included 项目。</div>}
+            {notIncludedItems.map((item,index)=>{
+              const expanded=expandedPackageItems.has("excluded:"+item.id);
+              return <div className={"itinerary-package-row "+(expanded?"expanded":"collapsed")} key={item.id}>
+                <div className="itinerary-package-summary">
+                  <div className="itinerary-package-index">{String(index+1).padStart(2,"0")}</div>
+                  <div className="itinerary-package-summary-copy">
+                    <strong>{item.name||"New Not Included Item"}</strong>
+                    <span>{item.preset==="other"?"Custom item":presetLabel("excluded",item.preset)}</span>
+                  </div>
+                  <div className="itinerary-package-actions">
+                    <button type="button" className="disclosure-action" onClick={()=>togglePackageItem("excluded",item.id)}>{expanded?"Done":"Edit"}</button>
+                    <button type="button" aria-label="Move item up" onClick={()=>movePackageItem("excluded",index,-1)} disabled={index===0}>↑</button>
+                    <button type="button" aria-label="Move item down" onClick={()=>movePackageItem("excluded",index,1)} disabled={index===notIncludedItems.length-1}>↓</button>
+                    <button type="button" onClick={()=>duplicatePackageItem("excluded",index)}>Duplicate</button>
+                    <button type="button" className="danger-link" onClick={()=>removePackageItem("excluded",item.id)}>Delete</button>
+                  </div>
+                </div>
+                {expanded&&<div className="itinerary-package-editor">
+                  <label className="field">
+                    <span>Preset｜常用项目</span>
+                    <select value={item.preset} onChange={e=>selectPackagePreset("excluded",item.id,e.target.value)}>
+                      {excludedPresets.map(([value,label])=><option key={value} value={value}>{label}</option>)}
+                    </select>
+                  </label>
+                  <label className="field itinerary-package-name">
+                    <span>Item Name｜项目名称</span>
+                    <input value={item.name} onChange={e=>patchPackageItem("excluded",item.id,{name:e.target.value})} placeholder={item.preset==="other"?"手动输入项目名称":"可继续修改项目名称"}/>
+                  </label>
+                </div>}
+              </div>;
+            })}
+          </div> : <div className="itinerary-attraction-empty itinerary-editor-empty">尚未加入 Not Included 项目。</div>}
         </div>
       </div>
     </section>
@@ -1161,30 +1185,42 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       </div>
 
       {reminders.length>0 ? <div className="itinerary-reminder-list">
-        {reminders.map((item,index)=><article className="itinerary-reminder-row" key={item.id}>
-          <div className="itinerary-reminder-index">{String(index+1).padStart(2,"0")}</div>
-          <label className="field">
-            <span>Preset｜常用提醒</span>
-            <select value={item.preset} onChange={e=>selectReminderPreset(item.id,e.target.value)}>
-              {reminderPresets.map(([value,label])=><option key={value} value={value}>{label}</option>)}
-            </select>
-          </label>
-          <label className="field">
-            <span>Reminder Title｜提醒标题</span>
-            <input value={item.title} onChange={e=>patchReminder(item.id,{title:e.target.value})} placeholder={item.preset==="other"?"手动输入提醒标题":"可继续修改提醒标题"}/>
-          </label>
-          <label className="field itinerary-reminder-description">
-            <span>Description｜提醒内容</span>
-            <textarea value={item.description} onChange={e=>patchReminder(item.id,{description:e.target.value})} placeholder="输入需要提醒旅客的内容..."/>
-          </label>
-          <div className="itinerary-reminder-actions">
-            <button type="button" onClick={()=>moveReminder(index,-1)} disabled={index===0}>↑</button>
-            <button type="button" onClick={()=>moveReminder(index,1)} disabled={index===reminders.length-1}>↓</button>
-            <button type="button" onClick={()=>duplicateReminder(index)}>Duplicate</button>
-            <button type="button" className="danger-link" onClick={()=>removeReminder(item.id)}>Delete</button>
-          </div>
-        </article>)}
-      </div> : <div className="itinerary-attraction-empty">尚未加入温馨提醒。</div>}
+        {reminders.map((item,index)=>{
+          const expanded=expandedReminders.has(item.id);
+          return <article className={"itinerary-reminder-row "+(expanded?"expanded":"collapsed")} key={item.id}>
+            <div className="itinerary-reminder-summary">
+              <div className="itinerary-reminder-index">{String(index+1).padStart(2,"0")}</div>
+              <div className="itinerary-reminder-summary-copy">
+                <strong>{item.title||"New Reminder"}</strong>
+                <span>{item.description||reminderPresetTitle(item.preset)||"No description yet"}</span>
+              </div>
+              <div className="itinerary-reminder-actions">
+                <button type="button" className="disclosure-action" onClick={()=>toggleReminder(item.id)}>{expanded?"Done":"Edit"}</button>
+                <button type="button" aria-label="Move reminder up" onClick={()=>moveReminder(index,-1)} disabled={index===0}>↑</button>
+                <button type="button" aria-label="Move reminder down" onClick={()=>moveReminder(index,1)} disabled={index===reminders.length-1}>↓</button>
+                <button type="button" onClick={()=>duplicateReminder(index)}>Duplicate</button>
+                <button type="button" className="danger-link" onClick={()=>removeReminder(item.id)}>Delete</button>
+              </div>
+            </div>
+            {expanded&&<div className="itinerary-reminder-editor">
+              <label className="field">
+                <span>Preset｜常用提醒</span>
+                <select value={item.preset} onChange={e=>selectReminderPreset(item.id,e.target.value)}>
+                  {reminderPresets.map(([value,label])=><option key={value} value={value}>{label}</option>)}
+                </select>
+              </label>
+              <label className="field">
+                <span>Reminder Title｜提醒标题</span>
+                <input value={item.title} onChange={e=>patchReminder(item.id,{title:e.target.value})} placeholder={item.preset==="other"?"手动输入提醒标题":"可继续修改提醒标题"}/>
+              </label>
+              <label className="field itinerary-reminder-description">
+                <span>Description｜提醒内容</span>
+                <textarea value={item.description} onChange={e=>patchReminder(item.id,{description:e.target.value})} placeholder="输入需要提醒旅客的内容..."/>
+              </label>
+            </div>}
+          </article>;
+        })}
+      </div> : <div className="itinerary-attraction-empty itinerary-editor-empty">尚未加入温馨提醒。</div>}
     </section>
 
     {message&&<div className="save-message">{message}</div>}
