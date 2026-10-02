@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
+import {UiText} from "@/components/WorkspaceLanguage";
 
 const money=(n:number)=>new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR"}).format(n||0).replace("MYR","RM");
 
@@ -21,27 +22,27 @@ export default async function DashboardPage() {
   return <div>
     <div className="page-head page-compact-header">
       <div>
-        <span className="page-kicker">WORKSPACE</span>
-        <h1>Good day, {user?.name || "Team"}</h1>
-        <p>{user?.role==="manager" ? "查看团队报价表现与最新进度。" : "管理你的报价、团型与客户跟进。"}</p>
+        <span className="page-kicker"><UiText en="WORKSPACE" zh="工作区" /></span>
+        <h1><UiText en="Good day" zh="你好" />, {user?.name || "Team"}</h1>
+        <p>{user?.role==="manager"?<UiText en="Review team quotation performance and latest progress." zh="查看团队报价表现与最新进度。" />:<UiText en="Manage your quotations, tour groups and customer follow-up." zh="管理你的报价、团型与客户跟进。" />}</p>
       </div>
-      <Link className="btn primary" href="/quotations/new">＋ New Quotation</Link>
+      <Link className="btn primary" href="/quotations/new">＋ <UiText en="New Quotation" zh="新建报价" /></Link>
     </div>
 
     <section className="dashboard-cards">
-      <DashCard label={user?.role==="manager" ? "Team Quotations" : "My Quotations"} value={String(all.length)} />
-      <DashCard label="Confirmed" value={String(confirmed)} />
-      <DashCard label="Quoted Value" value={money(total)} />
-      <DashCard label="Average Margin" value={(avgMargin*100).toFixed(1)+"%"} strong />
+      <DashCard label={user?.role==="manager"?<UiText en="Team Quotations" zh="团队报价" />:<UiText en="My Quotations" zh="我的报价" />} value={String(all.length)} />
+      <DashCard label={<UiText en="Confirmed" zh="已确认" />} value={String(confirmed)} />
+      <DashCard label={<UiText en="Quoted Value" zh="报价总额" />} value={money(total)} />
+      <DashCard label={<UiText en="Average Margin" zh="平均利润率" />} value={(avgMargin*100).toFixed(1)+"%"} strong />
     </section>
 
     <section className="panel">
-      <div className="panel-head"><h2>Recent Quotations</h2><Link href="/quotations">View all</Link></div>
-      <div className="data-table-wrap"><table className="data-table"><thead><tr><th>Quote No</th><th>Tour</th><th>Type</th><th>Pax</th><th>Status</th><th>Selling</th><th>Margin</th><th>Updated</th></tr></thead><tbody>
-        {recent.map((q:any)=><tr key={q.id}><td><Link href={"/quotations/"+q.id+"?returnTo="+encodeURIComponent("/dashboard")}>{q.quotation_no}</Link></td><td>{q.title}</td><td>{q.business_type||"—"}</td><td>{q.pax}</td><td><span className={"status status-"+q.status}>{q.status}</span></td><td>{money(Number(q.selling_price))}</td><td>{(Number(q.margin)*100).toFixed(1)}%</td><td>{new Date(q.updated_at).toLocaleDateString("en-MY")}</td></tr>)}
-        {!recent.length && <tr><td colSpan={8} className="empty">还没有报价。先建立第一张报价。</td></tr>}
+      <div className="panel-head"><h2><UiText en="Recent Quotations" zh="最近报价" /></h2><Link href="/quotations"><UiText en="View all" zh="查看全部" /></Link></div>
+      <div className="data-table-wrap"><table className="data-table"><thead><tr><th><UiText en="Quote No" zh="报价编号" /></th><th><UiText en="Tour" zh="行程" /></th><th><UiText en="Type" zh="类型" /></th><th><UiText en="Pax" zh="人数" /></th><th><UiText en="Status" zh="状态" /></th><th><UiText en="Selling" zh="售价" /></th><th><UiText en="Margin" zh="利润率" /></th><th><UiText en="Updated" zh="更新时间" /></th></tr></thead><tbody>
+        {recent.map((q:any)=><tr key={q.id}><td><Link href={"/quotations/"+q.id+"?returnTo="+encodeURIComponent("/dashboard")}>{q.quotation_no}</Link></td><td>{q.title}</td><td>{q.business_type||"—"}</td><td>{q.pax}</td><td><span className={"status status-"+q.status}>{q.status==="confirmed"?<UiText en="Confirmed" zh="已确认" />:q.status==="ready"?<UiText en="Ready" zh="已就绪" />:q.status==="under_review"?<UiText en="Under Review" zh="审核中" />:q.status==="revision_required"?<UiText en="Revision Required" zh="需要修改" />:q.status==="draft"?<UiText en="Draft" zh="草稿" />:q.status}</span></td><td>{money(Number(q.selling_price))}</td><td>{(Number(q.margin)*100).toFixed(1)}%</td><td>{new Date(q.updated_at).toLocaleDateString("en-MY")}</td></tr>)}
+        {!recent.length && <tr><td colSpan={8} className="empty"><UiText en="No quotations yet. Create the first quotation." zh="还没有报价。先建立第一张报价。" /></td></tr>}
       </tbody></table></div>
     </section>
   </div>;
 }
-function DashCard({label,value,strong}:{label:string;value:string;strong?:boolean}){return <div className={"dash-card "+(strong?"strong":"")}><span>{label}</span><b>{value}</b></div>}
+function DashCard({label,value,strong}:{label:React.ReactNode;value:string;strong?:boolean}){return <div className={"dash-card "+(strong?"strong":"")}><span>{label}</span><b>{value}</b></div>}
