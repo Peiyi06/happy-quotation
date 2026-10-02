@@ -18,6 +18,7 @@ type Product={
   status:"draft"|"ready"|"archived";
 };
 
+// Product Library is intentionally independent from Inquiry / Quotation / Itinerary workflows.
 const statusLabel:Record<string,string>={
   draft:"Draft",
   ready:"Ready to Sell",
