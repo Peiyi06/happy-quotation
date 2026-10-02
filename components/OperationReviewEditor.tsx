@@ -175,7 +175,7 @@ export default function OperationReviewEditor({
         </div>
       </div>
 
-      <div className="operation-subsection">
+      <div className="operation-subsection ios-form-subsection operation-trip-ios">
         <div className="operation-subsection-head"><div><h3>Trip Details</h3><p>行程基础资料</p></div></div>
         <div className="itinerary-meta-grid">
           <label className="field"><span>Departure City</span><input disabled={!canEdit} value={departureCity} onChange={e=>setDepartureCity(e.target.value)}/></label>
@@ -237,7 +237,7 @@ export default function OperationReviewEditor({
         </div>}
       </div>
 
-      <div className="operation-subsection">
+      <div className="operation-subsection ios-form-subsection operation-requirements-ios">
         <div className="operation-subsection-head"><div><h3>Requirements</h3><p>Supplier 执行时需要参考的要求</p></div></div>
         <div className="inquiry-requirement-grid operation-review-fields">
           <label className="field"><span>Flight Requirement｜航班需求</span><textarea disabled={!canEdit} value={flight} onChange={e=>setFlight(e.target.value)}/></label>
@@ -249,13 +249,13 @@ export default function OperationReviewEditor({
         </div>
       </div>
 
-      <div className="operation-subsection operation-internal-notes">
+      <div className="operation-subsection operation-internal-notes ios-form-subsection operation-notes-ios">
         <div className="operation-subsection-head"><div><h3>Internal Operation Notes｜内部操作备注</h3><p>Internal only · Not shown to supplier</p></div></div>
         <label className="field"><textarea disabled={!canEdit} value={operationNotes} onChange={e=>setOperationNotes(e.target.value)} placeholder="Internal notes for the Operation team..."/></label>
       </div>
     </section>
 
-    <section className="panel supplier-form-settings operation-supplier-panel">
+    <section className="panel supplier-form-settings operation-supplier-panel ios-form-card operation-supplier-ios">
       <div className="panel-head">
         <div>
           <h2>Supplier Inquiry｜供应商询价</h2>
