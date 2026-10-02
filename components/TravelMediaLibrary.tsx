@@ -423,7 +423,7 @@ export default function TravelMediaLibrary(){
               <div className="travel-library-keywords-head">
                 <div>
                   <strong>Match Keywords｜匹配关键词</strong>
-                  <span>帮助后续 AI 将不同写法匹配到同一个景点 / 酒店。</span>
+                  <span>可新增或删除。至少保留 1 个已保存关键词，才能确认素材进入 Library。</span>
                 </div>
               </div>
               <div className="travel-library-keyword-chips">
@@ -464,7 +464,12 @@ export default function TravelMediaLibrary(){
               <button
                 className="btn compact primary"
                 type="button"
-                disabled={!item.suggestedPlaceId||mediaReviewBusyId===item.id}
+                disabled={
+                  !item.suggestedPlaceId||
+                  !Array.isArray(item.matchKeywords)||
+                  item.matchKeywords.length<1||
+                  mediaReviewBusyId===item.id
+                }
                 onClick={()=>void reviewMediaCandidate(item.id,"confirm")}
               >
                 {mediaReviewBusyId===item.id?"Saving...":"✓ Confirm to Library"}
@@ -480,6 +485,9 @@ export default function TravelMediaLibrary(){
             </div>
             {!item.suggestedPlaceId&&<div className="travel-library-verification-note">
               AI 没有找到足够可信的景点 / 酒店记录，所以不能直接确认。先 Ignore，或之后加入手动改配功能。
+            </div>}
+            {item.suggestedPlaceId&&(!Array.isArray(item.matchKeywords)||item.matchKeywords.length<1)&&<div className="travel-library-verification-note">
+              请至少新增并保存 1 个 Match Keyword，才能 Confirm to Library。错误的关键词可以直接点击 × 删除。
             </div>}
           </div>
         </article>)}
