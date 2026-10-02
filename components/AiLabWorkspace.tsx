@@ -324,41 +324,46 @@ export default function AiLabWorkspace(){
           <span>{saveState==="saving"?"Saving...":saveState==="saved"?"Saved":"Auto-save"}</span>
         </div>
 
+        <div className="ai-thread-view-switch ios-segmented-control" aria-label="Thread view">
+          <button type="button" className={!showArchived?"active":""} onClick={()=>setShowArchived(false)}>
+            Active <span>{threads.length}</span>
+          </button>
+          <button type="button" className={showArchived?"active":""} onClick={()=>setShowArchived(true)}>
+            Archived <span>{archivedThreads.length}</span>
+          </button>
+        </div>
+
         {threadsLoading
           ? <p className="ai-lab-context-empty">Loading threads...</p>
-          : threads.length>0
-            ? <div className="ai-thread-list">
-                {threads.map(t=><div key={t.id} className={"ai-thread-item "+(threadId===t.id?"active":"")}>
-                  <button type="button" className="ai-thread-open" onClick={()=>void openThread(t.id)}>
-                    <span className="ai-thread-title">{t.title||"Untitled Thread"}</span>
-                    <span className="ai-thread-meta">{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
-                    <span className="ai-thread-time">{t.last_active_at?new Date(t.last_active_at).toLocaleString(): ""}</span>
-                  </button>
-                  <button type="button" className="ai-thread-archive" aria-label="Archive thread" title="Archive Thread" onClick={()=>void setThreadArchived(t.id,true)}>
-                    <span aria-hidden="true">⌄</span>
-                  </button>
-                </div>)}
-              </div>
-            : <p className="ai-lab-context-empty">还没有保存的工作对话。第一次发送消息后会自动建立 Thread。</p>}
-
-        <div className="ai-thread-archived">
-          <button type="button" onClick={()=>setShowArchived(v=>!v)}>
-            <span>Archived</span>
-            <em>{archivedThreads.length}</em>
-            <b>{showArchived?"⌃":"›"}</b>
-          </button>
-          {showArchived&&archivedThreads.length>0&&<div className="ai-thread-list archived">
-            {archivedThreads.map(t=><div key={t.id} className="ai-thread-item archived-item">
-              <button type="button" className="ai-thread-open" onClick={()=>void openThread(t.id)}>
-                <span className="ai-thread-title">{t.title||"Untitled Thread"}</span>
-                <span className="ai-thread-meta">{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
-              </button>
-              <button type="button" className="ai-thread-archive restore" aria-label="Restore thread" title="Restore Thread" onClick={()=>void setThreadArchived(t.id,false)}>
-                <span aria-hidden="true">↺</span>
-              </button>
-            </div>)}
-          </div>}
-        </div>
+          : !showArchived
+            ? threads.length>0
+              ? <div className="ai-thread-list">
+                  {threads.map(t=><div key={t.id} className={"ai-thread-item "+(threadId===t.id?"active":"")}>
+                    <button type="button" className="ai-thread-open" onClick={()=>void openThread(t.id)}>
+                      <span className="ai-thread-title">{t.title||"Untitled Thread"}</span>
+                      <span className="ai-thread-meta">{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
+                      <span className="ai-thread-time">{t.last_active_at?new Date(t.last_active_at).toLocaleString(): ""}</span>
+                    </button>
+                    <button type="button" className="ai-thread-archive" aria-label="Archive thread" title="Archive Thread" onClick={()=>void setThreadArchived(t.id,true)}>
+                      <span aria-hidden="true">⌄</span>
+                    </button>
+                  </div>)}
+                </div>
+              : <p className="ai-lab-context-empty">还没有保存的工作对话。第一次发送消息后会自动建立 Thread。</p>
+            : archivedThreads.length>0
+              ? <div className="ai-thread-list archived">
+                  {archivedThreads.map(t=><div key={t.id} className="ai-thread-item archived-item">
+                    <button type="button" className="ai-thread-open" onClick={()=>void openThread(t.id)}>
+                      <span className="ai-thread-title">{t.title||"Untitled Thread"}</span>
+                      <span className="ai-thread-meta">{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
+                      <span className="ai-thread-time">{t.last_active_at?new Date(t.last_active_at).toLocaleString(): ""}</span>
+                    </button>
+                    <button type="button" className="ai-thread-archive restore" aria-label="Restore thread" title="Restore Thread" onClick={()=>void setThreadArchived(t.id,false)}>
+                      <span aria-hidden="true">↺</span>
+                    </button>
+                  </div>)}
+                </div>
+              : <p className="ai-lab-context-empty">No archived threads.</p>}
       </div>
 
       <div className="ai-lab-context-section">
