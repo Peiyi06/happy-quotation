@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { internalDb, internalToken } from "@/lib/internalSession";
 import {UiText} from "@/components/WorkspaceLanguage";
+import ItineraryFilters from "@/components/ItineraryFilters";
 
 export default async function ItinerariesPage({searchParams}:{searchParams:Promise<Record<string,string|undefined>>}){
   const sp=await searchParams;
@@ -21,11 +22,7 @@ export default async function ItinerariesPage({searchParams}:{searchParams:Promi
       <Link className="btn primary" href="/itineraries/new"><UiText en="+ New Itinerary" zh="+ 新建行程" /></Link>
     </div>
 
-    <form className="filter-bar">
-      <input name="q" defaultValue={sp.q||""} placeholder="Search itinerary, customer or destination"/>
-      <select name="status" defaultValue={sp.status||""}><option value="">All Status</option><option value="draft">Draft</option><option value="ready">Ready</option><option value="confirmed">Confirmed</option><option value="archived">Archived</option></select>
-      <button className="btn"><UiText en="Filter" zh="筛选" /></button>
-    </form>
+    <ItineraryFilters q={sp.q||""} status={sp.status||""}/>
 
     <section className="panel">
       <div className="data-table-wrap">
