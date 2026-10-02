@@ -14507,3 +14507,161 @@ td,
     table-layout:auto!important;
   }
 }
+
+
+/* =========================================================
+   INQUIRIES — OPERATION MASTER ALIGNMENT
+   Mirror Operation workspace rhythm without duplicating its workflow semantics.
+   ========================================================= */
+.inquiry-workspace-template{
+  display:grid;
+  gap:16px;
+}
+
+.inquiry-workspace-template .inquiry-list-header{
+  margin-bottom:0!important;
+}
+
+.inquiry-workspace-template .inquiry-list-title h1{
+  margin:0 0 4px!important;
+  font-size:30px!important;
+  line-height:1.08!important;
+  font-weight:720!important;
+  letter-spacing:-.025em!important;
+  color:var(--color-text-primary,var(--navy2))!important;
+}
+
+.inquiry-workspace-template .inquiry-list-title p{
+  margin:0!important;
+  color:var(--color-text-secondary,var(--muted))!important;
+  font-size:11.5px!important;
+  line-height:1.4!important;
+}
+
+.inquiry-operation-toolbar{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:14px!important;
+  min-height:58px!important;
+  margin:0!important;
+  padding:10px 12px!important;
+  border:1px solid var(--color-border-default,var(--line))!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+
+.inquiry-operation-toolbar>div{
+  display:flex!important;
+  align-items:baseline!important;
+  gap:8px!important;
+}
+
+.inquiry-operation-toolbar strong{
+  color:var(--color-text-primary,var(--navy2))!important;
+  font-size:12px!important;
+  font-weight:680!important;
+}
+
+.inquiry-operation-toolbar span{
+  color:var(--color-text-tertiary,var(--muted))!important;
+  font-size:9.5px!important;
+}
+
+.inquiry-operation-toolbar form{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+}
+
+.inquiry-operation-toolbar input{
+  width:min(360px,34vw)!important;
+  min-height:36px!important;
+  padding:0 11px!important;
+  border:1px solid var(--color-border-default,#cfd9e2)!important;
+  border-radius:9px!important;
+  background:#fff!important;
+  color:var(--color-text-primary,var(--navy2))!important;
+  font-size:11px!important;
+  box-shadow:none!important;
+}
+
+.inquiry-operation-toolbar input:focus{
+  outline:none!important;
+  border-color:#9db8ca!important;
+  box-shadow:0 0 0 3px rgba(73,120,154,.10)!important;
+}
+
+.inquiry-operation-toolbar .btn{
+  min-height:36px!important;
+  height:36px!important;
+  padding:0 12px!important;
+  border-radius:9px!important;
+  font-size:10.5px!important;
+}
+
+.inquiry-queue-section{
+  width:100%;
+  margin:0!important;
+  padding:14px!important;
+  border:1px solid var(--color-border-default,var(--line))!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+
+.inquiry-queue-title{
+  align-items:flex-start!important;
+  margin:0 0 12px!important;
+}
+
+.inquiry-queue-title h2{
+  margin:0 0 4px!important;
+  color:var(--color-text-primary,var(--navy2))!important;
+  font-size:15px!important;
+  line-height:1.2!important;
+  font-weight:680!important;
+}
+
+.inquiry-queue-title .panel-subtext{
+  max-width:760px!important;
+  margin:0!important;
+  color:var(--color-text-secondary,var(--muted))!important;
+  font-size:10.5px!important;
+  line-height:1.45!important;
+}
+
+.inquiry-workspace-template .operation-count{
+  min-width:28px!important;
+  height:28px!important;
+  padding:0 8px!important;
+  background:#edf3f7!important;
+  color:var(--color-text-secondary,var(--navy2))!important;
+  font-size:10px!important;
+  font-weight:700!important;
+}
+
+@media(max-width:760px){
+  .inquiry-operation-toolbar{
+    align-items:stretch!important;
+    flex-direction:column!important;
+  }
+
+  .inquiry-operation-toolbar form{
+    width:100%!important;
+  }
+
+  .inquiry-operation-toolbar input{
+    width:100%!important;
+    flex:1!important;
+  }
+
+  .inquiry-operation-toolbar .btn{
+    flex:0 0 auto!important;
+  }
+
+  .inquiry-queue-section{
+    padding:12px!important;
+  }
+}
