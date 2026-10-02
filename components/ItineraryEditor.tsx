@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 
 type MealInfo={breakfast:string;lunch:string;dinner:string};
 type AttractionImage={path:string;url:string;name:string;libraryImageId?:string;libraryPlaceId?:string;source?:string};
@@ -109,6 +110,9 @@ const normalizeDay=(raw:any):DayItem=>({
 
 export default function ItineraryEditor({itineraryId,initialItinerary,currentStaffId,currentStaffName,sourceInquiryId="",sourceInquiryNo="",sourceInquirySnapshot}:Props){
   const router=useRouter();
+  const {language}=useWorkspaceLanguage();
+  const t=(en:string,zh:string)=>language==="zh"?zh:en;
+  const uiPresetLabel=(label:string)=>{const [en,zh]=label.split("｜");return language==="zh"?(zh||en):en;};
   const data=initialItinerary?.itinerary_data||{};
   const resolvedSourceInquiryId=sourceInquiryId||initialItinerary?.source_inquiry_id||data.sourceInquiryId||"";
   const resolvedSourceInquiryNo=sourceInquiryNo||data.sourceInquiryNo||"";
@@ -366,11 +370,11 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   async function uploadHotelImages(hotelId:string,files:FileList|null){
     if(!files?.length) return;
     const hotel=hotels.find(h=>h.id===hotelId);
-    if(!hotel?.name.trim()){alert("请先填写酒店名称，再上传图片。这样系统才能把照片存入 Media Library。");return;}
+    if(!hotel?.name.trim()){alert(t("Enter the hotel name before uploading images so the system can save them to the Media Library.","请先填写酒店名称，再上传图片。这样系统才能把照片存入 Media Library。"));return;}
     const remaining=Math.max(0,5-(hotel?.images.length||0));
-    if(remaining<=0){alert("每间酒店最多上传 5 张图片。");return;}
+    if(remaining<=0){alert(t("A maximum of 5 images is allowed per hotel.","每间酒店最多上传 5 张图片。"));return;}
     const selected=Array.from(files).slice(0,remaining);
-    if(files.length>remaining) alert("每间酒店最多上传 5 张图片，多余图片不会上传。");
+    if(files.length>remaining) alert(t("A maximum of 5 images is allowed per hotel. Extra images will not be uploaded.","每间酒店最多上传 5 张图片，多余图片不会上传。"));
 
     setUploadingHotel(hotelId);
     try{
@@ -592,11 +596,11 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     if(!files?.length) return;
     const day=days.find(d=>d.id===dayId);
     const attraction=day?.attractions.find(a=>a.id===attractionId);
-    if(!attraction?.name.trim()){alert("请先填写景点名称，再上传图片。这样系统才能把照片存入 Media Library。");return;}
+    if(!attraction?.name.trim()){alert(t("Enter the attraction name before uploading images so the system can save them to the Media Library.","请先填写景点名称，再上传图片。这样系统才能把照片存入 Media Library。"));return;}
     const remaining=Math.max(0,3-(attraction?.images.length||0));
-    if(remaining<=0){alert("每个景点最多上传 3 张图片。");return;}
+    if(remaining<=0){alert(t("A maximum of 3 images is allowed per attraction.","每个景点最多上传 3 张图片。"));return;}
     const selected=Array.from(files).slice(0,remaining);
-    if(files.length>remaining) alert("每个景点最多上传 3 张图片，多余图片不会上传。");
+    if(files.length>remaining) alert(t("A maximum of 3 images is allowed per attraction. Extra images will not be uploaded.","每个景点最多上传 3 张图片，多余图片不会上传。"));
 
     setUploadingAttraction(attractionId);
     try{
@@ -767,12 +771,12 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
         body:JSON.stringify({id:itineraryId||null,payload})
       });
       const result=await res.json().catch(()=>({}));
-      if(!res.ok||!result?.ok){setMessage(result?.error||"Unable to save itinerary.");return false;}
+      if(!res.ok||!result?.ok){setMessage(result?.error||t("Unable to save itinerary.","无法保存行程。"));return false;}
       baselineRef.current=currentSnapshot;
       setIsDirty(false);
       if(!itineraryId&&result.id){router.replace("/itineraries/"+result.id+"/edit");}
       else router.refresh();
-      setMessage("Saved");
+      setMessage(t("Saved","已保存"));
       return true;
     } finally {setSaving(false);}
   }
@@ -799,72 +803,72 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   return <div className="itinerary-editor">
     {resolvedSourceInquiryId&&<section className="quote-source-inquiry">
       <div>
-        <span>SOURCE INQUIRY｜来源询价</span>
+        <span>{t("SOURCE INQUIRY","来源询价")}</span>
         <strong>{resolvedSourceInquiryNo||"Linked Inquiry"}</strong>
         {resolvedSourceInquirySnapshot&&<small>{[resolvedSourceInquirySnapshot.destination,resolvedSourceInquirySnapshot.daysCount&&resolvedSourceInquirySnapshot.nightsCount?`${resolvedSourceInquirySnapshot.daysCount}D${resolvedSourceInquirySnapshot.nightsCount}N`:"",resolvedSourceInquirySnapshot.pax?`${resolvedSourceInquirySnapshot.pax} Pax`:""].filter(Boolean).join(" · ")}</small>}
       </div>
-      <button className="btn" type="button" onClick={()=>isDirty?setPendingHref("/inquiries/"+resolvedSourceInquiryId):router.push("/inquiries/"+resolvedSourceInquiryId)}>Open Inquiry</button>
+      <button className="btn" type="button" onClick={()=>isDirty?setPendingHref("/inquiries/"+resolvedSourceInquiryId):router.push("/inquiries/"+resolvedSourceInquiryId)}>{t("Open Inquiry","打开询价")}</button>
     </section>}
     <div className="page-head itinerary-editor-head">
       <div className="itinerary-editor-title-block">
-        <h1>{itineraryId?"Edit Itinerary":"New Itinerary"}</h1>
+        <h1>{itineraryId?t("Edit Itinerary","编辑行程"):t("New Itinerary","新建行程")}</h1>
         <div className="itinerary-editor-meta-line">
-          <span>{initialItinerary?.itinerary_no||"New Draft"}</span>
-          <span className={"status status-"+status}>{status==="ready"?"Ready":status==="confirmed"?"Confirmed":status==="archived"?"Archived":"Draft"}</span>
+          <span>{initialItinerary?.itinerary_no||t("New Draft","新草稿")}</span>
+          <span className={"status status-"+status}>{status==="ready"?t("Ready","已就绪"):status==="confirmed"?t("Confirmed","已确认"):status==="archived"?t("Archived","已归档"):t("Draft","草稿")}</span>
         </div>
       </div>
       <div className="detail-actions itinerary-editor-actions">
-        {isDirty&&<span className="unsaved-badge">Unsaved changes</span>}
-        <button className="btn itinerary-editor-back" onClick={()=>isDirty?setPendingHref("/itineraries"):router.push("/itineraries")}>← Back</button>
-        <button className="btn primary" onClick={()=>void save()} disabled={saving}>{saving?"Saving...":"Save Itinerary"}</button>
+        {isDirty&&<span className="unsaved-badge">{t("Unsaved changes","尚未保存")}</span>}
+        <button className="btn itinerary-editor-back" onClick={()=>isDirty?setPendingHref("/itineraries"):router.push("/itineraries")}>{t("← Back","← 返回")}</button>
+        <button className="btn primary" onClick={()=>void save()} disabled={saving}>{saving?t("Saving...","保存中..."):t("Save Itinerary","保存行程")}</button>
       </div>
     </div>
 
     <section className="panel itinerary-editor-basics">
-      <div className="panel-head"><h2>Basic Information｜基本资料</h2><span className="itinerary-code-preview">{label}</span></div>
+      <div className="panel-head"><h2>{t("Basic Information","基本资料")}</h2><span className="itinerary-code-preview">{label}</span></div>
 
       <div className="itinerary-basic-group">
-        <div className="itinerary-basic-group-head"><strong>Trip</strong><span>Route, dates and trip duration</span></div>
+        <div className="itinerary-basic-group-head"><strong>{t("Trip","行程")}</strong><span>{t("Route, dates and trip duration","路线、日期与行程天数")}</span></div>
         <div className="itinerary-basic-grid itinerary-basic-trip">
-          <label className="field"><span>Departure City｜出发城市</span><input value={departureCity} onChange={e=>setDepartureCity(e.target.value)} placeholder="Kuala Lumpur"/></label>
-          <label className="field"><span>Destination｜目的地</span><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder="Chongqing / Japan / Thailand"/></label>
-          <label className="field"><span>Travel Start Date｜出发日期</span><input type="date" value={travelStartDate} onChange={e=>setTravelStartDate(e.target.value)}/></label>
-          <label className="field"><span>Travel End Date｜返程日期</span><input type="date" value={travelEndDate} onChange={e=>setTravelEndDate(e.target.value)}/></label>
+          <label className="field"><span>{t("Departure City","出发城市")}</span><input value={departureCity} onChange={e=>setDepartureCity(e.target.value)} placeholder="Kuala Lumpur"/></label>
+          <label className="field"><span>{t("Destination","目的地")}</span><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder="Chongqing / Japan / Thailand"/></label>
+          <label className="field"><span>{t("Travel Start Date","出发日期")}</span><input type="date" value={travelStartDate} onChange={e=>setTravelStartDate(e.target.value)}/></label>
+          <label className="field"><span>{t("Travel End Date","返程日期")}</span><input type="date" value={travelEndDate} onChange={e=>setTravelEndDate(e.target.value)}/></label>
           <div className="itinerary-duration-control">
-            <div><span>Duration</span><strong>{label}</strong></div>
-            <label className="field"><span>Days</span><input type="number" min="1" value={daysCount} onChange={e=>setDaysCount(Math.max(1,Number(e.target.value)||1))}/></label>
-            <label className="field"><span>Nights</span><input type="number" min="0" value={nightsCount} onChange={e=>setNightsCount(Math.max(0,Number(e.target.value)||0))}/></label>
-            <button type="button" className="btn itinerary-sync-btn" onClick={syncDays}>Sync {daysCount} Day{daysCount===1?"":"s"}</button>
+            <div><span>{t("Duration","行程天数")}</span><strong>{label}</strong></div>
+            <label className="field"><span>{t("Days","天")}</span><input type="number" min="1" value={daysCount} onChange={e=>setDaysCount(Math.max(1,Number(e.target.value)||1))}/></label>
+            <label className="field"><span>{t("Nights","晚")}</span><input type="number" min="0" value={nightsCount} onChange={e=>setNightsCount(Math.max(0,Number(e.target.value)||0))}/></label>
+            <button type="button" className="btn itinerary-sync-btn" onClick={syncDays}>{t(`Sync ${daysCount} Day${daysCount===1?"":"s"}`,`同步为 ${daysCount} 天`)}</button>
           </div>
         </div>
       </div>
 
       <div className="itinerary-basic-group">
-        <div className="itinerary-basic-group-head"><strong>Booking</strong><span>Traveller and ownership details</span></div>
+        <div className="itinerary-basic-group-head"><strong>{t("Booking","预订资料")}</strong><span>{t("Traveller and ownership details","旅客及负责人资料")}</span></div>
         <div className="itinerary-basic-grid itinerary-basic-booking">
-          <label className="field"><span>Pax｜人数</span><input type="number" min="1" value={pax} onChange={e=>setPax(e.target.value===""?"":Math.max(1,Number(e.target.value)||1))} placeholder="20"/></label>
-          <label className="field"><span>Tour Type｜团型</span><input value={tourType} onChange={e=>setTourType(e.target.value)} placeholder="私人定制团 / Company Trip"/></label>
-          <label className="field"><span>Customer / Company</span><input value={customerName} onChange={e=>setCustomerName(e.target.value)}/></label>
+          <label className="field"><span>{t("Pax","人数")}</span><input type="number" min="1" value={pax} onChange={e=>setPax(e.target.value===""?"":Math.max(1,Number(e.target.value)||1))} placeholder="20"/></label>
+          <label className="field"><span>{t("Tour Type","团型")}</span><input value={tourType} onChange={e=>setTourType(e.target.value)} placeholder={t("Private Tour / Company Trip","私人定制团 / 公司团")}/></label>
+          <label className="field"><span>{t("Customer / Company","客户 / 公司")}</span><input value={customerName} onChange={e=>setCustomerName(e.target.value)}/></label>
           <label className="field"><span>OP</span><input value={op} readOnly className="system-fixed-input"/></label>
         </div>
       </div>
 
       <div className="itinerary-basic-group">
-        <div className="itinerary-basic-group-head"><strong>Document</strong><span>Itinerary naming and document state</span></div>
+        <div className="itinerary-basic-group-head"><strong>{t("Document","文件")}</strong><span>{t("Itinerary naming and document state","行程名称与文件状态")}</span></div>
         <div className="itinerary-basic-grid itinerary-basic-document">
-          <label className="field"><span>Itinerary Title</span><input value={title} onChange={e=>setTitle(e.target.value)}/></label>
-          <label className="field"><span>Status</span><select value={status} onChange={e=>setStatus(e.target.value)}><option value="draft">Draft</option><option value="ready">Ready</option><option value="confirmed">Confirmed</option><option value="archived">Archived</option></select></label>
+          <label className="field"><span>{t("Itinerary Title","行程标题")}</span><input value={title} onChange={e=>setTitle(e.target.value)}/></label>
+          <label className="field"><span>{t("Status","状态")}</span><select value={status} onChange={e=>setStatus(e.target.value)}><option value="draft">{t("Draft","草稿")}</option><option value="ready">{t("Ready","已就绪")}</option><option value="confirmed">{t("Confirmed","已确认")}</option><option value="archived">{t("Archived","已归档")}</option></select></label>
         </div>
       </div>
     </section>
 
     <section className="panel">
       <div className="panel-head">
-        <div><h2>Suggested Flights｜建议航班</h2><p className="panel-subtext">Optional｜如没有填写航班，未来导出 PDF 时会自动隐藏此区块。</p></div>
-        <button className="btn itinerary-add-action" type="button" onClick={addFlight}>+ Add Flight</button>
+        <div><h2>{t("Suggested Flights","建议航班")}</h2><p className="panel-subtext">{t("Optional. This section is hidden from exports when empty.","选填。没有填写航班时，导出文件会自动隐藏此区块。")}</p></div>
+        <button className="btn itinerary-add-action" type="button" onClick={addFlight}>{t("+ Add Flight","+ 新增航班")}</button>
       </div>
       {suggestedFlights.length>0 ? <div className="table-wrap"><table className="itinerary-flight-table">
-        <thead><tr><th>Route</th><th>Flight No.</th><th>Date</th><th>Departure</th><th>Arrival</th><th>Remarks</th><th>操作</th></tr></thead>
+        <thead><tr><th>{t("Route","路线")}</th><th>{t("Flight No.","航班号")}</th><th>{t("Date","日期")}</th><th>{t("Departure","起飞")}</th><th>{t("Arrival","抵达")}</th><th>{t("Remarks","备注")}</th><th>{t("Action","操作")}</th></tr></thead>
         <tbody>{suggestedFlights.map(f=><tr key={f.id}>
           <td><div className="itinerary-flight-route">
             <input maxLength={3} value={f.from} onChange={e=>patchFlight(f.id,{from:e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3)})} placeholder="KUL"/>
@@ -876,36 +880,36 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
           <td><input type="time" value={f.departureTime} onChange={e=>patchFlight(f.id,{departureTime:e.target.value})}/></td>
           <td><input type="time" value={f.arrivalTime} onChange={e=>patchFlight(f.id,{arrivalTime:e.target.value})}/></td>
           <td><input value={f.remarks} onChange={e=>patchFlight(f.id,{remarks:e.target.value})} placeholder="Sichuan Airlines"/></td>
-          <td><button type="button" className="danger-link" onClick={()=>removeFlight(f.id)}>Delete</button></td>
+          <td><button type="button" className="danger-link" onClick={()=>removeFlight(f.id)}>{t("Delete","删除")}</button></td>
         </tr>)}</tbody>
-      </table></div> : <div className="itinerary-attraction-empty itinerary-editor-empty">尚未填写建议航班。需要时点击 “+ Add Flight”。</div>}
+      </table></div> : <div className="itinerary-attraction-empty itinerary-editor-empty">{t("No suggested flights yet. Add one when needed.","尚未填写建议航班。需要时可新增航班。")}</div>}
     </section>
 
     <section className="panel">
       <div className="panel-head">
-        <div><h2>Daily Itinerary｜每日行程</h2><p className="panel-subtext">填写路线、行程内容、酒店、餐食及当天景点。</p></div>
-        <button className="btn itinerary-add-action" type="button" onClick={addDay}>+ Add Day</button>
+        <div><h2>{t("Daily Itinerary","每日行程")}</h2><p className="panel-subtext">{t("Add the route, itinerary content, hotel, meals and attractions for each day.","填写每天的路线、行程内容、酒店、餐食及景点。")}</p></div>
+        <button className="btn itinerary-add-action" type="button" onClick={addDay}>{t("+ Add Day","+ 新增一天")}</button>
       </div>
 
       <div className="itinerary-day-list">
         {days.map((day,index)=><article className="itinerary-day-card" key={day.id}>
           <div className="itinerary-day-head">
             <div className="itinerary-day-title-wrap">
-              <div><span>DAY {String(index+1).padStart(2,"0")}</span><strong>第 {index+1} 天</strong></div>
-              <span className={"itinerary-day-status "+(day.completed?"completed":"draft")}>{day.completed?"✓ Completed":"Draft"}</span>
+              <div><span>{t("DAY","第")} {String(index+1).padStart(2,"0")}</span><strong>{t(`Day ${index+1}`,`第 ${index+1} 天`)}</strong></div>
+              <span className={"itinerary-day-status "+(day.completed?"completed":"draft")}>{day.completed?t("✓ Completed","✓ 已完成"):t("Draft","草稿")}</span>
             </div>
             <div className="itinerary-day-actions">
               {day.completed
-                ? <button type="button" className="day-status-btn" onClick={()=>patchDay(day.id,{completed:false})}>Mark as Draft</button>
-                : <button type="button" className="day-complete-btn" onClick={()=>patchDay(day.id,{completed:true,collapsed:true})}>✓ 完成</button>}
-              <button type="button" className="day-collapse-btn" onClick={()=>patchDay(day.id,{collapsed:!day.collapsed})}>{day.collapsed?"展开":"收起"}</button>
+                ? <button type="button" className="day-status-btn" onClick={()=>patchDay(day.id,{completed:false})}>{t("Mark as Draft","标记为草稿")}</button>
+                : <button type="button" className="day-complete-btn" onClick={()=>patchDay(day.id,{completed:true,collapsed:true})}>{t("✓ Complete","✓ 完成")}</button>}
+              <button type="button" className="day-collapse-btn" onClick={()=>patchDay(day.id,{collapsed:!day.collapsed})}>{day.collapsed?t("Expand","展开"):t("Collapse","收起")}</button>
               <details className="itinerary-more-menu">
                 <summary aria-label="More day actions" title="More actions">•••</summary>
                 <div className="itinerary-more-menu-popover">
-                  <button type="button" onClick={()=>moveDay(index,-1)} disabled={index===0}>Move Up</button>
-                  <button type="button" onClick={()=>moveDay(index,1)} disabled={index===days.length-1}>Move Down</button>
-                  <button type="button" onClick={()=>duplicateDay(index)}>Duplicate</button>
-                  <button type="button" className="danger-link" onClick={()=>removeDay(index)} disabled={days.length<=1}>Delete</button>
+                  <button type="button" onClick={()=>moveDay(index,-1)} disabled={index===0}>{t("Move Up","上移")}</button>
+                  <button type="button" onClick={()=>moveDay(index,1)} disabled={index===days.length-1}>{t("Move Down","下移")}</button>
+                  <button type="button" onClick={()=>duplicateDay(index)}>{t("Duplicate","复制")}</button>
+                  <button type="button" className="danger-link" onClick={()=>removeDay(index)} disabled={days.length<=1}>{t("Delete","删除")}</button>
                 </div>
               </details>
             </div>
@@ -913,43 +917,43 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
 
           {day.collapsed ? <div className="itinerary-day-collapsed-summary">
             <div className="day-summary-primary">
-              <strong>{day.title||"未填写路线标题"}</strong>
-              <span>{day.hotel||"尚未填写酒店"}</span>
+              <strong>{day.title||t("Route title not entered","未填写路线标题")}</strong>
+              <span>{day.hotel||t("Hotel not entered","尚未填写酒店")}</span>
             </div>
             <div className="day-summary-meta">
-              {[day.meals.breakfast&&day.meals.breakfast!=="-"?`Breakfast: ${day.meals.breakfast}`:"",day.meals.lunch&&day.meals.lunch!=="-"?`Lunch: ${day.meals.lunch}`:"",day.meals.dinner&&day.meals.dinner!=="-"?`Dinner: ${day.meals.dinner}`:"",day.attractions.length?`${day.attractions.length} Attraction${day.attractions.length===1?"":"s"}`:"",day.attractions.reduce((sum,a)=>sum+a.images.length,0)?`${day.attractions.reduce((sum,a)=>sum+a.images.length,0)} Photo${day.attractions.reduce((sum,a)=>sum+a.images.length,0)===1?"":"s"}`:""].filter(Boolean).join(" · ")||"No meals or attractions added"}
+              {[day.meals.breakfast&&day.meals.breakfast!=="-"?`Breakfast: ${day.meals.breakfast}`:"",day.meals.lunch&&day.meals.lunch!=="-"?`Lunch: ${day.meals.lunch}`:"",day.meals.dinner&&day.meals.dinner!=="-"?`Dinner: ${day.meals.dinner}`:"",day.attractions.length?`${day.attractions.length} Attraction${day.attractions.length===1?"":"s"}`:"",day.attractions.reduce((sum,a)=>sum+a.images.length,0)?`${day.attractions.reduce((sum,a)=>sum+a.images.length,0)} Photo${day.attractions.reduce((sum,a)=>sum+a.images.length,0)===1?"":"s"}`:""].filter(Boolean).join(" · ")||t("No meals or attractions added","尚未填写餐食或景点")}
             </div>
           </div> : <>
 
           <div className="itinerary-day-main-grid">
             <label className="field itinerary-route-field">
-              <span>Route / Title｜路线标题</span>
-              <input value={day.title} onChange={e=>patchDay(day.id,{title:e.target.value})} placeholder="新加坡 → 重庆"/>
+              <span>{t("Route / Title","路线标题")}</span>
+              <input value={day.title} onChange={e=>patchDay(day.id,{title:e.target.value})} placeholder={t("Singapore → Chongqing","新加坡 → 重庆")}/>
             </label>
             <label className="field">
-              <span>Hotel｜酒店</span>
-              <input value={day.hotel} onChange={e=>patchDay(day.id,{hotel:e.target.value})} placeholder="重庆伊美 4 星酒店"/>
+              <span>{t("Hotel","酒店")}</span>
+              <input value={day.hotel} onChange={e=>patchDay(day.id,{hotel:e.target.value})} placeholder={t("Hotel name","酒店名称")}/>
             </label>
           </div>
 
           <label className="field">
-            <span>Itinerary Content｜行程内容</span>
-            <textarea value={day.content} onChange={e=>patchDay(day.id,{content:e.target.value})} placeholder="输入当天行程内容，例如集合、交通、景点、入住安排..."/>
+            <span>{t("Itinerary Content","行程内容")}</span>
+            <textarea value={day.content} onChange={e=>patchDay(day.id,{content:e.target.value})} placeholder={t("Enter the day's itinerary, transport, attractions and check-in arrangements...","输入当天行程内容，例如集合、交通、景点、入住安排...")}/>
           </label>
 
           <div className="itinerary-meal-section">
-            <div className="itinerary-subhead"><strong>Meals｜餐食</strong></div>
+            <div className="itinerary-subhead"><strong>{t("Meals","餐食")}</strong></div>
             <div className="itinerary-meal-grid">
-              <label className="field"><span>Breakfast｜早餐</span><input value={day.meals.breakfast} onChange={e=>patchMeal(day.id,"breakfast",e.target.value)} placeholder="Hotel Breakfast / -"/></label>
-              <label className="field"><span>Lunch｜午餐</span><input value={day.meals.lunch} onChange={e=>patchMeal(day.id,"lunch",e.target.value)} placeholder="Lunch / Meal On Board / -"/></label>
-              <label className="field"><span>Dinner｜晚餐</span><input value={day.meals.dinner} onChange={e=>patchMeal(day.id,"dinner",e.target.value)} placeholder="Dinner / Hotpot / -"/></label>
+              <label className="field"><span>{t("Breakfast","早餐")}</span><input value={day.meals.breakfast} onChange={e=>patchMeal(day.id,"breakfast",e.target.value)} placeholder="Hotel Breakfast / -"/></label>
+              <label className="field"><span>{t("Lunch","午餐")}</span><input value={day.meals.lunch} onChange={e=>patchMeal(day.id,"lunch",e.target.value)} placeholder="Lunch / Meal On Board / -"/></label>
+              <label className="field"><span>{t("Dinner","晚餐")}</span><input value={day.meals.dinner} onChange={e=>patchMeal(day.id,"dinner",e.target.value)} placeholder="Dinner / Hotpot / -"/></label>
             </div>
           </div>
 
           <div className="itinerary-attraction-section">
             <div className="itinerary-subhead">
-              <div><strong>Attractions｜景点</strong><span>每个景点可以独立填写名称及图片。</span></div>
-              <button type="button" className="btn itinerary-add-action" onClick={()=>addAttraction(day.id)}>+ Add Attraction</button>
+              <div><strong>{t("Attractions","景点")}</strong><span>{t("Each attraction can have its own name and images.","每个景点可以独立填写名称及图片。")}</span></div>
+              <button type="button" className="btn itinerary-add-action" onClick={()=>addAttraction(day.id)}>{t("+ Add Attraction","+ 新增景点")}</button>
             </div>
 
             {day.attractions.length>0 && <div className="itinerary-attraction-list">
@@ -966,24 +970,24 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
                       <span>{attraction.images.length} photo{attraction.images.length===1?"":"s"}</span>
                     </div>
                     <div className="itinerary-attraction-summary-actions">
-                      <button type="button" className="disclosure-action" onClick={()=>toggleAttractionEditor(attraction.id)}>{expanded?"Done":"Edit"}</button>
+                      <button type="button" className="disclosure-action" onClick={()=>toggleAttractionEditor(attraction.id)}>{expanded?t("Done","完成"):t("Edit","编辑")}</button>
                       <details className="itinerary-more-menu">
                         <summary aria-label="More attraction actions" title="More actions">•••</summary>
                         <div className="itinerary-more-menu-popover">
-                          <button type="button" onClick={()=>moveAttraction(day.id,aIndex,-1)} disabled={aIndex===0}>Move Up</button>
-                          <button type="button" onClick={()=>moveAttraction(day.id,aIndex,1)} disabled={aIndex===day.attractions.length-1}>Move Down</button>
-                          <button type="button" className="danger-link" onClick={()=>removeAttraction(day.id,attraction.id)}>Delete</button>
+                          <button type="button" onClick={()=>moveAttraction(day.id,aIndex,-1)} disabled={aIndex===0}>{t("Move Up","上移")}</button>
+                          <button type="button" onClick={()=>moveAttraction(day.id,aIndex,1)} disabled={aIndex===day.attractions.length-1}>{t("Move Down","下移")}</button>
+                          <button type="button" className="danger-link" onClick={()=>removeAttraction(day.id,attraction.id)}>{t("Delete","删除")}</button>
                         </div>
                       </details>
                     </div>
                   </div>
                   {expanded&&<div className="itinerary-attraction-editor">
                     <label className="field">
-                      <span>Attraction Name｜景点名称</span>
-                      <input value={attraction.name} onChange={e=>patchAttraction(day.id,attraction.id,{name:e.target.value})} onBlur={e=>void autoMatchAttraction(day.id,attraction.id,e.target.value)} placeholder="仙女山风景区"/>
+                      <span>{t("Attraction Name","景点名称")}</span>
+                      <input value={attraction.name} onChange={e=>patchAttraction(day.id,attraction.id,{name:e.target.value})} onBlur={e=>void autoMatchAttraction(day.id,attraction.id,e.target.value)} placeholder={t("Attraction name","景点名称")}/>
                     </label>
                     <div className="field itinerary-upload-field">
-                      <span>Upload Images｜上传景点图片</span>
+                      <span>{t("Upload Images","上传景点图片")}</span>
                       <label className="itinerary-upload-control">
                         <input
                           type="file"
@@ -992,7 +996,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
                           disabled={uploadingAttraction===attraction.id||attraction.images.length>=3}
                           onChange={e=>{void uploadAttractionImages(day.id,attraction.id,e.target.files);e.currentTarget.value="";}}
                         />
-                        <b>{uploadingAttraction===attraction.id?"Uploading...":attraction.images.length>=3?"Maximum 3 Images":"+ Attach Images"}</b>
+                        <b>{uploadingAttraction===attraction.id?t("Uploading...","上传中..."):attraction.images.length>=3?t("Maximum 3 Images","最多 3 张图片"):t("+ Attach Images","+ 添加图片")}</b>
                         <small>{attraction.images.length}/3 · JPG, PNG, WEBP, HEIC · Max 10MB each</small>
                       </label>
                     </div>
@@ -1007,7 +1011,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
               })}
             </div>}
 
-            {!day.attractions.length && <div className="itinerary-attraction-empty itinerary-editor-empty">当天尚未加入景点。</div>}
+            {!day.attractions.length && <div className="itinerary-attraction-empty itinerary-editor-empty">{t("No attractions added for this day.","当天尚未加入景点。")}</div>}
           </div>
           </>}
         </article>)}
@@ -1016,8 +1020,8 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
 
     <section className="panel">
       <div className="panel-head">
-        <div><h2>Hotel Introduction｜酒店介绍</h2><p className="panel-subtext">Optional｜可加入多间酒店；没有填写时未来导出 PDF 会自动隐藏。</p></div>
-        <button className="btn itinerary-add-action" type="button" onClick={addHotel}>+ Add Hotel</button>
+        <div><h2>{t("Hotel Introduction","酒店介绍")}</h2><p className="panel-subtext">{t("Optional. Add multiple hotels when needed; empty sections are hidden from exports.","选填。可加入多间酒店；未填写时导出文件会自动隐藏。")}</p></div>
+        <button className="btn itinerary-add-action" type="button" onClick={addHotel}>{t("+ Add Hotel","+ 新增酒店")}</button>
       </div>
 
       {hotels.length>0 ? <div className="itinerary-hotel-list">
@@ -1028,18 +1032,18 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
             <div className="itinerary-hotel-head">
               <div className="itinerary-hotel-summary-copy">
                 <span>HOTEL {String(index+1).padStart(2,"0")}</span>
-                <strong>{hotel.name||"New Hotel"}</strong>
-                <small>{summaryMeta||"Hotel details not completed"}</small>
+                <strong>{hotel.name||t("New Hotel","新酒店")}</strong>
+                <small>{summaryMeta||t("Hotel details not completed","酒店资料尚未完成")}</small>
               </div>
               <div className="itinerary-day-actions">
-                <button type="button" className="disclosure-action" onClick={()=>toggleHotelEditor(hotel.id)}>{expanded?"Done":"Edit"}</button>
+                <button type="button" className="disclosure-action" onClick={()=>toggleHotelEditor(hotel.id)}>{expanded?t("Done","完成"):t("Edit","编辑")}</button>
                 <details className="itinerary-more-menu">
                   <summary aria-label="More hotel actions" title="More actions">•••</summary>
                   <div className="itinerary-more-menu-popover">
-                    <button type="button" onClick={()=>moveHotel(index,-1)} disabled={index===0}>Move Up</button>
-                    <button type="button" onClick={()=>moveHotel(index,1)} disabled={index===hotels.length-1}>Move Down</button>
-                    <button type="button" onClick={()=>duplicateHotel(index)}>Duplicate</button>
-                    <button type="button" className="danger-link" onClick={()=>void removeHotel(index)}>Delete</button>
+                    <button type="button" onClick={()=>moveHotel(index,-1)} disabled={index===0}>{t("Move Up","上移")}</button>
+                    <button type="button" onClick={()=>moveHotel(index,1)} disabled={index===hotels.length-1}>{t("Move Down","下移")}</button>
+                    <button type="button" onClick={()=>duplicateHotel(index)}>{t("Duplicate","复制")}</button>
+                    <button type="button" className="danger-link" onClick={()=>void removeHotel(index)}>{t("Delete","删除")}</button>
                   </div>
                 </details>
               </div>
@@ -1052,23 +1056,23 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
 
             {expanded&&<div className="itinerary-hotel-editor">
               <div className="itinerary-hotel-grid">
-                <label className="field"><span>Hotel Name｜酒店名称</span><input value={hotel.name} onChange={e=>patchHotel(hotel.id,{name:e.target.value})} onBlur={e=>void autoMatchHotel(hotel.id,e.target.value)} placeholder="重庆伊美大酒店"/></label>
-                <label className="field"><span>City / Area｜城市 / 地区</span><input value={hotel.cityArea} onChange={e=>patchHotel(hotel.id,{cityArea:e.target.value})} placeholder="Chongqing / Guanyinqiao"/></label>
-                <label className="field"><span>Star Rating｜星级</span><input value={hotel.starRating} onChange={e=>patchHotel(hotel.id,{starRating:e.target.value})} placeholder="4 Star / 4 星级"/></label>
-                <label className="field"><span>Stay Nights｜入住晚数</span><input value={hotel.stayNights} onChange={e=>patchHotel(hotel.id,{stayNights:e.target.value})} placeholder="Night 1 / 3 / 4 / 5"/></label>
-                <label className="field"><span>Room Size｜房间面积</span><div className="unit-input-wrap"><input type="number" min="0" step="0.1" value={hotel.roomSize} onChange={e=>patchHotel(hotel.id,{roomSize:e.target.value===""?"":Math.max(0,Number(e.target.value))})} placeholder="28"/><b>m²</b></div></label>
-                <label className="field"><span>Opening Year｜开业年份</span><input inputMode="numeric" value={hotel.openingYear} onChange={e=>patchHotel(hotel.id,{openingYear:e.target.value.replace(/\D/g,"").slice(0,4)})} placeholder="2013"/></label>
-                <label className="field"><span>Renovation Year｜装修年份</span><input inputMode="numeric" value={hotel.renovationYear} onChange={e=>patchHotel(hotel.id,{renovationYear:e.target.value.replace(/\D/g,"").slice(0,4)})} placeholder="2024 / 留空"/></label>
+                <label className="field"><span>{t("Hotel Name","酒店名称")}</span><input value={hotel.name} onChange={e=>patchHotel(hotel.id,{name:e.target.value})} onBlur={e=>void autoMatchHotel(hotel.id,e.target.value)} placeholder={t("Hotel name","酒店名称")}/></label>
+                <label className="field"><span>{t("City / Area","城市 / 地区")}</span><input value={hotel.cityArea} onChange={e=>patchHotel(hotel.id,{cityArea:e.target.value})} placeholder="Chongqing / Guanyinqiao"/></label>
+                <label className="field"><span>{t("Star Rating","星级")}</span><input value={hotel.starRating} onChange={e=>patchHotel(hotel.id,{starRating:e.target.value})} placeholder={t("4 Star","4 星级")}/></label>
+                <label className="field"><span>{t("Stay Nights","入住晚数")}</span><input value={hotel.stayNights} onChange={e=>patchHotel(hotel.id,{stayNights:e.target.value})} placeholder="Night 1 / 3 / 4 / 5"/></label>
+                <label className="field"><span>{t("Room Size","房间面积")}</span><div className="unit-input-wrap"><input type="number" min="0" step="0.1" value={hotel.roomSize} onChange={e=>patchHotel(hotel.id,{roomSize:e.target.value===""?"":Math.max(0,Number(e.target.value))})} placeholder="28"/><b>m²</b></div></label>
+                <label className="field"><span>{t("Opening Year","开业年份")}</span><input inputMode="numeric" value={hotel.openingYear} onChange={e=>patchHotel(hotel.id,{openingYear:e.target.value.replace(/\D/g,"").slice(0,4)})} placeholder="2013"/></label>
+                <label className="field"><span>{t("Renovation Year","装修年份")}</span><input inputMode="numeric" value={hotel.renovationYear} onChange={e=>patchHotel(hotel.id,{renovationYear:e.target.value.replace(/\D/g,"").slice(0,4)})} placeholder={t("2024 / optional","2024 / 留空")}/></label>
               </div>
 
               <label className="field">
-                <span>Nearby / Location Notes｜周边 / 地理位置说明</span>
-                <textarea value={hotel.nearbyNotes} onChange={e=>patchHotel(hotel.id,{nearbyNotes:e.target.value})} placeholder="例如：距离观音桥约 2km，步行约 15 分钟。"/>
+                <span>{t("Nearby / Location Notes","周边 / 地理位置说明")}</span>
+                <textarea value={hotel.nearbyNotes} onChange={e=>patchHotel(hotel.id,{nearbyNotes:e.target.value})} placeholder={t("e.g. 2 km from the city centre, around 15 minutes on foot.","例如：距离市中心约 2km，步行约 15 分钟。")}/>
               </label>
 
               <div className="itinerary-hotel-images">
                 <div className="field itinerary-upload-field">
-                  <span>Hotel Images｜酒店图片</span>
+                  <span>{t("Hotel Images","酒店图片")}</span>
                   <label className="itinerary-upload-control">
                     <input
                       type="file"
@@ -1077,7 +1081,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
                       disabled={uploadingHotel===hotel.id||hotel.images.length>=5}
                       onChange={e=>{void uploadHotelImages(hotel.id,e.target.files);e.currentTarget.value="";}}
                     />
-                    <b>{uploadingHotel===hotel.id?"Uploading...":hotel.images.length>=5?"Maximum 5 Images":"+ Attach Hotel Images"}</b>
+                    <b>{uploadingHotel===hotel.id?t("Uploading...","上传中..."):hotel.images.length>=5?t("Maximum 5 Images","最多 5 张图片"):t("+ Attach Hotel Images","+ 添加酒店图片")}</b>
                     <small>{hotel.images.length}/5 · JPG, PNG, WEBP, HEIC · Max 10MB each</small>
                   </label>
                 </div>
@@ -1092,22 +1096,22 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
             </div>}
           </article>;
         })}
-      </div> : <div className="itinerary-attraction-empty itinerary-editor-empty">尚未加入酒店资料。需要时点击 “+ Add Hotel”。</div>}
+      </div> : <div className="itinerary-attraction-empty itinerary-editor-empty">{t("No hotel details yet. Add a hotel when needed.","尚未加入酒店资料。需要时可新增酒店。")}</div>}
     </section>
 
     <section className="panel">
       <div className="panel-head">
         <div>
-          <h2 className="itinerary-section-title"><span>Included / Not Included</span><span className="itinerary-section-title-cn">配套包含与不包含</span></h2>
-          <p className="panel-subtext">使用常用 Preset 快速加入，也可选择 Other 手动输入项目名称。</p>
+          <h2>{t("Included / Not Included","配套包含与不包含")}</h2>
+          <p className="panel-subtext">{t("Use presets or choose Other to enter a custom item.","使用常用项目快速加入，也可选择其他并手动输入。")}</p>
         </div>
       </div>
 
       <div className="itinerary-package-columns">
         <div className="itinerary-package-card included">
           <div className="itinerary-package-head">
-            <div><strong>Included｜配套包含</strong><span>{includedItems.length} items</span></div>
-            <button className="btn itinerary-add-action" type="button" onClick={()=>addPackageItem("included")}>+ Add Item</button>
+            <div><strong>{t("Included","配套包含")}</strong><span>{includedItems.length} items</span></div>
+            <button className="btn itinerary-add-action" type="button" onClick={()=>addPackageItem("included")}>{t("+ Add Item","+ 新增项目")}</button>
           </div>
           {includedItems.length>0 ? <div className="itinerary-package-list">
             {includedItems.map((item,index)=>{
@@ -1117,37 +1121,37 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
                   <div className="itinerary-package-index">{String(index+1).padStart(2,"0")}</div>
                   <div className="itinerary-package-summary-copy">
                     <strong>{item.name||"New Included Item"}</strong>
-                    <span>{item.preset==="other"?"Custom item":presetLabel("included",item.preset)}</span>
+                    <span>{item.preset==="other"?t("Custom item","自定义项目"):uiPresetLabel(presetLabel("included",item.preset))}</span>
                   </div>
                   <div className="itinerary-package-actions">
-                    <button type="button" className="disclosure-action" onClick={()=>togglePackageItem("included",item.id)}>{expanded?"Done":"Edit"}</button>
+                    <button type="button" className="disclosure-action" onClick={()=>togglePackageItem("included",item.id)}>{expanded?t("Done","完成"):t("Edit","编辑")}</button>
                     <button type="button" aria-label="Move item up" onClick={()=>movePackageItem("included",index,-1)} disabled={index===0}>↑</button>
                     <button type="button" aria-label="Move item down" onClick={()=>movePackageItem("included",index,1)} disabled={index===includedItems.length-1}>↓</button>
-                    <button type="button" onClick={()=>duplicatePackageItem("included",index)}>Duplicate</button>
-                    <button type="button" className="danger-link" onClick={()=>removePackageItem("included",item.id)}>Delete</button>
+                    <button type="button" onClick={()=>duplicatePackageItem("included",index)}>{t("Duplicate","复制")}</button>
+                    <button type="button" className="danger-link" onClick={()=>removePackageItem("included",item.id)}>{t("Delete","删除")}</button>
                   </div>
                 </div>
                 {expanded&&<div className="itinerary-package-editor">
                   <label className="field">
-                    <span>Preset｜常用项目</span>
+                    <span>{t("Preset","常用项目")}</span>
                     <select value={item.preset} onChange={e=>selectPackagePreset("included",item.id,e.target.value)}>
-                      {includedPresets.map(([value,label])=><option key={value} value={value}>{label}</option>)}
+                      {includedPresets.map(([value,label])=><option key={value} value={value}>{uiPresetLabel(label)}</option>)}
                     </select>
                   </label>
                   <label className="field itinerary-package-name">
-                    <span>Item Name｜项目名称</span>
-                    <input value={item.name} onChange={e=>patchPackageItem("included",item.id,{name:e.target.value})} placeholder={item.preset==="other"?"手动输入项目名称":"可继续修改项目名称"}/>
+                    <span>{t("Item Name","项目名称")}</span>
+                    <input value={item.name} onChange={e=>patchPackageItem("included",item.id,{name:e.target.value})} placeholder={item.preset==="other"?t("Enter item name","手动输入项目名称"):t("Edit item name if needed","可继续修改项目名称")}/>
                   </label>
                 </div>}
               </div>;
             })}
-          </div> : <div className="itinerary-attraction-empty itinerary-editor-empty">尚未加入 Included 项目。</div>}
+          </div> : <div className="itinerary-attraction-empty itinerary-editor-empty">{t("No included items yet.","尚未加入配套包含项目。")}</div>}
         </div>
 
         <div className="itinerary-package-card excluded">
           <div className="itinerary-package-head">
-            <div><strong>Not Included｜配套不包含</strong><span>{notIncludedItems.length} items</span></div>
-            <button className="btn itinerary-add-action" type="button" onClick={()=>addPackageItem("excluded")}>+ Add Item</button>
+            <div><strong>{t("Not Included","配套不包含")}</strong><span>{notIncludedItems.length} items</span></div>
+            <button className="btn itinerary-add-action" type="button" onClick={()=>addPackageItem("excluded")}>{t("+ Add Item","+ 新增项目")}</button>
           </div>
           {notIncludedItems.length>0 ? <div className="itinerary-package-list">
             {notIncludedItems.map((item,index)=>{
@@ -1157,31 +1161,31 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
                   <div className="itinerary-package-index">{String(index+1).padStart(2,"0")}</div>
                   <div className="itinerary-package-summary-copy">
                     <strong>{item.name||"New Not Included Item"}</strong>
-                    <span>{item.preset==="other"?"Custom item":presetLabel("excluded",item.preset)}</span>
+                    <span>{item.preset==="other"?t("Custom item","自定义项目"):uiPresetLabel(presetLabel("excluded",item.preset))}</span>
                   </div>
                   <div className="itinerary-package-actions">
-                    <button type="button" className="disclosure-action" onClick={()=>togglePackageItem("excluded",item.id)}>{expanded?"Done":"Edit"}</button>
+                    <button type="button" className="disclosure-action" onClick={()=>togglePackageItem("excluded",item.id)}>{expanded?t("Done","完成"):t("Edit","编辑")}</button>
                     <button type="button" aria-label="Move item up" onClick={()=>movePackageItem("excluded",index,-1)} disabled={index===0}>↑</button>
                     <button type="button" aria-label="Move item down" onClick={()=>movePackageItem("excluded",index,1)} disabled={index===notIncludedItems.length-1}>↓</button>
-                    <button type="button" onClick={()=>duplicatePackageItem("excluded",index)}>Duplicate</button>
-                    <button type="button" className="danger-link" onClick={()=>removePackageItem("excluded",item.id)}>Delete</button>
+                    <button type="button" onClick={()=>duplicatePackageItem("excluded",index)}>{t("Duplicate","复制")}</button>
+                    <button type="button" className="danger-link" onClick={()=>removePackageItem("excluded",item.id)}>{t("Delete","删除")}</button>
                   </div>
                 </div>
                 {expanded&&<div className="itinerary-package-editor">
                   <label className="field">
-                    <span>Preset｜常用项目</span>
+                    <span>{t("Preset","常用项目")}</span>
                     <select value={item.preset} onChange={e=>selectPackagePreset("excluded",item.id,e.target.value)}>
-                      {excludedPresets.map(([value,label])=><option key={value} value={value}>{label}</option>)}
+                      {excludedPresets.map(([value,label])=><option key={value} value={value}>{uiPresetLabel(label)}</option>)}
                     </select>
                   </label>
                   <label className="field itinerary-package-name">
-                    <span>Item Name｜项目名称</span>
-                    <input value={item.name} onChange={e=>patchPackageItem("excluded",item.id,{name:e.target.value})} placeholder={item.preset==="other"?"手动输入项目名称":"可继续修改项目名称"}/>
+                    <span>{t("Item Name","项目名称")}</span>
+                    <input value={item.name} onChange={e=>patchPackageItem("excluded",item.id,{name:e.target.value})} placeholder={item.preset==="other"?t("Enter item name","手动输入项目名称"):t("Edit item name if needed","可继续修改项目名称")}/>
                   </label>
                 </div>}
               </div>;
             })}
-          </div> : <div className="itinerary-attraction-empty itinerary-editor-empty">尚未加入 Not Included 项目。</div>}
+          </div> : <div className="itinerary-attraction-empty itinerary-editor-empty">{t("No excluded items yet.","尚未加入配套不包含项目。")}</div>}
         </div>
       </div>
     </section>
@@ -1189,10 +1193,10 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     <section className="panel">
       <div className="panel-head">
         <div>
-          <h2 className="itinerary-section-title"><span>Friendly Reminder</span><span className="itinerary-section-title-cn">温馨提醒</span></h2>
-          <p className="panel-subtext">Optional｜有填写才会在 Detail / 未来 PDF 显示。</p>
+          <h2>{t("Friendly Reminder","温馨提醒")}</h2>
+          <p className="panel-subtext">{t("Optional. Reminders appear only when content is added.","选填。只有填写内容后才会显示提醒。")}</p>
         </div>
-        <button className="btn itinerary-add-action" type="button" onClick={addReminder}>+ Add Reminder</button>
+        <button className="btn itinerary-add-action" type="button" onClick={addReminder}>{t("+ Add Reminder","+ 新增提醒")}</button>
       </div>
 
       {reminders.length>0 ? <div className="itinerary-reminder-list">
@@ -1202,36 +1206,36 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
             <div className="itinerary-reminder-summary">
               <div className="itinerary-reminder-index">{String(index+1).padStart(2,"0")}</div>
               <div className="itinerary-reminder-summary-copy">
-                <strong>{item.title||"New Reminder"}</strong>
-                <span>{item.description||reminderPresetTitle(item.preset)||"No description yet"}</span>
+                <strong>{item.title||t("New Reminder","新提醒")}</strong>
+                <span>{item.description||uiPresetLabel(reminderPresetTitle(item.preset))||t("No description yet","尚未填写内容")}</span>
               </div>
               <div className="itinerary-reminder-actions">
-                <button type="button" className="disclosure-action" onClick={()=>toggleReminder(item.id)}>{expanded?"Done":"Edit"}</button>
+                <button type="button" className="disclosure-action" onClick={()=>toggleReminder(item.id)}>{expanded?t("Done","完成"):t("Edit","编辑")}</button>
                 <button type="button" aria-label="Move reminder up" onClick={()=>moveReminder(index,-1)} disabled={index===0}>↑</button>
                 <button type="button" aria-label="Move reminder down" onClick={()=>moveReminder(index,1)} disabled={index===reminders.length-1}>↓</button>
-                <button type="button" onClick={()=>duplicateReminder(index)}>Duplicate</button>
-                <button type="button" className="danger-link" onClick={()=>removeReminder(item.id)}>Delete</button>
+                <button type="button" onClick={()=>duplicateReminder(index)}>{t("Duplicate","复制")}</button>
+                <button type="button" className="danger-link" onClick={()=>removeReminder(item.id)}>{t("Delete","删除")}</button>
               </div>
             </div>
             {expanded&&<div className="itinerary-reminder-editor">
               <label className="field">
-                <span>Preset｜常用提醒</span>
+                <span>{t("Preset","常用提醒")}</span>
                 <select value={item.preset} onChange={e=>selectReminderPreset(item.id,e.target.value)}>
-                  {reminderPresets.map(([value,label])=><option key={value} value={value}>{label}</option>)}
+                  {reminderPresets.map(([value,label])=><option key={value} value={value}>{uiPresetLabel(label)}</option>)}
                 </select>
               </label>
               <label className="field">
-                <span>Reminder Title｜提醒标题</span>
-                <input value={item.title} onChange={e=>patchReminder(item.id,{title:e.target.value})} placeholder={item.preset==="other"?"手动输入提醒标题":"可继续修改提醒标题"}/>
+                <span>{t("Reminder Title","提醒标题")}</span>
+                <input value={item.title} onChange={e=>patchReminder(item.id,{title:e.target.value})} placeholder={item.preset==="other"?t("Enter reminder title","手动输入提醒标题"):t("Edit reminder title if needed","可继续修改提醒标题")}/>
               </label>
               <label className="field itinerary-reminder-description">
-                <span>Description｜提醒内容</span>
-                <textarea value={item.description} onChange={e=>patchReminder(item.id,{description:e.target.value})} placeholder="输入需要提醒旅客的内容..."/>
+                <span>{t("Description","提醒内容")}</span>
+                <textarea value={item.description} onChange={e=>patchReminder(item.id,{description:e.target.value})} placeholder={t("Enter the reminder content...","输入需要提醒旅客的内容...")}/>
               </label>
             </div>}
           </article>;
         })}
-      </div> : <div className="itinerary-attraction-empty itinerary-editor-empty">尚未加入温馨提醒。</div>}
+      </div> : <div className="itinerary-attraction-empty itinerary-editor-empty">{t("No reminders yet.","尚未加入温馨提醒。")}</div>}
     </section>
 
     {message&&<div className="save-message">{message}</div>}
@@ -1240,13 +1244,13 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       <div className="unsaved-dialog">
         <div className="unsaved-icon">!</div>
         <div>
-          <h3>当前行程尚未存档</h3>
-          <p>你已经修改了这份行程。离开之前要先保存吗？</p>
+          <h3>{t("Unsaved itinerary","当前行程尚未存档")}</h3>
+          <p>{t("You have unsaved changes. Save before leaving?","你已经修改了这份行程。离开之前要先保存吗？")}</p>
         </div>
         <div className="unsaved-actions">
-          <button className="btn primary" onClick={saveAndLeave} disabled={saving}>{saving?"Saving...":"Save & Continue"}</button>
-          <button className="btn leave-btn" onClick={leaveWithoutSaving} disabled={saving}>Leave Without Saving</button>
-          <button className="btn" onClick={()=>setPendingHref(null)} disabled={saving}>Cancel</button>
+          <button className="btn primary" onClick={saveAndLeave} disabled={saving}>{saving?t("Saving...","保存中..."):t("Save & Continue","保存并继续")}</button>
+          <button className="btn leave-btn" onClick={leaveWithoutSaving} disabled={saving}>{t("Leave Without Saving","不保存离开")}</button>
+          <button className="btn" onClick={()=>setPendingHref(null)} disabled={saving}>{t("Cancel","取消")}</button>
         </div>
       </div>
     </div>}
