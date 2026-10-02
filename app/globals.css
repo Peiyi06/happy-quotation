@@ -9162,3 +9162,113 @@ td,
   background:#0C263B!important;
   border-color:#0C263B!important;
 }
+
+
+/* =========================================================
+   DASHBOARD — FINAL FOUNDATION POLISH
+   Lighter hierarchy, flatter information surfaces, quieter table.
+   ========================================================= */
+.workspace-main .dashboard-page-head{
+  min-height:96px;
+  padding:18px 22px;
+  border-radius:16px;
+  margin-bottom:18px;
+  box-shadow:0 8px 22px rgba(31,53,67,.06);
+}
+.workspace-main .dashboard-page-head h1{
+  font-size:32px!important;
+  font-weight:700!important;
+  letter-spacing:-.02em!important;
+  margin:0 0 5px!important;
+}
+.workspace-main .dashboard-page-head p{
+  font-size:13px!important;
+  line-height:1.4;
+}
+.workspace-main .dashboard-page-head .btn.primary{
+  min-height:40px;
+  padding:0 16px;
+  border:1px solid rgba(255,255,255,.18)!important;
+  box-shadow:0 1px 1px rgba(0,0,0,.06);
+}
+
+.dashboard-cards{
+  gap:12px;
+  margin-bottom:16px;
+}
+.dashboard-cards .dash-card{
+  padding:16px 18px!important;
+  border-color:#E8E8ED!important;
+  border-radius:12px!important;
+}
+.dashboard-cards .dash-card span{
+  margin-bottom:7px;
+  font-size:12px;
+  font-weight:500;
+}
+.dashboard-cards .dash-card b{
+  font-size:26px;
+  line-height:1.15;
+  font-weight:700!important;
+  letter-spacing:-.015em;
+}
+
+.dashboard-recent-panel{
+  padding:0!important;
+  overflow:hidden;
+  border-color:#E8E8ED!important;
+  border-radius:14px!important;
+  box-shadow:none!important;
+}
+.dashboard-recent-panel>.panel-head{
+  margin:0;
+  padding:18px 20px 14px;
+  border-bottom:1px solid var(--color-border-default);
+}
+.dashboard-recent-panel>.panel-head h2{
+  font-size:19px!important;
+  font-weight:700!important;
+  letter-spacing:-.01em;
+}
+.dashboard-recent-panel>.panel-head a{
+  font-size:12.5px;
+  font-weight:500;
+}
+.dashboard-recent-table{
+  min-width:850px;
+}
+.dashboard-recent-table th{
+  padding:10px 14px;
+  background:var(--color-bg-surface)!important;
+  color:var(--color-text-secondary)!important;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:0;
+}
+.dashboard-recent-table td{
+  padding:11px 14px;
+  font-size:13px;
+  font-weight:400;
+}
+.dashboard-recent-table td:first-child a{
+  font-weight:650;
+}
+.dashboard-recent-table tbody tr:hover td{
+  background:var(--color-bg-soft)!important;
+}
+
+@media(max-width:760px){
+  .workspace-main .dashboard-page-head{
+    padding:18px;
+    border-radius:14px;
+  }
+  .workspace-main .dashboard-page-head h1{
+    font-size:28px!important;
+  }
+  .dashboard-cards{
+    gap:10px;
+  }
+  .dashboard-recent-panel>.panel-head{
+    padding:16px 16px 12px;
+  }
+}
