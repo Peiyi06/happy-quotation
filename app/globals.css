@@ -4767,3 +4767,58 @@ button,
     min-width:0;
   }
 }
+
+
+/* Quotation bottom workflow */
+.quotation-workflow-panel,
+.quotation-editor-workflow{
+  margin-top:18px;
+}
+.quotation-workflow-note{
+  margin-top:12px;
+  padding:10px 12px;
+  border-radius:11px;
+  background:#fff5e7;
+  border:1px solid #efd7ad;
+  display:grid;
+  gap:4px;
+}
+.quotation-workflow-note.success{
+  background:#eef7f0;
+  border-color:#cfe4d4;
+}
+.quotation-workflow-note span{
+  font-size:9.5px;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:#90704a;
+}
+.quotation-workflow-note.success span{
+  color:#5d8066;
+}
+.quotation-workflow-note strong{
+  font-size:11.5px;
+  line-height:1.45;
+  color:#5c4b33;
+}
+.quotation-workflow-note.success strong{
+  color:#42614a;
+}
+.quotation-workflow-waiting{
+  margin-top:12px;
+  display:inline-flex;
+  align-items:center;
+  min-height:34px;
+  padding:0 11px;
+  border-radius:10px;
+  background:#f1f4f6;
+  color:#657783;
+  font-size:11px;
+  font-weight:700;
+}
+.quotation-editor-workflow .simple-workflow-actions,
+.quotation-workflow-panel .simple-workflow-actions{
+  margin-top:auto;
+  padding-top:14px;
+}
