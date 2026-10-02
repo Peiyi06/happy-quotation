@@ -18,7 +18,6 @@ export default function WorkspaceModuleMenu({
   label,
   kicker,
   title,
-  description,
   items,
 }:{label:Bilingual;kicker:Bilingual;title:Bilingual;items:ModuleItem[]}) {
   const [open,setOpen]=useState(false);
