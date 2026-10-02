@@ -67,7 +67,7 @@ export default function QuotationReviewActions({
       </div>
     </div>
 
-    <div className="simple-workflow-grid quotation-workflow-compact">
+    <div className="simple-workflow-grid quotation-workflow-compact system-workflow-grid">
       <div className={"simple-workflow-card "+(quotationComplete?"complete":quotationCurrent?"current":"upcoming")}>
         <div className="simple-workflow-card-head">
           <span className="simple-workflow-index">01</span>
