@@ -2,6 +2,8 @@ import Link from "next/link";
 import { internalDb, internalToken } from "@/lib/internalSession";
 import QuotationRowActions from "@/components/QuotationRowActions";
 import NewQuotationMenu from "@/components/NewQuotationMenu";
+import QuotationFilters from "@/components/QuotationFilters";
+import {UiText} from "@/components/WorkspaceLanguage";
 
 const money=(n:number)=>new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR"}).format(n||0).replace("MYR","RM");
 
@@ -20,21 +22,14 @@ export default async function QuotationsPage({ searchParams }:{searchParams:Prom
 
   return <div>
     <div className="page-head page-compact-header">
-      <div><span className="page-kicker">QUOTATIONS</span><h1>Quotation Library</h1><p>按团型、目的地、客户和状态管理历史报价。</p></div>
+      <div><h1><UiText en="Quotation Library" zh="报价资料库" /></h1><p><UiText en="Manage quotations by tour type, destination, customer and status." zh="按团型、目的地、客户和状态管理历史报价。" /></p></div>
       <NewQuotationMenu />
     </div>
-    <form className="filter-bar">
-      <input name="q" defaultValue={sp.q||""} placeholder="Search quotation, customer or destination" />
-      <input name="destination" defaultValue={sp.destination||""} placeholder="Destination" />
-      <select name="status" defaultValue={sp.status||""}>
-        <option value="">All Status</option><option value="draft">Draft</option><option value="under_review">Under Review</option><option value="revision_required">Revision Required</option><option value="ready">Ready</option><option value="sent">Sent</option><option value="revised">Revised</option><option value="confirmed">Confirmed</option><option value="lost">Lost</option><option value="archived">Archived</option>
-      </select>
-      <button className="btn">Filter</button>
-    </form>
+    <QuotationFilters q={sp.q||""} destination={sp.destination||""} status={sp.status||""}/>
     <section className="panel">
-      <div className="data-table-wrap"><table className="data-table"><thead><tr><th>Quote No</th><th>Tour</th><th>Group</th><th>Customer</th><th>Pax</th><th>Status</th><th>Selling</th><th>Margin</th><th>Updated</th><th>Action</th></tr></thead><tbody>
-        {quotes.map((x:any)=><tr key={x.id}><td><Link href={"/quotations/"+x.id}>{x.quotation_no}</Link></td><td><strong>{x.title}</strong><small>{x.destination||""}</small></td><td>{x.tour_group_name||"Unclassified"}</td><td>{x.customer_name||"—"}</td><td>{x.pax}</td><td><span className={"status status-"+x.status}>{x.status==="under_review"?"Under Review":x.status==="revision_required"?"Revision Required":x.status?.charAt(0).toUpperCase()+x.status?.slice(1)}</span></td><td>{money(Number(x.selling_price))}</td><td>{(Number(x.margin)*100).toFixed(1)}%</td><td>{new Date(x.updated_at).toLocaleDateString("en-MY")}</td><td><QuotationRowActions id={x.id}/></td></tr>)}
-        {!quotes.length&&<tr><td colSpan={10} className="empty">没有符合条件的报价。</td></tr>}
+      <div className="data-table-wrap"><table className="data-table"><thead><tr><th><UiText en="Quote No" zh="报价编号" /></th><th><UiText en="Tour" zh="行程" /></th><th><UiText en="Group" zh="团型" /></th><th><UiText en="Customer" zh="客户" /></th><th><UiText en="Pax" zh="人数" /></th><th><UiText en="Status" zh="状态" /></th><th><UiText en="Selling" zh="售价" /></th><th><UiText en="Margin" zh="利润率" /></th><th><UiText en="Updated" zh="更新时间" /></th><th><UiText en="Action" zh="操作" /></th></tr></thead><tbody>
+        {quotes.map((x:any)=><tr key={x.id}><td><Link href={"/quotations/"+x.id}>{x.quotation_no}</Link></td><td><strong>{x.title}</strong><small>{x.destination||""}</small></td><td>{x.tour_group_name||<UiText en="Unclassified" zh="未分类" />}</td><td>{x.customer_name||"—"}</td><td>{x.pax}</td><td><span className={"status status-"+x.status}>{x.status==="under_review"?<UiText en="Under Review" zh="审核中" />:x.status==="revision_required"?<UiText en="Revision Required" zh="需要修改" />:x.status==="ready"?<UiText en="Ready" zh="已就绪" />:x.status==="sent"?<UiText en="Sent" zh="已发送" />:x.status==="revised"?<UiText en="Revised" zh="已修改" />:x.status==="confirmed"?<UiText en="Confirmed" zh="已确认" />:x.status==="lost"?<UiText en="Lost" zh="未成交" />:x.status==="archived"?<UiText en="Archived" zh="已归档" />:<UiText en="Draft" zh="草稿" />}</span></td><td>{money(Number(x.selling_price))}</td><td>{(Number(x.margin)*100).toFixed(1)}%</td><td>{new Date(x.updated_at).toLocaleDateString("en-MY")}</td><td><QuotationRowActions id={x.id}/></td></tr>)}
+        {!quotes.length&&<tr><td colSpan={10} className="empty"><UiText en="No quotations match the current filters." zh="没有符合条件的报价。" /></td></tr>}
       </tbody></table></div>
     </section>
   </div>;
