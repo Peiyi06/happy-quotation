@@ -347,9 +347,9 @@ export default function AiLabWorkspace(){
                   {threads.map(thread=><div key={thread.id} className={"ai-thread-item "+(threadId===thread.id?"active":"")}>
                     <button type="button" className="ai-thread-open" onClick={()=>void openThread(thread.id)}>
                       <span className="ai-thread-title">{thread.title||(language==="zh"?"未命名对话":"Untitled Thread")}</span>
-                      <span className={"ai-thread-meta "+(!thread.inquiry_no&&!thread.destination&&!thread.inquiry_status?"is-unlinked":"")}>
-  {[thread.destination,thread.inquiry_status].filter(Boolean).join(" · ")||(language==="zh"?"未关联":"Unlinked")}
-</span>
+                      {(thread.destination||thread.inquiry_status)&&<span className="ai-thread-meta">
+  {[thread.destination,thread.inquiry_status].filter(Boolean).join(" · ")}
+</span>}
                       <span className="ai-thread-time">{thread.last_active_at?new Date(thread.last_active_at).toLocaleString(): ""}</span>
                     </button>
                     <button type="button" className="ai-thread-archive" aria-label={t("Archive thread","归档对话")} title={t("Archive Thread","归档对话")} onClick={()=>void setThreadArchived(thread.id,true)}>
@@ -363,9 +363,9 @@ export default function AiLabWorkspace(){
                   {archivedThreads.map(thread=><div key={thread.id} className="ai-thread-item archived-item">
                     <button type="button" className="ai-thread-open" onClick={()=>void openThread(thread.id)}>
                       <span className="ai-thread-title">{thread.title||(language==="zh"?"未命名对话":"Untitled Thread")}</span>
-                      <span className={"ai-thread-meta "+(!thread.inquiry_no&&!thread.destination&&!thread.inquiry_status?"is-unlinked":"")}>
-  {[thread.destination,thread.inquiry_status].filter(Boolean).join(" · ")||(language==="zh"?"未关联":"Unlinked")}
-</span>
+                      {(thread.destination||thread.inquiry_status)&&<span className="ai-thread-meta">
+  {[thread.destination,thread.inquiry_status].filter(Boolean).join(" · ")}
+</span>}
                       <span className="ai-thread-time">{thread.last_active_at?new Date(thread.last_active_at).toLocaleString(): ""}</span>
                     </button>
                     <button type="button" className="ai-thread-archive restore" aria-label={t("Restore thread","恢复对话")} title={t("Restore Thread","恢复对话")} onClick={()=>void setThreadArchived(thread.id,false)}>
@@ -389,7 +389,7 @@ export default function AiLabWorkspace(){
               <a className="btn ai-lab-nav-link" href={"/inquiries/"+contextInquiryId+"?returnTo="+encodeURIComponent("/ai-lab")}>{t("Open Inquiry","打开询价")}</a>
               <button className="ai-lab-clear" type="button" onClick={clearContext}>{t("Clear Context","清除上下文")}</button>
             </div>
-          : <p className="ai-lab-context-empty">{t("Once you mention an Inquiry, it stays here as context. You can then say “continue this case” or “what’s next?”","当你提到一笔 Inquiry 后，它会留在这里。之后可以直接说「继续这笔」或「下一步」。")}</p>}
+          : <p className="ai-lab-context-empty">{t("Mention an Inquiry to keep it as the active context.","提到一笔 Inquiry 后，它会作为当前上下文保留。")}</p>}
       </div>
 
       <div className={"ai-lab-safety "+(showSafety?"open":"")}>
