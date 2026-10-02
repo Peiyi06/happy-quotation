@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 
 type ImportResult={
   title:string;destination:string;departureCity:string;travelStartDate:string;travelEndDate:string;pax:number|null;tourType:string;
@@ -21,6 +22,8 @@ const uid=()=>Math.random().toString(36).slice(2,10);
 
 export default function AiSupplierImport(){
   const router=useRouter();
+  const {language}=useWorkspaceLanguage();
+  const t=(en:string,zh:string)=>language==="zh"?zh:en;
   const [file,setFile]=useState<File|null>(null);
   const [result,setResult]=useState<ImportResult|null>(null);
   const [analyzing,setAnalyzing]=useState(false);
@@ -58,7 +61,7 @@ export default function AiSupplierImport(){
       form.set("adjustmentNotes",adjustmentNotes.trim());
       const res=await fetch("/api/ai-import-supplier",{method:"POST",body:form});
       const data=await res.json().catch(()=>({}));
-      if(!res.ok||!data?.ok){setError(data?.error||"Unable to analyze supplier file.");return;}
+      if(!res.ok||!data?.ok){setError(data?.error||t("Unable to analyze supplier file.","无法分析供应商文件。"));return;}
       const parsed=data.result as ImportResult;
       const linked=inquiryContext||{};
       setResult({
@@ -108,12 +111,12 @@ export default function AiSupplierImport(){
       });
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){
-        setError(data?.error||"AI could not adjust this itinerary.");
+        setError(data?.error||t("AI could not adjust this itinerary.","AI 无法调整这份行程。"));
         return;
       }
       const p=data.result as AdjustmentProposal;
       setProposal(p);
-      setChatMessages([...nextMessages,{role:"assistant",text:p.reply||"I prepared a revised itinerary for your review."}]);
+      setChatMessages([...nextMessages,{role:"assistant",text:p.reply||t("I prepared a revised itinerary for your review.","我已经准备了一版修改后的行程供你检查。")}]);
       if(data.model) setModel(data.model);
     }finally{setChatting(false);}
   }
@@ -125,7 +128,7 @@ export default function AiSupplierImport(){
       internalFindings:result.internalFindings
     });
     setProposal(null);
-    setChatMessages(prev=>[...prev,{role:"assistant",text:"Changes applied to the current draft."}]);
+    setChatMessages(prev=>[...prev,{role:"assistant",text:t("Changes applied to the current draft.","修改已套用到当前草稿。")}]);
   }
 
   async function createDraft(){
@@ -171,7 +174,7 @@ export default function AiSupplierImport(){
       };
       const res=await fetch("/api/internal-itineraries",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:null,payload})});
       const data=await res.json().catch(()=>({}));
-      if(!res.ok||!data?.ok){setError(data?.error||"Unable to create itinerary draft.");return;}
+      if(!res.ok||!data?.ok){setError(data?.error||t("Unable to create itinerary draft.","无法建立行程草稿。"));return;}
       router.push("/itineraries/"+data.id+"/edit");
     }finally{setCreating(false);}
   }
@@ -179,27 +182,27 @@ export default function AiSupplierImport(){
   return <div className="ai-import-workspace">
     {inquiryContext&&<section className="quote-source-inquiry">
       <div>
-        <span>SOURCE INQUIRY｜来源询价</span>
-        <strong>{inquiryContext.inquiryNo||"Linked Inquiry"}</strong>
+        <span>{t("SOURCE INQUIRY","来源询价")}</span>
+        <strong>{inquiryContext.inquiryNo||t("Linked Inquiry","关联询价")}</strong>
         <small>{[inquiryContext.destination,inquiryContext.daysCount&&inquiryContext.nightsCount?`${inquiryContext.daysCount}D${inquiryContext.nightsCount}N`:"",inquiryContext.pax?`${inquiryContext.pax} Pax`:""].filter(Boolean).join(" · ")}</small>
       </div>
-      <button className="btn" type="button" onClick={()=>router.push("/inquiries/"+inquiryContext.id)}>Open Inquiry</button>
+      <button className="btn" type="button" onClick={()=>router.push("/inquiries/"+inquiryContext.id)}>{t("Open Inquiry","打开询价")}</button>
     </section>}
     <section className="panel ai-import-upload-panel">
       <div className="panel-head">
         <div>
-          <h2>AI Itinerary Generator｜智能行程生成</h2>
-          <p className="panel-subtext">上传行程文件或结合 Inquiry 资料，AI 会快速整理并生成可编辑的客户版 Itinerary Draft，同时把疑似成本与内部资料分开显示。</p>
+          <h2>{t("AI Itinerary Generator","智能行程生成")}</h2>
+          <p className="panel-subtext">{t("Upload an itinerary file or combine it with Inquiry data. AI will create an editable customer-facing draft while separating suspected cost and internal content.","上传行程文件或结合 Inquiry 资料，AI 会快速整理并生成可编辑的客户版 Itinerary Draft，同时把疑似成本与内部资料分开显示。")}</p>
         </div>
       </div>
       <div className="ai-import-upload-box">
         <label className="field">
-          <span>Source File｜行程来源文件</span>
+          <span>{t("Source File","行程来源文件")}</span>
           <input ref={supplierInputRef} type="file" accept=".pdf,.doc,.docx,.rtf,.txt,.jpg,.jpeg,.png,.webp" onChange={e=>{setFile(e.target.files?.[0]||null);setResult(null);setError("");setProposal(null);setChatMessages([]);}}/>
         </label>
         <div className="ai-import-file-note">
           <div className="ai-import-file-note-head">
-            <strong>{file?file.name:"尚未选择文件"}</strong>
+            <strong>{file?file.name:t("No file selected","尚未选择文件")}</strong>
             {file&&<button className="ai-import-remove-file" type="button" onClick={()=>{
               setFile(null);
               setResult(null);
@@ -208,29 +211,29 @@ export default function AiSupplierImport(){
               setChatMessages([]);
               setModel("");
               if(supplierInputRef.current) supplierInputRef.current.value="";
-            }}>× Remove File｜移除文件</button>}
+            }}>{t("× Remove File","× 移除文件")}</button>}
           </div>
-          <span>MVP 支持 PDF / Word / RTF / TXT / JPG / PNG / WEBP · 单个文件 ≤ 3.5MB</span>
+          <span>{t("MVP supports PDF / Word / RTF / TXT / JPG / PNG / WEBP · Maximum 3.5MB per file","MVP 支持 PDF / Word / RTF / TXT / JPG / PNG / WEBP · 单个文件 ≤ 3.5MB")}</span>
         </div>
       </div>
 
       <div className="ai-pre-adjustment">
         <label className="field">
-          <span>Adjustment Notes｜调整备注 <small>Optional</small></span>
+          <span>{t("Adjustment Notes","调整备注")} <small>{t("Optional","选填")}</small></span>
           <textarea
             value={adjustmentNotes}
             onChange={e=>setAdjustmentNotes(e.target.value)}
-            placeholder={"例如：供应商原本是 6D5N，但实际航班为 7D6N。\nDay 1 上午抵达，请增加轻松行程；原供应商 Day 1 内容顺延。\nDay 7 晚班机，白天可继续安排市区活动。\n尽量保留原本主要景点和酒店结构。"}
+            placeholder={t("e.g. Supplier itinerary is 6D5N but actual flights make it 7D6N.\nDay 1 arrives in the morning; add light activities and shift the original Day 1 plan.\nDay 7 has an evening flight, so daytime city activities are still possible.\nKeep the main attractions and hotel structure where possible.","例如：供应商原本是 6D5N，但实际航班为 7D6N。\nDay 1 上午抵达，请增加轻松行程；原供应商 Day 1 内容顺延。\nDay 7 晚班机，白天可继续安排市区活动。\n尽量保留原本主要景点和酒店结构。")}
           />
         </label>
         <div className="ai-adjustment-hint">
-          <strong>AI 会在第一次分析时同时参考这段备注</strong>
-          <span>已知航班、天数变化、景点移动、节奏要求、酒店要求等都可以先写在这里。没有备注也可以直接分析。</span>
+          <strong>{t("AI will use these notes during the first analysis","AI 会在第一次分析时同时参考这段备注")}</strong>
+          <span>{t("Add known flight details, duration changes, attraction moves, pacing or hotel requirements here. You can also analyze without notes.","已知航班、天数变化、景点移动、节奏要求、酒店要求等都可以先写在这里。没有备注也可以直接分析。")}</span>
         </div>
       </div>
 
       <div className="ai-import-primary-action">
-        <button className="btn primary" type="button" disabled={!file||analyzing} onClick={()=>void analyze()}>{analyzing?"AI Generating...":"Generate Itinerary Draft"}</button>
+        <button className="btn primary" type="button" disabled={!file||analyzing} onClick={()=>void analyze()}>{analyzing?t("AI Generating...","AI 生成中..."):t("Generate Itinerary Draft","生成行程草稿")}</button>
       </div>
       {error&&<div className="ai-import-error">{error}</div>}
     </section>
@@ -238,25 +241,25 @@ export default function AiSupplierImport(){
     {result&&<>
       <section className="panel">
         <div className="panel-head">
-          <div><h2>AI Itinerary Draft｜智能行程草稿</h2><p className="panel-subtext">AI 已根据来源资料生成可编辑行程，请检查内容后再建立正式 Itinerary。</p></div>
+          <div><h2>{t("AI Itinerary Draft","智能行程草稿")}</h2><p className="panel-subtext">{t("AI generated an editable itinerary from the source material. Review it before creating the formal Itinerary.","AI 已根据来源资料生成可编辑行程，请检查内容后再建立正式 Itinerary。")}</p></div>
           {model&&<span className="ai-model-badge">{model}</span>}
         </div>
         <div className="ai-import-summary-grid">
-          <div><span>Title</span><strong>{result.title||"—"}</strong></div>
-          <div><span>Destination</span><strong>{result.destination||"—"}</strong></div>
-          <div><span>Travel Dates</span><strong>{result.travelStartDate||"—"}{result.travelEndDate?" → "+result.travelEndDate:""}</strong></div>
-          <div><span>Pax</span><strong>{result.pax??"—"}</strong></div>
-          <div><span>Days</span><strong>{result.days.length}</strong></div>
-          <div><span>Hotels</span><strong>{result.hotels.length}</strong></div>
+          <div><span>{t("Title","标题")}</span><strong>{result.title||"—"}</strong></div>
+          <div><span>{t("Destination","目的地")}</span><strong>{result.destination||"—"}</strong></div>
+          <div><span>{t("Travel Dates","旅游日期")}</span><strong>{result.travelStartDate||"—"}{result.travelEndDate?" → "+result.travelEndDate:""}</strong></div>
+          <div><span>{t("Pax","人数")}</span><strong>{result.pax??"—"}</strong></div>
+          <div><span>{t("Days","天数")}</span><strong>{result.days.length}</strong></div>
+          <div><span>{t("Hotels","酒店")}</span><strong>{result.hotels.length}</strong></div>
         </div>
 
         <div className="ai-import-day-preview">
           {result.days.map((day,index)=><article key={index}>
-            <div className="ai-import-day-no">DAY {String(index+1).padStart(2,"0")}</div>
+            <div className="ai-import-day-no">{t("DAY","第")} {String(index+1).padStart(2,"0")}{language==="zh"?" 天":""}</div>
             <div>
-              <h3>{day.title||"Untitled Day"}</h3>
+              <h3>{day.title||t("Untitled Day","未命名行程日")}</h3>
               <p>{day.content||"—"}</p>
-              <small>Hotel: {day.hotel||"—"} · B: {day.meals?.breakfast||"—"} · L: {day.meals?.lunch||"—"} · D: {day.meals?.dinner||"—"}</small>
+              <small>{t("Hotel","酒店")}: {day.hotel||"—"} · {t("B","早")}: {day.meals?.breakfast||"—"} · {t("L","午")}: {day.meals?.lunch||"—"} · {t("D","晚")}: {day.meals?.dinner||"—"}</small>
               {day.attractions?.length>0&&<div className="ai-import-tags">{day.attractions.map((a,i)=><span key={i}>{a}</span>)}</div>}
             </div>
           </article>)}
@@ -266,8 +269,8 @@ export default function AiSupplierImport(){
       <section className="panel ai-assistant-panel">
         <div className="panel-head">
           <div>
-            <h2>AI Itinerary Assistant｜AI 行程调整助手</h2>
-            <p className="panel-subtext">告诉 AI 实际航班、天数或调整要求。AI 会先提出修改方案，确认后才套用到 Draft。</p>
+            <h2>{t("AI Itinerary Assistant","AI 行程调整助手")}</h2>
+            <p className="panel-subtext">{t("Tell AI the actual flights, duration or adjustment requirements. AI proposes changes first and applies them only after confirmation.","告诉 AI 实际航班、天数或调整要求。AI 会先提出修改方案，确认后才套用到 Draft。")}</p>
           </div>
         </div>
 
@@ -275,38 +278,38 @@ export default function AiSupplierImport(){
           <div className="ai-chat-column">
             <div className="ai-chat-log">
               {chatMessages.length===0&&<div className="ai-chat-empty">
-                例如：供应商是 6D5N，但我们实际航班变成 7D6N。第一天上午抵达，请安排轻松景点，不要删除原本主要景点。
+                {t("Example: The supplier itinerary is 6D5N but our actual flights make it 7D6N. We arrive on Day 1 morning, so add light activities without removing the main attractions.","例如：供应商是 6D5N，但我们实际航班变成 7D6N。第一天上午抵达，请安排轻松景点，不要删除原本主要景点。")}
               </div>}
               {chatMessages.map((m,index)=><div key={index} className={"ai-chat-message "+m.role}>
-                <span>{m.role==="user"?"Operation":"AI Assistant"}</span>
+                <span>{m.role==="user"?t("Operation","运营"):t("AI Assistant","AI 助手")}</span>
                 <p>{m.text}</p>
               </div>)}
-              {chatting&&<div className="ai-chat-thinking">AI is preparing a revised itinerary...</div>}
+              {chatting&&<div className="ai-chat-thinking">{t("AI is preparing a revised itinerary...","AI 正在准备修改后的行程...")}</div>}
             </div>
 
             <div className="ai-chat-compose">
               <textarea
                 value={chatInput}
                 onChange={e=>setChatInput(e.target.value)}
-                placeholder="Ask AI to adjust this itinerary..."
+                placeholder={t("Ask AI to adjust this itinerary...","请 AI 调整这份行程...")}
                 onKeyDown={e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();void askAssistant();}}}
               />
               <div className="ai-chat-compose-foot">
-                <span>Ctrl / Cmd + Enter to send</span>
-                <button className="btn primary" type="button" disabled={!chatInput.trim()||chatting} onClick={()=>void askAssistant()}>{chatting?"Adjusting...":"Ask AI to Adjust"}</button>
+                <span>{t("Ctrl / Cmd + Enter to send","Ctrl / Cmd + Enter 发送")}</span>
+                <button className="btn primary" type="button" disabled={!chatInput.trim()||chatting} onClick={()=>void askAssistant()}>{chatting?t("Adjusting...","调整中..."):t("Ask AI to Adjust","请 AI 调整")}</button>
               </div>
             </div>
           </div>
 
           <div className="ai-change-column">
             {!proposal&&<div className="ai-change-empty">
-              <strong>Changes Preview</strong>
-              <span>AI 调整后会先在这里列出修改内容，不会直接覆盖当前 Draft。</span>
+              <strong>{t("Changes Preview","修改预览")}</strong>
+              <span>{t("AI will list proposed changes here first and will not overwrite the current draft automatically.","AI 调整后会先在这里列出修改内容，不会直接覆盖当前 Draft。")}</span>
             </div>}
 
             {proposal&&<div className="ai-change-preview">
               <div className="ai-change-preview-head">
-                <div><strong>Proposed Changes｜建议修改</strong><span>{proposal.revisedDraft.days.length} Days · {Math.max(0,proposal.revisedDraft.days.length-1)} Nights</span></div>
+                <div><strong>{t("Proposed Changes","建议修改")}</strong><span>{proposal.revisedDraft.days.length} {t("Days","天")} · {Math.max(0,proposal.revisedDraft.days.length-1)} {t("Nights","晚")}</span></div>
               </div>
               <div className="ai-change-list">
                 {proposal.changeSummary.map((item,index)=><div key={index}><span>{index+1}</span><p>{item}</p></div>)}
@@ -315,8 +318,8 @@ export default function AiSupplierImport(){
                 {proposal.revisedDraft.warnings.map((w,index)=><div key={index}>⚠ {w}</div>)}
               </div>}
               <div className="ai-change-actions">
-                <button className="btn" type="button" onClick={()=>setProposal(null)}>Reject</button>
-                <button className="btn primary" type="button" onClick={applyProposal}>Apply Changes</button>
+                <button className="btn" type="button" onClick={()=>setProposal(null)}>{t("Reject","拒绝")}</button>
+                <button className="btn primary" type="button" onClick={applyProposal}>{t("Apply Changes","套用修改")}</button>
               </div>
             </div>}
           </div>
@@ -324,10 +327,10 @@ export default function AiSupplierImport(){
       </section>
 
       {(result.internalFindings.length>0||result.warnings.length>0)&&<section className="panel ai-internal-review">
-        <div className="panel-head"><div><h2>Operation Review｜内部检查</h2><p className="panel-subtext">以下内容不会写入客户版 Itinerary。</p></div></div>
+        <div className="panel-head"><div><h2>{t("Operation Review","内部检查")}</h2><p className="panel-subtext">{t("The content below will not be written into the customer-facing Itinerary.","以下内容不会写入客户版 Itinerary。")}</p></div></div>
         {result.internalFindings.length>0&&<div className="ai-internal-findings">
           {result.internalFindings.map((item,index)=><div key={index}>
-            <strong>{item.category||"Internal"}</strong>
+            <strong>{item.category||t("Internal","内部")}</strong>
             <p>{item.text}</p>
             <small>{item.reason}</small>
           </div>)}
@@ -339,10 +342,10 @@ export default function AiSupplierImport(){
 
       <section className="panel ai-import-apply-panel">
         <div>
-          <strong>确认 AI Draft 没有把供应商成本或内部资料放进客户内容后，再建立行程。</strong>
-          <span>建立后会直接进入现有 New Itinerary Editor，Jess 可以继续修改。</span>
+          <strong>{t("Create the itinerary only after confirming the AI Draft does not include supplier costs or internal information in customer content.","确认 AI Draft 没有把供应商成本或内部资料放进客户内容后，再建立行程。")}</strong>
+          <span>{t("After creation, you will enter the existing New Itinerary Editor for further editing.","建立后会直接进入现有 New Itinerary Editor，Jess 可以继续修改。")}</span>
         </div>
-        <button className="btn primary" type="button" disabled={creating} onClick={()=>void createDraft()}>{creating?"Creating...":"Create Draft Itinerary"}</button>
+        <button className="btn primary" type="button" disabled={creating} onClick={()=>void createDraft()}>{creating?t("Creating...","建立中..."):t("Create Draft Itinerary","建立行程草稿")}</button>
       </section>
     </>}
   </div>;
