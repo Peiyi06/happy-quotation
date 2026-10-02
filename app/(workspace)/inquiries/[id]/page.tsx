@@ -1,19 +1,19 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
-import InquiryWorkflowAction from "@/components/InquiryWorkflowAction";
 import {UiText} from "@/components/WorkspaceLanguage";
+import InquiryRequirementComparison from "@/components/InquiryRequirementComparison";
 
-const inquiryStatusLabels:Record<string,string>={
-  new:"New",
-  in_progress:"In Progress",
-  waiting_quote:"In Progress",
-  under_review:"Under Review",
-  revision_required:"Revision Required",
-  ready:"Ready",
-  ready_customer:"Ready",
-  itinerary_ready:"Itinerary Ready",
-  closed:"Closed"
+const inquiryStatusLabels:Record<string,{en:string;zh:string}>={
+  new:{en:"New",zh:"新案件"},
+  in_progress:{en:"In Progress",zh:"处理中"},
+  waiting_quote:{en:"In Progress",zh:"处理中"},
+  under_review:{en:"Under Review",zh:"审核中"},
+  revision_required:{en:"Revision Required",zh:"需要修改"},
+  ready:{en:"Ready",zh:"已就绪"},
+  ready_customer:{en:"Ready",zh:"已就绪"},
+  itinerary_ready:{en:"Itinerary Ready",zh:"行程已完成"},
+  closed:{en:"Closed",zh:"已关闭"}
 };
 
 const supplierStatusLabels:Record<string,string>={
@@ -23,23 +23,23 @@ const supplierStatusLabels:Record<string,string>={
   quote_received:"Quote Received"
 };
 
-const quotationStatusLabels:Record<string,string>={
-  draft:"Draft",
-  under_review:"Under Review",
-  revision_required:"Revision Required",
-  ready:"Ready",
-  sent:"Sent",
-  revised:"Revised",
-  confirmed:"Confirmed",
-  lost:"Lost",
-  archived:"Archived"
+const quotationStatusLabels:Record<string,{en:string;zh:string}>={
+  draft:{en:"Draft",zh:"草稿"},
+  under_review:{en:"Under Review",zh:"审核中"},
+  revision_required:{en:"Revision Required",zh:"需要修改"},
+  ready:{en:"Ready",zh:"已就绪"},
+  sent:{en:"Sent",zh:"已发送"},
+  revised:{en:"Revised",zh:"已修改"},
+  confirmed:{en:"Confirmed",zh:"已确认"},
+  lost:{en:"Lost",zh:"未成交"},
+  archived:{en:"Archived",zh:"已归档"}
 };
 
-const itineraryStatusLabels:Record<string,string>={
-  draft:"Draft",
-  ready:"Ready",
-  confirmed:"Confirmed",
-  archived:"Archived"
+const itineraryStatusLabels:Record<string,{en:string;zh:string}>={
+  draft:{en:"Draft",zh:"草稿"},
+  ready:{en:"Ready",zh:"已就绪"},
+  confirmed:{en:"Confirmed",zh:"已确认"},
+  archived:{en:"Archived",zh:"已归档"}
 };
 
 export default async function InquiryDetailPage({
@@ -110,41 +110,40 @@ export default async function InquiryDetailPage({
   const opValue=(key:string,fallback:any)=>Object.prototype.hasOwnProperty.call(operationReview,key)?operationReview[key]:fallback;
   const displayValue=(value:any)=>value===null||value===undefined||value===""?"—":String(value);
   const salesRequirements=[
-    {key:"departureCity",label:"Departure City",sales:data.departure_city,op:opValue("departureCity",data.departure_city)},
-    {key:"budget",label:"Budget",sales:data.budget,op:opValue("budget",data.budget)},
-    {key:"tourType",label:"Tour Type",sales:data.tour_type,op:opValue("tourType",data.tour_type)},
-    {key:"flightRequirement",label:"Flight Requirement",sales:data.flight_requirement,op:opValue("flightRequirement",data.flight_requirement),long:true},
-    {key:"hotelRequirement",label:"Hotel Requirement",sales:data.hotel_requirement,op:opValue("hotelRequirement",data.hotel_requirement),long:true},
-    {key:"mealRequirement",label:"Meal Requirement",sales:data.meal_requirement,op:opValue("mealRequirement",data.meal_requirement),long:true},
-    {key:"specialRequest",label:"Special Request",sales:data.special_request,op:opValue("specialRequest",data.special_request),long:true}
+    {key:"departureCity",en:"Departure City",zh:"出发城市",sales:displayValue(data.departure_city),op:displayValue(opValue("departureCity",data.departure_city))},
+    {key:"budget",en:"Budget",zh:"预算",sales:displayValue(data.budget),op:displayValue(opValue("budget",data.budget))},
+    {key:"tourType",en:"Tour Type",zh:"团型",sales:displayValue(data.tour_type),op:displayValue(opValue("tourType",data.tour_type))},
+    {key:"flightRequirement",en:"Flight Requirement",zh:"航班需求",sales:displayValue(data.flight_requirement),op:displayValue(opValue("flightRequirement",data.flight_requirement)),long:true},
+    {key:"hotelRequirement",en:"Hotel Requirement",zh:"酒店需求",sales:displayValue(data.hotel_requirement),op:displayValue(opValue("hotelRequirement",data.hotel_requirement)),long:true},
+    {key:"mealRequirement",en:"Meal Requirement",zh:"餐食需求",sales:displayValue(data.meal_requirement),op:displayValue(opValue("mealRequirement",data.meal_requirement)),long:true},
+    {key:"specialRequest",en:"Special Request",zh:"特别要求",sales:displayValue(data.special_request),op:displayValue(opValue("specialRequest",data.special_request)),long:true}
   ];
 
   return <div className="inquiry-detail-template">
     <div className="page-head inquiry-detail-head">
-      <div className="inquiry-detail-title-block"><h1>{data.customer_name||data.inquiry_no}</h1><p>{data.inquiry_no} · {inquiryStatusLabels[data.status]||data.status}</p></div>
+      <div className="inquiry-detail-title-block">
+        <h1>{data.customer_name||data.inquiry_no}</h1>
+        <div className="inquiry-detail-meta-line">
+          <span>{data.inquiry_no}</span>
+          <span className={"inquiry-header-status status-"+String(data.status||"new")}>
+            {inquiryStatusLabels[data.status]
+              ?<UiText en={inquiryStatusLabels[data.status].en} zh={inquiryStatusLabels[data.status].zh} />
+              :data.status}
+          </span>
+        </div>
+      </div>
       <div className="inquiry-head-right">
-        <InquiryWorkflowAction
-          inquiryId={id}
-          mainStatus={data.status||"new"}
-          supplierStatus={data.supplier_inquiry_status||"draft"}
-          canAdvance={Boolean(user&&(user.username==="long"||user.id===data.operation_assignee_id))}
-          canUpdateStatus={false}
-          hasQuotation={visibleQuotes.length>0}
-          viewerMode={viewerMode}
-          firstQuotationId={visibleQuotes[0]?.id}
-        />
         <div className="detail-actions">
           <Link className="btn inquiry-back-action" href={returnTo}>{returnLabel}</Link>
           <Link className="btn" href={"/inquiries/"+id+"/operation?returnTo="+returnParam}><UiText en="Operation Review" zh="运营审核" /></Link>
-          <Link className="btn primary" href={"/inquiries/"+id+"/edit?returnTo="+returnParam}><UiText en="Edit Inquiry" zh="编辑询价" /></Link>
+          <Link className="btn" href={"/inquiries/"+id+"/edit?returnTo="+returnParam}><UiText en="Edit Inquiry" zh="编辑询价" /></Link>
         </div>
       </div>
     </div>
 
     <section className="dashboard-cards itinerary-summary-cards inquiry-overview-strip">
       <div className="dash-card"><span><UiText en="Destination" zh="目的地" /></span><b>{data.destination||"—"}</b></div>
-      <div className="dash-card"><span><UiText en="Travel Dates" zh="旅游日期" /></span><b>{data.travel_start_date||"—"}{data.travel_end_date?" → "+data.travel_end_date:""}</b></div>
-      <div className="dash-card"><span><UiText en="Duration" zh="天数" /></span><b>{data.days_count}D{data.nights_count}N</b></div>
+      <div className="dash-card"><span><UiText en="Travel" zh="行程日期" /></span><b>{data.travel_start_date||"—"}{data.travel_end_date?" → "+data.travel_end_date:""} · {data.days_count}D{data.nights_count}N</b></div>
       <div className="dash-card"><span><UiText en="Pax" zh="人数" /></span><b>{data.pax||"—"}</b></div>
       <div className="dash-card"><span><UiText en="Sales Owner" zh="销售负责人" /></span><b>{data.sales_owner_name||"—"}</b></div>
       <div className="dash-card"><span><UiText en="Operation" zh="运营负责人" /></span><b>{data.operation_assignee_name||"—"}</b></div>
@@ -157,60 +156,15 @@ export default async function InquiryDetailPage({
         </div>
       </div>
 
-      <div className={"inquiry-version-grid "+(hasOperationVersion?"has-operation":"single")}>
-        <article className="inquiry-version-card sales-original">
-          <div className="inquiry-version-card-head">
-            <div>
-              <span className="inquiry-version-kicker"><UiText en="ORIGINAL" zh="原始版本" /></span>
-              <h3><UiText en="Original Inquiry" zh="原始询价" /></h3>
-            </div>
-            <span className="inquiry-version-badge"><UiText en="Original" zh="原始" /></span>
-          </div>
-          <div className="inquiry-version-meta">
-            <div><span>Contact</span><strong>{data.contact||"—"}</strong></div>
-            <div><span>Sales Owner</span><strong>{data.sales_owner_name||"—"}</strong></div>
-          </div>
-          <div className="inquiry-version-fields">
-            {salesRequirements.map((field:any)=><div className={"inquiry-version-field "+(field.long?"long":"")} key={field.key}>
-              <span>{field.label}</span>
-              {field.long?<p>{displayValue(field.sales)}</p>:<strong>{displayValue(field.sales)}</strong>}
-            </div>)}
-          </div>
-        </article>
-
-        {hasOperationVersion&&<article className="inquiry-version-card operation-version">
-          <div className="inquiry-version-card-head">
-            <div>
-              <span className="inquiry-version-kicker"><UiText en="OPERATION" zh="运营版本" /></span>
-              <h3><UiText en="Execution Version" zh="执行版本" /></h3>
-            </div>
-            <span className="inquiry-version-badge operation"><UiText en="Updated by OP" zh="运营更新" /></span>
-          </div>
-          <div className="inquiry-version-meta">
-            <div><span>Operation</span><strong>{data.operation_assignee_name||"—"}</strong></div>
-            <div><span>Purpose</span><strong>Supplier / Execution</strong></div>
-          </div>
-          <div className="inquiry-version-fields">
-            {salesRequirements.map((field:any)=>{
-              const changed=displayValue(field.op)!==displayValue(field.sales);
-              return <div className={"inquiry-version-field "+(field.long?"long ":"")+(changed?"changed":"same")} key={field.key}>
-                <div className="inquiry-version-field-label">
-                  <span>{field.label}</span>
-                  <em>{changed?"Updated":"Same as Sales"}</em>
-                </div>
-                {field.long?<p>{displayValue(field.op)}</p>:<strong>{displayValue(field.op)}</strong>}
-              </div>;
-            })}
-            {operationReview.transportRequirement&&<div className="inquiry-version-field long operation-only">
-              <div className="inquiry-version-field-label"><span>Transportation Requirement</span><em>OP Only</em></div>
-              <p>{displayValue(operationReview.transportRequirement)}</p>
-            </div>}
-            {operationReview.itineraryRequirement&&<div className="inquiry-version-field long operation-only">
-              <div className="inquiry-version-field-label"><span>Itinerary Requirement</span><em>OP Only</em></div>
-              <p>{displayValue(operationReview.itineraryRequirement)}</p>
-            </div>}
-          </div>
-        </article>}
+      <InquiryRequirementComparison
+        fields={salesRequirements}
+        contact={data.contact||"—"}
+        salesOwner={data.sales_owner_name||"—"}
+        operationAssignee={data.operation_assignee_name||"—"}
+        hasOperationVersion={hasOperationVersion}
+        transportRequirement={operationReview.transportRequirement||""}
+        itineraryRequirement={operationReview.itineraryRequirement||""}
+      />
       </div>
     </section>
 
@@ -229,13 +183,8 @@ export default async function InquiryDetailPage({
           </div>
           <div className="simple-workflow-title">
             <h3><UiText en="Operation" zh="运营" /></h3>
-            <strong>{data.operation_assignee_name?"Assigned to "+data.operation_assignee_name:"Not Assigned"}</strong>
+            <strong>{data.operation_assignee_name||"—"}</strong>
           </div>
-          <p>{caseStatus==="new"
-            ?"Inquiry 已提交，等待 Operation 开始处理。"
-            :operationComplete
-              ?"Operation 前期处理已完成，案件已进入报价阶段。"
-              :"Operation 正在整理供应商资料、询价与报价成本。"}</p>
         </div>
 
         <div className="simple-workflow-arrow" aria-hidden="true">→</div>
@@ -247,32 +196,27 @@ export default async function InquiryDetailPage({
           </div>
           <div className="simple-workflow-title">
             <h3><UiText en="Quotation" zh="报价" /></h3>
-            <strong>{caseStatus==="under_review"
-              ?"Waiting Management Approval"
-              :caseStatus==="revision_required"
-                ?"Quotation Requires Re-check"
-                :quotationReady
-                  ?"Final Quotation Ready"
-                  :"Preparing"}</strong>
+            <strong><UiText
+              en={caseStatus==="under_review"?"Waiting for approval":caseStatus==="revision_required"?"Revision required":quotationReady?"Ready":"Preparing"}
+              zh={caseStatus==="under_review"?"等待审核":caseStatus==="revision_required"?"需要修改":quotationReady?"已就绪":"准备中"}
+            /></strong>
           </div>
           {quotationReady&&approvedQuotes.length>0
             ? <div className="workflow-record-list">
                 {approvedQuotes.map((q:any)=><Link key={q.id} className="workflow-record-link" href={"/quotations/"+q.id+"?returnTo="+currentInquiryParam}>
                   <b>{q.quotation_no}</b>
-                  <span>{quotationStatusLabels[q.status]||q.status||"Ready"} · {q.owner_name||"—"}</span>
+                  <span>{quotationStatusLabels[q.status]
+                    ?<><UiText en={quotationStatusLabels[q.status].en} zh={quotationStatusLabels[q.status].zh} /> · {q.owner_name||"—"}</>
+                    :q.status||"Ready"}</span>
                 </Link>)}
               </div>
-            : <p>{caseStatus==="under_review"
-                ?"Quotation 已提交管理层审核，通过后 Sales 才会看到最终报价。"
-                :caseStatus==="revision_required"
-                  ?"Quotation 正在重新调整与审核，暂时不要向客户使用旧报价。"
-                  :"Operation 正在准备报价；审核通过后会在这里显示最终版本。"}</p>}
+            : null}
 
           {viewerMode!=="sales"&&!quotationReady&&<div className="simple-workflow-actions">
             {linkedQuotes.length===0
-              ? <Link className="btn primary" href={"/quotations/new?sourceInquiry="+id}>Create Quotation</Link>
+              ? <Link className="btn primary" href={"/quotations/new?sourceInquiry="+id}><UiText en="Create Quotation" zh="建立报价" /></Link>
               : <Link className="btn primary" href={"/quotations/"+linkedQuotes[0].id+"?returnTo="+currentInquiryParam}>
-                  {caseStatus==="revision_required"?"Revise Quotation":"Open Quotation"}
+                  <UiText en={caseStatus==="revision_required"?"Revise Quotation":"Open Quotation"} zh={caseStatus==="revision_required"?"修改报价":"打开报价"} />
                 </Link>}
           </div>}
         </div>
@@ -286,27 +230,24 @@ export default async function InquiryDetailPage({
           </div>
           <div className="simple-workflow-title">
             <h3><UiText en="Itinerary" zh="行程" /></h3>
-            <strong>{itineraryReady
-              ?"Itinerary Ready"
-              :linkedItineraries.length
-                ?linkedItineraries.length+" Draft"
-                :quotationReady
-                  ?"Ready to Create"
-                  :"Available After Quotation"}</strong>
+            <strong><UiText
+              en={itineraryReady?"Ready":linkedItineraries.length?linkedItineraries.length+" Draft":quotationReady?"Ready to create":"Next"}
+              zh={itineraryReady?"已完成":linkedItineraries.length?linkedItineraries.length+" 个草稿":quotationReady?"可以建立":"下一步"}
+            /></strong>
           </div>
           {linkedItineraries.length>0
             ? <div className="workflow-record-list">
                 {linkedItineraries.map((it:any)=><Link key={it.id} className="workflow-record-link" href={"/itineraries/"+it.id+"?returnTo="+currentInquiryParam}>
                   <b>{it.itinerary_no}</b>
-                  <span>{itineraryStatusLabels[it.status]||it.status||"Draft"} · {it.days_count}D{it.nights_count}N</span>
+                  <span>{itineraryStatusLabels[it.status]
+                    ?<><UiText en={itineraryStatusLabels[it.status].en} zh={itineraryStatusLabels[it.status].zh} /> · {it.days_count}D{it.nights_count}N</>
+                    :it.status||"Draft"}</span>
                 </Link>)}
               </div>
-            : <p>{quotationReady
-                ?"Final Quotation 已准备完成，可以开始制作给客户的 Itinerary。"
-                :"Quotation 审核通过后，Sales 才进入 Itinerary 阶段。"}</p>}
+            : null}
           {quotationReady&&!itineraryReady&&<div className="simple-workflow-actions">
-            {linkedItineraries.length===0&&<Link className="btn primary" href={"/itineraries/new?sourceInquiry="+id}>Create Itinerary</Link>}
-            <Link className="workflow-text-link" href={"/ai-import?sourceInquiry="+id}>AI Itinerary</Link>
+            {linkedItineraries.length===0&&<Link className="btn primary" href={"/itineraries/new?sourceInquiry="+id}><UiText en="Create Itinerary" zh="建立行程" /></Link>}
+            <Link className="workflow-text-link" href={"/ai-import?sourceInquiry="+id}><UiText en="AI Itinerary" zh="AI 行程" /></Link>
           </div>}
         </div>
       </div>
