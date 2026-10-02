@@ -20,7 +20,7 @@ export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
       className={compact?"sidebar-new-quote":"btn primary"}
       onClick={()=>setOpen(true)}
     >
-      ＋ New Quotation
+      Quotation
     </button>
 
     {open && typeof document !== "undefined" && createPortal(
@@ -28,17 +28,29 @@ export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
       <div className="quotation-type-modal" onMouseDown={e=>e.stopPropagation()}>
         <div className="quotation-type-head">
           <div>
-            <span className="page-kicker">NEW QUOTATION</span>
-            <h2>Select Quotation Type</h2>
-            <p>请选择要建立的报价类型。</p>
+            <span className="page-kicker">QUOTATION</span>
+            <h2>Quotation Workspace</h2>
+            <p>管理现有报价，或选择要建立的报价类型。</p>
           </div>
           <button type="button" className="quotation-type-close" onClick={()=>setOpen(false)} aria-label="Close">×</button>
         </div>
 
-        <div className="quotation-type-grid">
-          <Link href="/quotations/new" className="quotation-type-card available" onClick={()=>setOpen(false)}>
+        <div className="quotation-type-grid workspace-module-grid">
+          <Link href="/quotations" className="quotation-type-card available" onClick={()=>setOpen(false)}>
             <div className="quotation-type-card-top">
               <span className="quotation-type-index">01</span>
+              <span className="quotation-type-status available">Available</span>
+            </div>
+            <div>
+              <h3>My Quotations</h3>
+              <p>View and manage existing quotations.</p>
+            </div>
+            <span className="quotation-type-enter">Open Quotations →</span>
+          </Link>
+
+          <Link href="/quotations/new" className="quotation-type-card available" onClick={()=>setOpen(false)}>
+            <div className="quotation-type-card-top">
+              <span className="quotation-type-index">02</span>
               <span className="quotation-type-status available">Available</span>
             </div>
             <div>
@@ -50,7 +62,7 @@ export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
 
           <div className="quotation-type-card coming" aria-disabled="true">
             <div className="quotation-type-card-top">
-              <span className="quotation-type-index">02</span>
+              <span className="quotation-type-index">03</span>
               <span className="quotation-type-status">Coming Soon</span>
             </div>
             <div>
@@ -62,7 +74,7 @@ export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
 
           <div className="quotation-type-card coming" aria-disabled="true">
             <div className="quotation-type-card-top">
-              <span className="quotation-type-index">03</span>
+              <span className="quotation-type-index">04</span>
               <span className="quotation-type-status">Coming Soon</span>
             </div>
             <div>
