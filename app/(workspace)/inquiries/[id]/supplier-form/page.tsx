@@ -16,7 +16,7 @@ export default async function SupplierInquiryFormPage({
   searchParams
 }:{
   params:Promise<{id:string}>;
-  searchParams:Promise<{lang?:string}>;
+  searchParams:Promise<{lang?:string;returnTo?:string}>;
 }){
   const {id}=await params;
   const sp=await searchParams;
@@ -75,6 +75,10 @@ export default async function SupplierInquiryFormPage({
   const requestedLanguage=sp.lang==="en"?"en":sp.lang==="zh"?"zh":"original";
   const translated=requestedLanguage==="en"&&englishReady?translations.en.data:requestedLanguage==="zh"&&chineseReady?translations.zh.data:null;
   const language:( "original"|"en"|"zh")=translated?requestedLanguage:"original";
+  const rawReturnTo=String(sp.returnTo||"");
+  const returnTo=rawReturnTo.startsWith("/")&&!rawReturnTo.startsWith("//")?rawReturnTo:"/inquiries";
+  const returnParam=encodeURIComponent(returnTo);
+  const operationReviewHref="/inquiries/"+id+"/operation?returnTo="+returnParam;
 
   const L=(en:string,zh:string)=>language==="en"?en:language==="zh"?zh:`${en}｜${zh}`;
   const V=(key:string,original:any)=>translated&&typeof translated[key]==="string"&&translated[key]?translated[key]:original;
@@ -140,13 +144,14 @@ export default async function SupplierInquiryFormPage({
 
   return <div className="supplier-form-page">
     <div className="supplier-form-toolbar">
-      <a className="btn" href={"/inquiries/"+id+"/operation"}>← Operation Review</a>
+      <a className="btn" href={operationReviewHref}>← Operation Review</a>
       <div className="supplier-form-toolbar-right">
         <SupplierFormLanguageControls
           inquiryId={id}
           currentLanguage={language}
           englishReady={englishReady}
           chineseReady={chineseReady}
+          returnTo={returnTo}
         />
         <PrintSupplierFormButton
           inquiryId={id}
