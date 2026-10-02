@@ -33,6 +33,7 @@ export default function AiLabWorkspace(){
   const [threads,setThreads]=useState<WorkThread[]>([]);
   const [archivedThreads,setArchivedThreads]=useState<WorkThread[]>([]);
   const [showArchived,setShowArchived]=useState(false);
+  const [showSafety,setShowSafety]=useState(false);
   const [threadsLoading,setThreadsLoading]=useState(false);
   const [saveState,setSaveState]=useState<"saved"|"saving"|"">("");
   const [imageFiles,setImageFiles]=useState<File[]>([]);
@@ -298,35 +299,79 @@ export default function AiLabWorkspace(){
 
     <aside className="ai-lab-context">
       <div className="ai-thread-panel">
-        <div className="ai-thread-panel-head"><div><span>WORK THREADS</span><strong>Active Conversations</strong></div><button type="button" onClick={newThread}>＋ New</button></div>
-        <div className="ai-thread-save-state">{saveState==="saving"?"Saving...":saveState==="saved"?"✓ Saved":"Auto-save on"}</div>
-        {threadsLoading?<p className="ai-lab-context-empty">Loading threads...</p>:threads.length>0?<div className="ai-thread-list">
-          {threads.map(t=><div key={t.id} className={"ai-thread-item "+(threadId===t.id?"active":"")}>
-            <button type="button" className="ai-thread-open" onClick={()=>void openThread(t.id)}>
-              <strong>{t.title||"Untitled Thread"}</strong>
-              <span>{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
-              <small>{t.last_active_at?new Date(t.last_active_at).toLocaleString(): ""}</small>
-            </button>
-            <button type="button" className="ai-thread-archive icon-action-btn icon-action-remove" title="Archive Thread" onClick={()=>void setThreadArchived(t.id,true)}>×</button>
-          </div>)}
-        </div>:<p className="ai-lab-context-empty">还没有保存的工作对话。第一次发送消息后会自动建立 Thread。</p>}
+        <div className="ai-thread-panel-head">
+          <div>
+            <span>WORK THREADS</span>
+            <strong>Active Conversations</strong>
+          </div>
+          <button type="button" onClick={newThread}>＋ New</button>
+        </div>
+
+        <div className="ai-thread-save-state">
+          <i aria-hidden="true"/>
+          <span>{saveState==="saving"?"Saving...":saveState==="saved"?"Saved":"Auto-save"}</span>
+        </div>
+
+        {threadsLoading
+          ? <p className="ai-lab-context-empty">Loading threads...</p>
+          : threads.length>0
+            ? <div className="ai-thread-list">
+                {threads.map(t=><div key={t.id} className={"ai-thread-item "+(threadId===t.id?"active":"")}>
+                  <button type="button" className="ai-thread-open" onClick={()=>void openThread(t.id)}>
+                    <strong>{t.title||"Untitled Thread"}</strong>
+                    <span>{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
+                    <small>{t.last_active_at?new Date(t.last_active_at).toLocaleString(): ""}</small>
+                  </button>
+                  <button type="button" className="ai-thread-archive" aria-label="Archive thread" title="Archive Thread" onClick={()=>void setThreadArchived(t.id,true)}>×</button>
+                </div>)}
+              </div>
+            : <p className="ai-lab-context-empty">还没有保存的工作对话。第一次发送消息后会自动建立 Thread。</p>}
+
         <div className="ai-thread-archived">
-          <button type="button" onClick={()=>setShowArchived(v=>!v)}>Archived ({archivedThreads.length}) {showArchived?"▴":"▾"}</button>
+          <button type="button" onClick={()=>setShowArchived(v=>!v)}>
+            <span>Archived</span>
+            <em>{archivedThreads.length}</em>
+            <b>{showArchived?"⌃":"›"}</b>
+          </button>
           {showArchived&&archivedThreads.length>0&&<div className="ai-thread-list archived">
             {archivedThreads.map(t=><div key={t.id} className="ai-thread-item">
               <button type="button" className="ai-thread-open" onClick={()=>void openThread(t.id)}>
                 <strong>{t.title||"Untitled Thread"}</strong>
                 <span>{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
               </button>
-              <button type="button" className="ai-thread-archive" title="Restore Thread" onClick={()=>void setThreadArchived(t.id,false)}>↺</button>
+              <button type="button" className="ai-thread-archive restore" aria-label="Restore thread" title="Restore Thread" onClick={()=>void setThreadArchived(t.id,false)}>↺</button>
             </div>)}
           </div>}
         </div>
       </div>
 
-      <div className="ai-lab-context-head"><span>CURRENT CONTEXT</span><strong>{contextInquiryId?"Current Case":"No case selected"}</strong></div>
-      {contextInquiryId?<div className="ai-lab-current-case"><span>INQUIRY</span><strong>{contextTitle||contextInquiryId}</strong><small>{contextInquiryId}</small><a className="btn ai-lab-nav-link" href={"/inquiries/"+contextInquiryId}>Open Inquiry</a><button className="ai-lab-clear" type="button" onClick={clearContext}>Clear Context</button></div>:<p className="ai-lab-context-empty">当你提到一笔 Inquiry 后，它会留在这里。之后你可以直接说「继续这笔」或「下一步」。</p>}
-      <div className="ai-lab-safety"><strong>Beta Safety</strong><span>查询 / 导航可以直接做。</span><span>真正修改状态时必须由你确认。</span><span>非 Quotation 长期规则会自动保存并提示；Quotation 规则仍需你手动确认。</span></div>
+      <div className="ai-lab-context-section">
+        <div className="ai-lab-context-head">
+          <span>CURRENT CONTEXT</span>
+          <strong>{contextInquiryId?"Current Case":"No case selected"}</strong>
+        </div>
+        {contextInquiryId
+          ? <div className="ai-lab-current-case">
+              <span>INQUIRY</span>
+              <strong>{contextTitle||contextInquiryId}</strong>
+              <small>{contextInquiryId}</small>
+              <a className="btn ai-lab-nav-link" href={"/inquiries/"+contextInquiryId}>Open Inquiry</a>
+              <button className="ai-lab-clear" type="button" onClick={clearContext}>Clear Context</button>
+            </div>
+          : <p className="ai-lab-context-empty">当你提到一笔 Inquiry 后，它会留在这里。之后可以直接说「继续这笔」或「下一步」。</p>}
+      </div>
+
+      <div className={"ai-lab-safety "+(showSafety?"open":"")}>
+        <button type="button" className="ai-lab-safety-toggle" onClick={()=>setShowSafety(v=>!v)}>
+          <span><i aria-hidden="true"/> Safety</span>
+          <b>{showSafety?"⌃":"›"}</b>
+        </button>
+        {showSafety&&<div className="ai-lab-safety-body">
+          <span>查询 / 导航可以直接做。</span>
+          <span>真正修改状态时必须由你确认。</span>
+          <span>非 Quotation 长期规则会自动保存并提示；Quotation 规则仍需你手动确认。</span>
+        </div>}
+      </div>
     </aside>
   </div>;
 }
