@@ -288,8 +288,14 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
         <label className="field"><span>Mobility / Care Notes｜行动与照顾需求</span><textarea value={mobilityNotes} onChange={e=>setMobilityNotes(e.target.value)} placeholder="例如：减少长时间步行、需要轮椅协助"/></label>
       </div>
       <div className={"traveller-composition-check "+(compositionMismatch?"warning":"ok")}>
-        <strong>Composition Total: {compositionTotal}</strong>
-        <span>{pax===""?"请先填写总 Pax。":compositionMismatch?`与 Pax ${pax} 不一致，请检查。`:`与 Pax ${pax} 一致。`}</span>
+        <div className="traveller-composition-total">
+          <span>Composition Total</span>
+          <strong>{compositionTotal} <small>pax</small></strong>
+        </div>
+        <div className="traveller-composition-match">
+          <i aria-hidden="true"/>
+          <span>{pax===""?"请先填写总 Pax。":compositionMismatch?`Doesn’t match Pax ${pax} · 请检查`:`Matches Pax ${pax} · 人数一致`}</span>
+        </div>
       </div>
     </section>
 
