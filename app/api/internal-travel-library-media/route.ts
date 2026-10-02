@@ -345,7 +345,12 @@ async function processOne(token:string,db:any,doc:any,key:string){
       }
 
       const resolved=await resolvePlace(db,token,type,name);
-      const accepted=resolved&&confidence>=(type==="hotel"?0.92:0.86);
+      const resolvedScore=Number(resolved?.score||0);
+      // An exact canonical / alias / staff keyword name is strong identity evidence
+      // even when the photo itself is visually ambiguous. Keep the original vision
+      // confidence visible and require human review, but attach the Library record.
+      const exactNameMatch=Boolean(resolved)&&resolvedScore>=0.985;
+      const accepted=Boolean(resolved)&&(exactNameMatch||confidence>=(type==="hotel"?0.92:0.86));
       const groupAnchor=!accepted?findGroupAnchor(anchors,img,type,name):null;
       const inherited=Boolean(groupAnchor?.placeId);
       const stored=await uploadExtracted(token,img,String(doc.id));
@@ -363,7 +368,7 @@ async function processOne(token:string,db:any,doc:any,key:string){
           ? String(groupAnchor.name||name)
           : name;
       const matchMethod=accepted
-        ? (Number(resolved.score||0)>=0.99?"document_context_exact":"document_context_fuzzy")
+        ? (resolvedScore>=0.985?"document_context_exact":"document_context_fuzzy")
         : inherited
           ? "document_group_context"
           : "document_context_vision";
