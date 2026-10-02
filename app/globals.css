@@ -12871,3 +12871,161 @@ td,
     transform:translateY(-2px);
   }
 }
+
+
+/* =========================================================
+   AI LAB — SIDEBAR COLLAPSE MOTION
+   Integrated rail control with staged content + width transition.
+   ========================================================= */
+
+/* Header collapse control: proper icon button, not a loose glyph. */
+.ai-thread-collapse-btn{
+  width:30px!important;
+  min-width:30px!important;
+  height:30px!important;
+  padding:0!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border:1px solid transparent!important;
+  border-radius:9px!important;
+  background:transparent!important;
+  color:var(--color-text-tertiary)!important;
+  font-size:0!important;
+  box-shadow:none!important;
+  transition:
+    background-color .16s ease,
+    border-color .16s ease,
+    color .16s ease,
+    transform .20s cubic-bezier(.22,1,.36,1)!important;
+}
+.ai-thread-collapse-btn::before{
+  content:"";
+  width:7px;
+  height:7px;
+  border-left:1.6px solid currentColor;
+  border-bottom:1.6px solid currentColor;
+  transform:rotate(45deg);
+}
+.ai-thread-collapse-btn:hover{
+  background:var(--color-bg-soft)!important;
+  border-color:var(--color-border-default)!important;
+  color:var(--color-text-primary)!important;
+}
+.ai-thread-collapse-btn:active{
+  transform:scale(.94)!important;
+}
+
+/* Make the shell and rail animate as one system. */
+@media(min-width:821px){
+  .ai-lab-shell{
+    transition:grid-template-columns .24s cubic-bezier(.22,1,.36,1), gap .24s cubic-bezier(.22,1,.36,1)!important;
+  }
+
+  .ai-lab-context{
+    transition:
+      width .24s cubic-bezier(.22,1,.36,1),
+      min-width .24s cubic-bezier(.22,1,.36,1),
+      max-width .24s cubic-bezier(.22,1,.36,1),
+      border-radius .20s ease!important;
+  }
+
+  .ai-thread-panel,
+  .ai-lab-context-section,
+  .ai-lab-safety{
+    opacity:1;
+    transform:translateX(0);
+    transition:
+      opacity .14s ease,
+      transform .14s ease!important;
+  }
+
+  /* Collapsing: fade content first, then the rail contracts. */
+  .ai-lab-shell.sidebar-collapsed{
+    grid-template-columns:minmax(0,1fr) 48px!important;
+    gap:12px!important;
+  }
+
+  .ai-lab-shell.sidebar-collapsed .ai-thread-panel,
+  .ai-lab-shell.sidebar-collapsed .ai-lab-context-section,
+  .ai-lab-shell.sidebar-collapsed .ai-lab-safety{
+    opacity:0!important;
+    transform:translateX(8px)!important;
+    pointer-events:none!important;
+    visibility:hidden!important;
+    display:block!important;
+  }
+
+  .ai-lab-shell.sidebar-collapsed .ai-lab-context{
+    width:48px!important;
+    min-width:48px!important;
+    max-width:48px!important;
+    padding:0!important;
+    display:block!important;
+    overflow:hidden!important;
+  }
+
+  /* Restore handle: same visual language as the header control. */
+  .ai-lab-sidebar-restore{
+    position:absolute!important;
+    top:12px!important;
+    left:50%!important;
+    transform:translateX(-50%)!important;
+    width:30px!important;
+    min-width:30px!important;
+    height:30px!important;
+    padding:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    border:1px solid transparent!important;
+    border-radius:9px!important;
+    background:transparent!important;
+    color:var(--color-text-tertiary)!important;
+    font-size:0!important;
+    box-shadow:none!important;
+    transition:
+      background-color .16s ease,
+      border-color .16s ease,
+      color .16s ease,
+      transform .20s cubic-bezier(.22,1,.36,1)!important;
+  }
+
+  .ai-lab-sidebar-restore::before{
+    content:"";
+    width:7px;
+    height:7px;
+    border-right:1.6px solid currentColor;
+    border-top:1.6px solid currentColor;
+    transform:rotate(45deg);
+  }
+
+  .ai-lab-sidebar-restore:hover{
+    background:var(--color-bg-soft)!important;
+    border-color:var(--color-border-default)!important;
+    color:var(--color-text-primary)!important;
+  }
+
+  .ai-lab-sidebar-restore:active{
+    transform:translateX(-50%) scale(.94)!important;
+  }
+
+  /* Let main content expansion feel continuous rather than snapping. */
+  .ai-lab-main{
+    transition:width .24s cubic-bezier(.22,1,.36,1), max-width .24s cubic-bezier(.22,1,.36,1)!important;
+  }
+}
+
+/* Respect reduced-motion preferences. */
+@media(prefers-reduced-motion:reduce){
+  .ai-lab-shell,
+  .ai-lab-context,
+  .ai-thread-panel,
+  .ai-lab-context-section,
+  .ai-lab-safety,
+  .ai-thread-collapse-btn,
+  .ai-lab-sidebar-restore,
+  .ai-lab-main{
+    transition:none!important;
+  }
+}
