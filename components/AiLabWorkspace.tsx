@@ -252,7 +252,7 @@ export default function AiLabWorkspace(){
   return <div className={"ai-lab-shell "+(sidebarCollapsed?"sidebar-collapsed":"")}>
     <section className="ai-lab-main">
       <div className="ai-lab-hero ai-lab-workbench-head">
-        <div><span>HAPPY AI LAB · BETA</span><h1>{t("What would you like to work on?","你想处理什么？")}</h1><p>{t("Experiment with AI workflows here; existing Inquiry / Quotation / Itinerary pages remain unchanged.","先实验 AI 操作方式；现有 Inquiry / Quotation / Itinerary 页面全部保留。")}</p></div>
+        <div><span>HAPPY AI LAB · BETA</span><h1>{t("What would you like to work on?","你想处理什么？")}</h1><p>{t("Work with Inquiry, Quotation and Itinerary using AI.","使用 AI 处理 Inquiry、Quotation 与 Itinerary。")}</p></div>
         <span className="ai-lab-mode">{t("READ-MOSTLY · CONFIRM BEFORE WRITE","以读取为主 · 写入前需确认")}</span>
       </div>
 
