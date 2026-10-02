@@ -11601,3 +11601,307 @@ td,
     justify-content:center;
   }
 }
+
+
+/* =========================================================
+   AI LAB — LAYOUT POLISH
+   Chat first, Threads second. Compact sidebar/list density.
+   ========================================================= */
+.ai-lab-shell{
+  display:grid!important;
+  grid-template-columns:minmax(0,2.3fr) minmax(300px,1fr)!important;
+  gap:16px!important;
+  align-items:start!important;
+}
+.ai-lab-main{
+  min-width:0;
+}
+.ai-lab-context{
+  min-width:0;
+}
+
+/* Header becomes a slim workbench bar. */
+.ai-lab-workbench-head{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:14px!important;
+  padding:10px 12px!important;
+  margin-bottom:10px!important;
+  border-radius:10px!important;
+}
+.ai-lab-workbench-head>div:first-child{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  grid-template-areas:
+    "kicker title"
+    ". subtitle";
+  column-gap:10px;
+  align-items:baseline;
+}
+.ai-lab-workbench-head>div:first-child>span{
+  grid-area:kicker;
+  align-self:center;
+}
+.ai-lab-workbench-head h1{
+  grid-area:title;
+  margin:0!important;
+  font-size:20px!important;
+  line-height:1.1!important;
+}
+.ai-lab-workbench-head p{
+  grid-area:subtitle;
+  margin-top:3px!important;
+  max-width:720px;
+  font-size:10.5px!important;
+}
+.ai-lab-mode{
+  min-height:24px!important;
+  padding:0 7px!important;
+  font-size:8.5px!important;
+  opacity:.82;
+}
+
+/* Chat area should feel continuous and primary. */
+.ai-lab-chat{
+  padding:2px 2px 0!important;
+}
+.ai-lab-message{
+  margin-bottom:10px!important;
+}
+.ai-lab-message.assistant .ai-lab-bubble{
+  max-width:760px;
+}
+.ai-lab-message.user .ai-lab-bubble{
+  max-width:780px;
+  margin-left:auto;
+}
+.ai-lab-bubble{
+  padding:10px 12px!important;
+}
+.ai-lab-bubble>p{
+  font-size:12px!important;
+  line-height:1.5!important;
+}
+
+/* Starter prompts become a compact 2-column suggestion grid. */
+.ai-lab-starters{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:6px!important;
+  max-width:760px;
+  margin:6px 0 10px!important;
+}
+.ai-lab-starters button{
+  width:100%;
+  min-height:32px!important;
+  padding:0 10px!important;
+  justify-content:flex-start!important;
+  text-align:left!important;
+  border-radius:9px!important;
+  font-size:10.5px!important;
+}
+
+/* Composer stays visually attached to the conversation. */
+.ai-lab-compose{
+  margin-top:8px!important;
+  padding:8px!important;
+}
+.ai-lab-compose textarea{
+  min-height:40px!important;
+}
+.ai-lab-compose-note{
+  margin-bottom:0!important;
+}
+
+/* Sidebar: auxiliary panel, not a second main page. */
+.ai-lab-context{
+  border:1px solid var(--color-border-default)!important;
+  border-radius:12px!important;
+  background:var(--color-bg-surface)!important;
+  overflow:hidden!important;
+}
+.ai-thread-panel{
+  padding:0!important;
+  background:transparent!important;
+}
+.ai-thread-panel-head{
+  padding:12px 12px 9px!important;
+}
+.ai-thread-panel-head>div>span{
+  font-size:8.5px!important;
+  letter-spacing:.07em!important;
+}
+.ai-thread-panel-head>div>strong{
+  font-size:15px!important;
+  line-height:1.2!important;
+}
+.ai-thread-panel-actions{
+  gap:4px!important;
+}
+.ai-thread-panel-actions button{
+  min-height:28px!important;
+  height:28px!important;
+  padding:0 8px!important;
+  font-size:10px!important;
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+.ai-thread-save-state{
+  padding:0 12px 8px!important;
+  font-size:9px!important;
+}
+.ai-thread-view-switch{
+  margin:0 12px 8px!important;
+  min-height:34px!important;
+}
+.ai-thread-view-switch button{
+  min-height:30px!important;
+  font-size:10.5px!important;
+}
+.ai-thread-list{
+  margin:0!important;
+  padding:0 8px 8px!important;
+  display:grid!important;
+  gap:0!important;
+  max-height:430px!important;
+  overflow:auto!important;
+}
+.ai-thread-item{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 24px!important;
+  align-items:center!important;
+  min-height:58px!important;
+  margin:0!important;
+  padding:7px 4px 7px 8px!important;
+  border:0!important;
+  border-bottom:1px solid var(--color-border-default)!important;
+  border-radius:0!important;
+  background:transparent!important;
+}
+.ai-thread-item:last-child{
+  border-bottom:0!important;
+}
+.ai-thread-item:hover{
+  background:var(--color-bg-soft)!important;
+}
+.ai-thread-item.active{
+  background:var(--color-brand-primary-soft)!important;
+  border-bottom-color:#D9E7F1!important;
+  border-radius:8px!important;
+}
+.ai-thread-open{
+  min-width:0;
+  display:grid!important;
+  gap:2px!important;
+  padding:0!important;
+  text-align:left!important;
+}
+.ai-thread-title{
+  overflow:hidden;
+  color:var(--color-text-primary)!important;
+  font-size:11px!important;
+  font-weight:650!important;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.ai-thread-meta{
+  overflow:hidden;
+  color:var(--color-text-secondary)!important;
+  font-size:9.5px!important;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.ai-thread-time{
+  color:var(--color-text-tertiary)!important;
+  font-size:8.5px!important;
+}
+.ai-thread-archive{
+  width:24px!important;
+  min-width:24px!important;
+  height:24px!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  color:var(--color-text-tertiary)!important;
+  box-shadow:none!important;
+}
+
+/* Current Context reads as a separate lightweight section. */
+.ai-lab-context-section{
+  margin:0!important;
+  padding:12px!important;
+  border-top:1px solid var(--color-border-default)!important;
+  background:var(--color-bg-soft)!important;
+}
+.ai-lab-context-head{
+  margin:0 0 8px!important;
+  padding:0 0 8px!important;
+  border-bottom:1px solid var(--color-border-default)!important;
+}
+.ai-lab-context-head>span{
+  color:var(--color-text-tertiary)!important;
+  font-size:8.5px!important;
+  letter-spacing:.07em!important;
+}
+.ai-lab-context-head>strong{
+  font-size:14px!important;
+  color:var(--color-text-primary)!important;
+}
+.ai-lab-context-empty{
+  margin:0!important;
+  color:var(--color-text-secondary)!important;
+  font-size:9.5px!important;
+  line-height:1.45!important;
+}
+.ai-lab-current-case{
+  box-shadow:none!important;
+}
+.ai-lab-safety{
+  margin:0!important;
+  border-top:1px solid var(--color-border-default)!important;
+  background:var(--color-bg-surface)!important;
+}
+
+/* Large desktop: preserve chat-first proportions. */
+@media(min-width:1280px){
+  .ai-lab-shell{
+    grid-template-columns:minmax(0,2.45fr) minmax(320px,.95fr)!important;
+  }
+}
+
+/* Tablet: still two columns, but less aggressive. */
+@media(max-width:1100px) and (min-width:821px){
+  .ai-lab-shell{
+    grid-template-columns:minmax(0,1.75fr) minmax(300px,1fr)!important;
+  }
+  .ai-lab-starters{
+    grid-template-columns:1fr!important;
+  }
+}
+
+/* Narrow screens collapse naturally. */
+@media(max-width:820px){
+  .ai-lab-shell{
+    grid-template-columns:1fr!important;
+  }
+  .ai-lab-context{
+    border-left:1px solid var(--color-border-default)!important;
+  }
+  .ai-lab-workbench-head{
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+  }
+  .ai-lab-workbench-head>div:first-child{
+    grid-template-columns:1fr!important;
+    grid-template-areas:
+      "kicker"
+      "title"
+      "subtitle";
+    row-gap:2px;
+  }
+  .ai-lab-starters{
+    grid-template-columns:1fr!important;
+    max-width:none;
+  }
+}
