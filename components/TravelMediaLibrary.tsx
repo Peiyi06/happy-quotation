@@ -685,29 +685,40 @@ export default function TravelMediaLibrary(){
       {showLibrarySources&&<div className="travel-library-source-list">
         {docs.map(doc=><article className="travel-library-source-card" key={doc.id}>
           <div className="travel-library-source-main">
-            <div>
-              <strong>{doc.title||doc.fileName}</strong>
-              <small>{doc.fileName} · {fmtSize(doc.fileSize)}</small>
+            <strong>{doc.title||doc.fileName}</strong>
+            <small>
+              {[doc.fileName,doc.sourceType||"other",doc.destination||"",fmtSize(doc.fileSize)].filter(Boolean).join(" · ")}
+            </small>
+          </div>
+
+          <div className="travel-library-source-summary">
+            <span className={"status travel-library-source-status "+(doc.status==="saved"?"status-ready":"status-under_review")}>
+              {doc.status==="saved"?t("Saved","已保存"):t("Pending Review","待审核")}
+            </span>
+            <div className="travel-library-source-processing">
+              <span>{t("Media","媒体")}</span>
+              <strong>{doc.mediaExtractionStatus==="review"
+                ? Number(doc.mediaExtractionSummary?.found||0)+t(" found · "," 个找到 · ")+Number(doc.mediaExtractionSummary?.matched||0)+t(" matched"," 个匹配")
+                : doc.mediaExtractionStatus==="processing"?t("Processing...","处理中...")
+                : doc.mediaExtractionStatus==="completed"?t("Completed","已完成")
+                : doc.mediaExtractionStatus==="queued"?t("Queued","已排队")
+                : doc.mediaExtractionStatus==="failed"?t("Failed","失败")
+                :t("Not Processed","未处理")}</strong>
             </div>
-            <span className={"status "+(doc.status==="saved"?"status-ready":"status-under_review")}>{doc.status==="saved"?t("Saved","已保存"):t("Pending Review","待审核")}</span>
+            <div className="travel-library-source-processing">
+              <span>{t("AI","AI")}</span>
+              <strong>{doc.extraction?.places?.length||0} {t("places","景点")} · {doc.extraction?.hotels?.length||0} {t("hotels","酒店")} · {doc.extraction?.prices?.length||0} {t("prices","价格")}</strong>
+            </div>
+            <div className="travel-library-source-updated">
+              <span>{t("Updated","更新时间")}</span>
+              <strong>{doc.updatedAt?new Date(doc.updatedAt).toLocaleDateString("en-MY"):"—"}</strong>
+            </div>
           </div>
-          <div className="travel-library-source-meta">
-            <div><span>{t("Type","类型")}</span><strong>{doc.sourceType||"other"}</strong></div>
-            <div><span>{t("Destination","目的地")}</span><strong>{doc.destination||"—"}</strong></div>
-            <div><span>{t("Media","媒体")}</span><strong>{doc.mediaExtractionStatus==="review"
-              ? Number(doc.mediaExtractionSummary?.found||0)+t(" found · "," 个找到 · ")+Number(doc.mediaExtractionSummary?.matched||0)+t(" matched"," 个匹配")
-              : doc.mediaExtractionStatus==="processing"?t("Processing...","处理中...")
-              : doc.mediaExtractionStatus==="completed"?t("Completed","已完成")
-              : doc.mediaExtractionStatus==="queued"?t("Queued","已排队")
-              : doc.mediaExtractionStatus==="failed"?t("Failed","失败")
-              :t("Not Processed","未处理")}</strong></div>
-            <div><span>{t("AI Extracted","AI 提取")}</span><strong>{doc.extraction?.places?.length||0} {t("places","景点")} · {doc.extraction?.hotels?.length||0} {t("hotels","酒店")} · {doc.extraction?.prices?.length||0} {t("prices","价格")}</strong></div>
-            <div><span>{t("Updated","更新时间")}</span><strong>{doc.updatedAt?new Date(doc.updatedAt).toLocaleDateString("en-MY"):"—"}</strong></div>
-          </div>
+
           <div className="travel-library-source-actions">
-            <button className="btn compact" type="button" onClick={()=>void openSource(doc)}>{t("Open File","打开文件")}</button>
-            {doc.status==="pending_review"&&<button className="btn compact" type="button" onClick={()=>setPreview({id:doc.id,file:{name:doc.fileName,path:doc.storagePath,mimeType:doc.mimeType},extraction:doc.extraction})}>{t("Review","审核")}</button>}
-            {doc.status==="pending_review"&&<button className="btn compact travel-library-source-save" type="button" onClick={()=>void confirm(doc.id)} disabled={savingId===doc.id}>{savingId===doc.id?t("Saving...","保存中..."):t("Save","保存")}</button>}
+            <button className="travel-library-source-open" type="button" onClick={()=>void openSource(doc)}>{t("Open","打开")} →</button>
+            {doc.status==="pending_review"&&<button className="btn compact travel-library-source-review" type="button" onClick={()=>setPreview({id:doc.id,file:{name:doc.fileName,path:doc.storagePath,mimeType:doc.mimeType},extraction:doc.extraction})}>{t("Review","审核")}</button>}
+            {doc.status==="pending_review"&&<button className="travel-library-source-save" type="button" onClick={()=>void confirm(doc.id)} disabled={savingId===doc.id}>{savingId===doc.id?t("Saving...","保存中..."):t("Save","保存")}</button>}
           </div>
         </article>)}
         {!loading&&!docs.length&&<div className="travel-library-inspector-empty">{t("No data yet. Upload the first itinerary, quotation, hotel document or image.","还没有资料。上传第一份行程、报价、酒店资料或图片。")}</div>}
