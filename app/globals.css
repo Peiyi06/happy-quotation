@@ -12257,3 +12257,107 @@ td,
     margin-top:18px!important;
   }
 }
+
+
+/* =========================================================
+   AI LAB — STARTER + SIDEBAR HEIGHT CONTROL
+   Simplify the empty-state workbench and keep the auxiliary
+   sidebar inside the viewport instead of stretching the page.
+   ========================================================= */
+
+/* Empty-state workbench: input first, suggestions second. */
+.ai-lab-chat:empty{
+  display:none!important;
+}
+.ai-lab-starter-wrap{
+  display:grid;
+  gap:5px;
+  margin:6px 0 0;
+}
+.ai-lab-starters{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:6px!important;
+  max-width:760px;
+  margin:0!important;
+}
+.ai-lab-more-starters{
+  justify-self:start;
+  min-height:26px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:var(--color-info-text);
+  font-size:9.5px;
+  font-weight:600;
+  cursor:pointer;
+}
+.ai-lab-more-starters:hover{
+  color:var(--color-brand-primary);
+  text-decoration:underline;
+}
+.ai-lab-compose{
+  margin-top:10px!important;
+}
+.ai-lab-compose-note{
+  opacity:.72;
+}
+
+/* The right rail owns its own vertical scrolling. */
+@media(min-width:821px){
+  .ai-lab-context{
+    position:sticky!important;
+    top:20px!important;
+    height:calc(100vh - 40px)!important;
+    max-height:calc(100vh - 40px)!important;
+    display:flex!important;
+    flex-direction:column!important;
+    overflow:hidden!important;
+  }
+  .ai-thread-panel{
+    display:flex!important;
+    flex-direction:column!important;
+    flex:1 1 auto!important;
+    min-height:0!important;
+    overflow:hidden!important;
+  }
+  .ai-thread-list{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+  }
+  .ai-lab-context-section,
+  .ai-lab-safety{
+    flex:0 0 auto!important;
+  }
+}
+
+/* Final left header reduction: functional, not introductory. */
+.ai-lab-workbench-head{
+  padding:7px 9px!important;
+}
+.ai-lab-workbench-head h1{
+  font-size:18px!important;
+}
+.ai-lab-workbench-head p{
+  font-size:9.5px!important;
+}
+.ai-lab-mode{
+  border-color:var(--color-border-default)!important;
+  background:var(--color-bg-soft)!important;
+  color:var(--color-text-secondary)!important;
+  opacity:.62!important;
+}
+
+@media(max-width:820px){
+  .ai-lab-starters{
+    grid-template-columns:1fr!important;
+    max-width:none;
+  }
+  .ai-lab-context{
+    position:static!important;
+    height:auto!important;
+    max-height:none!important;
+  }
+}
