@@ -861,7 +861,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     <section className="panel">
       <div className="panel-head">
         <div><h2>Suggested Flights｜建议航班</h2><p className="panel-subtext">Optional｜如没有填写航班，未来导出 PDF 时会自动隐藏此区块。</p></div>
-        <button className="btn" type="button" onClick={addFlight}>+ Add Flight</button>
+        <button className="btn itinerary-add-action" type="button" onClick={addFlight}>+ Add Flight</button>
       </div>
       {suggestedFlights.length>0 ? <div className="table-wrap"><table className="itinerary-flight-table">
         <thead><tr><th>Route</th><th>Flight No.</th><th>Date</th><th>Departure</th><th>Arrival</th><th>Remarks</th><th>操作</th></tr></thead>
@@ -884,7 +884,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     <section className="panel">
       <div className="panel-head">
         <div><h2>Daily Itinerary｜每日行程</h2><p className="panel-subtext">填写路线、行程内容、酒店、餐食及当天景点。</p></div>
-        <button className="btn" type="button" onClick={addDay}>+ Add Day</button>
+        <button className="btn itinerary-add-action" type="button" onClick={addDay}>+ Add Day</button>
       </div>
 
       <div className="itinerary-day-list">
@@ -899,10 +899,15 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
                 ? <button type="button" className="day-status-btn" onClick={()=>patchDay(day.id,{completed:false})}>Mark as Draft</button>
                 : <button type="button" className="day-complete-btn" onClick={()=>patchDay(day.id,{completed:true,collapsed:true})}>✓ 完成</button>}
               <button type="button" className="day-collapse-btn" onClick={()=>patchDay(day.id,{collapsed:!day.collapsed})}>{day.collapsed?"展开":"收起"}</button>
-              <button type="button" className="day-icon-action" aria-label="Move day up" title="Move up" onClick={()=>moveDay(index,-1)} disabled={index===0}>↑</button>
-              <button type="button" className="day-icon-action" aria-label="Move day down" title="Move down" onClick={()=>moveDay(index,1)} disabled={index===days.length-1}>↓</button>
-              <button type="button" className="day-secondary-action" onClick={()=>duplicateDay(index)}>Duplicate</button>
-              <button type="button" className="danger-link" onClick={()=>removeDay(index)} disabled={days.length<=1}>Delete</button>
+              <details className="itinerary-more-menu">
+                <summary aria-label="More day actions" title="More actions">•••</summary>
+                <div className="itinerary-more-menu-popover">
+                  <button type="button" onClick={()=>moveDay(index,-1)} disabled={index===0}>Move Up</button>
+                  <button type="button" onClick={()=>moveDay(index,1)} disabled={index===days.length-1}>Move Down</button>
+                  <button type="button" onClick={()=>duplicateDay(index)}>Duplicate</button>
+                  <button type="button" className="danger-link" onClick={()=>removeDay(index)} disabled={days.length<=1}>Delete</button>
+                </div>
+              </details>
             </div>
           </div>
 
@@ -911,12 +916,8 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
               <strong>{day.title||"未填写路线标题"}</strong>
               <span>{day.hotel||"尚未填写酒店"}</span>
             </div>
-            <div className="day-summary-chips">
-              <span>B: {day.meals.breakfast||"—"}</span>
-              <span>L: {day.meals.lunch||"—"}</span>
-              <span>D: {day.meals.dinner||"—"}</span>
-              <span>{day.attractions.length} Attractions</span>
-              <span>{day.attractions.reduce((sum,a)=>sum+a.images.length,0)} Photos</span>
+            <div className="day-summary-meta">
+              {[day.meals.breakfast&&day.meals.breakfast!=="-"?`Breakfast: ${day.meals.breakfast}`:"",day.meals.lunch&&day.meals.lunch!=="-"?`Lunch: ${day.meals.lunch}`:"",day.meals.dinner&&day.meals.dinner!=="-"?`Dinner: ${day.meals.dinner}`:"",day.attractions.length?`${day.attractions.length} Attraction${day.attractions.length===1?"":"s"}`:"",day.attractions.reduce((sum,a)=>sum+a.images.length,0)?`${day.attractions.reduce((sum,a)=>sum+a.images.length,0)} Photo${day.attractions.reduce((sum,a)=>sum+a.images.length,0)===1?"":"s"}`:""].filter(Boolean).join(" · ")||"No meals or attractions added"}
             </div>
           </div> : <>
 
@@ -948,7 +949,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
           <div className="itinerary-attraction-section">
             <div className="itinerary-subhead">
               <div><strong>Attractions｜景点</strong><span>每个景点可以独立填写名称及图片。</span></div>
-              <button type="button" className="btn" onClick={()=>addAttraction(day.id)}>+ Add Attraction</button>
+              <button type="button" className="btn itinerary-add-action" onClick={()=>addAttraction(day.id)}>+ Add Attraction</button>
             </div>
 
             {day.attractions.length>0 && <div className="itinerary-attraction-list">
@@ -959,16 +960,21 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
                     <div className="itinerary-attraction-index">{String(aIndex+1).padStart(2,"0")}</div>
                     {attraction.images[0]
                       ? <img className="itinerary-attraction-summary-image" src={attraction.images[0].url} alt={attraction.name||"Attraction"}/>
-                      : <div className="itinerary-attraction-summary-image placeholder" aria-hidden="true">⌁</div>}
+                      : <div className="itinerary-attraction-summary-image placeholder" aria-label="No image">▧</div>}
                     <div className="itinerary-attraction-summary-copy">
                       <strong>{attraction.name||"New Attraction"}</strong>
                       <span>{attraction.images.length} photo{attraction.images.length===1?"":"s"}</span>
                     </div>
                     <div className="itinerary-attraction-summary-actions">
                       <button type="button" className="disclosure-action" onClick={()=>toggleAttractionEditor(attraction.id)}>{expanded?"Done":"Edit"}</button>
-                      <button type="button" aria-label="Move attraction up" title="Move up" onClick={()=>moveAttraction(day.id,aIndex,-1)} disabled={aIndex===0}>↑</button>
-                      <button type="button" aria-label="Move attraction down" title="Move down" onClick={()=>moveAttraction(day.id,aIndex,1)} disabled={aIndex===day.attractions.length-1}>↓</button>
-                      <button type="button" className="danger-link" onClick={()=>removeAttraction(day.id,attraction.id)}>Delete</button>
+                      <details className="itinerary-more-menu">
+                        <summary aria-label="More attraction actions" title="More actions">•••</summary>
+                        <div className="itinerary-more-menu-popover">
+                          <button type="button" onClick={()=>moveAttraction(day.id,aIndex,-1)} disabled={aIndex===0}>Move Up</button>
+                          <button type="button" onClick={()=>moveAttraction(day.id,aIndex,1)} disabled={aIndex===day.attractions.length-1}>Move Down</button>
+                          <button type="button" className="danger-link" onClick={()=>removeAttraction(day.id,attraction.id)}>Delete</button>
+                        </div>
+                      </details>
                     </div>
                   </div>
                   {expanded&&<div className="itinerary-attraction-editor">
@@ -1011,7 +1017,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     <section className="panel">
       <div className="panel-head">
         <div><h2>Hotel Introduction｜酒店介绍</h2><p className="panel-subtext">Optional｜可加入多间酒店；没有填写时未来导出 PDF 会自动隐藏。</p></div>
-        <button className="btn" type="button" onClick={addHotel}>+ Add Hotel</button>
+        <button className="btn itinerary-add-action" type="button" onClick={addHotel}>+ Add Hotel</button>
       </div>
 
       {hotels.length>0 ? <div className="itinerary-hotel-list">
@@ -1027,10 +1033,15 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
               </div>
               <div className="itinerary-day-actions">
                 <button type="button" className="disclosure-action" onClick={()=>toggleHotelEditor(hotel.id)}>{expanded?"Done":"Edit"}</button>
-                <button type="button" aria-label="Move hotel up" title="Move up" onClick={()=>moveHotel(index,-1)} disabled={index===0}>↑</button>
-                <button type="button" aria-label="Move hotel down" title="Move down" onClick={()=>moveHotel(index,1)} disabled={index===hotels.length-1}>↓</button>
-                <button type="button" onClick={()=>duplicateHotel(index)}>Duplicate</button>
-                <button type="button" className="danger-link" onClick={()=>void removeHotel(index)}>Delete</button>
+                <details className="itinerary-more-menu">
+                  <summary aria-label="More hotel actions" title="More actions">•••</summary>
+                  <div className="itinerary-more-menu-popover">
+                    <button type="button" onClick={()=>moveHotel(index,-1)} disabled={index===0}>Move Up</button>
+                    <button type="button" onClick={()=>moveHotel(index,1)} disabled={index===hotels.length-1}>Move Down</button>
+                    <button type="button" onClick={()=>duplicateHotel(index)}>Duplicate</button>
+                    <button type="button" className="danger-link" onClick={()=>void removeHotel(index)}>Delete</button>
+                  </div>
+                </details>
               </div>
             </div>
 
@@ -1096,7 +1107,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
         <div className="itinerary-package-card included">
           <div className="itinerary-package-head">
             <div><strong>Included｜配套包含</strong><span>{includedItems.length} items</span></div>
-            <button className="btn" type="button" onClick={()=>addPackageItem("included")}>+ Add Item</button>
+            <button className="btn itinerary-add-action" type="button" onClick={()=>addPackageItem("included")}>+ Add Item</button>
           </div>
           {includedItems.length>0 ? <div className="itinerary-package-list">
             {includedItems.map((item,index)=>{
@@ -1136,7 +1147,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
         <div className="itinerary-package-card excluded">
           <div className="itinerary-package-head">
             <div><strong>Not Included｜配套不包含</strong><span>{notIncludedItems.length} items</span></div>
-            <button className="btn" type="button" onClick={()=>addPackageItem("excluded")}>+ Add Item</button>
+            <button className="btn itinerary-add-action" type="button" onClick={()=>addPackageItem("excluded")}>+ Add Item</button>
           </div>
           {notIncludedItems.length>0 ? <div className="itinerary-package-list">
             {notIncludedItems.map((item,index)=>{
@@ -1181,7 +1192,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
           <h2>Friendly Reminder｜温馨提醒</h2>
           <p className="panel-subtext">Optional｜有填写才会在 Detail / 未来 PDF 显示。</p>
         </div>
-        <button className="btn" type="button" onClick={addReminder}>+ Add Reminder</button>
+        <button className="btn itinerary-add-action" type="button" onClick={addReminder}>+ Add Reminder</button>
       </div>
 
       {reminders.length>0 ? <div className="itinerary-reminder-list">
