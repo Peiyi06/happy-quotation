@@ -904,7 +904,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
                 : <button type="button" className="day-complete-btn" onClick={()=>patchDay(day.id,{completed:true,collapsed:true})}>{t("✓ Complete","✓ 完成")}</button>}
               <button type="button" className="day-collapse-btn" onClick={()=>patchDay(day.id,{collapsed:!day.collapsed})}>{day.collapsed?t("Expand","展开"):t("Collapse","收起")}</button>
               <details className="itinerary-more-menu">
-                <summary aria-label="More day actions" title="More actions">•••</summary>
+                <summary aria-label={t("More day actions","更多每日行程操作")} title={t("More actions","更多操作")}>•••</summary>
                 <div className="itinerary-more-menu-popover">
                   <button type="button" onClick={()=>moveDay(index,-1)} disabled={index===0}>{t("Move Up","上移")}</button>
                   <button type="button" onClick={()=>moveDay(index,1)} disabled={index===days.length-1}>{t("Move Down","下移")}</button>
@@ -921,7 +921,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
               <span>{day.hotel||t("Hotel not entered","尚未填写酒店")}</span>
             </div>
             <div className="day-summary-meta">
-              {[day.meals.breakfast&&day.meals.breakfast!=="-"?`Breakfast: ${day.meals.breakfast}`:"",day.meals.lunch&&day.meals.lunch!=="-"?`Lunch: ${day.meals.lunch}`:"",day.meals.dinner&&day.meals.dinner!=="-"?`Dinner: ${day.meals.dinner}`:"",day.attractions.length?`${day.attractions.length} Attraction${day.attractions.length===1?"":"s"}`:"",day.attractions.reduce((sum,a)=>sum+a.images.length,0)?`${day.attractions.reduce((sum,a)=>sum+a.images.length,0)} Photo${day.attractions.reduce((sum,a)=>sum+a.images.length,0)===1?"":"s"}`:""].filter(Boolean).join(" · ")||t("No meals or attractions added","尚未填写餐食或景点")}
+              {[day.meals.breakfast&&day.meals.breakfast!=="-"?`${t("Breakfast","早餐")}: ${day.meals.breakfast}`:"",day.meals.lunch&&day.meals.lunch!=="-"?`${t("Lunch","午餐")}: ${day.meals.lunch}`:"",day.meals.dinner&&day.meals.dinner!=="-"?`${t("Dinner","晚餐")}: ${day.meals.dinner}`:"",day.attractions.length?t(`${day.attractions.length} Attraction${day.attractions.length===1?"":"s"}`,`${day.attractions.length} 个景点`):"",day.attractions.reduce((sum,a)=>sum+a.images.length,0)?t(`${day.attractions.reduce((sum,a)=>sum+a.images.length,0)} Photo${day.attractions.reduce((sum,a)=>sum+a.images.length,0)===1?"":"s"}`,`${day.attractions.reduce((sum,a)=>sum+a.images.length,0)} 张图片`):""].filter(Boolean).join(" · ")||t("No meals or attractions added","尚未填写餐食或景点")}
             </div>
           </div> : <>
 
@@ -972,7 +972,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
                     <div className="itinerary-attraction-summary-actions">
                       <button type="button" className="disclosure-action" onClick={()=>toggleAttractionEditor(attraction.id)}>{expanded?t("Done","完成"):t("Edit","编辑")}</button>
                       <details className="itinerary-more-menu">
-                        <summary aria-label="More attraction actions" title="More actions">•••</summary>
+                        <summary aria-label={t("More attraction actions","更多景点操作")} title={t("More actions","更多操作")}>•••</summary>
                         <div className="itinerary-more-menu-popover">
                           <button type="button" onClick={()=>moveAttraction(day.id,aIndex,-1)} disabled={aIndex===0}>{t("Move Up","上移")}</button>
                           <button type="button" onClick={()=>moveAttraction(day.id,aIndex,1)} disabled={aIndex===day.attractions.length-1}>{t("Move Down","下移")}</button>
@@ -1038,7 +1038,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
               <div className="itinerary-day-actions">
                 <button type="button" className="disclosure-action" onClick={()=>toggleHotelEditor(hotel.id)}>{expanded?t("Done","完成"):t("Edit","编辑")}</button>
                 <details className="itinerary-more-menu">
-                  <summary aria-label="More hotel actions" title="More actions">•••</summary>
+                  <summary aria-label={t("More hotel actions","更多酒店操作")} title={t("More actions","更多操作")}>•••</summary>
                   <div className="itinerary-more-menu-popover">
                     <button type="button" onClick={()=>moveHotel(index,-1)} disabled={index===0}>{t("Move Up","上移")}</button>
                     <button type="button" onClick={()=>moveHotel(index,1)} disabled={index===hotels.length-1}>{t("Move Down","下移")}</button>
@@ -1110,7 +1110,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       <div className="itinerary-package-columns">
         <div className="itinerary-package-card included">
           <div className="itinerary-package-head">
-            <div><strong>{t("Included","配套包含")}</strong><span>{includedItems.length} items</span></div>
+            <div><strong>{t("Included","配套包含")}</strong><span>{includedItems.length} {t(includedItems.length===1?"item":"items","项")}</span></div>
             <button className="btn itinerary-add-action" type="button" onClick={()=>addPackageItem("included")}>{t("+ Add Item","+ 新增项目")}</button>
           </div>
           {includedItems.length>0 ? <div className="itinerary-package-list">
@@ -1150,7 +1150,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
 
         <div className="itinerary-package-card excluded">
           <div className="itinerary-package-head">
-            <div><strong>{t("Not Included","配套不包含")}</strong><span>{notIncludedItems.length} items</span></div>
+            <div><strong>{t("Not Included","配套不包含")}</strong><span>{notIncludedItems.length} {t(notIncludedItems.length===1?"item":"items","项")}</span></div>
             <button className="btn itinerary-add-action" type="button" onClick={()=>addPackageItem("excluded")}>{t("+ Add Item","+ 新增项目")}</button>
           </div>
           {notIncludedItems.length>0 ? <div className="itinerary-package-list">
