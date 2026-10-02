@@ -312,30 +312,30 @@ export default function TravelMediaLibrary(){
   return <div className="travel-library-workspace">
     <section className="travel-library-flow-head">
       <div>
-        <span className="page-kicker">PROCESSING WORKSPACE</span>
-        <h2>Travel Library Processing</h2>
-        <p>Upload → AI Review → Media Extraction → Human Review → Library</p>
+        <span className="page-kicker">{t("PROCESSING WORKSPACE","处理工作区")}</span>
+        <h2>{t("Travel Library Processing","旅游资料库处理")}</h2>
+        <p>{t("Upload → AI Review → Media Extraction → Human Review → Library","上传 → AI 审核 → 媒体提取 → 人工审核 → 资料库")}</p>
       </div>
-      <div className="travel-library-flow-steps" aria-label="Travel Library processing flow">
-        <span>1 Upload</span><b>→</b><span>2 AI Review</span><b>→</b><span>3 Extract Media</span><b>→</b><span>4 Review</span><b>→</b><span>5 Library</span>
+      <div className="travel-library-flow-steps" aria-label={t("Travel Library processing flow","Travel Library 处理流程")}>
+        <span>{t("1 Upload","1 上传")}</span><b>→</b><span>{t("2 AI Review","2 AI 审核")}</span><b>→</b><span>{t("3 Extract Media","3 提取媒体")}</span><b>→</b><span>{t("4 Review","4 审核")}</span><b>→</b><span>{t("5 Library","5 资料库")}</span>
       </div>
     </section>
 
     <div className="travel-library-toolbar">
       <div>
-        <strong>{docs.length} Sources</strong>
-        <span>{savedCount} Saved · {pendingCount} Pending Review</span>
+        <strong>{docs.length} {t("Sources","来源")}</strong>
+        <span>{savedCount} {t("Saved","已保存")} · {pendingCount} {t("Pending Review","待审核")}</span>
       </div>
       <div className="travel-library-toolbar-actions">
-        <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search destination, title or file..."/>
+        <input value={q} onChange={e=>setQ(e.target.value)} placeholder={t("Search destination, title or file...","搜索目的地、标题或文件...")}/>
         <select value={status} onChange={e=>setStatus(e.target.value)}>
-          <option value="">All Status</option>
-          <option value="pending_review">Pending Review</option>
-          <option value="saved">Saved</option>
+          <option value="">{t("All Status","全部状态")}</option>
+          <option value="pending_review">{t("Pending Review","待审核")}</option>
+          <option value="saved">{t("Saved","已保存")}</option>
         </select>
-        <button className="btn" type="button" onClick={()=>void load()}>Search</button>
+        <button className="btn" type="button" onClick={()=>void load()}>{t("Search","搜索")}</button>
         <label className="btn primary travel-library-upload-btn">
-          {analyzing?"AI Analyzing...":"＋ Upload & Analyze"}
+          {analyzing?t("AI Analyzing...","AI 分析中..."):t("＋ Upload & Analyze","＋ 上传并分析")}
           <input ref={inputRef} type="file" accept=".pdf,.doc,.docx,.rtf,.txt,.jpg,.jpeg,.png,.webp" disabled={analyzing} onChange={e=>void analyze(e.target.files?.[0]||null)}/>
         </label>
       </div>
@@ -346,61 +346,61 @@ export default function TravelMediaLibrary(){
     {preview&&<section className="panel travel-library-review">
       <div className="panel-head">
         <div>
-          <span className="page-kicker">AI REVIEW PREVIEW</span>
-          <h2>{preview.extraction?.title||preview.file?.name||"Travel Library Source"}</h2>
-          <p className="panel-subtext">AI 已整理资料。确认后才会正式写入 Places / Hotels / Itinerary Cases / Historical Price References。</p>
+          <span className="page-kicker">{t("AI REVIEW PREVIEW","AI 审核预览")}</span>
+          <h2>{preview.extraction?.title||preview.file?.name||t("Travel Library Source","Travel Library 来源")}</h2>
+          <p className="panel-subtext">{t("AI has organized the information. It will only be written to Places / Hotels / Itinerary Cases / Historical Price References after confirmation.","AI 已整理资料。确认后才会正式写入 Places / Hotels / Itinerary Cases / Historical Price References。")}</p>
         </div>
         {model&&<span className="ai-model-badge">{model}</span>}
       </div>
 
       <div className="travel-library-review-meta">
-        <div><span>Type</span><strong>{preview.extraction?.sourceType||"other"}</strong></div>
-        <div><span>Destination</span><strong>{preview.extraction?.destination||"—"}</strong></div>
-        <div><span>Places</span><strong>{preview.extraction?.places?.length||0}</strong></div>
-        <div><span>Hotels</span><strong>{preview.extraction?.hotels?.length||0}</strong></div>
-        <div><span>Prices</span><strong>{preview.extraction?.prices?.length||0}</strong></div>
+        <div><span>{t("Type","类型")}</span><strong>{preview.extraction?.sourceType||"other"}</strong></div>
+        <div><span>{t("Destination","目的地")}</span><strong>{preview.extraction?.destination||"—"}</strong></div>
+        <div><span>{t("Places","景点")}</span><strong>{preview.extraction?.places?.length||0}</strong></div>
+        <div><span>{t("Hotels","酒店")}</span><strong>{preview.extraction?.hotels?.length||0}</strong></div>
+        <div><span>{t("Prices","价格")}</span><strong>{preview.extraction?.prices?.length||0}</strong></div>
       </div>
 
       {preview.extraction?.photoMatch&&<div className={"travel-library-photo-match "+(preview.extraction.photoMatch.status==="matched"?"matched":"review")}>
         <div className="travel-library-photo-match-head">
           <div>
-            <span className="page-kicker">PHOTO MATCH REVIEW</span>
-            <h3>{preview.extraction.photoMatch.status==="matched"?"✓ Matched":"Needs Review"}</h3>
+            <span className="page-kicker">{t("PHOTO MATCH REVIEW","照片匹配审核")}</span>
+            <h3>{preview.extraction.photoMatch.status==="matched"?t("✓ Matched","✓ 已匹配"):t("Needs Review","需要审核")}</h3>
           </div>
           <span className={"status "+(preview.extraction.photoMatch.status==="matched"?"status-ready":"status-under_review")}>
-            {Math.round(Number(preview.extraction.photoMatch.confidence||0)*100)}% Confidence
+            {Math.round(Number(preview.extraction.photoMatch.confidence||0)*100)}% {t("Confidence","可信度")}
           </span>
         </div>
         <div className="travel-library-photo-match-grid">
-          <div><span>AI Identified</span><strong>{preview.extraction.photoMatch.identifiedName||"Unknown"}</strong></div>
-          <div><span>Type</span><strong>{preview.extraction.photoMatch.identifiedType||"unknown"}</strong></div>
-          <div><span>Matched Library Record</span><strong>{preview.extraction.photoMatch.matchedName||"No confident match"}</strong></div>
-          <div><span>Match Method</span><strong>{preview.extraction.photoMatch.method==="ai_semantic"?"AI Semantic":preview.extraction.photoMatch.method==="fuzzy"?"Fuzzy":preview.extraction.photoMatch.method==="exact"?"Exact":"AI Identification Only"}</strong></div>
-          <div><span>Destination</span><strong>{preview.extraction.photoMatch.destination||"—"}</strong></div>
-          <div><span>City / Area</span><strong>{preview.extraction.photoMatch.cityArea||"—"}</strong></div>
+          <div><span>{t("AI Identified","AI 识别")}</span><strong>{preview.extraction.photoMatch.identifiedName||t("Unknown","未知")}</strong></div>
+          <div><span>{t("Type","类型")}</span><strong>{preview.extraction.photoMatch.identifiedType||t("unknown","未知")}</strong></div>
+          <div><span>{t("Matched Library Record","匹配的资料库记录")}</span><strong>{preview.extraction.photoMatch.matchedName||t("No confident match","没有可信匹配")}</strong></div>
+          <div><span>{t("Match Method","匹配方式")}</span><strong>{preview.extraction.photoMatch.method==="ai_semantic"?t("AI Semantic","AI 语义"):preview.extraction.photoMatch.method==="fuzzy"?t("Fuzzy","模糊匹配"):preview.extraction.photoMatch.method==="exact"?t("Exact","精确匹配"):t("AI Identification Only","仅 AI 识别")}</strong></div>
+          <div><span>{t("Destination","目的地")}</span><strong>{preview.extraction.photoMatch.destination||"—"}</strong></div>
+          <div><span>{t("City / Area","城市 / 区域")}</span><strong>{preview.extraction.photoMatch.cityArea||"—"}</strong></div>
         </div>
         <p>{preview.extraction.photoMatch.reason||"—"}</p>
-        {preview.extraction.photoMatch.status!=="matched"&&<small>系统不会把这个结果当作已确认匹配。请先检查照片与名称，再决定是否存档。</small>}
+        {preview.extraction.photoMatch.status!=="matched"&&<small>{t("The system will not treat this as a confirmed match. Check the photo and name before saving.","系统不会把这个结果当作已确认匹配。请先检查照片与名称，再决定是否存档。")}</small>}
       </div>}
 
       <div className="travel-library-review-grid">
         <article>
-          <h3>Summary</h3>
+          <h3>{t("Summary","摘要")}</h3>
           <p>{preview.extraction?.summary||"—"}</p>
         </article>
         <article>
-          <h3>Places / Attractions</h3>
+          <h3>{t("Places / Attractions","景点")}</h3>
           <div className="travel-library-tags">{(preview.extraction?.places||[]).map((x:any,i:number)=><span key={i}>{x.name}</span>)}</div>
         </article>
         <article>
-          <h3>Hotels</h3>
+          <h3>{t("Hotels","酒店")}</h3>
           <div className="travel-library-tags">{(preview.extraction?.hotels||[]).map((x:any,i:number)=><span key={i}>{x.name}</span>)}</div>
         </article>
         <article>
-          <h3>Historical Price References</h3>
+          <h3>{t("Historical Price References","历史价格参考")}</h3>
           {(preview.extraction?.prices||[]).length
-            ? <div className="travel-library-price-list">{preview.extraction.prices.map((x:any,i:number)=><div key={i}><strong>{[x.currency,x.amount].filter(Boolean).join(" ")||"Price"}</strong><span>{[x.label,x.pax?x.pax+" pax":"",x.travelPeriod,x.supplier].filter(Boolean).join(" · ")}</span></div>)}</div>
-            : <p>没有识别到价格资料。</p>}
+            ? <div className="travel-library-price-list">{preview.extraction.prices.map((x:any,i:number)=><div key={i}><strong>{[x.currency,x.amount].filter(Boolean).join(" ")||"Price"}</strong><span>{[x.label,x.pax?x.pax+" "+t("pax","人"):"",x.travelPeriod,x.supplier].filter(Boolean).join(" · ")}</span></div>)}</div>
+            : <p>{t("No price information detected.","没有识别到价格资料。")}</p>}
         </article>
       </div>
 
@@ -410,9 +410,9 @@ export default function TravelMediaLibrary(){
 
       <div className="travel-library-review-actions">
         {preview.saved
-          ? <span className="status status-ready">Saved to Library</span>
+          ? <span className="status status-ready">{t("Saved to Library","已保存到资料库")}</span>
           : <button className="btn primary" type="button" disabled={savingId===preview.id} onClick={()=>void confirm(preview.id)}>
-              {savingId===preview.id?"Saving...":"Confirm & Save to Library"}
+              {savingId===preview.id?t("Saving...","保存中..."):t("Confirm & Save to Library","确认并保存到资料库")}
             </button>}
       </div>
     </section>}
@@ -452,7 +452,7 @@ export default function TravelMediaLibrary(){
               </span>
             </div>
             <div className="travel-library-document-media-meta">
-              <div><span>Type</span><strong>{item.suggestedType||"unknown"}</strong></div>
+              <div><span>{t("Type","类型")}</span><strong>{item.suggestedType||"unknown"}</strong></div>
               <div><span>Match</span><strong>{item.suggestedPlaceId?"Library Record Found":"No confident record"}</strong></div>
               <div><span>Method</span><strong>{String(item.matchMethod||"").replaceAll("_"," ")||"—"}</strong></div>
               <div><span>Source</span><strong>{item.sourcePage?"Page "+item.sourcePage:"Document"}</strong></div>
@@ -684,8 +684,8 @@ export default function TravelMediaLibrary(){
             <span className={"status "+(doc.status==="saved"?"status-ready":"status-under_review")}>{doc.status==="saved"?"Saved":"Pending Review"}</span>
           </div>
           <div className="travel-library-source-meta">
-            <div><span>Type</span><strong>{doc.sourceType||"other"}</strong></div>
-            <div><span>Destination</span><strong>{doc.destination||"—"}</strong></div>
+            <div><span>{t("Type","类型")}</span><strong>{doc.sourceType||"other"}</strong></div>
+            <div><span>{t("Destination","目的地")}</span><strong>{doc.destination||"—"}</strong></div>
             <div><span>Media</span><strong>{doc.mediaExtractionStatus==="review"
               ? Number(doc.mediaExtractionSummary?.found||0)+" found · "+Number(doc.mediaExtractionSummary?.matched||0)+" matched"
               : doc.mediaExtractionStatus==="processing"?"Processing..."
