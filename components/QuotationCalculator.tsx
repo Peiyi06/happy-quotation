@@ -915,30 +915,28 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     </Section>
 
     {workspaceMode&&<section className="panel inquiry-workflow-panel quotation-editor-workflow">
-      <div className="panel-head inquiry-workflow-panel-head">
+      <div className="panel-head inquiry-workflow-panel-head quotation-workflow-compact-head">
         <div>
           <span className="page-kicker">WORKFLOW</span>
           <h2>工作流程</h2>
-          <p className="panel-subtext">Quotation → Review → Itinerary</p>
         </div>
       </div>
 
-      <div className="simple-workflow-grid">
+      <div className="simple-workflow-grid quotation-workflow-compact">
         <div className={"simple-workflow-card "+((displayStatus==="under_review"||displayStatus==="ready")?"complete":"current")}>
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">01</span>
-            <span className="simple-workflow-state">{(displayStatus==="under_review"||displayStatus==="ready")?"✓ Completed":"Current"}</span>
+            <span className="simple-workflow-state">{(displayStatus==="under_review"||displayStatus==="ready")?"✓ Done":displayStatus==="revision_required"?"Revise":"Current"}</span>
           </div>
           <div className="simple-workflow-title">
-            <h3>Quotation</h3>
-            <strong>{displayStatus==="revision_required"?"Revision Required":displayStatus==="under_review"||displayStatus==="ready"?"Submitted":"Prepare Quotation"}</strong>
+            <strong>Quotation</strong>
           </div>
           {(displayStatus==="draft"||displayStatus==="revision_required")&&<div className="simple-workflow-actions">
             <button className="btn" type="button" disabled={saving||!isDirty} onClick={()=>void saveQuotation()}>
-              {saving?"Saving...":isDirty?"Save Quotation":"Saved ✓"}
+              {saving?"Saving...":isDirty?"Save":"Saved ✓"}
             </button>
             {quotationId&&<button className="btn primary" type="button" disabled={saving} onClick={()=>void submitForReview()}>
-              {saving?"Working...":displayStatus==="revision_required"?"Resubmit for Review":"Submit for Review"}
+              {saving?"Working...":displayStatus==="revision_required"?"Resubmit":"Submit"}
             </button>}
           </div>}
         </div>
@@ -948,13 +946,12 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         <div className={"simple-workflow-card "+(displayStatus==="ready"?"complete":displayStatus==="under_review"?"current":"upcoming")}>
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">02</span>
-            <span className="simple-workflow-state">{displayStatus==="ready"?"✓ Completed":displayStatus==="under_review"?"Current":"Upcoming"}</span>
+            <span className="simple-workflow-state">{displayStatus==="ready"?"✓ Done":displayStatus==="under_review"?"Reviewing":"Next"}</span>
           </div>
           <div className="simple-workflow-title">
-            <h3>Management Review</h3>
-            <strong>{displayStatus==="ready"?"Approved":displayStatus==="under_review"?"Waiting for Approval":"After Submission"}</strong>
+            <strong>Management Review</strong>
           </div>
-          {displayStatus==="under_review"&&<div className="quotation-workflow-waiting">Waiting Management Review</div>}
+          {displayStatus==="under_review"&&<div className="quotation-workflow-waiting">Waiting for approval</div>}
         </div>
 
         <div className="simple-workflow-arrow" aria-hidden="true">→</div>
@@ -962,17 +959,16 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         <div className={"simple-workflow-card "+(displayStatus==="ready"?"current":"upcoming")}>
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">03</span>
-            <span className="simple-workflow-state">{displayStatus==="ready"?"Current":"Upcoming"}</span>
+            <span className="simple-workflow-state">{displayStatus==="ready"?"Current":"Next"}</span>
           </div>
           <div className="simple-workflow-title">
-            <h3>Itinerary</h3>
-            <strong>{displayStatus==="ready"?"Ready to Create":"After Approval"}</strong>
+            <strong>Itinerary</strong>
           </div>
           {displayStatus==="ready"&&resolvedSourceInquiryId&&<div className="simple-workflow-actions">
-            <button className="btn primary" type="button" onClick={()=>router.push("/itineraries/new?sourceInquiry="+resolvedSourceInquiryId)}>Create Itinerary</button>
-            <button className="btn" type="button" onClick={()=>router.push("/ai-import?sourceInquiry="+resolvedSourceInquiryId)}>AI Itinerary</button>
+            <button className="btn primary" type="button" onClick={()=>router.push("/itineraries/new?sourceInquiry="+resolvedSourceInquiryId)}>Create</button>
+            <button className="btn" type="button" onClick={()=>router.push("/ai-import?sourceInquiry="+resolvedSourceInquiryId)}>AI</button>
           </div>}
-          {displayStatus==="ready"&&!resolvedSourceInquiryId&&<div className="quotation-workflow-waiting">Quotation Ready · No linked Inquiry</div>}
+          {displayStatus==="ready"&&!resolvedSourceInquiryId&&<div className="quotation-workflow-waiting">No linked Inquiry</div>}
         </div>
       </div>
     </section>}
