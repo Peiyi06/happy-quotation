@@ -8766,3 +8766,218 @@ td,
     grid-column:auto;
   }
 }
+
+
+/* =========================================================
+   ITINERARY EDITOR — ACTION DENSITY + COMPACT SUMMARY POLISH
+   ========================================================= */
+.itinerary-editor .itinerary-add-action{
+  min-height:34px!important;
+  height:34px;
+  padding:0 11px!important;
+  border-color:var(--color-border-default)!important;
+  background:var(--color-bg-surface)!important;
+  color:var(--color-text-secondary)!important;
+  font-size:11px!important;
+  font-weight:650!important;
+  box-shadow:none!important;
+}
+.itinerary-editor .itinerary-add-action:hover{
+  background:var(--color-bg-soft)!important;
+  color:var(--color-text-primary)!important;
+}
+
+/* Shared lightweight More menu for secondary item actions. */
+.itinerary-editor .itinerary-more-menu{
+  position:relative;
+  flex:0 0 auto;
+}
+.itinerary-editor .itinerary-more-menu>summary{
+  list-style:none;
+  display:grid;
+  place-items:center;
+  min-width:32px;
+  height:32px;
+  padding:0 7px;
+  border:1px solid var(--color-border-default);
+  border-radius:var(--radius-sm);
+  background:var(--color-bg-surface);
+  color:var(--color-text-secondary);
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.08em;
+  cursor:pointer;
+  user-select:none;
+}
+.itinerary-editor .itinerary-more-menu>summary::-webkit-details-marker{
+  display:none;
+}
+.itinerary-editor .itinerary-more-menu>summary:hover,
+.itinerary-editor .itinerary-more-menu[open]>summary{
+  background:var(--color-bg-soft);
+  color:var(--color-text-primary);
+}
+.itinerary-editor .itinerary-more-menu-popover{
+  position:absolute;
+  top:calc(100% + 6px);
+  right:0;
+  z-index:40;
+  width:150px;
+  padding:6px;
+  border:1px solid var(--color-border-default);
+  border-radius:var(--radius-md);
+  background:var(--color-bg-surface);
+  box-shadow:var(--shadow-elevated);
+}
+.itinerary-editor .itinerary-more-menu-popover button{
+  display:flex!important;
+  align-items:center;
+  width:100%!important;
+  min-height:34px!important;
+  padding:0 9px!important;
+  border:0!important;
+  border-radius:7px!important;
+  background:transparent!important;
+  color:var(--color-text-primary)!important;
+  text-align:left;
+  font-size:11px!important;
+  font-weight:600!important;
+}
+.itinerary-editor .itinerary-more-menu-popover button:hover:not(:disabled){
+  background:var(--color-bg-soft)!important;
+}
+.itinerary-editor .itinerary-more-menu-popover button:disabled{
+  opacity:.4;
+}
+.itinerary-editor .itinerary-more-menu-popover .danger-link{
+  color:var(--color-danger-text)!important;
+}
+.itinerary-editor .itinerary-more-menu-popover .danger-link:hover:not(:disabled){
+  background:var(--color-danger-soft)!important;
+}
+
+/* Day card: keep only state + disclosure visible in the header. */
+.itinerary-editor .itinerary-day-head{
+  min-height:56px;
+  padding:11px 14px;
+}
+.itinerary-editor .itinerary-day-actions{
+  gap:4px;
+}
+.itinerary-editor .itinerary-day-actions>button{
+  min-height:32px;
+}
+.itinerary-editor .itinerary-day-collapsed-summary{
+  gap:14px;
+  padding:10px 14px;
+}
+.itinerary-editor .day-summary-primary{
+  gap:2px;
+}
+.itinerary-editor .day-summary-primary strong{
+  font-size:13px;
+}
+.itinerary-editor .day-summary-meta{
+  max-width:52%;
+  color:var(--color-text-secondary);
+  font-size:10px;
+  line-height:1.45;
+  text-align:right;
+}
+.itinerary-editor .day-summary-chips{
+  display:none!important;
+}
+
+/* Attraction summaries become denser and content-first. */
+.itinerary-editor .itinerary-attraction-list{
+  gap:7px;
+}
+.itinerary-editor .itinerary-attraction-summary{
+  grid-template-columns:30px 40px minmax(0,1fr) auto;
+  gap:9px;
+  min-height:58px;
+  padding:7px 9px;
+}
+.itinerary-editor .itinerary-attraction-index{
+  width:30px;
+  height:30px;
+}
+.itinerary-editor .itinerary-attraction-summary-image{
+  width:40px;
+  height:40px;
+  border-radius:8px;
+}
+.itinerary-editor .itinerary-attraction-summary-image.placeholder{
+  background:var(--color-bg-soft);
+  color:var(--color-text-tertiary);
+  font-size:14px;
+}
+.itinerary-editor .itinerary-attraction-summary-copy{
+  gap:2px;
+}
+.itinerary-editor .itinerary-attraction-summary-copy strong{
+  font-size:12px;
+}
+.itinerary-editor .itinerary-attraction-summary-actions{
+  gap:3px;
+}
+.itinerary-editor .itinerary-attraction-summary-actions>.disclosure-action{
+  min-height:30px;
+  padding:0 7px;
+}
+
+/* Hotel summary uses the same compact action language. */
+.itinerary-editor .itinerary-hotel-list{
+  gap:10px;
+}
+.itinerary-editor .itinerary-hotel-head{
+  min-height:58px;
+  padding:9px 12px;
+}
+.itinerary-editor .itinerary-hotel-summary-copy{
+  gap:1px!important;
+}
+.itinerary-editor .itinerary-hotel-summary-copy>strong{
+  font-size:13px;
+}
+.itinerary-editor .itinerary-hotel-summary-copy>small{
+  font-size:10px;
+}
+.itinerary-editor .itinerary-hotel-summary-images{
+  gap:5px;
+  padding:0 12px 9px;
+}
+.itinerary-editor .itinerary-hotel-summary-images img{
+  width:52px;
+  height:38px;
+  border-radius:7px;
+}
+
+/* Keep work sections closer together without removing breathing room. */
+.itinerary-editor>.panel{
+  margin-bottom:16px;
+}
+.itinerary-editor .itinerary-editor-empty{
+  padding-top:8px;
+  padding-bottom:6px;
+}
+
+@media(max-width:900px){
+  .itinerary-editor .day-summary-meta{
+    max-width:none;
+    text-align:left;
+  }
+}
+@media(max-width:760px){
+  .itinerary-editor .itinerary-more-menu-popover{
+    right:auto;
+    left:0;
+  }
+  .itinerary-editor .itinerary-attraction-summary{
+    grid-template-columns:28px 38px minmax(0,1fr) auto;
+  }
+  .itinerary-editor .itinerary-attraction-summary-image{
+    width:38px;
+    height:38px;
+  }
+}
