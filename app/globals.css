@@ -14665,3 +14665,94 @@ td,
     padding:12px!important;
   }
 }
+
+
+/* =========================================================
+   INQUIRY LIST — ITINERARY MASTER ALIGNMENT
+   Match Itinerary library structure and naming rhythm.
+   ========================================================= */
+.inquiry-library-template .inquiry-library-head{
+  align-items:flex-start;
+  margin-bottom:var(--space-lg);
+  padding:4px 0 20px;
+  border-bottom:1px solid var(--color-border-default);
+}
+
+.inquiry-library-template .inquiry-library-title-block{
+  display:grid;
+  gap:6px;
+}
+
+.inquiry-library-template .inquiry-library-title-block h1{
+  margin:0!important;
+  font-size:34px!important;
+  line-height:1.08!important;
+  letter-spacing:-.025em;
+  color:var(--color-brand-primary)!important;
+}
+
+.inquiry-library-template .inquiry-library-title-block p{
+  margin:0;
+  color:var(--color-text-secondary);
+  font-size:14px;
+}
+
+.inquiry-library-template .panel{
+  box-shadow:none;
+}
+
+.inquiry-library-template .filter-bar{
+  grid-template-columns:minmax(0,2fr) minmax(180px,.75fr) auto!important;
+  gap:10px!important;
+  margin-bottom:16px!important;
+}
+
+.inquiry-library-template .filter-bar input,
+.inquiry-library-template .filter-bar select{
+  min-height:40px!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+
+.inquiry-library-template .filter-bar .btn{
+  min-height:40px!important;
+  height:40px!important;
+  padding:0 14px!important;
+  border-radius:10px!important;
+  box-shadow:none!important;
+}
+
+.inquiry-library-template .inquiry-table{
+  min-width:980px;
+}
+
+.inquiry-library-template .inquiry-table th{
+  position:static!important;
+  text-align:left!important;
+  background:#f3f7fa!important;
+  color:#607080!important;
+}
+
+.inquiry-library-template .inquiry-table td{
+  text-align:left!important;
+  background:#fff!important;
+}
+
+.inquiry-library-template .inquiry-table td:first-child a{
+  color:var(--navy)!important;
+  font-weight:700!important;
+  text-decoration:none!important;
+}
+
+.inquiry-library-template .inquiry-table td:first-child a:hover{
+  text-decoration:underline!important;
+  text-underline-offset:2px!important;
+}
+
+@media(max-width:760px){
+  .inquiry-library-template .filter-bar{
+    grid-template-columns:1fr!important;
+  }
+}
