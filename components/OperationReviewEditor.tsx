@@ -232,7 +232,7 @@ export default function OperationReviewEditor({
           </div>)}
           <div className="operation-flight-editor-actions">
             <button className="btn" type="button" onClick={()=>setOperationFlights(prev=>[...prev,emptyFlight()])}>+ Add Flight</button>
-            <button className="btn primary" type="button" onClick={()=>setEditingFlights(false)}>Done</button>
+            <button className="btn" type="button" onClick={()=>setEditingFlights(false)}>Done</button>
           </div>
         </div>}
       </div>
@@ -259,7 +259,7 @@ export default function OperationReviewEditor({
       <div className="panel-head">
         <div>
           <h2>Supplier Inquiry｜供应商询价</h2>
-          <p className="panel-subtext">这里只设置发给 Supplier 前需要确认的内容；Status 统一在页面右上角管理。</p>
+          <p className="panel-subtext">这里只设置发给 Supplier 前需要确认的内容；Status 跟随 Inquiry Workflow。</p>
         </div>
         <button className="btn" type="button" onClick={()=>window.open(supplierFormHref,"_blank")}>Preview Supplier Form</button>
       </div>
