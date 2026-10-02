@@ -95,7 +95,7 @@ export default async function OperationWorkspacePage({
       </div>
       <form>
         {requestedScope==="all"&&<input type="hidden" name="scope" value="all"/>}
-        <input name="q" defaultValue={sp.q||""} placeholder="Search Inquiry / Customer / Destination / Sales"/>
+        <input name="q" defaultValue={sp.q||""} placeholder="Search inquiry, customer or destination"/>
         <button className="btn" type="submit">Search</button>
       </form>
     </section>
