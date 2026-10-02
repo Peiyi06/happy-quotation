@@ -9272,3 +9272,273 @@ td,
     padding:16px 16px 12px;
   }
 }
+
+
+/* =========================================================
+   WORKSPACE HEADER UNIFICATION
+   Flat workspace master based on Operation / library pages.
+   ========================================================= */
+.workspace-main .workspace-flat-head{
+  position:relative;
+  min-height:0;
+  padding:4px 0 20px;
+  margin-bottom:var(--space-lg);
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:24px;
+  overflow:visible;
+  background:transparent!important;
+  border:0!important;
+  border-bottom:1px solid var(--color-border-default)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  color:var(--color-text-primary)!important;
+}
+.workspace-main .workspace-flat-head>div:first-child{
+  min-width:0;
+}
+.workspace-main .workspace-flat-head h1{
+  margin:0 0 6px!important;
+  color:var(--color-brand-primary)!important;
+  font-size:34px!important;
+  line-height:1.08!important;
+  font-weight:700!important;
+  letter-spacing:-.025em!important;
+}
+.workspace-main .workspace-flat-head p{
+  margin:0!important;
+  max-width:760px;
+  color:var(--color-text-secondary)!important;
+  font-size:14px!important;
+  line-height:1.45!important;
+}
+.workspace-main .workspace-flat-head>.btn,
+.workspace-main .workspace-flat-head>.detail-actions{
+  flex:0 0 auto;
+}
+.workspace-main .workspace-flat-head .btn.primary{
+  background:var(--color-brand-primary)!important;
+  border-color:var(--color-brand-primary)!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+.workspace-main .workspace-flat-head .btn.primary:hover{
+  background:var(--color-brand-primary-hover)!important;
+  border-color:var(--color-brand-primary-hover)!important;
+}
+
+/* Dashboard overview becomes one information strip instead of four cards. */
+.dashboard-overview-strip{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:0;
+  margin:0 0 var(--space-xl);
+  padding:6px 0 18px;
+  border-bottom:1px solid var(--color-border-default);
+}
+.dashboard-overview-metric{
+  min-width:0;
+  padding:8px 18px;
+  border-right:1px solid var(--color-border-default);
+}
+.dashboard-overview-metric:first-child{
+  padding-left:0;
+}
+.dashboard-overview-metric:last-child{
+  border-right:0;
+}
+.dashboard-overview-metric span{
+  display:block;
+  margin-bottom:6px;
+  color:var(--color-text-secondary);
+  font-size:11px;
+  font-weight:600;
+}
+.dashboard-overview-metric b{
+  display:block;
+  color:var(--color-brand-primary);
+  font-size:24px;
+  line-height:1.15;
+  font-weight:700;
+  letter-spacing:-.015em;
+}
+
+/* Dashboard content section remains quiet under the flat header. */
+.dashboard-recent-panel{
+  border-radius:var(--radius-md)!important;
+}
+.dashboard-recent-panel>.panel-head{
+  padding-top:16px;
+}
+
+/* Tour Groups: management rows instead of a card wall. */
+.tour-groups-head .tour-group-create-trigger:not(.primary){
+  background:var(--color-bg-surface)!important;
+  border-color:var(--color-border-default)!important;
+  color:var(--color-text-primary)!important;
+}
+.tour-group-create-panel{
+  padding:18px 20px;
+  margin-bottom:var(--space-lg);
+  box-shadow:none;
+}
+.tour-group-create-form{
+  display:grid;
+  grid-template-columns:1.25fr 1fr 1fr;
+  gap:14px;
+}
+.tour-group-description-field{
+  grid-column:1/-1;
+}
+.tour-group-create-actions{
+  grid-column:1/-1;
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  padding-top:2px;
+}
+.tour-group-sections{
+  display:grid;
+  gap:16px;
+}
+.tour-group-section{
+  padding:0!important;
+  overflow:hidden;
+  border-radius:var(--radius-md)!important;
+}
+.tour-group-section-head{
+  margin:0!important;
+  padding:14px 16px;
+  border-bottom:1px solid var(--color-border-default);
+}
+.tour-group-section-head h2{
+  font-size:17px!important;
+}
+.tour-group-section-head>span{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:28px;
+  height:28px;
+  padding:0 8px;
+  border-radius:999px;
+  background:var(--color-neutral-status-soft);
+  color:var(--color-neutral-status-text);
+  font-size:11px;
+  font-weight:700;
+}
+.tour-group-list{
+  display:grid;
+}
+.tour-group-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:18px;
+  align-items:center;
+  min-height:66px;
+  padding:12px 16px;
+  border-bottom:1px solid var(--color-border-default);
+  background:var(--color-bg-surface);
+}
+.tour-group-row:last-child{
+  border-bottom:0;
+}
+.tour-group-row:hover{
+  background:var(--color-bg-soft);
+}
+.tour-group-row-main{
+  min-width:0;
+  display:grid;
+  gap:3px;
+}
+.tour-group-row-main strong{
+  color:var(--color-text-primary);
+  font-size:14px;
+  font-weight:650;
+}
+.tour-group-row-main span{
+  color:var(--color-text-secondary);
+  font-size:12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.tour-group-row-meta{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  color:var(--color-text-secondary);
+  font-size:12px;
+  white-space:nowrap;
+}
+.tour-group-row-meta>span{
+  padding:4px 8px;
+  border-radius:999px;
+  background:var(--color-neutral-status-soft);
+  color:var(--color-neutral-status-text);
+}
+.tour-group-row-meta b{
+  color:var(--color-text-secondary);
+  font-size:12px;
+  font-weight:600;
+}
+
+@media(max-width:900px){
+  .dashboard-overview-strip{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .dashboard-overview-metric:nth-child(2){
+    border-right:0;
+  }
+  .dashboard-overview-metric:nth-child(-n+2){
+    border-bottom:1px solid var(--color-border-default);
+  }
+  .tour-group-create-form{
+    grid-template-columns:1fr 1fr;
+  }
+}
+@media(max-width:760px){
+  .workspace-main .workspace-flat-head{
+    flex-direction:column;
+    gap:14px;
+    padding-bottom:18px;
+  }
+  .workspace-main .workspace-flat-head h1{
+    font-size:30px!important;
+  }
+  .workspace-main .workspace-flat-head>.btn,
+  .workspace-main .workspace-flat-head>.detail-actions{
+    width:100%;
+  }
+  .workspace-main .workspace-flat-head>.btn{
+    justify-content:center;
+  }
+  .dashboard-overview-strip{
+    grid-template-columns:1fr;
+    padding-top:0;
+  }
+  .dashboard-overview-metric,
+  .dashboard-overview-metric:first-child{
+    padding:10px 0;
+    border-right:0;
+    border-bottom:1px solid var(--color-border-default);
+  }
+  .dashboard-overview-metric:last-child{
+    border-bottom:0;
+  }
+  .tour-group-create-form{
+    grid-template-columns:1fr;
+  }
+  .tour-group-description-field,
+  .tour-group-create-actions{
+    grid-column:auto;
+  }
+  .tour-group-row{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+  .tour-group-row-meta{
+    justify-content:space-between;
+  }
+}
