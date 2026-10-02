@@ -5331,3 +5331,85 @@ button,
     animation-delay:.72s!important;
   }
 }
+
+
+/* =========================================================
+   SYSTEM WORKFLOW MASTER
+   Single visual + motion source for all workflow surfaces.
+   ========================================================= */
+.system-workflow-head{
+  margin-bottom:12px!important;
+}
+.system-workflow-grid{
+  align-items:stretch;
+}
+.system-workflow-grid .simple-workflow-card{
+  min-height:128px;
+  padding:14px 15px!important;
+  gap:10px!important;
+}
+.system-workflow-grid .simple-workflow-card-head{
+  min-height:28px;
+}
+.system-workflow-grid .simple-workflow-index{
+  width:28px;
+  height:28px;
+}
+.system-workflow-grid .simple-workflow-title{
+  margin-top:1px;
+}
+.system-workflow-grid .simple-workflow-title>strong{
+  font-size:15px!important;
+  line-height:1.25!important;
+}
+.system-workflow-grid .simple-workflow-actions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  padding-top:1px!important;
+}
+.system-workflow-grid .simple-workflow-actions .btn{
+  min-height:32px;
+  padding:6px 10px!important;
+}
+.system-workflow-grid .quotation-workflow-waiting{
+  margin-top:auto;
+  font-size:11px;
+  color:#71828d;
+}
+
+/* Every system workflow connector carries a subtle continuous blue charge. */
+.system-workflow-grid .simple-workflow-arrow::after{
+  opacity:1;
+  animation:quotation-energy-flow 2.35s cubic-bezier(.42,0,.32,1) infinite!important;
+}
+.system-workflow-grid > .simple-workflow-arrow:nth-child(4)::after{
+  animation-delay:.72s!important;
+}
+
+/* Keep completed rails green underneath, while the blue energy still flows above. */
+.system-workflow-grid .simple-workflow-card.complete + .simple-workflow-arrow::before{
+  background:#cee1d4;
+}
+
+@media(max-width:1050px){
+  .system-workflow-grid .simple-workflow-arrow::after{
+    animation:quotation-energy-flow-vertical 2.35s cubic-bezier(.42,0,.32,1) infinite!important;
+  }
+  .system-workflow-grid > .simple-workflow-arrow:nth-child(4)::after{
+    animation-delay:.72s!important;
+  }
+}
+
+@media(max-width:760px){
+  .new-inquiry-workflow-grid.system-workflow-grid .simple-workflow-arrow{
+    transform:none!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .system-workflow-grid .simple-workflow-arrow::after{
+    animation:none!important;
+    opacity:.35;
+  }
+}
