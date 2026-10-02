@@ -3,6 +3,7 @@
 import { useEffect,useMemo,useRef,useState } from "react";
 import { useRouter } from "next/navigation";
 import InquiryAiIntake from "@/components/InquiryAiIntake";
+import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 
 type InquiryFlight={id:string;from:string;to:string;flightNo:string;date:string;departureTime:string;arrivalTime:string;remarks:string};
 const flightUid=()=>Math.random().toString(36).slice(2,10);
@@ -10,6 +11,8 @@ const emptyFlight=():InquiryFlight=>({id:flightUid(),from:"",to:"",flightNo:"",d
 
 export default function InquiryEditor({initialInquiry,currentStaffName,backHref="/inquiries"}:{initialInquiry?:any;currentStaffName:string;backHref?:string}){
   const router=useRouter();
+  const {language}=useWorkspaceLanguage();
+  const t=(en:string,zh:string)=>language==="zh"?zh:en;
   const [customerName,setCustomerName]=useState(initialInquiry?.customer_name||"");
   const [contact,setContact]=useState(initialInquiry?.contact||"");
   const [destination,setDestination]=useState(initialInquiry?.destination||"");
@@ -106,10 +109,10 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
   async function copyText(text:string,label:string){
     try{
       await navigator.clipboard.writeText(text);
-      setCopyMessage(label+" copied ✓");
+      setCopyMessage(t(label+" copied ✓",label==="Basic request"?"基础资料模板已复制 ✓":"详细资料模板已复制 ✓"));
       window.setTimeout(()=>setCopyMessage(""),1800);
     }catch{
-      setCopyMessage("Unable to copy. Please copy manually.");
+      setCopyMessage(t("Unable to copy. Please copy manually.","无法复制，请手动复制。"));
       window.setTimeout(()=>setCopyMessage(""),2200);
     }
   }
@@ -208,7 +211,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
       }));
       if(onlyFlights.length) setSuggestedFlights(onlyFlights);
     }
-    setMessage("AI information applied — remember to Save Inquiry.");
+    setMessage(t("AI information applied — remember to Save Inquiry.","AI 资料已套用，请记得保存 Inquiry。"));
   }
 
   async function save(){
@@ -228,73 +231,73 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
       };
       const res=await fetch("/api/internal-inquiries",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:initialInquiry?.id||null,payload})});
       const data=await res.json().catch(()=>({}));
-      if(!res.ok||!data?.ok){setMessage(data?.error||"Unable to save inquiry.");return;}
+      if(!res.ok||!data?.ok){setMessage(data?.error||t("Unable to save inquiry.","无法保存 Inquiry。"));return;}
       baselineRef.current=editorSnapshot;
       setIsDirty(false);
       setShowUnsavedPrompt(false);
       setPendingHref(null);
       if(!initialInquiry?.id&&data.id) router.replace("/inquiries/"+data.id);
-      else {setMessage("All changes saved ✓");router.refresh();}
+      else {setMessage(t("All changes saved ✓","所有修改已保存 ✓"));router.refresh();}
     }finally{setSaving(false);}
   }
 
   return <div className="inquiry-editor">
     <section className="panel">
       <div className="panel-head">
-        <div><h2>Customer Request｜客户需求</h2><p className="panel-subtext">Sales 只需在 Inquiry 输入一次，后续 Itinerary / Quotation 会复用这些资料。</p></div>
+        <div><h2>{t("Customer Request","客户需求")}</h2><p className="panel-subtext">{t("Sales only needs to enter this once; Itinerary and Quotation can reuse the information later.","Sales 只需在 Inquiry 输入一次，后续 Itinerary / Quotation 会复用这些资料。")}</p></div>
         <div className="customer-request-copy-actions">
           <InquiryAiIntake
             inquiryContext={{departureCity,destination,travelStartDate:startDate,travelEndDate:endDate,pax,budget,tourType}}
             onApply={applyAiIntake}
           />
-          <button className="btn" type="button" onClick={()=>void copyText(basicRequestText(),"Basic request")}>Copy Basic Request</button>
-          <button className="btn" type="button" onClick={()=>void copyText(detailedRequestText(),"Detailed request")}>Copy Detailed Request</button>
+          <button className="btn" type="button" onClick={()=>void copyText(basicRequestText(),"Basic request")}>{t("Copy Basic Request","复制基础资料模板")}</button>
+          <button className="btn" type="button" onClick={()=>void copyText(detailedRequestText(),"Detailed request")}>{t("Copy Detailed Request","复制详细资料模板")}</button>
         </div>
       </div>
       {copyMessage&&<div className="copy-feedback">{copyMessage}</div>}
       <div className="itinerary-meta-grid">
-        <label className="field"><span>Customer / Company</span><input value={customerName} onChange={e=>setCustomerName(e.target.value)}/></label>
-        <label className="field"><span>Contact</span><input value={contact} onChange={e=>setContact(e.target.value)} placeholder="Phone / WhatsApp / Email"/></label>
-        <label className="field"><span>Departure City｜出发城市</span><input value={departureCity} onChange={e=>setDepartureCity(e.target.value)} placeholder="Kuala Lumpur"/></label>
-        <label className="field"><span>Destination｜目的地</span><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder="Hokkaido / Chongqing"/></label>
-        <label className="field"><span>Travel Start Date</span><input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}/></label>
-        <label className="field"><span>Travel End Date</span><input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)}/></label>
-        <label className="field"><span>Days</span><input type="number" min="1" value={days} onChange={e=>setDays(Math.max(1,Number(e.target.value)||1))}/></label>
-        <label className="field"><span>Nights</span><input type="number" min="0" value={nights} onChange={e=>setNights(Math.max(0,Number(e.target.value)||0))}/></label>
-        <label className="field"><span>Pax｜人数</span><input type="number" min="1" value={pax} onChange={e=>setPax(e.target.value===""?"":Math.max(1,Number(e.target.value)||1))}/></label>
-        <label className="field"><span>Budget｜预算</span><input value={budget} onChange={e=>setBudget(e.target.value)} placeholder="RM 3,500/pax"/></label>
-        <label className="field"><span>Tour Type｜团型</span><input value={tourType} onChange={e=>setTourType(e.target.value)} placeholder="Private / Company Trip"/></label>
-        <label className="field"><span>Sales Owner</span><input value={initialInquiry?.sales_owner_name||currentStaffName} readOnly className="system-fixed-input"/></label>
-        <label className="field"><span>Operation Assignee</span><input value={initialInquiry?.operation_assignee_name||"Jess"} readOnly className="system-fixed-input"/></label>
+        <label className="field"><span>{t("Customer / Company","客户 / 公司")}</span><input value={customerName} onChange={e=>setCustomerName(e.target.value)}/></label>
+        <label className="field"><span>{t("Contact","联系方式")}</span><input value={contact} onChange={e=>setContact(e.target.value)} placeholder={t("Phone / WhatsApp / Email","电话 / WhatsApp / 电邮")}/></label>
+        <label className="field"><span>{t("Departure City","出发城市")}</span><input value={departureCity} onChange={e=>setDepartureCity(e.target.value)} placeholder={t("Kuala Lumpur","吉隆坡")}/></label>
+        <label className="field"><span>{t("Destination","目的地")}</span><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder={t("Hokkaido / Chongqing","北海道 / 重庆")}/></label>
+        <label className="field"><span>{t("Travel Start Date","出发日期")}</span><input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}/></label>
+        <label className="field"><span>{t("Travel End Date","返程日期")}</span><input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)}/></label>
+        <label className="field"><span>{t("Days","天数")}</span><input type="number" min="1" value={days} onChange={e=>setDays(Math.max(1,Number(e.target.value)||1))}/></label>
+        <label className="field"><span>{t("Nights","晚数")}</span><input type="number" min="0" value={nights} onChange={e=>setNights(Math.max(0,Number(e.target.value)||0))}/></label>
+        <label className="field"><span>{t("Pax","人数")}</span><input type="number" min="1" value={pax} onChange={e=>setPax(e.target.value===""?"":Math.max(1,Number(e.target.value)||1))}/></label>
+        <label className="field"><span>{t("Budget","预算")}</span><input value={budget} onChange={e=>setBudget(e.target.value)} placeholder="RM 3,500/pax"/></label>
+        <label className="field"><span>{t("Tour Type","团型")}</span><input value={tourType} onChange={e=>setTourType(e.target.value)} placeholder={t("Private / Company Trip","私人团 / 公司团")}/></label>
+        <label className="field"><span>{t("Sales Owner","销售负责人")}</span><input value={initialInquiry?.sales_owner_name||currentStaffName} readOnly className="system-fixed-input"/></label>
+        <label className="field"><span>{t("Operation Assignee","运营负责人")}</span><input value={initialInquiry?.operation_assignee_name||"Jess"} readOnly className="system-fixed-input"/></label>
       </div>
     </section>
 
     <section className="panel">
       <div className="panel-head">
         <div>
-          <h2>Traveller Composition｜旅客组成</h2>
-          <p className="panel-subtext">填写成人、老人及小孩人数，方便 Operation 与供应商判断行程强度、车辆、门票及餐食安排。</p>
+          <h2>{t("Traveller Composition","旅客组成")}</h2>
+          <p className="panel-subtext">{t("Enter the number of adults, seniors and children so Operation and suppliers can plan pacing, transport, tickets and meals.","填写成人、老人及小孩人数，方便 Operation 与供应商判断行程强度、车辆、门票及餐食安排。")}</p>
         </div>
       </div>
       <div className="itinerary-meta-grid">
-        <label className="field"><span>Adult｜成人</span><input type="number" min="0" value={adultCount} onChange={e=>setAdultCount(e.target.value===""?"":Math.max(0,Number(e.target.value)||0))}/></label>
-        <label className="field"><span>Senior｜老人</span><input type="number" min="0" value={seniorCount} onChange={e=>setSeniorCount(e.target.value===""?"":Math.max(0,Number(e.target.value)||0))}/></label>
-        <label className="field"><span>Child｜小孩</span><input type="number" min="0" value={childCount} onChange={e=>setChildCount(e.target.value===""?"":Math.max(0,Number(e.target.value)||0))}/></label>
+        <label className="field"><span>{t("Adult","成人")}</span><input type="number" min="0" value={adultCount} onChange={e=>setAdultCount(e.target.value===""?"":Math.max(0,Number(e.target.value)||0))}/></label>
+        <label className="field"><span>{t("Senior","老人")}</span><input type="number" min="0" value={seniorCount} onChange={e=>setSeniorCount(e.target.value===""?"":Math.max(0,Number(e.target.value)||0))}/></label>
+        <label className="field"><span>{t("Child","小孩")}</span><input type="number" min="0" value={childCount} onChange={e=>setChildCount(e.target.value===""?"":Math.max(0,Number(e.target.value)||0))}/></label>
       </div>
       <div className="inquiry-requirement-grid traveller-composition-notes">
-        <label className="field"><span>Senior Notes｜老人备注</span><textarea value={seniorNotes} onChange={e=>setSeniorNotes(e.target.value)} placeholder="例如：65岁、72岁，其中1位走路较慢"/></label>
-        <label className="field"><span>Child Ages｜小孩年龄</span><textarea value={childAges} onChange={e=>setChildAges(e.target.value)} placeholder="例如：6岁、10岁"/></label>
-        <label className="field"><span>Child Notes｜小孩备注</span><textarea value={childNotes} onChange={e=>setChildNotes(e.target.value)} placeholder="婴儿车、儿童餐、儿童座椅等"/></label>
-        <label className="field"><span>Mobility / Care Notes｜行动与照顾需求</span><textarea value={mobilityNotes} onChange={e=>setMobilityNotes(e.target.value)} placeholder="例如：减少长时间步行、需要轮椅协助"/></label>
+        <label className="field"><span>{t("Senior Notes","老人备注")}</span><textarea value={seniorNotes} onChange={e=>setSeniorNotes(e.target.value)} placeholder={t("e.g. Age 65 and 72; one walks more slowly","例如：65岁、72岁，其中1位走路较慢")}/></label>
+        <label className="field"><span>{t("Child Ages","小孩年龄")}</span><textarea value={childAges} onChange={e=>setChildAges(e.target.value)} placeholder={t("e.g. Age 6 and 10","例如：6岁、10岁")}/></label>
+        <label className="field"><span>{t("Child Notes","小孩备注")}</span><textarea value={childNotes} onChange={e=>setChildNotes(e.target.value)} placeholder={t("Stroller, child meal, child seat, etc.","婴儿车、儿童餐、儿童座椅等")}/></label>
+        <label className="field"><span>{t("Mobility / Care Notes","行动与照顾需求")}</span><textarea value={mobilityNotes} onChange={e=>setMobilityNotes(e.target.value)} placeholder={t("e.g. Reduce long walks; wheelchair assistance needed","例如：减少长时间步行、需要轮椅协助")}/></label>
       </div>
       <div className={"traveller-composition-check "+(compositionMismatch?"warning":"ok")}>
         <div className="traveller-composition-total">
-          <span>Composition Total</span>
+          <span>{t("Composition Total","人数合计")}</span>
           <strong>{compositionTotal} <small>pax</small></strong>
         </div>
         <div className="traveller-composition-match">
           <i aria-hidden="true"/>
-          <span>{pax===""?"请先填写总 Pax。":compositionMismatch?`Doesn’t match Pax ${pax} · 请检查`:`Matches Pax ${pax} · 人数一致`}</span>
+          <span>{pax===""?t("Enter total Pax first.","请先填写总人数。"):compositionMismatch?t(`Doesn’t match Pax ${pax} · Check the breakdown`,`与总人数 ${pax} 不一致 · 请检查`):t(`Matches Pax ${pax}`,`与总人数 ${pax} 一致`)}</span>
         </div>
       </div>
     </section>
@@ -302,43 +305,43 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
     <section className="panel ios-form-card inquiry-flights-ios">
       <div className="panel-head">
         <div>
-          <h2>Suggested Flights｜推荐航班</h2>
-          <p className="panel-subtext">Sales 可先填写推荐航班。Operation 后续可以沿用或提出替代航班，不会覆盖原始版本。</p>
+          <h2>{t("Suggested Flights","推荐航班")}</h2>
+          <p className="panel-subtext">{t("Sales can enter suggested flights first. Operation may keep them or propose alternatives without overwriting the original version.","Sales 可先填写推荐航班。Operation 后续可以沿用或提出替代航班，不会覆盖原始版本。")}</p>
         </div>
-        <button className="btn" type="button" onClick={()=>setSuggestedFlights(prev=>[...prev,emptyFlight()])}>+ Add Flight</button>
+        <button className="btn" type="button" onClick={()=>setSuggestedFlights(prev=>[...prev,emptyFlight()])}>{t("+ Add Flight","+ 新增航班")}</button>
       </div>
       <div className="inquiry-flight-list">
-        {suggestedFlights.length===0&&<div className="empty">Optional｜如暂时没有推荐航班，可以留空。</div>}
+        {suggestedFlights.length===0&&<div className="empty">{t("Optional · Leave blank if there are no suggested flights yet.","选填 · 如暂时没有推荐航班，可以留空。")}</div>}
         {suggestedFlights.map((flight,index)=><div className="inquiry-flight-card" key={flight.id}>
-          <div className="inquiry-flight-card-head"><strong>Flight {index+1}</strong><button className="btn danger" type="button" onClick={()=>setSuggestedFlights(prev=>prev.filter(x=>x.id!==flight.id))}>Delete</button></div>
+          <div className="inquiry-flight-card-head"><strong>{t("Flight","航班")} {index+1}</strong><button className="btn danger" type="button" onClick={()=>setSuggestedFlights(prev=>prev.filter(x=>x.id!==flight.id))}>{t("Delete","删除")}</button></div>
           <div className="itinerary-meta-grid">
-            <label className="field"><span>From</span><input maxLength={3} value={flight.from} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,from:e.target.value.toUpperCase()}:x))} placeholder="KUL"/></label>
-            <label className="field"><span>To</span><input maxLength={3} value={flight.to} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,to:e.target.value.toUpperCase()}:x))} placeholder="CTS"/></label>
-            <label className="field"><span>Flight No.</span><input value={flight.flightNo} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,flightNo:e.target.value.toUpperCase()}:x))} placeholder="MH 52"/></label>
-            <label className="field"><span>Date</span><input type="date" value={flight.date} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,date:e.target.value}:x))}/></label>
-            <label className="field"><span>Departure Time</span><input type="time" value={flight.departureTime} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,departureTime:e.target.value}:x))}/></label>
-            <label className="field"><span>Arrival Time</span><input type="time" value={flight.arrivalTime} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,arrivalTime:e.target.value}:x))}/></label>
-            <label className="field inquiry-flight-remarks"><span>Remarks</span><input value={flight.remarks} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,remarks:e.target.value}:x))} placeholder="+1 / transit / baggage..."/></label>
+            <label className="field"><span>{t("From","出发")}</span><input maxLength={3} value={flight.from} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,from:e.target.value.toUpperCase()}:x))} placeholder="KUL"/></label>
+            <label className="field"><span>{t("To","抵达")}</span><input maxLength={3} value={flight.to} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,to:e.target.value.toUpperCase()}:x))} placeholder="CTS"/></label>
+            <label className="field"><span>{t("Flight No.","航班号")}</span><input value={flight.flightNo} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,flightNo:e.target.value.toUpperCase()}:x))} placeholder="MH 52"/></label>
+            <label className="field"><span>{t("Date","日期")}</span><input type="date" value={flight.date} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,date:e.target.value}:x))}/></label>
+            <label className="field"><span>{t("Departure Time","起飞时间")}</span><input type="time" value={flight.departureTime} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,departureTime:e.target.value}:x))}/></label>
+            <label className="field"><span>{t("Arrival Time","抵达时间")}</span><input type="time" value={flight.arrivalTime} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,arrivalTime:e.target.value}:x))}/></label>
+            <label className="field inquiry-flight-remarks"><span>{t("Remarks","备注")}</span><input value={flight.remarks} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,remarks:e.target.value}:x))} placeholder="+1 / transit / baggage..."/></label>
           </div>
         </div>)}
       </div>
     </section>
 
     <section className="panel ios-form-card inquiry-requirements-ios">
-      <div className="panel-head"><h2>Travel Requirements｜旅游需求</h2></div>
+      <div className="panel-head"><h2>{t("Travel Requirements","旅游需求")}</h2></div>
       <div className="inquiry-requirement-grid">
-        <label className="field"><span>Flight Requirement｜航班需求</span><textarea value={flightRequirement} onChange={e=>setFlightRequirement(e.target.value)} placeholder="Preferred airline, flight time, baggage..."/></label>
-        <label className="field"><span>Hotel Requirement｜酒店需求</span><textarea value={hotelRequirement} onChange={e=>setHotelRequirement(e.target.value)} placeholder="Star rating, room type, location..."/></label>
-        <label className="field"><span>Meal Requirement｜餐食需求</span><textarea value={mealRequirement} onChange={e=>setMealRequirement(e.target.value)} placeholder="Vegetarian, halal, no beef..."/></label>
-        <label className="field"><span>Special Request｜特别要求</span><textarea value={specialRequest} onChange={e=>setSpecialRequest(e.target.value)} placeholder="Activities, elderly guests, children, special arrangements..."/></label>
+        <label className="field"><span>{t("Flight Requirement","航班需求")}</span><textarea value={flightRequirement} onChange={e=>setFlightRequirement(e.target.value)} placeholder={t("Preferred airline, flight time, baggage...","偏好航空公司、航班时间、行李要求...")}/></label>
+        <label className="field"><span>{t("Hotel Requirement","酒店需求")}</span><textarea value={hotelRequirement} onChange={e=>setHotelRequirement(e.target.value)} placeholder={t("Star rating, room type, location...","星级、房型、地点要求...")}/></label>
+        <label className="field"><span>{t("Meal Requirement","餐食需求")}</span><textarea value={mealRequirement} onChange={e=>setMealRequirement(e.target.value)} placeholder={t("Vegetarian, halal, no beef...","素食、清真、不吃牛肉等...")}/></label>
+        <label className="field"><span>{t("Special Request","特别要求")}</span><textarea value={specialRequest} onChange={e=>setSpecialRequest(e.target.value)} placeholder={t("Activities, elderly guests, children, special arrangements...","活动、长者、小孩或其他特别安排...")}/></label>
       </div>
     </section>
 
     {!initialInquiry?.id&&<section className="panel inquiry-workflow-panel new-inquiry-workflow-panel">
       <div className="panel-head inquiry-workflow-panel-head system-workflow-head">
         <div>
-          <span className="page-kicker">WORKFLOW</span>
-          <h2>下一步｜Next Step</h2>
+          <span className="page-kicker">{t("WORKFLOW","工作流程")}</span>
+          <h2>{t("Next Step","下一步")}</h2>
           
         </div>
       </div>
@@ -346,27 +349,27 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
         <div className="simple-workflow-card current">
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">01</span>
-            <span className="simple-workflow-state">Current</span>
+            <span className="simple-workflow-state">{t("Current","当前")}</span>
           </div>
           <div className="simple-workflow-title">
-            <strong>Inquiry</strong>
+            <strong>{t("Inquiry","询价")}</strong>
           </div>
         </div>
         <div className="simple-workflow-arrow" aria-hidden="true">→</div>
         <div className="simple-workflow-card upcoming">
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">02</span>
-            <span className="simple-workflow-state">Next</span>
+            <span className="simple-workflow-state">{t("Next","下一步")}</span>
           </div>
           <div className="simple-workflow-title">
-            <strong>Operation</strong>
+            <strong>{t("Operation","运营")}</strong>
           </div>
         </div>
       </div>
       <div className="new-inquiry-workflow-actions">
-        <button className="btn" type="button" onClick={()=>requestNavigate(backHref)}>← Back</button>
+        <button className="btn" type="button" onClick={()=>requestNavigate(backHref)}>{t("← Back","← 返回")}</button>
         <button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>
-          {saving?"Creating...":"Create Inquiry & Send to Operation"}
+          {saving?t("Creating...","建立中..."):t("Create Inquiry & Send to Operation","建立 Inquiry 并交给 Operation")}
         </button>
       </div>
       {message&&<div className="save-message">{message}</div>}
@@ -375,26 +378,26 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
     {initialInquiry?.id&&<>
       <div className={"inquiry-save-state "+(isDirty?"unsaved":"saved")}>
         <div>
-          <strong>{isDirty?"● Unsaved Changes｜有未存档修改":"✓ All changes saved｜所有修改已存档"}</strong>
-          <span>{isDirty?"离开、刷新或关闭页面前请先 Save Inquiry。":"目前页面资料已存档。"}</span>
+          <strong>{isDirty?t("● Unsaved Changes","● 有未存档修改"):t("✓ All changes saved","✓ 所有修改已存档")}</strong>
+          <span>{isDirty?t("Save Inquiry before leaving, refreshing or closing this page.","离开、刷新或关闭页面前请先保存 Inquiry。"):t("The current page is saved.","目前页面资料已存档。")}</span>
         </div>
-        {isDirty&&<button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>{saving?"Saving...":"Save Inquiry"}</button>}
+        {isDirty&&<button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>{saving?t("Saving...","保存中..."):t("Save Inquiry","保存 Inquiry")}</button>}
       </div>
 
       <div className="detail-actions inquiry-save-actions">
-        <button className="btn" type="button" onClick={()=>requestNavigate(backHref)}>← Back</button>
-        <button className="btn primary" type="button" disabled={saving||!isDirty} onClick={()=>void save()}>{saving?"Saving...":isDirty?"Save Inquiry":"Saved ✓"}</button>
+        <button className="btn" type="button" onClick={()=>requestNavigate(backHref)}>{t("← Back","← 返回")}</button>
+        <button className="btn primary" type="button" disabled={saving||!isDirty} onClick={()=>void save()}>{saving?t("Saving...","保存中..."):isDirty?t("Save Inquiry","保存 Inquiry"):t("Saved ✓","已保存 ✓")}</button>
       </div>
       {message&&<div className="save-message">{message}</div>}
     </>}
 
     {showUnsavedPrompt&&<div className="unsaved-overlay" onMouseDown={()=>setShowUnsavedPrompt(false)}>
       <div className="unsaved-modal" onMouseDown={e=>e.stopPropagation()}>
-        <span className="page-kicker">UNSAVED CHANGES</span>
-        <h3>You have unsaved changes.</h3>
-        <p>尚有修改未存档，离开后这些资料会丢失。</p>
+        <span className="page-kicker">{t("UNSAVED CHANGES","未保存修改")}</span>
+        <h3>{t("You have unsaved changes.","你有尚未保存的修改。")}</h3>
+        <p>{t("These changes will be lost if you leave without saving.","尚有修改未存档，离开后这些资料会丢失。")}</p>
         <div className="detail-actions">
-          <button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>{saving?"Saving...":"Stay & Save"}</button>
+          <button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>{saving?t("Saving...","保存中..."):t("Stay & Save","留下并保存")}</button>
           <button className="btn" type="button" onClick={()=>{
             const href=pendingHref||backHref;
             baselineRef.current=editorSnapshot;
@@ -402,7 +405,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
             setShowUnsavedPrompt(false);
             setPendingHref(null);
             router.push(href);
-          }}>Leave Without Saving</button>
+          }}>{t("Leave Without Saving","不保存离开")}</button>
         </div>
       </div>
     </div>}
