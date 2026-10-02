@@ -318,11 +318,13 @@ export default function AiLabWorkspace(){
             ? <div className="ai-thread-list">
                 {threads.map(t=><div key={t.id} className={"ai-thread-item "+(threadId===t.id?"active":"")}>
                   <button type="button" className="ai-thread-open" onClick={()=>void openThread(t.id)}>
-                    <strong>{t.title||"Untitled Thread"}</strong>
-                    <span>{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
-                    <small>{t.last_active_at?new Date(t.last_active_at).toLocaleString(): ""}</small>
+                    <span className="ai-thread-title">{t.title||"Untitled Thread"}</span>
+                    <span className="ai-thread-meta">{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
+                    <span className="ai-thread-time">{t.last_active_at?new Date(t.last_active_at).toLocaleString(): ""}</span>
                   </button>
-                  <button type="button" className="ai-thread-archive" aria-label="Archive thread" title="Archive Thread" onClick={()=>void setThreadArchived(t.id,true)}>×</button>
+                  <button type="button" className="ai-thread-archive" aria-label="Archive thread" title="Archive Thread" onClick={()=>void setThreadArchived(t.id,true)}>
+                    <span aria-hidden="true">⌄</span>
+                  </button>
                 </div>)}
               </div>
             : <p className="ai-lab-context-empty">还没有保存的工作对话。第一次发送消息后会自动建立 Thread。</p>}
@@ -334,12 +336,14 @@ export default function AiLabWorkspace(){
             <b>{showArchived?"⌃":"›"}</b>
           </button>
           {showArchived&&archivedThreads.length>0&&<div className="ai-thread-list archived">
-            {archivedThreads.map(t=><div key={t.id} className="ai-thread-item">
+            {archivedThreads.map(t=><div key={t.id} className="ai-thread-item archived-item">
               <button type="button" className="ai-thread-open" onClick={()=>void openThread(t.id)}>
-                <strong>{t.title||"Untitled Thread"}</strong>
-                <span>{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
+                <span className="ai-thread-title">{t.title||"Untitled Thread"}</span>
+                <span className="ai-thread-meta">{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||"Unlinked"}</span>
               </button>
-              <button type="button" className="ai-thread-archive restore" aria-label="Restore thread" title="Restore Thread" onClick={()=>void setThreadArchived(t.id,false)}>↺</button>
+              <button type="button" className="ai-thread-archive restore" aria-label="Restore thread" title="Restore Thread" onClick={()=>void setThreadArchived(t.id,false)}>
+                <span aria-hidden="true">↺</span>
+              </button>
             </div>)}
           </div>}
         </div>
