@@ -864,7 +864,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         <Field label="OP"><input value={op || currentStaffName} readOnly /></Field>
         <Field label={t("Supplier","供应商")}><input value={supplier} onChange={e=>setSupplier(e.target.value)} /></Field>
         <Field label={t("Pax","人数")}><input type="number" min="1" value={pax} onChange={e=>setPax(Number(e.target.value)||1)} /></Field>
-        <Field label={t("Main Currency","主要币种")}><select value={mainCurrency} onChange={e=>setMainCurrency(e.target.value as Currency)}>{currencies.map(c=><option key={c} value={c}>{currencyLabel(c)}</option>)}</select></Field>
+        <Field label={t("Main Currency","主要币种")}><select value={mainCurrency} onChange={e=>setMainCurrency(e.target.value as Currency)}>{currencies.map(c=><option key={c} value={c}>{c==="其他"?t("Other","其他"):c}</option>)}</select></Field>
         <Field label={t("Main Exchange Rate → RM","主要汇率 → RM")}><input type="number" step="0.0001" value={mainRate} onChange={e=>setMainRate(Number(e.target.value)||0)} /></Field>
         <Field label={t("Profit Method","利润方式")}><select value={profitMode} onChange={e=>setProfitMode(e.target.value as ProfitMode)}>{profitModes.map(x=><option key={x} value={x}>{profitModeLabel(x)}</option>)}</select></Field>
         <Field label={t("Profit Rate","利润率")}><input type="number" step="0.01" value={profitRate} onChange={e=>setProfitRate(Number(e.target.value)||0)} /></Field>
@@ -959,7 +959,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     {workspaceMode&&<section className="panel inquiry-workflow-panel quotation-editor-workflow">
       <div className="panel-head inquiry-workflow-panel-head quotation-workflow-compact-head">
         <div>
-          <h2>Workflow</h2>
+          <h2>{t("Workflow","工作流程")}</h2>
         </div>
       </div>
 
@@ -967,17 +967,17 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         <div className={"simple-workflow-card "+((displayStatus==="under_review"||displayStatus==="ready")?"complete":"current")}>
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">01</span>
-            <span className="simple-workflow-state">{(displayStatus==="under_review"||displayStatus==="ready")?"✓ Done":displayStatus==="revision_required"?"Revise":"Current"}</span>
+            <span className="simple-workflow-state">{(displayStatus==="under_review"||displayStatus==="ready")?t("✓ Done","✓ 已完成"):displayStatus==="revision_required"?t("Revise","修改"):t("Current","当前")}</span>
           </div>
           <div className="simple-workflow-title">
-            <strong>Quotation</strong>
+            <strong>{t("Quotation","报价")}</strong>
           </div>
           {(displayStatus==="draft"||displayStatus==="revision_required")&&<div className="simple-workflow-actions">
             <button className="btn" type="button" disabled={saving||!isDirty} onClick={()=>void saveQuotation()}>
-              {saving?"Saving...":isDirty?"Save":"Saved ✓"}
+              {saving?t("Saving...","保存中..."):isDirty?t("Save","保存"):t("Saved ✓","已保存 ✓")}
             </button>
             {quotationId&&<button className="btn primary" type="button" disabled={saving} onClick={()=>void submitForReview()}>
-              {saving?"Working...":displayStatus==="revision_required"?"Resubmit":"Submit"}
+              {saving?t("Working...","处理中..."):displayStatus==="revision_required"?t("Resubmit","重新提交"):t("Submit","提交")}
             </button>}
           </div>}
         </div>
@@ -987,12 +987,12 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         <div className={"simple-workflow-card "+(displayStatus==="ready"?"complete":displayStatus==="under_review"?"current":"upcoming")}>
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">02</span>
-            <span className="simple-workflow-state">{displayStatus==="ready"?"✓ Done":displayStatus==="under_review"?"Reviewing":"Next"}</span>
+            <span className="simple-workflow-state">{displayStatus==="ready"?t("✓ Done","✓ 已完成"):displayStatus==="under_review"?t("Reviewing","审核中"):t("Next","下一步")}</span>
           </div>
           <div className="simple-workflow-title">
-            <strong>Management Review</strong>
+            <strong>{t("Management Review","管理层审核")}</strong>
           </div>
-          {displayStatus==="under_review"&&<div className="quotation-workflow-waiting">Waiting for approval</div>}
+          {displayStatus==="under_review"&&<div className="quotation-workflow-waiting">{t("Waiting for approval","等待批准")}</div>}
         </div>
 
         <div className="simple-workflow-arrow" aria-hidden="true">→</div>
@@ -1000,16 +1000,16 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         <div className={"simple-workflow-card "+(displayStatus==="ready"?"current":"upcoming")}>
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">03</span>
-            <span className="simple-workflow-state">{displayStatus==="ready"?"Current":"Next"}</span>
+            <span className="simple-workflow-state">{displayStatus==="ready"?t("Current","当前"):t("Next","下一步")}</span>
           </div>
           <div className="simple-workflow-title">
-            <strong>Itinerary</strong>
+            <strong>{t("Itinerary","行程")}</strong>
           </div>
           {displayStatus==="ready"&&resolvedSourceInquiryId&&<div className="simple-workflow-actions">
-            <button className="btn primary" type="button" onClick={()=>router.push("/itineraries/new?sourceInquiry="+resolvedSourceInquiryId)}>Create</button>
+            <button className="btn primary" type="button" onClick={()=>router.push("/itineraries/new?sourceInquiry="+resolvedSourceInquiryId)}>{t("Create","创建")}</button>
             <button className="btn" type="button" onClick={()=>router.push("/ai-import?sourceInquiry="+resolvedSourceInquiryId)}>AI</button>
           </div>}
-          {displayStatus==="ready"&&!resolvedSourceInquiryId&&<div className="quotation-workflow-waiting">No linked Inquiry</div>}
+          {displayStatus==="ready"&&!resolvedSourceInquiryId&&<div className="quotation-workflow-waiting">{t("No linked Inquiry","没有关联的 Inquiry")}</div>}
         </div>
       </div>
     </section>}
@@ -1018,18 +1018,18 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <div className="unsaved-dialog">
         <div className="unsaved-icon">!</div>
         <div>
-          <h3>当前报价尚未存档</h3>
-          <p>你已经修改了这张报价。离开之前要先保存吗？</p>
+          <h3>{t("Unsaved quotation","当前报价尚未存档")}</h3>
+          <p>{t("You have unsaved changes. Save before leaving?","你已经修改了这张报价。离开之前要先保存吗？")}</p>
         </div>
         <div className="unsaved-actions">
-          <button className="btn primary" onClick={saveAndLeave} disabled={saving}>{saving?"Saving...":"Save & Continue"}</button>
-          <button className="btn leave-btn" onClick={leaveWithoutSaving} disabled={saving}>Leave Without Saving</button>
-          <button className="btn" onClick={()=>setPendingHref(null)} disabled={saving}>Cancel</button>
+          <button className="btn primary" onClick={saveAndLeave} disabled={saving}>{saving?t("Saving...","保存中..."):t("Save & Continue","保存并继续")}</button>
+          <button className="btn leave-btn" onClick={leaveWithoutSaving} disabled={saving}>{t("Leave Without Saving","不保存离开")}</button>
+          <button className="btn" onClick={()=>setPendingHref(null)} disabled={saving}>{t("Cancel","取消")}</button>
         </div>
       </div>
     </div>}
 
-    <footer>{workspaceMode ? "报价保存后会同步至公司云端数据库，可在 Quotation Library 重新打开及修改。" : "数据会自动保存在此浏览器 Local Storage。"} 其他非主要币种若未设为「主要币种」，汇率会显示 —，避免静默误算。</footer>
+    <footer>{workspaceMode?t("Saved quotations sync to the company cloud database and can be reopened from Quotation Library.","报价保存后会同步至公司云端数据库，可在 Quotation Library 重新打开及修改。"):t("Data is automatically saved in this browser's Local Storage.","数据会自动保存在此浏览器 Local Storage。")} {t("For non-primary currencies without an exchange rate, the rate displays — to prevent silent miscalculation.","其他非主要币种若未设为主要币种，汇率会显示 —，避免静默误算。")}</footer>
   </main>
 }
 
