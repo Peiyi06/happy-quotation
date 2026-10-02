@@ -345,13 +345,13 @@ export default function AiLabWorkspace(){
           : !showArchived
             ? threads.length>0
               ? <div className="ai-thread-list">
-                  {threads.map(t=><div key={t.id} className={"ai-thread-item "+(threadId===t.id?"active":"")}>
-                    <button type="button" className="ai-thread-open" onClick={()=>void openThread(t.id)}>
-                      <span className="ai-thread-title">{t.title||(language==="zh"?"未命名对话":"Untitled Thread")}</span>
-                      <span className="ai-thread-meta">{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||(language==="zh"?"未关联":"Unlinked")}</span>
-                      <span className="ai-thread-time">{t.last_active_at?new Date(t.last_active_at).toLocaleString(): ""}</span>
+                  {threads.map(thread=><div key={thread.id} className={"ai-thread-item "+(threadId===thread.id?"active":"")}>
+                    <button type="button" className="ai-thread-open" onClick={()=>void openThread(thread.id)}>
+                      <span className="ai-thread-title">{thread.title||(language==="zh"?"未命名对话":"Untitled Thread")}</span>
+                      <span className="ai-thread-meta">{[thread.inquiry_no,thread.destination,thread.inquiry_status].filter(Boolean).join(" · ")||(language==="zh"?"未关联":"Unlinked")}</span>
+                      <span className="ai-thread-time">{thread.last_active_at?new Date(thread.last_active_at).toLocaleString(): ""}</span>
                     </button>
-                    <button type="button" className="ai-thread-archive" aria-label={t("Archive thread","归档对话")} title={t("Archive Thread","归档对话")} onClick={()=>void setThreadArchived(t.id,true)}>
+                    <button type="button" className="ai-thread-archive" aria-label={t("Archive thread","归档对话")} title={t("Archive Thread","归档对话")} onClick={()=>void setThreadArchived(thread.id,true)}>
                       <span aria-hidden="true">⌄</span>
                     </button>
                   </div>)}
@@ -359,13 +359,13 @@ export default function AiLabWorkspace(){
               : <p className="ai-lab-context-empty">{t("No saved work conversations yet. A Thread will be created automatically after the first message.","还没有保存的工作对话。第一次发送消息后会自动建立 Thread。")}</p>
             : archivedThreads.length>0
               ? <div className="ai-thread-list archived">
-                  {archivedThreads.map(t=><div key={t.id} className="ai-thread-item archived-item">
-                    <button type="button" className="ai-thread-open" onClick={()=>void openThread(t.id)}>
-                      <span className="ai-thread-title">{t.title||(language==="zh"?"未命名对话":"Untitled Thread")}</span>
-                      <span className="ai-thread-meta">{[t.inquiry_no,t.destination,t.inquiry_status].filter(Boolean).join(" · ")||(language==="zh"?"未关联":"Unlinked")}</span>
-                      <span className="ai-thread-time">{t.last_active_at?new Date(t.last_active_at).toLocaleString(): ""}</span>
+                  {archivedThreads.map(thread=><div key={thread.id} className="ai-thread-item archived-item">
+                    <button type="button" className="ai-thread-open" onClick={()=>void openThread(thread.id)}>
+                      <span className="ai-thread-title">{thread.title||(language==="zh"?"未命名对话":"Untitled Thread")}</span>
+                      <span className="ai-thread-meta">{[thread.inquiry_no,thread.destination,thread.inquiry_status].filter(Boolean).join(" · ")||(language==="zh"?"未关联":"Unlinked")}</span>
+                      <span className="ai-thread-time">{thread.last_active_at?new Date(thread.last_active_at).toLocaleString(): ""}</span>
                     </button>
-                    <button type="button" className="ai-thread-archive restore" aria-label={t("Restore thread","恢复对话")} title={t("Restore Thread","恢复对话")} onClick={()=>void setThreadArchived(t.id,false)}>
+                    <button type="button" className="ai-thread-archive restore" aria-label={t("Restore thread","恢复对话")} title={t("Restore Thread","恢复对话")} onClick={()=>void setThreadArchived(thread.id,false)}>
                       <span aria-hidden="true">↺</span>
                     </button>
                   </div>)}
