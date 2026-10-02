@@ -84,9 +84,9 @@ export default async function InquiryDetailPage({
         :itineraryReady
           ?"done"
           :"itinerary";
-  const operationState=caseStatus==="new"?"New":operationComplete?"✓ Completed":"In Progress";
-  const quotationState=caseStatus==="under_review"?"Under Review":caseStatus==="revision_required"?"Re-quote":quotationReady?"✓ Completed":"Preparing";
-  const itineraryState=itineraryReady?"✓ Completed":salesCurrentStep==="itinerary"?"Current":"Upcoming";
+  const operationState=caseStatus==="new"?"Current":operationComplete?"✓ Done":"Current";
+  const quotationState=caseStatus==="under_review"?"Reviewing":caseStatus==="revision_required"?"Revise":quotationReady?"✓ Done":"Next";
+  const itineraryState=itineraryReady?"✓ Done":salesCurrentStep==="itinerary"?"Current":"Next";
   const rawReturnTo=String(sp.returnTo||"");
   const returnTo=rawReturnTo.startsWith("/")&&!rawReturnTo.startsWith("//")?rawReturnTo:"/inquiries";
   const returnLabel=returnTo.startsWith("/operation")
@@ -219,15 +219,15 @@ export default async function InquiryDetailPage({
     </section>
 
     <section className="panel inquiry-workflow-panel">
-      <div className="panel-head inquiry-workflow-panel-head">
+      <div className="panel-head inquiry-workflow-panel-head system-workflow-head">
         <div>
           <span className="page-kicker">WORKFLOW</span>
           <h2>工作流程</h2>
-          <p className="panel-subtext">Operation → Quotation → Itinerary。只显示 Sales 需要掌握的案件进度。</p>
+          
         </div>
       </div>
 
-      <div className="simple-workflow-grid">
+      <div className="simple-workflow-grid system-workflow-grid">
         <div className={"simple-workflow-card "+(operationComplete?"complete":salesCurrentStep==="operation"?"current":"upcoming")}>
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">01</span>
