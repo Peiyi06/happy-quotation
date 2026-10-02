@@ -20,7 +20,7 @@ export default async function DashboardPage() {
   const avgMargin = all.length ? all.reduce((s:number,q:any)=>s+Number(q.margin||0),0)/all.length : 0;
 
   return <div>
-    <div className="page-head page-compact-header">
+    <div className="page-head page-compact-header dashboard-page-head">
       <div>
         <h1><UiText en="Good day" zh="你好" />, {user?.name || "Team"}</h1>
         <p>{user?.role==="manager"?<UiText en="Review team quotation performance and latest progress." zh="查看团队报价表现与最新进度。" />:<UiText en="Manage your quotations, tour groups and customer follow-up." zh="管理你的报价、团型与客户跟进。" />}</p>
