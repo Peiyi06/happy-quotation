@@ -14756,3 +14756,382 @@ td,
     grid-template-columns:1fr!important;
   }
 }
+
+
+/* =========================================================
+   NEW INQUIRY — FOUNDATION FORM WORKSPACE
+   Scoped to New Inquiry only; Edit Inquiry remains untouched.
+   ========================================================= */
+
+.new-inquiry-template{
+  display:grid;
+  gap:18px;
+}
+
+.new-inquiry-template .new-inquiry-head{
+  align-items:flex-start!important;
+  margin:0!important;
+  padding:4px 0 20px!important;
+  border:0!important;
+  border-bottom:1px solid var(--color-border-default)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:var(--color-text-primary,var(--navy2))!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+
+.new-inquiry-template .new-inquiry-title-block{
+  display:grid;
+  gap:6px;
+}
+
+.new-inquiry-template .new-inquiry-title-block h1{
+  margin:0!important;
+  color:var(--color-brand-primary,var(--navy))!important;
+  font-size:34px!important;
+  line-height:1.08!important;
+  font-weight:700!important;
+  letter-spacing:-.025em!important;
+}
+
+.new-inquiry-template .new-inquiry-title-block p{
+  margin:0!important;
+  max-width:760px!important;
+  color:var(--color-text-secondary,var(--muted))!important;
+  font-size:13px!important;
+  line-height:1.5!important;
+}
+
+/* Editor rhythm */
+.new-inquiry-template .inquiry-editor{
+  display:grid!important;
+  gap:0!important;
+}
+
+.new-inquiry-template .inquiry-editor>.panel{
+  margin:0!important;
+  padding:22px 0!important;
+  border:0!important;
+  border-bottom:1px solid var(--color-border-default,var(--line))!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+.new-inquiry-template .inquiry-editor>.panel:first-child{
+  padding-top:6px!important;
+}
+
+.new-inquiry-template .inquiry-editor>.panel:last-of-type{
+  border-bottom:0!important;
+}
+
+.new-inquiry-template .inquiry-editor>.panel>.panel-head{
+  align-items:flex-start!important;
+  gap:18px!important;
+  margin:0 0 16px!important;
+  padding:0!important;
+  border:0!important;
+}
+
+.new-inquiry-template .inquiry-editor>.panel>.panel-head h2{
+  margin:0 0 4px!important;
+  color:var(--color-text-primary,var(--navy2))!important;
+  font-size:16px!important;
+  line-height:1.2!important;
+  font-weight:680!important;
+  letter-spacing:-.01em!important;
+}
+
+.new-inquiry-template .inquiry-editor>.panel>.panel-head .panel-subtext{
+  margin:0!important;
+  max-width:720px!important;
+  color:var(--color-text-secondary,var(--muted))!important;
+  font-size:10.5px!important;
+  line-height:1.5!important;
+}
+
+/* Top utilities: secondary, compact, grouped */
+.new-inquiry-template .customer-request-copy-actions{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:8px!important;
+  flex-wrap:wrap!important;
+}
+
+.new-inquiry-template .customer-request-copy-actions .btn,
+.new-inquiry-template .inquiry-flights-ios>.panel-head>.btn{
+  min-height:34px!important;
+  height:34px!important;
+  padding:0 10px!important;
+  border:1px solid var(--color-border-default,var(--line))!important;
+  border-radius:9px!important;
+  background:#fff!important;
+  color:var(--color-text-secondary,var(--navy2))!important;
+  box-shadow:none!important;
+  font-size:10px!important;
+  font-weight:650!important;
+}
+
+.new-inquiry-template .customer-request-copy-actions .btn:hover,
+.new-inquiry-template .inquiry-flights-ios>.panel-head>.btn:hover{
+  background:var(--color-bg-soft,#f6f8fa)!important;
+  color:var(--color-text-primary,var(--navy2))!important;
+}
+
+/* Form grid: quiet system fields, no oversized inputs */
+.new-inquiry-template .itinerary-meta-grid{
+  gap:12px 14px!important;
+}
+
+.new-inquiry-template .field{
+  gap:6px!important;
+}
+
+.new-inquiry-template .field>span{
+  color:var(--color-text-secondary,var(--muted))!important;
+  font-size:9.5px!important;
+  line-height:1.2!important;
+  font-weight:650!important;
+}
+
+.new-inquiry-template .field input,
+.new-inquiry-template .field select,
+.new-inquiry-template .field textarea{
+  border:1px solid var(--color-border-default,#d6e0e6)!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  color:var(--color-text-primary,var(--navy2))!important;
+  box-shadow:none!important;
+  font-size:11.5px!important;
+  transition:border-color .14s ease,box-shadow .14s ease,background .14s ease!important;
+}
+
+.new-inquiry-template .field input{
+  min-height:40px!important;
+  height:40px!important;
+  padding:0 11px!important;
+}
+
+.new-inquiry-template .field textarea{
+  min-height:92px!important;
+  padding:10px 11px!important;
+  line-height:1.45!important;
+  resize:vertical!important;
+}
+
+.new-inquiry-template .field input:hover,
+.new-inquiry-template .field textarea:hover{
+  border-color:#bccbd5!important;
+}
+
+.new-inquiry-template .field input:focus,
+.new-inquiry-template .field textarea:focus,
+.new-inquiry-template .field select:focus{
+  outline:none!important;
+  border-color:#8fafc3!important;
+  box-shadow:0 0 0 3px rgba(62,108,142,.09)!important;
+}
+
+.new-inquiry-template .system-fixed-input{
+  background:#f6f8fa!important;
+  color:var(--color-text-secondary,#647581)!important;
+}
+
+/* Traveller composition: grouped details instead of nested cards */
+.new-inquiry-template .traveller-composition-notes{
+  gap:12px!important;
+  margin-top:14px!important;
+}
+
+.new-inquiry-template .traveller-composition-check{
+  margin-top:14px!important;
+  padding:10px 12px!important;
+  border:1px solid var(--color-border-default,var(--line))!important;
+  border-radius:10px!important;
+  background:var(--color-bg-soft,#f7f9fa)!important;
+  box-shadow:none!important;
+}
+
+.new-inquiry-template .traveller-composition-check.ok{
+  background:#f5f9f6!important;
+  border-color:#d9e7dd!important;
+}
+
+.new-inquiry-template .traveller-composition-check.warning{
+  background:#fff9ef!important;
+  border-color:#eadbbd!important;
+}
+
+/* Flights: list rows, not floating cards */
+.new-inquiry-template .inquiry-flight-list{
+  gap:0!important;
+}
+
+.new-inquiry-template .inquiry-flight-card{
+  margin:0!important;
+  padding:14px 0!important;
+  border:0!important;
+  border-top:1px solid var(--color-border-default,var(--line))!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+.new-inquiry-template .inquiry-flight-card:first-child{
+  border-top:0!important;
+  padding-top:0!important;
+}
+
+.new-inquiry-template .inquiry-flight-card-head{
+  margin-bottom:12px!important;
+}
+
+.new-inquiry-template .inquiry-flight-card-head strong{
+  font-size:11px!important;
+  font-weight:680!important;
+}
+
+.new-inquiry-template .inquiry-flight-card-head .btn.danger{
+  min-height:30px!important;
+  height:30px!important;
+  padding:0 8px!important;
+  border-radius:8px!important;
+  background:transparent!important;
+  border-color:transparent!important;
+  color:var(--color-danger-text,#a34848)!important;
+  box-shadow:none!important;
+}
+
+.new-inquiry-template .inquiry-flight-card-head .btn.danger:hover{
+  background:#fff3f2!important;
+}
+
+/* Requirements: same quiet grouped-field treatment */
+.new-inquiry-template .inquiry-requirement-grid{
+  gap:12px!important;
+}
+
+/* Empty state */
+.new-inquiry-template .inquiry-flight-list>.empty{
+  padding:18px 0!important;
+  border:0!important;
+  background:transparent!important;
+  color:var(--color-text-tertiary,var(--muted))!important;
+  text-align:left!important;
+  font-size:10.5px!important;
+}
+
+/* Workflow: final submission strip, lighter than content */
+.new-inquiry-template .new-inquiry-workflow-panel{
+  margin-top:8px!important;
+  padding:20px 0 0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-panel .inquiry-workflow-panel-head{
+  margin-bottom:12px!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-panel .page-kicker{
+  display:none!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-panel .inquiry-workflow-panel-head h2{
+  margin:0!important;
+  font-size:15px!important;
+  font-weight:680!important;
+  color:var(--color-text-primary,var(--navy2))!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-grid{
+  grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr)!important;
+  gap:8px!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-card{
+  min-height:92px!important;
+  padding:13px!important;
+  border-radius:12px!important;
+  box-shadow:none!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-card.current{
+  border-color:#b8cedc!important;
+  background:#f8fbfd!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-card.upcoming{
+  background:#f7f8f9!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-actions{
+  margin-top:14px!important;
+  padding-top:14px!important;
+  border-top:1px solid var(--color-border-default,var(--line))!important;
+  align-items:center!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-actions .btn{
+  min-height:38px!important;
+  height:38px!important;
+  border-radius:10px!important;
+  box-shadow:none!important;
+  font-size:10.5px!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-actions .btn.primary{
+  min-width:230px!important;
+  padding:0 14px!important;
+}
+
+/* Feedback */
+.new-inquiry-template .copy-feedback,
+.new-inquiry-template .save-message{
+  border-radius:9px!important;
+  box-shadow:none!important;
+  font-size:10.5px!important;
+}
+
+@media(max-width:900px){
+  .new-inquiry-template .inquiry-editor>.panel>.panel-head{
+    flex-direction:column!important;
+  }
+
+  .new-inquiry-template .customer-request-copy-actions{
+    justify-content:flex-start!important;
+  }
+}
+
+@media(max-width:760px){
+  .new-inquiry-template .new-inquiry-title-block h1{
+    font-size:30px!important;
+  }
+
+  .new-inquiry-template .new-inquiry-head{
+    padding-bottom:16px!important;
+  }
+
+  .new-inquiry-template .inquiry-editor>.panel{
+    padding:18px 0!important;
+  }
+
+  .new-inquiry-template .new-inquiry-workflow-grid{
+    grid-template-columns:1fr!important;
+  }
+
+  .new-inquiry-template .new-inquiry-workflow-actions{
+    flex-direction:column-reverse!important;
+  }
+
+  .new-inquiry-template .new-inquiry-workflow-actions .btn,
+  .new-inquiry-template .new-inquiry-workflow-actions .btn.primary{
+    width:100%!important;
+    min-width:0!important;
+  }
+}
