@@ -1,0 +1,24 @@
+:global(.operation-workspace-template) .queueGrid.queueGrid {
+  grid-template-columns: 1fr !important;
+  gap: 12px;
+}
+
+:global(.operation-workspace-template) .queueSection.queueSection {
+  width: 100%;
+}
+
+:global(.operation-workspace-template) .queueSection :global(.operation-queue-title) {
+  padding-top: 12px;
+  padding-bottom: 9px;
+}
+
+:global(.operation-workspace-template) .queueSection :global(.panel-subtext) {
+  max-width: 760px;
+}
+
+@media (min-width: 1180px) {
+  :global(.operation-workspace-template) .queueGrid.queueGrid > .queueSection:nth-child(5),
+  :global(.operation-workspace-template) .queueGrid.queueGrid > .queueSection:nth-child(6) {
+    grid-column: 1 !important;
+  }
+}
