@@ -299,7 +299,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
       </div>
     </section>
 
-    <section className="panel">
+    <section className="panel ios-form-card inquiry-flights-ios">
       <div className="panel-head">
         <div>
           <h2>Suggested Flights｜推荐航班</h2>
@@ -324,7 +324,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
       </div>
     </section>
 
-    <section className="panel">
+    <section className="panel ios-form-card inquiry-requirements-ios">
       <div className="panel-head"><h2>Travel Requirements｜旅游需求</h2></div>
       <div className="inquiry-requirement-grid">
         <label className="field"><span>Flight Requirement｜航班需求</span><textarea value={flightRequirement} onChange={e=>setFlightRequirement(e.target.value)} placeholder="Preferred airline, flight time, baggage..."/></label>
