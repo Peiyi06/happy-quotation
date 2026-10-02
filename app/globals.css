@@ -15447,3 +15447,245 @@ td,
     justify-content:flex-start!important;
   }
 }
+
+
+/* =========================================================
+   FOUNDATION TYPOGRAPHY MASTER — FINAL LOCK
+   Page 34 / Section 20 / Body 14 / Meta 12 / Micro 11
+   This block intentionally sits last and supersedes earlier
+   page-specific typography experiments.
+   ========================================================= */
+:root{
+  --foundation-type-page:34px;
+  --foundation-type-section:20px;
+  --foundation-type-body:14px;
+  --foundation-type-meta:12px;
+  --foundation-type-micro:11px;
+}
+
+/* Page titles */
+.workspace-main .page-head h1,
+.workspace-main .workspace-flat-head h1,
+.workspace-main .inquiry-library-title-block h1,
+.workspace-main .itinerary-library-title-block h1,
+.workspace-main .operation-workspace-title-block h1,
+.workspace-main .new-inquiry-title-block h1,
+.workspace-main .ai-itinerary-page-head h1,
+.workspace-main .ai-lab-workbench-head h1{
+  font-size:var(--foundation-type-page)!important;
+  line-height:1.08!important;
+  font-weight:700!important;
+  letter-spacing:-.025em!important;
+}
+
+/* Page descriptions / primary supporting copy */
+.workspace-main .page-head p,
+.workspace-main .workspace-flat-head p,
+.workspace-main .inquiry-library-title-block p,
+.workspace-main .itinerary-library-title-block p,
+.workspace-main .operation-workspace-title-block p,
+.workspace-main .new-inquiry-title-block p,
+.workspace-main .ai-itinerary-page-head p,
+.workspace-main .ai-lab-workbench-head p{
+  font-size:var(--foundation-type-body)!important;
+  line-height:1.45!important;
+}
+
+/* Section hierarchy */
+.workspace-main .panel-head h2,
+.workspace-main .section h2,
+.workspace-main .inquiry-workflow-panel h2,
+.workspace-main .ai-foundation-section>.panel-head h2,
+.workspace-main .new-inquiry-workflow-panel .inquiry-workflow-panel-head h2{
+  font-size:var(--foundation-type-section)!important;
+  line-height:1.2!important;
+  font-weight:700!important;
+  letter-spacing:-.01em!important;
+}
+
+/* Core body / controls */
+.workspace-main .btn,
+.workspace-main input,
+.workspace-main select,
+.workspace-main textarea,
+.workspace-main td,
+.workspace-main .data-table td,
+.workspace-main .simple-workflow-title>strong,
+.workspace-main .simple-workflow-title h3,
+.workspace-main .panel,
+.workspace-main .section{
+  font-size:var(--foundation-type-body)!important;
+}
+
+/* Labels / metadata / status */
+.workspace-main .field>span,
+.workspace-main .field span,
+.workspace-main th,
+.workspace-main .data-table th,
+.workspace-main .status,
+.workspace-main .simple-workflow-state,
+.workspace-main .detail-item span,
+.workspace-main .page-kicker,
+.workspace-main .eyebrow{
+  font-size:var(--foundation-type-meta)!important;
+  line-height:1.25!important;
+}
+
+/* Micro text is reserved for genuinely tertiary information only. */
+.workspace-main small,
+.workspace-main footer,
+.workspace-main .foundation-micro{
+  font-size:var(--foundation-type-micro)!important;
+  line-height:1.35!important;
+}
+
+/* ---------------------------------------------------------
+   NEW INQUIRY — remove undersized local overrides
+   --------------------------------------------------------- */
+.new-inquiry-template .inquiry-editor>.panel>.panel-head h2{
+  font-size:var(--foundation-type-section)!important;
+}
+
+.new-inquiry-template .inquiry-editor>.panel>.panel-head .panel-subtext{
+  font-size:var(--foundation-type-body)!important;
+}
+
+.new-inquiry-template .field>span{
+  font-size:var(--foundation-type-meta)!important;
+}
+
+.new-inquiry-template .field input,
+.new-inquiry-template .field select,
+.new-inquiry-template .field textarea{
+  font-size:var(--foundation-type-body)!important;
+}
+
+.new-inquiry-template .customer-request-copy-actions .btn,
+.new-inquiry-template .inquiry-flights-ios>.panel-head>.btn,
+.new-inquiry-template .new-inquiry-back-action,
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-actions .btn.primary{
+  font-size:var(--foundation-type-body)!important;
+}
+
+.new-inquiry-template .inquiry-flight-card-head strong,
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-title strong{
+  font-size:var(--foundation-type-body)!important;
+}
+
+.new-inquiry-template .inquiry-flight-list>.empty,
+.new-inquiry-template .traveller-composition-match,
+.new-inquiry-template .traveller-composition-total span,
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-index,
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-state,
+.new-inquiry-template .copy-feedback,
+.new-inquiry-template .save-message{
+  font-size:var(--foundation-type-meta)!important;
+}
+
+/* ---------------------------------------------------------
+   AI ITINERARY — align with standard workspace hierarchy
+   --------------------------------------------------------- */
+.ai-itinerary-page-head h1{
+  font-size:var(--foundation-type-page)!important;
+}
+
+.ai-itinerary-page-head p,
+.ai-import-workspace .ai-foundation-section>.panel-head .panel-subtext{
+  font-size:var(--foundation-type-body)!important;
+}
+
+.ai-import-workspace .ai-foundation-section>.panel-head h2{
+  font-size:var(--foundation-type-section)!important;
+}
+
+.ai-import-workspace .field>span,
+.ai-import-workspace .field span,
+.ai-itinerary-context-strip>div>span{
+  font-size:var(--foundation-type-meta)!important;
+}
+
+.ai-import-workspace input,
+.ai-import-workspace select,
+.ai-import-workspace textarea,
+.ai-import-workspace .btn,
+.ai-itinerary-context-strip>div>strong{
+  font-size:var(--foundation-type-body)!important;
+}
+
+.ai-itinerary-context-strip>div>small{
+  font-size:var(--foundation-type-micro)!important;
+}
+
+/* ---------------------------------------------------------
+   AI WORKSPACE — restore readable Foundation scale
+   --------------------------------------------------------- */
+.ai-lab-workbench-head h1{
+  font-size:var(--foundation-type-page)!important;
+}
+
+.ai-lab-workbench-head p{
+  font-size:var(--foundation-type-body)!important;
+  line-height:1.45!important;
+}
+
+.ai-lab-mode{
+  font-size:var(--foundation-type-meta)!important;
+}
+
+.ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-compose textarea,
+.ai-lab-compose textarea{
+  font-size:var(--foundation-type-body)!important;
+}
+
+.ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-starters button,
+.ai-lab-starters button{
+  font-size:var(--foundation-type-body)!important;
+}
+
+.ai-lab-more-starters,
+.ai-lab-more-suggestions{
+  font-size:var(--foundation-type-meta)!important;
+}
+
+.ai-lab-context-head>span{
+  font-size:var(--foundation-type-meta)!important;
+}
+
+.ai-lab-context-head>strong{
+  font-size:var(--foundation-type-body)!important;
+}
+
+.ai-lab-context-section>.ai-lab-context-empty,
+.ai-lab-safety-toggle>span{
+  font-size:var(--foundation-type-meta)!important;
+}
+
+.ai-lab-safety-toggle>b{
+  font-size:var(--foundation-type-meta)!important;
+}
+
+.ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-compose-note,
+.ai-lab-compose-note{
+  font-size:var(--foundation-type-micro)!important;
+}
+
+/* Shared tables and list pages finish on one scale. */
+.inquiry-library-template .inquiry-table th,
+.itinerary-library-template .itinerary-table th,
+.trash-table th{
+  font-size:var(--foundation-type-meta)!important;
+}
+
+.inquiry-library-template .inquiry-table td,
+.itinerary-library-template .itinerary-table td,
+.trash-table td{
+  font-size:var(--foundation-type-body)!important;
+}
+
+/* Mobile keeps hierarchy but reduces only the page title. */
+@media(max-width:760px){
+  :root{
+    --foundation-type-page:30px;
+    --foundation-type-section:19px;
+  }
+}
