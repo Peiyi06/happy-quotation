@@ -420,15 +420,15 @@ export default function TravelMediaLibrary(){
     <section className="panel travel-library-document-media">
       <div className="panel-head">
         <div>
-          <span className="page-kicker">DOCUMENT MEDIA EXTRACTION</span>
-          <h2>Document Media Review｜文件图片匹配审核</h2>
-          <p className="panel-subtext">PDF / DOCX 内嵌照片会先拆出并由 AI 结合页内文字与视觉判断。你确认后才会进入正式 Travel Media Library。</p>
+          <span className="page-kicker">{t("DOCUMENT MEDIA EXTRACTION","文件媒体提取")}</span>
+          <h2>{t("Document Media Review","文件图片匹配审核")}</h2>
+          <p className="panel-subtext">{t("Embedded PDF / DOCX images are extracted and reviewed by AI using page text and visual context. They enter the formal Travel Media Library only after your confirmation.","PDF / DOCX 内嵌照片会先拆出并由 AI 结合页内文字与视觉判断。你确认后才会进入正式 Travel Media Library。")}</p>
         </div>
         <div className="travel-library-document-media-status">
-          {mediaProcessing&&<span className="status status-under_review">Processing...</span>}
-          <span className="status status-ready">{mediaReview.length} To Review</span>
+          {mediaProcessing&&<span className="status status-under_review">{t("Processing...","处理中...")}</span>}
+          <span className="status status-ready">{mediaReview.length} {t("To Review","待审核")}</span>
           <button className="btn compact primary" type="button" disabled={mediaProcessing} onClick={()=>void processMediaBacklog()}>
-            {mediaProcessing?"Running...":"Run Media Extraction"}
+            {mediaProcessing?t("Running...","运行中..."):t("Run Media Extraction","运行媒体提取")}
           </button>
         </div>
       </div>
@@ -438,14 +438,14 @@ export default function TravelMediaLibrary(){
       {mediaReview.filter((item:any)=>String(item?.status||"pending_review")==="pending_review"&&!reviewedMediaIdsRef.current.has(String(item?.id||""))).length>0?<div className="travel-library-document-media-grid">
         {mediaReview.filter((item:any)=>String(item?.status||"pending_review")==="pending_review"&&!reviewedMediaIdsRef.current.has(String(item?.id||""))).map((item:any)=><article className="travel-library-document-media-card" key={item.id}>
           <div className="travel-library-document-media-image">
-            <img src={item.imageUrl} alt={item.suggestedName||item.originalName||"Extracted media"}/>
-            <span>{item.sourcePage?"Page "+item.sourcePage:"DOCX"}</span>
+            <img src={item.imageUrl} alt={item.suggestedName||item.originalName||t("Extracted media","已提取媒体")}/>
+            <span>{item.sourcePage?t("Page ","第 ")+item.sourcePage+(language==="zh"?" 页":""):"DOCX"}</span>
           </div>
           <div className="travel-library-document-media-body">
             <div className="travel-library-document-media-title">
               <div>
-                <small>{item.documentTitle||item.fileName||"Library Source"}</small>
-                <strong>{item.suggestedName||"Needs manual review"}</strong>
+                <small>{item.documentTitle||item.fileName||t("Library Source","资料来源")}</small>
+                <strong>{item.suggestedName||t("Needs manual review","需要人工审核")}</strong>
               </div>
               <span className={"status "+(item.suggestedPlaceId?"status-ready":"status-under_review")}>
                 {Math.round(Number(item.confidence||0)*100)}%
@@ -453,15 +453,15 @@ export default function TravelMediaLibrary(){
             </div>
             <div className="travel-library-document-media-meta">
               <div><span>{t("Type","类型")}</span><strong>{item.suggestedType||"unknown"}</strong></div>
-              <div><span>Match</span><strong>{item.suggestedPlaceId?"Library Record Found":"No confident record"}</strong></div>
-              <div><span>Method</span><strong>{String(item.matchMethod||"").replaceAll("_"," ")||"—"}</strong></div>
-              <div><span>Source</span><strong>{item.sourcePage?"Page "+item.sourcePage:"Document"}</strong></div>
+              <div><span>{t("Match","匹配")}</span><strong>{item.suggestedPlaceId?t("Library Record Found","已找到资料库记录"):t("No confident record","没有可信记录")}</strong></div>
+              <div><span>{t("Method","方式")}</span><strong>{String(item.matchMethod||"").replaceAll("_"," ")||"—"}</strong></div>
+              <div><span>{t("Source","来源")}</span><strong>{item.sourcePage?t("Page ","第 ")+item.sourcePage+(language==="zh"?" 页":""):t("Document","文件")}</strong></div>
             </div>
             {item.suggestedPlaceId&&<div className="travel-library-keywords">
               <div className="travel-library-keywords-head">
                 <div>
-                  <strong>Match Keywords｜匹配关键词</strong>
-                  <span>可新增或删除。至少保留 1 个已保存关键词，才能确认素材进入 Library。</span>
+                  <strong>{t("Match Keywords","匹配关键词")}</strong>
+                  <span>{t("Keywords can be added or removed. Keep at least one saved keyword before confirming media into the Library.","可新增或删除。至少保留 1 个已保存关键词，才能确认素材进入 Library。")}</span>
                 </div>
               </div>
               <div className="travel-library-keyword-chips">
@@ -469,36 +469,36 @@ export default function TravelMediaLibrary(){
                   type="button"
                   className="travel-library-keyword-chip"
                   key={keyword}
-                  title="Remove keyword"
+                  title={t("Remove keyword","删除关键词")}
                   disabled={keywordBusyId===String(item.suggestedPlaceId)}
                   onClick={()=>void updateMatchKeywords(
                     String(item.suggestedPlaceId),
                     (Array.isArray(item.matchKeywords)?item.matchKeywords:[]).filter((x:string)=>x!==keyword)
                   )}
                 >{keyword}<span>×</span></button>)}
-                {(!Array.isArray(item.matchKeywords)||item.matchKeywords.length===0)&&<em>No custom keywords yet</em>}
+                {(!Array.isArray(item.matchKeywords)||item.matchKeywords.length===0)&&<em>{t("No custom keywords yet","尚无自定义关键词")}</em>}
               </div>
               <div className="travel-library-keyword-input">
                 <input
                   value={keywordDrafts[String(item.suggestedPlaceId)]||""}
                   onChange={e=>setKeywordDrafts(current=>({...current,[String(item.suggestedPlaceId)]:e.target.value}))}
                   onKeyDown={e=>{if(e.key==="Enter"){e.preventDefault();addMatchKeyword(String(item.suggestedPlaceId),item.matchKeywords||[]);}}}
-                  placeholder="例如：京都三得利，三得利酒厂..."
+                  placeholder={t("e.g. Kyoto Suntory, Suntory brewery...","例如：京都三得利，三得利酒厂...")}
                 />
                 <button className="btn compact" type="button"
                   disabled={keywordBusyId===String(item.suggestedPlaceId)||!String(keywordDrafts[String(item.suggestedPlaceId)]||"").trim()}
                   onClick={()=>addMatchKeyword(String(item.suggestedPlaceId),item.matchKeywords||[])}>
-                  {keywordBusyId===String(item.suggestedPlaceId)?"Saving...":"＋ Add Keyword"}
+                  {keywordBusyId===String(item.suggestedPlaceId)?t("Saving...","保存中..."):t("＋ Add Keyword","＋ 新增关键词")}
                 </button>
               </div>
             </div>}
             <p>{item.reason||"—"}</p>
             {item.nearbyText&&<details>
-              <summary>Show page context</summary>
+              <summary>{t("Show page context","显示页面上下文")}</summary>
               <div>{item.nearbyText}</div>
             </details>}
             <div className="travel-library-document-media-actions">
-              <a className="btn compact" href={item.imageUrl} target="_blank" rel="noreferrer">Open</a>
+              <a className="btn compact" href={item.imageUrl} target="_blank" rel="noreferrer">{t("Open","打开")}</a>
               <button
                 className="btn compact primary"
                 type="button"
@@ -510,7 +510,7 @@ export default function TravelMediaLibrary(){
                 }
                 onClick={()=>void reviewMediaCandidate(item.id,"confirm")}
               >
-                {mediaReviewBusyId===item.id?"Saving...":"✓ Confirm to Library"}
+                {mediaReviewBusyId===item.id?t("Saving...","保存中..."):t("✓ Confirm to Library","✓ 确认到资料库")}
               </button>
               <button
                 className="btn compact danger"
@@ -518,28 +518,28 @@ export default function TravelMediaLibrary(){
                 disabled={mediaReviewBusyId===item.id}
                 onClick={()=>void reviewMediaCandidate(item.id,"ignore")}
               >
-                Ignore / Delete
+                {t("Ignore / Delete","忽略 / 删除")}
               </button>
             </div>
             {!item.suggestedPlaceId&&<div className="travel-library-verification-note">
-              AI 没有找到足够可信的景点 / 酒店记录，所以不能直接确认。先 Ignore，或之后加入手动改配功能。
+              {t("AI did not find a sufficiently reliable attraction / hotel record, so this cannot be confirmed directly. Ignore it for now or use manual remapping later.","AI 没有找到足够可信的景点 / 酒店记录，所以不能直接确认。先 Ignore，或之后加入手动改配功能。")}
             </div>}
             {item.suggestedPlaceId&&(!Array.isArray(item.matchKeywords)||item.matchKeywords.length<1)&&<div className="travel-library-verification-note">
-              请至少新增并保存 1 个 Match Keyword，才能 Confirm to Library。错误的关键词可以直接点击 × 删除。
+              {t("Add and save at least one Match Keyword before confirming to Library. Incorrect keywords can be removed with ×.","请至少新增并保存 1 个 Match Keyword，才能 Confirm to Library。错误的关键词可以直接点击 × 删除。")}
             </div>}
           </div>
         </article>)}
       </div>:<div className="travel-library-inspector-empty">
-        {mediaProcessing?"正在分析现有 Library Sources...":"目前没有待审核的 PDF / DOCX 内嵌照片。点击 Run Media Extraction 手动开始。"}
+        {mediaProcessing?t("Analyzing existing Library Sources...","正在分析现有 Library Sources..."):t("There are no PDF / DOCX embedded photos awaiting review. Click Run Media Extraction to start manually.","目前没有待审核的 PDF / DOCX 内嵌照片。点击 Run Media Extraction 手动开始。")}
       </div>}
     </section>
 
     <section className="panel travel-library-inspector">
       <div className="panel-head">
         <div>
-          <span className="page-kicker">MEDIA INSPECTOR</span>
-          <h2>Library Search & Validation｜资料库检查</h2>
-          <p className="panel-subtext">搜索已经正式存档的景点或酒店，检查系统目前关联的照片是否正确。</p>
+          <span className="page-kicker">{t("MEDIA INSPECTOR","媒体检查器")}</span>
+          <h2>{t("Library Search & Validation","资料库检查")}</h2>
+          <p className="panel-subtext">{t("Search stored attractions or hotels and verify the photos currently linked to them.","搜索已经正式存档的景点或酒店，检查系统目前关联的照片是否正确。")}</p>
         </div>
       </div>
 
@@ -556,10 +556,10 @@ export default function TravelMediaLibrary(){
             }
           }}
           onKeyDown={e=>{if(e.key==="Enter") void searchInspector();}}
-          placeholder="例如：清水寺 / Kiyomizu-dera / DoubleTree Kyoto..."
+          placeholder={t("e.g. Kiyomizu-dera / DoubleTree Kyoto...","例如：清水寺 / Kiyomizu-dera / DoubleTree Kyoto...")}
         />
         <button className="btn primary" type="button" disabled={inspectorLoading} onClick={()=>void searchInspector()}>
-          {inspectorLoading?"Searching...":"Search Library"}
+          {inspectorLoading?t("Searching...","搜索中..."):t("Search Library","搜索资料库")}
         </button>
         <button
           className="btn"
@@ -567,7 +567,7 @@ export default function TravelMediaLibrary(){
           disabled={inspectorLoading||(!inspectorQuery&&!inspectorResults.length&&!inspectorMessage)}
           onClick={clearInspector}
         >
-          Clear
+          {t("Clear","清除")}
         </button>
       </div>
 
@@ -577,26 +577,26 @@ export default function TravelMediaLibrary(){
         {inspectorResults.map((place:any)=><article className="travel-library-inspector-place" key={place.placeId}>
           <div className="travel-library-inspector-place-head">
             <div>
-              <span className="page-kicker">{String(place.type||"PLACE").toUpperCase()}</span>
-              <h3>{place.canonicalName||"Unnamed Place"}</h3>
+              <span className="page-kicker">{String(place.type||t("PLACE","地点")).toUpperCase()}</span>
+              <h3>{place.canonicalName||t("Unnamed Place","未命名地点")}</h3>
               <p>{[place.destination,place.cityArea].filter(Boolean).join(" · ")||"—"}</p>
             </div>
             <div className="travel-library-inspector-badges">
-              <span className="status status-ready">{Array.isArray(place.images)?place.images.length:0} Photos</span>
-              <span className="travel-library-score">{Math.round(Number(place.score||0)*100)}% Name Match</span>
+              <span className="status status-ready">{Array.isArray(place.images)?place.images.length:0} {t("Photos","张照片")}</span>
+              <span className="travel-library-score">{Math.round(Number(place.score||0)*100)}% {t("Name Match","名称匹配")}</span>
             </div>
           </div>
 
           {Array.isArray(place.aliases)&&place.aliases.length>0&&<div className="travel-library-inspector-aliases">
-            <span>Aliases</span>
+            <span>{t("Aliases","别名")}</span>
             <div>{place.aliases.map((a:string,i:number)=><em key={i}>{a}</em>)}</div>
           </div>}
 
           <div className="travel-library-keywords">
             <div className="travel-library-keywords-head">
               <div>
-                <strong>Match Keywords｜匹配关键词</strong>
-                <span>内部匹配词，不会改变正式景点 / 酒店名称。</span>
+                <strong>{t("Match Keywords","匹配关键词")}</strong>
+                <span>{t("Internal matching terms do not change the official attraction / hotel name.","内部匹配词，不会改变正式景点 / 酒店名称。")}</span>
               </div>
             </div>
             <div className="travel-library-keyword-chips">
@@ -604,26 +604,26 @@ export default function TravelMediaLibrary(){
                 type="button"
                 className="travel-library-keyword-chip"
                 key={keyword}
-                title="Remove keyword"
+                title={t("Remove keyword","删除关键词")}
                 disabled={keywordBusyId===String(place.placeId)}
                 onClick={()=>void updateMatchKeywords(
                   String(place.placeId),
                   (Array.isArray(place.matchKeywords)?place.matchKeywords:[]).filter((x:string)=>x!==keyword)
                 )}
               >{keyword}<span>×</span></button>)}
-              {(!Array.isArray(place.matchKeywords)||place.matchKeywords.length===0)&&<em>No custom keywords yet</em>}
+              {(!Array.isArray(place.matchKeywords)||place.matchKeywords.length===0)&&<em>{t("No custom keywords yet","尚无自定义关键词")}</em>}
             </div>
             <div className="travel-library-keyword-input">
               <input
                 value={keywordDrafts[String(place.placeId)]||""}
                 onChange={e=>setKeywordDrafts(current=>({...current,[String(place.placeId)]:e.target.value}))}
                 onKeyDown={e=>{if(e.key==="Enter"){e.preventDefault();addMatchKeyword(String(place.placeId),place.matchKeywords||[]);}}}
-                placeholder="Add matching keyword..."
+                placeholder={t("Add matching keyword...","新增匹配关键词...")}
               />
               <button className="btn compact" type="button"
                 disabled={keywordBusyId===String(place.placeId)||!String(keywordDrafts[String(place.placeId)]||"").trim()}
                 onClick={()=>addMatchKeyword(String(place.placeId),place.matchKeywords||[])}>
-                {keywordBusyId===String(place.placeId)?"Saving...":"＋ Add Keyword"}
+                {keywordBusyId===String(place.placeId)?t("Saving...","保存中..."):t("＋ Add Keyword","＋ 新增关键词")}
               </button>
             </div>
           </div>
@@ -635,34 +635,34 @@ export default function TravelMediaLibrary(){
                     <img src={img.url} alt={img.name||place.canonicalName}/>
                   </div>
                   <figcaption>
-                    <strong>{img.name||"Library Image"}</strong>
-                    <span>{img.createdAt?new Date(img.createdAt).toLocaleDateString("en-MY"):"Stored Library Image"}</span>
+                    <strong>{img.name||t("Library Image","资料库图片")}</strong>
+                    <span>{img.createdAt?new Date(img.createdAt).toLocaleDateString("en-MY"):t("Stored Library Image","已存档资料库图片")}</span>
                     <div>
-                      <a className="btn compact" href={img.url} target="_blank" rel="noreferrer">Open</a>
+                      <a className="btn compact" href={img.url} target="_blank" rel="noreferrer">{t("Open","打开")}</a>
                       <button className="btn compact" type="button" disabled={deletingId===img.imageId} onClick={()=>void mutateInspectorImage(img.imageId,"remove")}>
-                        Remove from Place
+                        {t("Remove from Place","从地点移除")}
                       </button>
                       <button className="btn compact danger" type="button" disabled={deletingId===img.imageId} onClick={()=>void mutateInspectorImage(img.imageId,"delete")}>
-                        {deletingId===img.imageId?"Deleting...":"Delete"}
+                        {deletingId===img.imageId?t("Deleting...","删除中..."):t("Delete","删除")}
                       </button>
                     </div>
                   </figcaption>
                 </figure>)}
               </div>
-            : <div className="travel-library-inspector-empty">这个景点 / 酒店名称已经存档，但目前没有关联照片。</div>}
+            : <div className="travel-library-inspector-empty">{t("This attraction / hotel is stored but currently has no linked photos.","这个景点 / 酒店名称已经存档，但目前没有关联照片。")}</div>}
         </article>)}
       </div>}
 
       {!inspectorLoading&&!inspectorResults.length&&!inspectorMessage&&<div className="travel-library-inspector-empty">
-        输入景点或酒店关键字，例如「清水寺」、「Kiyomizu」或酒店名称，系统会搜索已经存档的 Library Record 与照片。
+        {t("Enter an attraction or hotel keyword, such as Kiyomizu or a hotel name. The system will search stored Library Records and photos.","输入景点或酒店关键字，例如「清水寺」、「Kiyomizu」或酒店名称，系统会搜索已经存档的 Library Record 与照片。")}
       </div>}
     </section>
 
     <section className="panel travel-library-sources-toggle">
       <div className="panel-head">
         <div>
-          <h2>Library Sources</h2>
-          <p className="panel-subtext">原始 Word / PDF / 图片会保存在私有 Supabase Storage；价格只作为历史参考。</p>
+          <h2>{t("Library Sources","资料来源")}</h2>
+          <p className="panel-subtext">{t("Original Word / PDF / image files are stored in private Supabase Storage; prices are historical references only.","原始 Word / PDF / 图片会保存在私有 Supabase Storage；价格只作为历史参考。")}</p>
         </div>
         <button
           className="btn"
@@ -670,7 +670,7 @@ export default function TravelMediaLibrary(){
           aria-expanded={showLibrarySources}
           onClick={()=>setShowLibrarySources(current=>!current)}
         >
-          {showLibrarySources?"Hide Sources":"Show Sources"}
+          {showLibrarySources?t("Hide Sources","隐藏来源"):t("Show Sources","显示来源")}
         </button>
       </div>
 
@@ -681,28 +681,28 @@ export default function TravelMediaLibrary(){
               <strong>{doc.title||doc.fileName}</strong>
               <small>{doc.fileName} · {fmtSize(doc.fileSize)}</small>
             </div>
-            <span className={"status "+(doc.status==="saved"?"status-ready":"status-under_review")}>{doc.status==="saved"?"Saved":"Pending Review"}</span>
+            <span className={"status "+(doc.status==="saved"?"status-ready":"status-under_review")}>{doc.status==="saved"?t("Saved","已保存"):t("Pending Review","待审核")}</span>
           </div>
           <div className="travel-library-source-meta">
             <div><span>{t("Type","类型")}</span><strong>{doc.sourceType||"other"}</strong></div>
             <div><span>{t("Destination","目的地")}</span><strong>{doc.destination||"—"}</strong></div>
-            <div><span>Media</span><strong>{doc.mediaExtractionStatus==="review"
-              ? Number(doc.mediaExtractionSummary?.found||0)+" found · "+Number(doc.mediaExtractionSummary?.matched||0)+" matched"
-              : doc.mediaExtractionStatus==="processing"?"Processing..."
-              : doc.mediaExtractionStatus==="completed"?"Completed"
-              : doc.mediaExtractionStatus==="queued"?"Queued"
-              : doc.mediaExtractionStatus==="failed"?"Failed"
-              :"Not Processed"}</strong></div>
-            <div><span>AI Extracted</span><strong>{doc.extraction?.places?.length||0} places · {doc.extraction?.hotels?.length||0} hotels · {doc.extraction?.prices?.length||0} prices</strong></div>
-            <div><span>Updated</span><strong>{doc.updatedAt?new Date(doc.updatedAt).toLocaleDateString("en-MY"):"—"}</strong></div>
+            <div><span>{t("Media","媒体")}</span><strong>{doc.mediaExtractionStatus==="review"
+              ? Number(doc.mediaExtractionSummary?.found||0)+t(" found · "," 个找到 · ")+Number(doc.mediaExtractionSummary?.matched||0)+t(" matched"," 个匹配")
+              : doc.mediaExtractionStatus==="processing"?t("Processing...","处理中...")
+              : doc.mediaExtractionStatus==="completed"?t("Completed","已完成")
+              : doc.mediaExtractionStatus==="queued"?t("Queued","已排队")
+              : doc.mediaExtractionStatus==="failed"?t("Failed","失败")
+              :t("Not Processed","未处理")}</strong></div>
+            <div><span>{t("AI Extracted","AI 提取")}</span><strong>{doc.extraction?.places?.length||0} {t("places","景点")} · {doc.extraction?.hotels?.length||0} {t("hotels","酒店")} · {doc.extraction?.prices?.length||0} {t("prices","价格")}</strong></div>
+            <div><span>{t("Updated","更新时间")}</span><strong>{doc.updatedAt?new Date(doc.updatedAt).toLocaleDateString("en-MY"):"—"}</strong></div>
           </div>
           <div className="travel-library-source-actions">
-            <button className="btn compact" type="button" onClick={()=>void openSource(doc)}>Open File</button>
-            {doc.status==="pending_review"&&<button className="btn compact" type="button" onClick={()=>setPreview({id:doc.id,file:{name:doc.fileName,path:doc.storagePath,mimeType:doc.mimeType},extraction:doc.extraction})}>Review</button>}
-            {doc.status==="pending_review"&&<button className="btn compact primary" type="button" onClick={()=>void confirm(doc.id)} disabled={savingId===doc.id}>{savingId===doc.id?"Saving...":"Save"}</button>}
+            <button className="btn compact" type="button" onClick={()=>void openSource(doc)}>{t("Open File","打开文件")}</button>
+            {doc.status==="pending_review"&&<button className="btn compact" type="button" onClick={()=>setPreview({id:doc.id,file:{name:doc.fileName,path:doc.storagePath,mimeType:doc.mimeType},extraction:doc.extraction})}>{t("Review","审核")}</button>}
+            {doc.status==="pending_review"&&<button className="btn compact primary" type="button" onClick={()=>void confirm(doc.id)} disabled={savingId===doc.id}>{savingId===doc.id?t("Saving...","保存中..."):t("Save","保存")}</button>}
           </div>
         </article>)}
-        {!loading&&!docs.length&&<div className="travel-library-inspector-empty">还没有资料。上传第一份行程、报价、酒店资料或图片。</div>}
+        {!loading&&!docs.length&&<div className="travel-library-inspector-empty">{t("No data yet. Upload the first itinerary, quotation, hotel document or image.","还没有资料。上传第一份行程、报价、酒店资料或图片。")}</div>}
       </div>}
     </section>
   </div>;}
