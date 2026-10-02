@@ -273,6 +273,14 @@ export default async function InquiryDetailPage({
                 :caseStatus==="revision_required"
                   ?"Quotation 正在重新调整与审核，暂时不要向客户使用旧报价。"
                   :"Operation 正在准备报价；审核通过后会在这里显示最终版本。"}</p>}
+
+          {viewerMode!=="sales"&&!quotationReady&&<div className="simple-workflow-actions">
+            {linkedQuotes.length===0
+              ? <Link className="btn primary" href={"/quotations/new?sourceInquiry="+id}>Create Quotation</Link>
+              : <Link className="btn primary" href={"/quotations/"+linkedQuotes[0].id+"?returnTo="+currentInquiryParam}>
+                  {caseStatus==="revision_required"?"Revise Quotation":"Open Quotation"}
+                </Link>}
+          </div>}
         </div>
 
         <div className="simple-workflow-arrow" aria-hidden="true">→</div>
