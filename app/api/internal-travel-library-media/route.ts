@@ -252,6 +252,33 @@ async function resolvePlace(db:any,token:string,type:string,name:string){
   return best;
 }
 
+function normalizeGroupName(value:string){
+  return String(value||"")
+    .normalize("NFKC")
+    .toLowerCase()
+    .replace(/[\s\-_.·•・()（）【】\[\],，。\/\\]+/g,"")
+    .trim();
+}
+
+async function getGroupAnchors(db:any,token:string,documentId:string){
+  const {data,error}=await db.rpc("staff_get_travel_media_group_anchors",{
+    p_token:token,p_document_id:documentId
+  });
+  if(error||!data?.ok) return [];
+  return Array.isArray(data.anchors)?data.anchors:[];
+}
+
+function findGroupAnchor(anchors:any[],img:ExtractedImage,type:string,name:string){
+  const normalized=normalizeGroupName(name);
+  if(!normalized) return null;
+  return anchors.find((anchor:any)=>
+    Number(anchor?.sourcePage||0)===Number(img.sourcePage||0) &&
+    String(anchor?.type||"")===type &&
+    normalizeGroupName(String(anchor?.name||""))===normalized &&
+    Boolean(anchor?.placeId)
+  )||null;
+}
+
 async function processOne(token:string,db:any,doc:any,key:string){
   const sourceUrl=await signSource(token,String(doc.storagePath||""));
   const sourceRes=await fetch(sourceUrl);
@@ -301,6 +328,7 @@ async function processOne(token:string,db:any,doc:any,key:string){
     return summary;
   }
 
+  const anchors=await getGroupAnchors(db,token,String(doc.id));
   const aiMatches:any[]=await identifyBatch(key,chunk,doc);
   const candidates:any[]=[];
   let matchedThisChunk=0;
@@ -318,9 +346,30 @@ async function processOne(token:string,db:any,doc:any,key:string){
 
       const resolved=await resolvePlace(db,token,type,name);
       const accepted=resolved&&confidence>=(type==="hotel"?0.92:0.86);
+      const groupAnchor=!accepted?findGroupAnchor(anchors,img,type,name):null;
+      const inherited=Boolean(groupAnchor?.placeId);
       const stored=await uploadExtracted(token,img,String(doc.id));
       uploadedPaths.push(stored.path);
-      if(accepted) matchedThisChunk++;
+      if(accepted||inherited) matchedThisChunk++;
+
+      const suggestedPlaceId=accepted
+        ? String(resolved.placeId||"")
+        : inherited
+          ? String(groupAnchor.placeId||"")
+          : "";
+      const suggestedName=accepted
+        ? String(resolved.canonicalName||name)
+        : inherited
+          ? String(groupAnchor.name||name)
+          : name;
+      const matchMethod=accepted
+        ? (Number(resolved.score||0)>=0.99?"document_context_exact":"document_context_fuzzy")
+        : inherited
+          ? "document_group_context"
+          : "document_context_vision";
+      const reason=inherited
+        ? [String(ai.reason||""),`Matched to a confirmed ${type} on the same source page with the same normalized name.`].filter(Boolean).join(" ")
+        : String(ai.reason||"");
 
       candidates.push({
         imageIndex:img.imageIndex,
@@ -332,11 +381,11 @@ async function processOne(token:string,db:any,doc:any,key:string){
         height:img.height,
         nearbyText:img.nearbyText,
         suggestedType:type,
-        suggestedPlaceId:accepted?String(resolved.placeId||""):"",
-        suggestedName:accepted?String(resolved.canonicalName||name):name,
+        suggestedPlaceId,
+        suggestedName,
         confidence,
-        matchMethod:accepted?(Number(resolved.score||0)>=0.99?"document_context_exact":"document_context_fuzzy"):"document_context_vision",
-        reason:String(ai.reason||"")
+        matchMethod,
+        reason
       });
     }
 
