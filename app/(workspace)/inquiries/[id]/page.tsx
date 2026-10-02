@@ -119,7 +119,7 @@ export default async function InquiryDetailPage({
     {key:"specialRequest",label:"Special Request",sales:data.special_request,op:opValue("specialRequest",data.special_request),long:true}
   ];
 
-  return <div>
+  return <div className="inquiry-detail-template">
     <div className="page-head inquiry-detail-head">
       <div><span className="page-kicker"><UiText en="INQUIRY" zh="询价" /></span><h1>{data.customer_name||data.inquiry_no}</h1><p>{data.inquiry_no} · {inquiryStatusLabels[data.status]||data.status}</p></div>
       <div className="inquiry-head-right">
@@ -134,14 +134,14 @@ export default async function InquiryDetailPage({
           firstQuotationId={visibleQuotes[0]?.id}
         />
         <div className="detail-actions">
-          <Link className="btn" href={returnTo}>{returnLabel}</Link>
+          <Link className="btn inquiry-back-action" href={returnTo}>{returnLabel}</Link>
           <Link className="btn" href={"/inquiries/"+id+"/operation?returnTo="+returnParam}><UiText en="Operation Review" zh="运营审核" /></Link>
-          <Link className="btn" href={"/inquiries/"+id+"/edit?returnTo="+returnParam}><UiText en="Edit Inquiry" zh="编辑询价" /></Link>
+          <Link className="btn primary" href={"/inquiries/"+id+"/edit?returnTo="+returnParam}><UiText en="Edit Inquiry" zh="编辑询价" /></Link>
         </div>
       </div>
     </div>
 
-    <section className="dashboard-cards itinerary-summary-cards">
+    <section className="dashboard-cards itinerary-summary-cards inquiry-overview-strip">
       <div className="dash-card"><span><UiText en="Destination" zh="目的地" /></span><b>{data.destination||"—"}</b></div>
       <div className="dash-card"><span><UiText en="Travel Dates" zh="旅游日期" /></span><b>{data.travel_start_date||"—"}{data.travel_end_date?" → "+data.travel_end_date:""}</b></div>
       <div className="dash-card"><span><UiText en="Duration" zh="天数" /></span><b>{data.days_count}D{data.nights_count}N</b></div>
@@ -150,7 +150,7 @@ export default async function InquiryDetailPage({
       <div className="dash-card"><span><UiText en="Operation" zh="运营负责人" /></span><b>{data.operation_assignee_name||"—"}</b></div>
     </section>
 
-    <section className="panel inquiry-requirements-panel">
+    <section className="panel inquiry-requirements-panel inquiry-plain-section">
       <div className="panel-head">
         <div>
           <h2><UiText en="Customer Requirements" zh="客户需求" /></h2>
@@ -214,7 +214,7 @@ export default async function InquiryDetailPage({
       </div>
     </section>
 
-    <section className="panel inquiry-workflow-panel">
+    <section className="panel inquiry-workflow-panel inquiry-elevated-section">
       <div className="panel-head inquiry-workflow-panel-head system-workflow-head">
         <div>
           <span className="page-kicker"><UiText en="WORKFLOW" zh="流程" /></span>
