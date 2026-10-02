@@ -32,12 +32,67 @@ export default function AiSupplierImport(){
   const [model,setModel]=useState("");
   const supplierInputRef=useRef<HTMLInputElement|null>(null);
   const [adjustmentNotes,setAdjustmentNotes]=useState("");
+  const [adjustmentFocused,setAdjustmentFocused]=useState(false);
+  const [typingExample,setTypingExample]=useState("");
+  const [typingExampleIndex,setTypingExampleIndex]=useState(0);
+  const [reduceMotion,setReduceMotion]=useState(false);
 
   const [chatInput,setChatInput]=useState("");
   const [chatting,setChatting]=useState(false);
   const [chatMessages,setChatMessages]=useState<ChatMessage[]>([]);
   const [proposal,setProposal]=useState<AdjustmentProposal|null>(null);
   const [inquiryContext,setInquiryContext]=useState<any>(null);
+
+  useEffect(()=>{
+    const media=window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync=()=>setReduceMotion(media.matches);
+    sync();
+    media.addEventListener?.("change",sync);
+    return ()=>media.removeEventListener?.("change",sync);
+  },[]);
+
+  const adjustmentExamples=language==="zh"?[
+    "供应商原本是 6D5N，但实际航班为 7D6N。第一天上午抵达，请增加轻松行程。",
+    "保留主要景点，但减少每天的行程密度，适合有老人同行的团。",
+    "京都酒店保留两晚，把原本第二天的大阪行程移到第五天。",
+    "返程是晚上航班，最后一天白天可以继续安排市区景点。"
+  ]:[
+    "Supplier itinerary is 6D5N, but actual flights make it 7D6N. Add light activities on arrival day.",
+    "Keep the main attractions, but reduce the daily pace for senior travellers.",
+    "Keep two nights in Kyoto and move the original Osaka day to Day 5.",
+    "Return flight is in the evening, so keep daytime city activities on the final day."
+  ];
+
+  useEffect(()=>{
+    if(adjustmentNotes||adjustmentFocused){setTypingExample("");return;}
+    const examples=adjustmentExamples;
+    const full=examples[typingExampleIndex%examples.length];
+    if(reduceMotion){setTypingExample(full);return;}
+
+    let cancelled=false;
+    let timer:ReturnType<typeof setTimeout>;
+    let charIndex=0;
+    setTypingExample("");
+
+    const typeNext=()=>{
+      if(cancelled) return;
+      charIndex+=1;
+      setTypingExample(full.slice(0,charIndex));
+      if(charIndex<full.length){
+        timer=setTimeout(typeNext,42);
+      }else{
+        timer=setTimeout(()=>{
+          if(cancelled) return;
+          setTypingExample("");
+          timer=setTimeout(()=>{
+            if(!cancelled) setTypingExampleIndex(index=>(index+1)%examples.length);
+          },260);
+        },1800);
+      }
+    };
+    timer=setTimeout(typeNext,280);
+    return ()=>{cancelled=true;clearTimeout(timer);};
+  },[adjustmentNotes,adjustmentFocused,typingExampleIndex,reduceMotion,language]);
 
   useEffect(()=>{
     const sourceInquiry=new URLSearchParams(window.location.search).get("sourceInquiry");
@@ -220,12 +275,20 @@ export default function AiSupplierImport(){
 
         <label className="field ai-adjustment-field">
           <span>{t("Adjustment Notes","调整备注")} <small>{t("Optional","选填")}</small></span>
-          <textarea
-            value={adjustmentNotes}
-            onChange={e=>setAdjustmentNotes(e.target.value)}
-            placeholder={t("e.g. Supplier itinerary is 6D5N but actual flights make it 7D6N.\nDay 1 arrives in the morning; add light activities and shift the original Day 1 plan.\nDay 7 has an evening flight, so daytime city activities are still possible.\nKeep the main attractions and hotel structure where possible.","例如：供应商原本是 6D5N，但实际航班为 7D6N。\nDay 1 上午抵达，请增加轻松行程；原供应商 Day 1 内容顺延。\nDay 7 晚班机，白天可继续安排市区活动。\n尽量保留原本主要景点和酒店结构。")}
-          />
-          <small className="ai-adjustment-helper">
+          <div className="ai-adjustment-textarea-wrap">
+            <textarea
+              value={adjustmentNotes}
+              onFocus={()=>setAdjustmentFocused(true)}
+              onBlur={()=>setAdjustmentFocused(false)}
+              onChange={e=>setAdjustmentNotes(e.target.value)}
+              placeholder=""
+              aria-describedby="ai-adjustment-helper"
+            />
+            {!adjustmentNotes&&!adjustmentFocused&&<div className="ai-adjustment-typing" aria-hidden="true">
+              <span>{typingExample}</span>{!reduceMotion&&typingExample&&<i />}
+            </div>}
+          </div>
+          <small className="ai-adjustment-helper" id="ai-adjustment-helper">
             {t("AI uses these notes during the first analysis. Add known flight details, duration changes, attraction moves, pacing or hotel requirements here. You can also analyze without notes.","AI 会在第一次分析时参考这些备注。可填写已知航班、天数变化、景点调整、节奏或酒店要求；没有备注也可以直接分析。")}
           </small>
         </label>
