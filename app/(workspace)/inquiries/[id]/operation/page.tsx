@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { internalDb,internalToken,internalUser } from "@/lib/internalSession";
 import OperationReviewEditor from "@/components/OperationReviewEditor";
+import {UiText} from "@/components/WorkspaceLanguage";
 
 export default async function OperationReviewPage({
   params,
@@ -34,12 +35,12 @@ export default async function OperationReviewPage({
         <h1>{data.customer_name||data.inquiry_no}</h1>
         <div className="operation-review-meta-line">
           <span>{data.inquiry_no}</span>
-          <span className={"status operation-review-status status-"+String(data.status||"new")}>{data.status==="under_review"?"Under Review":data.status==="revision_required"?"Revision Required":data.status==="ready"||data.status==="ready_customer"?"Ready":data.status==="in_progress"||data.status==="waiting_quote"?"In Progress":data.status==="new"?"New":data.status||"New"}</span>
+          <span className={"status operation-review-status status-"+String(data.status||"new")}>{data.status==="under_review"?<UiText en="Under Review" zh="审核中" />:data.status==="revision_required"?<UiText en="Revision Required" zh="需要修改" />:data.status==="ready"||data.status==="ready_customer"?<UiText en="Ready" zh="已就绪" />:data.status==="in_progress"||data.status==="waiting_quote"?<UiText en="In Progress" zh="处理中" />:data.status==="new"?<UiText en="New" zh="新案件" />:data.status||<UiText en="New" zh="新案件" />}</span>
           <span>{data.destination||"—"}</span>
         </div>
       </div>
       <div className="detail-actions">
-        <Link className="btn operation-review-back" href={inquiryHref}>← Inquiry</Link>
+        <Link className="btn operation-review-back" href={inquiryHref}><UiText en="← Inquiry" zh="← 询价" /></Link>
       </div>
     </div>
     <OperationReviewEditor inquiry={data} canEdit={canEdit} returnTo={returnTo}/>
