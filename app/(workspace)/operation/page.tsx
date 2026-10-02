@@ -1,16 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
-
-const operationStatusLabels:Record<string,string>={
-  new:"New",
-  in_progress:"In Progress",
-  waiting_quote:"In Progress",
-  under_review:"Under Review",
-  revision_required:"Revision Required",
-  ready:"Ready",
-  ready_customer:"Ready"
-};
+import OperationRows from "./OperationRows";
+import styles from "./OperationWorkspace.module.css";
 
 type QueueKey="new"|"in_progress"|"under_review"|"revision_required"|"ready";
 
@@ -28,16 +20,6 @@ function queueFor(item:any):QueueKey{
   if(item.status==="under_review") return "under_review";
   if(item.status==="new") return "new";
   return "in_progress";
-}
-
-function ageLabel(value:string){
-  if(!value) return "Updated recently";
-  const time=new Date(value).getTime();
-  if(!Number.isFinite(time)) return "Updated recently";
-  const days=Math.max(0,Math.floor((Date.now()-time)/86400000));
-  if(days===0) return "New / Today";
-  if(days>=5) return `Waiting ${days}d · Attention`;
-  return `Waiting ${days}d`;
 }
 
 export default async function OperationWorkspacePage({
@@ -102,25 +84,28 @@ export default async function OperationWorkspacePage({
 
     {error&&<div className="save-message">Unable to load Operation queue: {error.message}</div>}
 
-    {canViewAll&&requestedScope==="all"&&unassigned.length>0&&<section className="operation-queue-section operation-unassigned">
+    {canViewAll&&requestedScope==="all"&&unassigned.length>0&&<section className={"operation-queue-section operation-unassigned "+styles.queueSection}>
       <div className="panel-head">
         <div><h2>Unassigned</h2><p className="panel-subtext">这些 active Inquiry 尚未分配 Operation，需要先安排负责人。</p></div>
         <span className="operation-count">{unassigned.length}</span>
       </div>
-      <OperationRows items={unassigned} returnTo={queueHref(expandedQueue)}/>
+      <OperationRows items={unassigned.slice(0,5)} returnTo={queueHref(expandedQueue)}/>
+      {unassigned.length>5&&<div className="operation-queue-footer">
+        <span>{unassigned.length-5} more unassigned case{unassigned.length-5===1?"":"s"}</span>
+      </div>}
     </section>}
 
-    <div className="operation-queue-grid">
+    <div className={"operation-queue-grid "+styles.queueGrid}>
       {queues.map(queue=>{
         const expanded=expandedQueue===queue.key;
-        const visibleItems=expanded?queue.items:queue.items.slice(0,3);
-        return <section className={"operation-queue-section operation-queue-panel operation-queue-"+queue.key+" "+(expanded?"expanded":"")} key={queue.key}>
+        const visibleItems=expanded?queue.items:queue.items.slice(0,5);
+        return <section className={"operation-queue-section operation-queue-panel operation-queue-"+queue.key+" "+styles.queueSection+" "+(expanded?"expanded":"")} key={queue.key}>
           <div className="panel-head operation-queue-title">
             <div><h2>{queue.title}</h2><p className="panel-subtext">{queue.subtitle}</p></div>
             <span className="operation-count">{queue.items.length}</span>
           </div>
           {queue.items.length?<OperationRows items={visibleItems} returnTo={queueHref(expandedQueue)}/>:<div className="operation-empty">No cases in this queue.</div>}
-          {queue.items.length>3&&<div className="operation-queue-footer">
+          {queue.items.length>5&&<div className="operation-queue-footer">
             <Link href={expanded?queueHref():queueHref(queue.key)}>
               {expanded?"Show Less":"View All "+queue.items.length+" Cases →"}
             </Link>
@@ -128,7 +113,7 @@ export default async function OperationWorkspacePage({
         </section>;
       })}
 
-      <section className="operation-queue-section operation-queue-panel operation-queue-itinerary_ready operation-coming-soon" aria-disabled="true">
+      <section className={"operation-queue-section operation-queue-panel operation-queue-itinerary_ready operation-coming-soon "+styles.queueSection} aria-disabled="true">
         <div className="panel-head operation-queue-title">
           <div><h2>Itinerary Ready</h2><p className="panel-subtext">Completed itinerary tracking will be available here.</p></div>
           <span className="operation-coming-soon-badge">Coming Soon</span>
@@ -136,54 +121,5 @@ export default async function OperationWorkspacePage({
         <div className="operation-empty">Coming soon.</div>
       </section>
     </div>
-  </div>;
-}
-
-function OperationRows({items,returnTo}:{items:any[];returnTo:string}){
-  return <div className="operation-case-list">
-    <div className="operation-case-columns" aria-hidden="true">
-      <span>Inquiry No.</span>
-      <span>Customer</span>
-      <span>Destination</span>
-      <span>Travel Date</span>
-      <span>Pax</span>
-      <span>Sales</span>
-      <span>Operation</span>
-      <span>Status</span>
-    </div>
-    {items.map((item:any)=><Link className="operation-case-row" href={"/inquiries/"+item.id+"?returnTo="+encodeURIComponent(returnTo)} key={item.id}>
-      <div className="operation-case-field operation-case-no">
-        <span>Inquiry No.</span>
-        <strong>{item.inquiry_no}</strong>
-      </div>
-      <div className="operation-case-field">
-        <span>Customer</span>
-        <strong>{item.customer_name||"—"}</strong>
-      </div>
-      <div className="operation-case-field">
-        <span>Destination</span>
-        <strong>{item.destination||"—"}</strong>
-      </div>
-      <div className="operation-case-field">
-        <span>Travel Date</span>
-        <strong>{item.travel_start_date||"—"}{item.travel_end_date?" → "+item.travel_end_date:""}</strong>
-      </div>
-      <div className="operation-case-field compact">
-        <span>Pax</span>
-        <strong>{item.pax||"—"}</strong>
-      </div>
-      <div className="operation-case-field compact">
-        <span>Sales</span>
-        <strong>{item.sales_owner_name||"—"}</strong>
-      </div>
-      <div className="operation-case-field compact">
-        <span>Operation</span>
-        <strong>{item.operation_assignee_name||"Unassigned"}</strong>
-      </div>
-      <div className="operation-case-state">
-        <span className={"status status-"+item.status}>{operationStatusLabels[item.status]||item.status}</span>
-        <small className={ageLabel(item.supplier_inquiry_updated_at||item.updated_at).includes("Attention")?"attention":""}>{ageLabel(item.supplier_inquiry_updated_at||item.updated_at)}</small>
-      </div>
-    </Link>)}
   </div>;
 }
