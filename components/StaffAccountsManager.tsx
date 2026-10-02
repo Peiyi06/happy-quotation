@@ -34,16 +34,24 @@ export default function StaffAccountsManager({initialAccounts,currentUserId}:{in
   }
 
   return <>
-    <section className="panel">
-      <div className="panel-head"><h2>{t("Team Accounts","团队账号")}</h2><button className="btn primary" onClick={()=>setOpen(v=>!v)}>{t("＋ Create Staff Account","＋ 建立员工账号")}</button></div>
-      {open&&<form className="inline-form staff-create-form" onSubmit={createAccount}>
-        <input name="name" required placeholder={t("Name","姓名")} />
-        <input name="username" required placeholder={t("Username","用户名")} />
-        <input name="password" required placeholder={t("Password","密码")} defaultValue="123" />
-        <select name="role" defaultValue="sales"><option value="sales">{t("Sales","销售")}</option><option value="manager">{t("Manager","经理")}</option></select>
-        <button className="btn primary" disabled={saving}>{saving?t("Creating...","建立中..."):t("Create","建立")}</button>
-        <button className="btn" type="button" onClick={()=>setOpen(false)}>{t("Cancel","取消")}</button>
-      </form>}
+    <section className="panel staff-accounts-panel">
+      <div className="panel-head"><h2>{t("Team Accounts","团队账号")}</h2><button className={"btn staff-create-trigger "+(open?"":"primary")} onClick={()=>setOpen(v=>!v)}>{open?t("Close","关闭"):t("＋ Create Staff Account","＋ 建立员工账号")}</button></div>
+      {open&&<div className="staff-create-shell">
+        <div className="staff-create-copy">
+          <strong>{t("Create Staff Account","建立员工账号")}</strong>
+          <span>{t("Add the staff member's account details and workspace role.","填写员工账号资料与系统角色。")}</span>
+        </div>
+        <form className="staff-create-form" onSubmit={createAccount}>
+          <label className="field"><span>{t("Name","姓名")}</span><input name="name" required placeholder={t("Name","姓名")} /></label>
+          <label className="field"><span>{t("Username","用户名")}</span><input name="username" required placeholder={t("Username","用户名")} /></label>
+          <label className="field"><span>{t("Password","密码")}</span><input name="password" required placeholder={t("Password","密码")} defaultValue="123" /></label>
+          <label className="field"><span>{t("Role","角色")}</span><select name="role" defaultValue="sales"><option value="sales">{t("Sales","销售")}</option><option value="manager">{t("Manager","经理")}</option></select></label>
+          <div className="staff-create-actions">
+            <button className="btn" type="button" onClick={()=>setOpen(false)}>{t("Cancel","取消")}</button>
+            <button className="btn primary" disabled={saving}>{saving?t("Creating...","建立中..."):t("Create Account","建立账号")}</button>
+          </div>
+        </form>
+      </div>}
       {message&&<div className="auth-message">{message}</div>}
       <div className="data-table-wrap"><table className="data-table"><thead><tr><th>{t("Name","姓名")}</th><th>{t("Username","用户名")}</th><th>{t("Role","角色")}</th><th>{t("Status","状态")}</th><th>{t("Password","密码")}</th><th>{t("Action","操作")}</th></tr></thead><tbody>
         {initialAccounts.map(a=><StaffRow key={a.id} account={a} current={a.id===currentUserId} onUpdate={updateAccount} t={t}/>)}
