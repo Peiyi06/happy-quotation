@@ -12361,3 +12361,88 @@ td,
     max-height:none!important;
   }
 }
+
+
+/* =========================================================
+   AI LAB — LEFT WORKSPACE BALANCE
+   Intentional empty-state whitespace with a centered work area.
+   ========================================================= */
+@media(min-width:821px){
+  .ai-lab-main:has(> .ai-lab-chat:empty){
+    display:grid!important;
+    grid-template-rows:auto auto minmax(34px,1fr) auto auto;
+    align-content:stretch!important;
+    min-height:min(680px,calc(100vh - 48px))!important;
+  }
+
+  .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-workbench-head{
+    grid-row:1;
+  }
+
+  .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-starter-wrap{
+    grid-row:2;
+    width:min(100%,820px);
+    margin:10px auto 0!important;
+  }
+
+  .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-starters{
+    max-width:none!important;
+  }
+
+  .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-more-starters{
+    margin-top:2px;
+  }
+
+  .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-upload-previews{
+    grid-row:4;
+    width:min(100%,820px);
+    margin:0 auto 6px!important;
+  }
+
+  .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-compose{
+    grid-row:4;
+    width:min(calc(100% - 24px),820px);
+    margin:0 auto!important;
+    padding:8px 9px!important;
+    border-radius:14px!important;
+  }
+
+  .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-compose textarea{
+    min-height:46px!important;
+    max-height:120px!important;
+    font-size:13px!important;
+  }
+
+  .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-compose-note{
+    grid-row:5;
+    width:min(calc(100% - 24px),820px);
+    margin:5px auto 0!important;
+    padding:0 4px!important;
+    text-align:left;
+    font-size:8.75px!important;
+    opacity:.58!important;
+  }
+}
+
+/* Suggestions read as one quiet group rather than four loose controls. */
+.ai-lab-starter-wrap{
+  padding:0;
+}
+.ai-lab-starters button{
+  border-color:var(--color-border-default)!important;
+  background:rgba(255,255,255,.72)!important;
+}
+.ai-lab-more-starters{
+  color:var(--color-text-secondary)!important;
+  font-size:9px!important;
+  font-weight:550!important;
+}
+.ai-lab-more-starters:hover{
+  color:var(--color-info-text)!important;
+}
+
+/* Keep focus treatment restrained and Foundation-consistent. */
+.ai-lab-compose:focus-within{
+  border-color:var(--color-info-text)!important;
+  box-shadow:0 0 0 2px var(--color-focus-ring)!important;
+}
