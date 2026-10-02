@@ -7726,3 +7726,67 @@ td,
     grid-column:1/-1;
   }
 }
+
+
+/* =========================================================
+   OPERATION 2x2 SPACING + COMING SOON
+   Foundation breathing room and sixth neutral placeholder.
+   ========================================================= */
+@media(min-width:1180px){
+  .operation-workspace-template .operation-queue-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+
+  .operation-workspace-template .operation-queue-grid > .operation-queue-section:nth-child(5),
+  .operation-workspace-template .operation-queue-grid > .operation-queue-section:nth-child(6){
+    grid-column:auto!important;
+  }
+}
+
+.operation-workspace-template .operation-queue-section{
+  padding-left:18px;
+  padding-right:18px;
+  padding-bottom:10px;
+  border:1px solid var(--color-border-default);
+  border-top-width:3px;
+  border-radius:var(--radius-md);
+  background:var(--color-bg-surface);
+}
+
+.operation-workspace-template .operation-queue-title,
+.operation-workspace-template .operation-unassigned>.panel-head{
+  padding:14px 0 10px;
+}
+
+.operation-workspace-template .operation-empty{
+  padding:10px 0 2px;
+}
+
+.operation-workspace-template .operation-coming-soon{
+  border-top-color:var(--color-border-strong);
+  opacity:.82;
+}
+
+.operation-workspace-template .operation-coming-soon-badge{
+  display:inline-flex;
+  align-items:center;
+  min-height:28px;
+  padding:0 10px;
+  border-radius:999px;
+  background:var(--color-neutral-status-soft);
+  color:var(--color-neutral-status-text);
+  font-size:10px;
+  font-weight:750;
+  white-space:nowrap;
+}
+
+.operation-workspace-template .operation-coming-soon .operation-empty{
+  color:var(--color-text-tertiary);
+}
+
+@media(max-width:1179px){
+  .operation-workspace-template .operation-queue-section{
+    padding-left:16px;
+    padding-right:16px;
+  }
+}
