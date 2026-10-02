@@ -11,9 +11,12 @@ export default async function ItinerariesPage({searchParams}:{searchParams:Promi
   if(sp.status) items=items.filter((x:any)=>x.status===sp.status);
   if(q) items=items.filter((x:any)=>[x.itinerary_no,x.title,x.destination,x.customer_name].some((v:any)=>(v||"").toLowerCase().includes(q)));
 
-  return <div>
-    <div className="page-head page-compact-header">
-      <div><span className="page-kicker">ITINERARY TEMPLATES</span><h1>行程模板</h1><p>独立建立与管理简易行程。</p></div>
+  return <div className="itinerary-library-template">
+    <div className="page-head itinerary-library-head">
+      <div className="itinerary-library-title-block">
+        <h1>Itinerary</h1>
+        <p>{items.length} itinerar{items.length===1?"y":"ies"}</p>
+      </div>
       <Link className="btn primary" href="/itineraries/new">+ New Itinerary</Link>
     </div>
 
@@ -35,7 +38,7 @@ export default async function ItinerariesPage({searchParams}:{searchParams:Promi
               <td>{x.days_count}D{x.nights_count}N</td>
               <td>{x.customer_name||"—"}</td>
               <td>{x.owner_name||"—"}</td>
-              <td><span className={"status status-"+x.status}>{x.status}</span></td>
+              <td><span className={"status status-"+x.status}>{x.status==="ready"?"Ready":x.status==="confirmed"?"Confirmed":x.status==="archived"?"Archived":"Draft"}</span></td>
               <td>{x.updated_at?new Date(x.updated_at).toLocaleDateString("en-MY"):"—"}</td>
             </tr>)}
             {!items.length&&<tr><td colSpan={8} className="empty">还没有行程模板。</td></tr>}
