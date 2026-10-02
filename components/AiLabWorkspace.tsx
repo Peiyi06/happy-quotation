@@ -22,9 +22,7 @@ export default function AiLabWorkspace(){
     t("Find the most recently updated Inquiries","帮我找最近更新的 Inquiry"),
     t("Which Quotations are still in Draft?","有哪些 Quotation 还在 Draft？")
   ];
-  const [messages,setMessages]=useState<Message[]>([
-    {role:"assistant",text:t("Ask about Inquiry, Quotation or Itinerary status, or tell me what you want to handle next.","可以直接问 Inquiry、Quotation、Itinerary 的状态，或告诉我接下来要处理什么。")}
-  ]);
+  const [messages,setMessages]=useState<Message[]>([]);
   const [input,setInput]=useState("");
   const [loading,setLoading]=useState(false);
   const [actionLoading,setActionLoading]=useState(false);
@@ -36,6 +34,7 @@ export default function AiLabWorkspace(){
   const [archivedThreads,setArchivedThreads]=useState<WorkThread[]>([]);
   const [showArchived,setShowArchived]=useState(false);
   const [showSafety,setShowSafety]=useState(false);
+  const [showMoreStarters,setShowMoreStarters]=useState(false);
   const [sidebarCollapsed,setSidebarCollapsed]=useState(false);
   const [threadsLoading,setThreadsLoading]=useState(false);
   const [saveState,setSaveState]=useState<"saved"|"saving"|"">("");
@@ -64,7 +63,7 @@ export default function AiLabWorkspace(){
     setThreadId("");
     setContextInquiryId("");
     setContextTitle("");
-    setMessages([{role:"assistant",text:t("New work conversation ready. Tell me what you want to handle next.","新的工作对话已准备好。告诉我接下来要处理什么。")}]);
+    setMessages([]);
     setSaveState("");
   }
 
@@ -293,13 +292,20 @@ export default function AiLabWorkspace(){
         {loading&&<div className="ai-lab-message assistant"><div className="ai-lab-message-label">Happy AI</div><div className="ai-lab-bubble thinking">{t("Reading system data...","正在读取系统资料...")}</div></div>}
       </div>
 
-      {messages.length<=1&&<div className="ai-lab-starters">{starterPrompts.map(p=><button key={p} type="button" onClick={()=>void send(p)}>{p}</button>)}</div>}
+      {messages.length===0&&<div className="ai-lab-starter-wrap">
+        <div className="ai-lab-starters">
+          {starterPrompts.slice(0,showMoreStarters?starterPrompts.length:2).map(p=><button key={p} type="button" onClick={()=>void send(p)}>{p}</button>)}
+        </div>
+        <button className="ai-lab-more-starters" type="button" onClick={()=>setShowMoreStarters(v=>!v)}>
+          {showMoreStarters?t("Fewer suggestions","收起建议"):t("More suggestions","更多建议")}
+        </button>
+      </div>}
 
       {imagePreviews.length>0&&<div className="ai-lab-upload-previews">{imagePreviews.map((a,i)=><div key={a.url} className="ai-lab-upload-chip"><img src={a.url} alt={a.name}/><span>{a.name}</span><button className="icon-action-btn icon-action-remove" type="button" aria-label={t("Remove ","移除 ")+a.name} onClick={()=>removeImage(i)}>×</button></div>)}</div>}
       <div className="ai-lab-compose">
         <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onChange={e=>addImages(e.target.files)}/>
         <button type="button" className="ai-lab-attach-btn" disabled={loading||imageFiles.length>=4} onClick={()=>fileInputRef.current?.click()}>＋</button>
-        <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder={t("Type a message, or upload WhatsApp / flight / quotation screenshots...","可以输入文字，或直接上传 WhatsApp / 航班 / 报价截图…")} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();void send();}}}/>
+        <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder={t("Ask about an Inquiry, Quotation or Itinerary…","询问 Inquiry、Quotation 或 Itinerary…")} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();void send();}}}/>
         <button type="button" className="workflow-primary-btn ai-lab-send-primary" disabled={(!input.trim()&&!imageFiles.length)||loading} onClick={()=>void send()}>{loading?t("Thinking...","思考中..."):t("Send","发送")}</button>
       </div>
       <div className="ai-lab-compose-note">{t("JPG / PNG / WEBP · Up to 4 images · Max 5MB each · Conversations auto-save · Enter to send · AI changes still require confirmation","支持 JPG / PNG / WEBP · 最多 4 张 · 每张 ≤ 5MB · 对话自动保存 · Enter 发送 · AI 修改系统前仍需确认")}</div>
