@@ -104,7 +104,7 @@ const normalizeDay=(raw:any):DayItem=>({
       }))
     : [],
   completed:Boolean(raw?.completed),
-  collapsed:Boolean(raw?.collapsed)
+  collapsed:raw?.collapsed===undefined?Boolean(raw?.completed):Boolean(raw?.collapsed)
 });
 
 export default function ItineraryEditor({itineraryId,initialItinerary,currentStaffId,currentStaffName,sourceInquiryId="",sourceInquiryNo="",sourceInquirySnapshot}:Props){
@@ -724,35 +724,56 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       </div>
       <button className="btn" type="button" onClick={()=>isDirty?setPendingHref("/inquiries/"+resolvedSourceInquiryId):router.push("/inquiries/"+resolvedSourceInquiryId)}>Open Inquiry</button>
     </section>}
-    <div className="page-head page-hero-header">
-      <div>
-        <span className="page-kicker">ITINERARY TEMPLATE</span>
+    <div className="page-head itinerary-editor-head">
+      <div className="itinerary-editor-title-block">
         <h1>{itineraryId?"Edit Itinerary":"New Itinerary"}</h1>
-        <p>{resolvedSourceInquiryId?"由 Inquiry 自动带入基础资料；请检查后完成每日行程。":"独立建立简易行程。保存后可继续编辑。"}</p>
+        <div className="itinerary-editor-meta-line">
+          <span>{initialItinerary?.itinerary_no||"New Draft"}</span>
+          <span className={"status status-"+status}>{status==="ready"?"Ready":status==="confirmed"?"Confirmed":status==="archived"?"Archived":"Draft"}</span>
+        </div>
       </div>
-      <div className="detail-actions">
+      <div className="detail-actions itinerary-editor-actions">
         {isDirty&&<span className="unsaved-badge">Unsaved changes</span>}
-        <button className="btn" onClick={()=>isDirty?setPendingHref("/itineraries"):router.push("/itineraries")}>← Back</button>
+        <button className="btn itinerary-editor-back" onClick={()=>isDirty?setPendingHref("/itineraries"):router.push("/itineraries")}>← Back</button>
         <button className="btn primary" onClick={()=>void save()} disabled={saving}>{saving?"Saving...":"Save Itinerary"}</button>
       </div>
     </div>
 
-    <section className="panel">
-      <div className="panel-head"><h2>基本资料</h2><span className="itinerary-code-preview">{label}</span></div>
-      <div className="itinerary-meta-grid">
-        <label className="field"><span>Itinerary Title</span><input value={title} onChange={e=>setTitle(e.target.value)}/></label>
-        <label className="field"><span>Departure City｜出发城市</span><input value={departureCity} onChange={e=>setDepartureCity(e.target.value)} placeholder="Kuala Lumpur"/></label>
-        <label className="field"><span>Destination｜目的地</span><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder="Chongqing / Japan / Thailand"/></label>
-        <label className="field"><span>Travel Start Date｜出发日期</span><input type="date" value={travelStartDate} onChange={e=>setTravelStartDate(e.target.value)}/></label>
-        <label className="field"><span>Travel End Date｜返程日期</span><input type="date" value={travelEndDate} onChange={e=>setTravelEndDate(e.target.value)}/></label>
-        <label className="field"><span>Days</span><input type="number" min="1" value={daysCount} onChange={e=>setDaysCount(Math.max(1,Number(e.target.value)||1))}/></label>
-        <label className="field"><span>Nights</span><input type="number" min="0" value={nightsCount} onChange={e=>setNightsCount(Math.max(0,Number(e.target.value)||0))}/></label>
-        <label className="field"><span>Pax｜人数</span><input type="number" min="1" value={pax} onChange={e=>setPax(e.target.value===""?"":Math.max(1,Number(e.target.value)||1))} placeholder="20"/></label>
-        <label className="field"><span>Tour Type｜团型</span><input value={tourType} onChange={e=>setTourType(e.target.value)} placeholder="私人定制团 / Company Trip"/></label>
-        <label className="field"><span>Customer / Company</span><input value={customerName} onChange={e=>setCustomerName(e.target.value)}/></label>
-        <label className="field"><span>Status</span><select value={status} onChange={e=>setStatus(e.target.value)}><option value="draft">Draft</option><option value="ready">Ready</option><option value="confirmed">Confirmed</option><option value="archived">Archived</option></select></label>
-        <label className="field"><span>OP</span><input value={op} readOnly className="system-fixed-input"/></label>
-        <div className="field"><span>Day Cards</span><button type="button" className="btn itinerary-sync-btn" onClick={syncDays}>Sync to {daysCount} Days</button></div>
+    <section className="panel itinerary-editor-basics">
+      <div className="panel-head"><h2>Basic Information｜基本资料</h2><span className="itinerary-code-preview">{label}</span></div>
+
+      <div className="itinerary-basic-group">
+        <div className="itinerary-basic-group-head"><strong>Trip</strong><span>Route, dates and trip duration</span></div>
+        <div className="itinerary-basic-grid itinerary-basic-trip">
+          <label className="field"><span>Departure City｜出发城市</span><input value={departureCity} onChange={e=>setDepartureCity(e.target.value)} placeholder="Kuala Lumpur"/></label>
+          <label className="field"><span>Destination｜目的地</span><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder="Chongqing / Japan / Thailand"/></label>
+          <label className="field"><span>Travel Start Date｜出发日期</span><input type="date" value={travelStartDate} onChange={e=>setTravelStartDate(e.target.value)}/></label>
+          <label className="field"><span>Travel End Date｜返程日期</span><input type="date" value={travelEndDate} onChange={e=>setTravelEndDate(e.target.value)}/></label>
+          <div className="itinerary-duration-control">
+            <div><span>Duration</span><strong>{label}</strong></div>
+            <label className="field"><span>Days</span><input type="number" min="1" value={daysCount} onChange={e=>setDaysCount(Math.max(1,Number(e.target.value)||1))}/></label>
+            <label className="field"><span>Nights</span><input type="number" min="0" value={nightsCount} onChange={e=>setNightsCount(Math.max(0,Number(e.target.value)||0))}/></label>
+            <button type="button" className="btn itinerary-sync-btn" onClick={syncDays}>Sync {daysCount} Day{daysCount===1?"":"s"}</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="itinerary-basic-group">
+        <div className="itinerary-basic-group-head"><strong>Booking</strong><span>Traveller and ownership details</span></div>
+        <div className="itinerary-basic-grid itinerary-basic-booking">
+          <label className="field"><span>Pax｜人数</span><input type="number" min="1" value={pax} onChange={e=>setPax(e.target.value===""?"":Math.max(1,Number(e.target.value)||1))} placeholder="20"/></label>
+          <label className="field"><span>Tour Type｜团型</span><input value={tourType} onChange={e=>setTourType(e.target.value)} placeholder="私人定制团 / Company Trip"/></label>
+          <label className="field"><span>Customer / Company</span><input value={customerName} onChange={e=>setCustomerName(e.target.value)}/></label>
+          <label className="field"><span>OP</span><input value={op} readOnly className="system-fixed-input"/></label>
+        </div>
+      </div>
+
+      <div className="itinerary-basic-group">
+        <div className="itinerary-basic-group-head"><strong>Document</strong><span>Itinerary naming and document state</span></div>
+        <div className="itinerary-basic-grid itinerary-basic-document">
+          <label className="field"><span>Itinerary Title</span><input value={title} onChange={e=>setTitle(e.target.value)}/></label>
+          <label className="field"><span>Status</span><select value={status} onChange={e=>setStatus(e.target.value)}><option value="draft">Draft</option><option value="ready">Ready</option><option value="confirmed">Confirmed</option><option value="archived">Archived</option></select></label>
+        </div>
       </div>
     </section>
 
@@ -797,9 +818,9 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
                 ? <button type="button" className="day-status-btn" onClick={()=>patchDay(day.id,{completed:false})}>Mark as Draft</button>
                 : <button type="button" className="day-complete-btn" onClick={()=>patchDay(day.id,{completed:true,collapsed:true})}>✓ 完成</button>}
               <button type="button" className="day-collapse-btn" onClick={()=>patchDay(day.id,{collapsed:!day.collapsed})}>{day.collapsed?"展开":"收起"}</button>
-              <button type="button" onClick={()=>moveDay(index,-1)} disabled={index===0}>↑</button>
-              <button type="button" onClick={()=>moveDay(index,1)} disabled={index===days.length-1}>↓</button>
-              <button type="button" onClick={()=>duplicateDay(index)}>Duplicate</button>
+              <button type="button" className="day-icon-action" aria-label="Move day up" title="Move up" onClick={()=>moveDay(index,-1)} disabled={index===0}>↑</button>
+              <button type="button" className="day-icon-action" aria-label="Move day down" title="Move down" onClick={()=>moveDay(index,1)} disabled={index===days.length-1}>↓</button>
+              <button type="button" className="day-secondary-action" onClick={()=>duplicateDay(index)}>Duplicate</button>
               <button type="button" className="danger-link" onClick={()=>removeDay(index)} disabled={days.length<=1}>Delete</button>
             </div>
           </div>
