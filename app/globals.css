@@ -11298,3 +11298,306 @@ td,
     flex-wrap:wrap;
   }
 }
+
+
+/* =========================================================
+   AI LAB FOUNDATION
+   Keep the special workbench character while reducing hero
+   weight, nested cards and competing confirmation actions.
+   ========================================================= */
+.ai-lab-shell{
+  gap:18px!important;
+}
+.ai-lab-main{
+  min-width:0;
+}
+.ai-lab-workbench-head{
+  min-height:0!important;
+  margin-bottom:14px!important;
+  padding:14px 16px!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:var(--radius-md)!important;
+  background:var(--color-bg-surface)!important;
+  box-shadow:none!important;
+}
+.ai-lab-workbench-head>div:first-child{
+  min-width:0;
+}
+.ai-lab-workbench-head>div:first-child>span{
+  color:var(--color-text-tertiary)!important;
+  font-size:9px!important;
+  font-weight:700!important;
+  letter-spacing:.08em!important;
+}
+.ai-lab-workbench-head h1{
+  margin:3px 0 4px!important;
+  color:var(--color-brand-primary)!important;
+  font-size:24px!important;
+  line-height:1.1!important;
+  font-weight:700!important;
+  letter-spacing:-.02em!important;
+}
+.ai-lab-workbench-head p{
+  margin:0!important;
+  color:var(--color-text-secondary)!important;
+  font-size:11.5px!important;
+  line-height:1.45!important;
+}
+.ai-lab-mode{
+  min-height:28px!important;
+  padding:0 9px!important;
+  border:1px solid #D9E7F1!important;
+  border-radius:999px!important;
+  background:var(--color-info-soft)!important;
+  color:var(--color-info-text)!important;
+  font-size:9.5px!important;
+  font-weight:650!important;
+  white-space:nowrap;
+}
+
+/* Message surfaces stay readable without becoming nested card stacks. */
+.ai-lab-message{
+  margin-bottom:12px!important;
+}
+.ai-lab-message-label{
+  margin-bottom:4px!important;
+  color:var(--color-text-tertiary)!important;
+  font-size:9.5px!important;
+  font-weight:650!important;
+}
+.ai-lab-bubble{
+  padding:12px 14px!important;
+  border-color:var(--color-border-default)!important;
+  border-radius:12px!important;
+  box-shadow:none!important;
+}
+.ai-lab-message.assistant .ai-lab-bubble{
+  background:var(--color-bg-surface)!important;
+}
+.ai-lab-message.user .ai-lab-bubble{
+  background:var(--color-brand-primary-soft)!important;
+}
+.ai-lab-bubble>p{
+  margin:0!important;
+  line-height:1.55!important;
+}
+.ai-lab-links{
+  margin-top:10px!important;
+  padding-top:8px!important;
+  border-top:1px solid var(--color-border-default);
+}
+
+/* Memory is a soft suggestion, not a write-confirmation action. */
+.ai-lab-memory-proposal,
+.ai-lab-memory-autosaved{
+  margin-top:10px!important;
+  padding:10px 0 0!important;
+  border:0!important;
+  border-top:1px solid var(--color-border-default)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.ai-lab-memory-proposal>span,
+.ai-lab-memory-autosaved>span{
+  color:var(--color-text-tertiary)!important;
+  font-size:8.5px!important;
+  letter-spacing:.06em!important;
+}
+.ai-lab-memory-proposal>strong,
+.ai-lab-memory-autosaved>strong{
+  display:block;
+  margin-top:4px;
+  color:var(--color-text-primary)!important;
+  font-size:12px!important;
+}
+.ai-lab-memory-proposal>p,
+.ai-lab-memory-autosaved>p{
+  margin:4px 0 0!important;
+  color:var(--color-text-secondary)!important;
+  font-size:10.5px!important;
+  line-height:1.45!important;
+}
+.ai-lab-memory-proposal>div{
+  display:flex;
+  justify-content:flex-end;
+  gap:6px;
+  margin-top:8px;
+}
+.ai-lab-memory-save{
+  min-height:30px!important;
+  height:30px!important;
+  padding:0 9px!important;
+  background:var(--color-bg-surface)!important;
+  border-color:var(--color-border-default)!important;
+  color:var(--color-info-text)!important;
+  font-size:10.5px!important;
+  box-shadow:none!important;
+}
+.ai-lab-memory-save:hover:not(:disabled){
+  background:var(--color-bg-soft)!important;
+  color:var(--color-brand-primary)!important;
+  border-color:var(--color-border-strong)!important;
+}
+
+/* Proposed system writes keep a stronger confirmation treatment. */
+.ai-lab-action-card{
+  margin-top:10px!important;
+  padding:11px 12px!important;
+  border:1px solid #D9E7F1!important;
+  border-radius:10px!important;
+  background:var(--color-info-soft)!important;
+  box-shadow:none!important;
+}
+.ai-lab-action-card>span{
+  color:var(--color-info-text)!important;
+  font-size:8.5px!important;
+  letter-spacing:.06em!important;
+}
+.ai-lab-action-card>strong{
+  display:block;
+  margin-top:4px;
+  color:var(--color-text-primary)!important;
+  font-size:12px!important;
+}
+.ai-lab-action-card>div{
+  display:flex;
+  justify-content:flex-end;
+  gap:6px;
+  margin-top:10px;
+}
+.ai-lab-action-confirm{
+  min-height:32px!important;
+  height:32px!important;
+  padding:0 10px!important;
+  background:var(--color-brand-primary)!important;
+  border-color:var(--color-brand-primary)!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+.ai-lab-action-confirm:hover:not(:disabled){
+  background:var(--color-brand-primary-hover)!important;
+  border-color:var(--color-brand-primary-hover)!important;
+}
+
+/* Composer is the main day-to-day action surface. */
+.ai-lab-compose{
+  gap:8px!important;
+  padding:10px!important;
+  border-color:var(--color-border-default)!important;
+  border-radius:12px!important;
+  background:var(--color-bg-surface)!important;
+  box-shadow:none!important;
+}
+.ai-lab-compose textarea{
+  min-height:44px!important;
+  max-height:140px;
+  padding:9px 10px!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.ai-lab-compose textarea:focus{
+  box-shadow:none!important;
+}
+.ai-lab-attach-btn{
+  width:32px!important;
+  min-width:32px!important;
+  height:32px!important;
+  border-color:var(--color-border-default)!important;
+  background:var(--color-bg-soft)!important;
+  color:var(--color-text-secondary)!important;
+}
+.ai-lab-send-primary{
+  min-height:36px!important;
+  height:36px!important;
+  padding:0 12px!important;
+  background:var(--color-brand-primary)!important;
+  border-color:var(--color-brand-primary)!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+.ai-lab-compose-note{
+  margin-top:5px!important;
+  color:var(--color-text-tertiary)!important;
+  font-size:9px!important;
+  line-height:1.35!important;
+}
+
+/* Starter prompts are suggestions, not cards. */
+.ai-lab-starters{
+  gap:6px!important;
+  margin:8px 0 10px!important;
+}
+.ai-lab-starters button{
+  min-height:30px!important;
+  padding:0 9px!important;
+  border-color:var(--color-border-default)!important;
+  border-radius:999px!important;
+  background:var(--color-bg-surface)!important;
+  color:var(--color-text-secondary)!important;
+  box-shadow:none!important;
+}
+.ai-lab-starters button:hover{
+  background:var(--color-bg-soft)!important;
+  color:var(--color-text-primary)!important;
+}
+
+/* Context/thread sidebar stays a separate work surface, but quieter. */
+.ai-lab-context{
+  border-left:1px solid var(--color-border-default)!important;
+  background:var(--color-bg-soft)!important;
+}
+.ai-thread-panel{
+  box-shadow:none!important;
+}
+.ai-thread-panel-head{
+  border-bottom-color:var(--color-border-default)!important;
+}
+.ai-thread-panel-head>div>span{
+  color:var(--color-text-tertiary)!important;
+}
+.ai-thread-panel-head>div>strong{
+  color:var(--color-text-primary)!important;
+}
+.ai-thread-item,
+.ai-thread-archive-item{
+  box-shadow:none!important;
+}
+.ai-thread-item:hover,
+.ai-thread-archive-item:hover{
+  background:var(--color-bg-surface)!important;
+}
+.ai-thread-item.active{
+  background:var(--color-brand-primary-soft)!important;
+  border-color:#D9E7F1!important;
+}
+
+@media(max-width:980px){
+  .ai-lab-workbench-head{
+    align-items:flex-start!important;
+    flex-direction:column!important;
+    gap:10px!important;
+  }
+  .ai-lab-mode{
+    align-self:flex-start;
+  }
+}
+@media(max-width:760px){
+  .ai-lab-workbench-head{
+    padding:12px!important;
+  }
+  .ai-lab-workbench-head h1{
+    font-size:21px!important;
+  }
+  .ai-lab-action-card>div,
+  .ai-lab-memory-proposal>div{
+    justify-content:stretch;
+  }
+  .ai-lab-action-card>div .btn,
+  .ai-lab-memory-proposal>div .btn,
+  .ai-lab-memory-proposal>div .ai-lab-memory-save{
+    flex:1;
+    justify-content:center;
+  }
+}
