@@ -16,11 +16,11 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
       <aside className="sidebar">
         <div className="sidebar-brand">
           <div className="brand-mark">H</div>
-          <div><strong>Happy Express</strong><span>Quotation Workspace</span></div>
+          <div><strong>Happy Express</strong><span><UiText en="Quotation Workspace" zh="报价工作区" /></span></div>
         </div>
         <nav className="sidebar-nav">
           <Link href="/dashboard"><UiText en="Dashboard" zh="仪表板" /></Link>
-          {user.username.toLowerCase() === "long" && <Link href="/ai-lab">AI Workspace Beta</Link>}
+          {user.username.toLowerCase() === "long" && <Link href="/ai-lab"><UiText en="AI Workspace Beta" zh="AI 工作区 Beta" /></Link>}
           <Link href="/inquiries"><UiText en="Inquiry" zh="询价" /></Link>
           {user.role === "manager" && <Link href="/operation"><UiText en="Operation" zh="运营" /></Link>}
           <Link href="/products"><UiText en="Product" zh="产品" /></Link>
