@@ -34,6 +34,7 @@ export default function AiLabWorkspace(){
   const [archivedThreads,setArchivedThreads]=useState<WorkThread[]>([]);
   const [showArchived,setShowArchived]=useState(false);
   const [showSafety,setShowSafety]=useState(false);
+  const [sidebarCollapsed,setSidebarCollapsed]=useState(false);
   const [threadsLoading,setThreadsLoading]=useState(false);
   const [saveState,setSaveState]=useState<"saved"|"saving"|"">("");
   const [imageFiles,setImageFiles]=useState<File[]>([]);
@@ -246,7 +247,7 @@ export default function AiLabWorkspace(){
     newThread();
   }
 
-  return <div className="ai-lab-shell">
+  return <div className={"ai-lab-shell "+(sidebarCollapsed?"sidebar-collapsed":"")}>
     <section className="ai-lab-main">
       <div className="ai-lab-hero">
         <div><span>HAPPY AI LAB · BETA</span><h1>What would you like to work on?</h1><p>先实验 AI 操作方式；现有 Inquiry / Quotation / Itinerary 页面全部保留。</p></div>
@@ -298,13 +299,24 @@ export default function AiLabWorkspace(){
     </section>
 
     <aside className="ai-lab-context">
+      {sidebarCollapsed&&<button
+        type="button"
+        className="ai-lab-sidebar-restore"
+        aria-label="Expand sidebar"
+        title="Expand sidebar"
+        onClick={()=>setSidebarCollapsed(false)}
+      >‹</button>}
+
       <div className="ai-thread-panel">
         <div className="ai-thread-panel-head">
           <div>
             <span>WORK THREADS</span>
             <strong>Active Conversations</strong>
           </div>
-          <button type="button" onClick={newThread}>＋ New</button>
+          <div className="ai-thread-panel-actions">
+            <button type="button" className="ai-thread-collapse-btn" aria-label="Collapse sidebar" title="Collapse sidebar" onClick={()=>setSidebarCollapsed(true)}>›</button>
+            <button type="button" onClick={newThread}>＋ New</button>
+          </div>
         </div>
 
         <div className="ai-thread-save-state">
