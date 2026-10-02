@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect,useMemo,useRef,useState } from "react";
+import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 
 type Doc={
   id:string;title:string;fileName:string;storagePath:string;mimeType:string;fileSize:number;
@@ -14,6 +15,8 @@ const fmtSize=(n:number)=>{
 };
 
 export default function TravelMediaLibrary(){
+  const {language}=useWorkspaceLanguage();
+  const t=(en:string,zh:string)=>language==="zh"?zh:en;
   const [docs,setDocs]=useState<Doc[]>([]);
   const [q,setQ]=useState("");
   const [status,setStatus]=useState("");
@@ -44,7 +47,7 @@ export default function TravelMediaLibrary(){
     try{
       const res=await fetch("/api/internal-travel-library?q="+encodeURIComponent(q)+"&status="+encodeURIComponent(status),{cache:"no-store"});
       const data=await res.json().catch(()=>({}));
-      if(!res.ok||!data?.ok){setError(data?.error||"Unable to load library.");return;}
+      if(!res.ok||!data?.ok){setError(data?.error||t("Unable to load library.","无法加载资料库。"));return;}
       setDocs(Array.isArray(data.documents)?data.documents:[]);
     }finally{setLoading(false);}
   }
@@ -69,7 +72,7 @@ export default function TravelMediaLibrary(){
     if(mediaProcessing) return;
     mediaBackfillStartedRef.current=true;
     setMediaProcessing(true);
-    setMediaBackfillMessage("Queueing existing Library Sources...");
+    setMediaBackfillMessage(t("Queueing existing Library Sources...","正在排队现有 Library Sources..."));
     let failures=0;
     let processed=0;
     let lastError="";
@@ -81,11 +84,11 @@ export default function TravelMediaLibrary(){
       });
       const queueData=await queueRes.json().catch(()=>({}));
       if(!queueRes.ok||!queueData?.ok){
-        setMediaBackfillMessage("Unable to queue Library Sources: "+String(queueData?.error||"unknown error"));
+        setMediaBackfillMessage(t("Unable to queue Library Sources: ","无法排队 Library Sources：")+String(queueData?.error||t("unknown error","未知错误")));
         return;
       }
 
-      setMediaBackfillMessage("Queued "+Number(queueData.queued||0)+" source(s). Processing...");
+      setMediaBackfillMessage(t("Queued ","已排队 ")+Number(queueData.queued||0)+t(" source(s). Processing..."," 个来源，处理中..."));
       // Each server invocation processes one media chunk. Keep consuming until the queue is empty.
       // 120 passes is intentionally above the normal backlog size so one Library open can finish all queued documents.
       for(let i=0;i<120;i++){
@@ -97,24 +100,24 @@ export default function TravelMediaLibrary(){
         const data=await res.json().catch(()=>({}));
         if(!res.ok){
           failures++;
-          lastError=String(data?.error||"media extraction failed");
-          setMediaBackfillMessage("Media extraction failed: "+lastError);
+          lastError=String(data?.error||t("media extraction failed","媒体提取失败"));
+          setMediaBackfillMessage(t("Media extraction failed: ","媒体提取失败：")+lastError);
           // Avoid a hot retry loop when one source repeatedly fails.
           await new Promise(resolve=>window.setTimeout(resolve,1200));
           continue;
         }
         if(data?.done){
           if(failures>0){
-            setMediaBackfillMessage(failures+" Library Source(s) failed media extraction. "+lastError);
+            setMediaBackfillMessage(failures+t(" Library Source(s) failed media extraction. "," 个 Library Source 媒体提取失败。")+lastError);
           }else{
-            setMediaBackfillMessage(processed===0?"Existing Library Sources are up to date.":"Existing Library Sources media extraction completed.");
+            setMediaBackfillMessage(processed===0?t("Existing Library Sources are up to date.","现有 Library Sources 已是最新。"):t("Existing Library Sources media extraction completed.","现有 Library Sources 媒体提取已完成。"));
           }
           break;
         }
         processed++;
         const s=data?.summary||{};
         setMediaBackfillMessage(
-          String(data?.title||"Library Source")+" · "+Number(s.found||0)+" photos found · "+Number(s.matched||0)+" matched"
+          String(data?.title||t("Library Source","资料来源"))+" · "+Number(s.found||0)+t(" photos found · "," 张照片 · ")+Number(s.matched||0)+t(" matched"," 张已匹配")
         );
         await loadMediaReview();
         await load();
@@ -158,7 +161,7 @@ export default function TravelMediaLibrary(){
             return [candidate,...current];
           });
         }
-        setError(data?.error||"Unable to update extracted media.");
+        setError(data?.error||t("Unable to update extracted media.","无法更新已提取媒体。"));
         return;
       }
 
@@ -174,7 +177,7 @@ export default function TravelMediaLibrary(){
           return [candidate,...current];
         });
       }
-      setError(String(err?.message||"Unable to update extracted media."));
+      setError(String(err?.message||t("Unable to update extracted media.","无法更新已提取媒体。")));
     }finally{setMediaReviewBusyId("");}
   }
 
@@ -186,7 +189,7 @@ export default function TravelMediaLibrary(){
       form.set("file",file);
       const res=await fetch("/api/internal-travel-library",{method:"POST",body:form});
       const data=await res.json().catch(()=>({}));
-      if(!res.ok||!data?.ok){setError(data?.error||"Unable to analyze file.");return;}
+      if(!res.ok||!data?.ok){setError(data?.error||t("Unable to analyze file.","无法分析文件。"));return;}
       setPreview({id:data.id,file:data.file,extraction:data.extraction});
       setModel(data.model||"");
       await load();
@@ -204,7 +207,7 @@ export default function TravelMediaLibrary(){
         body:JSON.stringify({action:"confirm",id})
       });
       const data=await res.json().catch(()=>({}));
-      if(!res.ok||!data?.ok){setError(data?.error||"Unable to save to library.");return;}
+      if(!res.ok||!data?.ok){setError(data?.error||t("Unable to save to library.","无法保存到资料库。"));return;}
       const savedPreview=preview?.id===id?preview:null;
       if(savedPreview) setPreview((p:any)=>p?{...p,saved:true}:p);
       await load();
@@ -229,15 +232,15 @@ export default function TravelMediaLibrary(){
 
   async function searchInspector(){
     const query=inspectorQuery.trim();
-    if(!query){setInspectorResults([]);setInspectorMessage("请输入景点或酒店关键字。");return;}
+    if(!query){setInspectorResults([]);setInspectorMessage(t("Enter an attraction or hotel keyword.","请输入景点或酒店关键字。"));return;}
     setInspectorLoading(true);setInspectorMessage("");setError("");
     try{
       const res=await fetch("/api/internal-travel-media-inspector?q="+encodeURIComponent(query),{cache:"no-store"});
       const data=await res.json().catch(()=>({}));
-      if(!res.ok||!data?.ok){setError(data?.error||"Unable to search Media Library.");return;}
+      if(!res.ok||!data?.ok){setError(data?.error||t("Unable to search Media Library.","无法搜索 Media Library。"));return;}
       const results=Array.isArray(data.results)?data.results:[];
       setInspectorResults(results);
-      if(!results.length) setInspectorMessage("没有找到相关景点、酒店或已存档照片。");
+      if(!results.length) setInspectorMessage(t("No related attractions, hotels or stored photos found.","没有找到相关景点、酒店或已存档照片。"));
     }finally{setInspectorLoading(false);}
   }
 
@@ -252,7 +255,7 @@ export default function TravelMediaLibrary(){
         body:JSON.stringify({action:"update_keywords",placeId,keywords:cleaned})
       });
       const data=await res.json().catch(()=>({}));
-      if(!res.ok||!data?.ok){setError(data?.error||"Unable to update match keywords.");return;}
+      if(!res.ok||!data?.ok){setError(data?.error||t("Unable to update match keywords.","无法更新匹配关键词。"));return;}
       const saved=Array.isArray(data.matchKeywords)?data.matchKeywords:cleaned;
       setMediaReview(current=>current.map((item:any)=>
         String(item.suggestedPlaceId||"")===placeId?{...item,matchKeywords:saved}:item
@@ -275,8 +278,8 @@ export default function TravelMediaLibrary(){
     const permanent=action==="delete";
     const ok=window.confirm(
       permanent
-        ?"Permanently delete this image from the Travel Media Library and Storage? This cannot be undone."
-        :"Remove this image from this place/hotel? The underlying file will not be deleted."
+        ?t("Permanently delete this image from the Travel Media Library and Storage? This cannot be undone.","永久从 Travel Media Library 和 Storage 删除这张图片吗？此操作无法撤销。")
+        :t("Remove this image from this place/hotel? The underlying file will not be deleted.","从这个景点 / 酒店移除这张图片吗？原始文件不会被删除。")
     );
     if(!ok) return;
     setDeletingId(imageId);setError("");setInspectorMessage("");
@@ -287,8 +290,8 @@ export default function TravelMediaLibrary(){
         body:JSON.stringify({action,imageId})
       });
       const data=await res.json().catch(()=>({}));
-      if(!res.ok||!data?.ok){setError(data?.error||"Unable to update image.");return;}
-      setInspectorMessage(permanent?"Image deleted permanently.":"Image removed from this Library record.");
+      if(!res.ok||!data?.ok){setError(data?.error||t("Unable to update image.","无法更新图片。"));return;}
+      setInspectorMessage(permanent?t("Image deleted permanently.","图片已永久删除。"):t("Image removed from this Library record.","图片已从此 Library 记录移除。"));
       await searchInspector();
     }finally{setDeletingId("");}
   }
@@ -299,7 +302,7 @@ export default function TravelMediaLibrary(){
       body:JSON.stringify({action:"sign",path:doc.storagePath})
     });
     const data=await res.json().catch(()=>({}));
-    if(!res.ok||!data?.ok||!data.url){setError(data?.error||"Unable to open file.");return;}
+    if(!res.ok||!data?.ok||!data.url){setError(data?.error||t("Unable to open file.","无法打开文件。"));return;}
     window.open(data.url,"_blank","noopener,noreferrer");
   }
 
