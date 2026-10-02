@@ -30,17 +30,19 @@ export default async function ItineraryDetailPage({
   const returnLabel=returnTo.startsWith("/inquiries/")?"← Inquiry":"← Back";
   const currentItineraryHref="/itineraries/"+id+"?returnTo="+encodeURIComponent(returnTo);
 
-  return <div>
-    <div className="page-head quote-detail-head">
-      <div>
-        <span className="page-kicker">ITINERARY DETAIL</span>
+  return <div className="itinerary-detail-template">
+    <div className="page-head itinerary-detail-head">
+      <div className="itinerary-detail-title-block">
         <h1>{data.title||data.itinerary_no}</h1>
-        <p>{data.itinerary_no} · {data.status||"draft"}</p>
+        <div className="itinerary-detail-meta-line">
+          <span>{data.itinerary_no}</span>
+          <span className={"status itinerary-header-status status-"+String(data.status||"draft")}>{data.status==="ready"?"Ready":data.status==="confirmed"?"Confirmed":data.status==="archived"?"Archived":"Draft"}</span>
+        </div>
       </div>
       <div className="detail-actions">
-        <Link className="btn" href={returnTo}>{returnLabel}</Link>
+        <Link className="btn itinerary-back-action" href={returnTo}>{returnLabel}</Link>
         <ItineraryActions id={id}/>
-        <Link className="btn primary" href={"/itineraries/"+id+"/edit"}>Edit Itinerary</Link>
+        <Link className="btn" href={"/itineraries/"+id+"/edit"}>Edit Itinerary</Link>
       </div>
     </div>
 
@@ -53,15 +55,13 @@ export default async function ItineraryDetailPage({
       <Link className="btn" href={"/inquiries/"+data.source_inquiry_id+"?returnTo="+encodeURIComponent(currentItineraryHref)}>Open Inquiry</Link>
     </section>}
 
-    <section className="dashboard-cards itinerary-summary-cards">
-      <div className="dash-card"><span>Departure City</span><b>{qd.departureCity||"—"}</b></div>
-      <div className="dash-card"><span>Destination</span><b>{data.destination||"—"}</b></div>
-      <div className="dash-card"><span>Travel Dates</span><b>{qd.travelStartDate||"—"}{qd.travelEndDate?" → "+qd.travelEndDate:""}</b></div>
-      <div className="dash-card"><span>Duration</span><b>{data.days_count}D{data.nights_count}N</b></div>
-      <div className="dash-card"><span>Pax</span><b>{qd.pax||"—"}</b></div>
-      <div className="dash-card"><span>Tour Type</span><b>{qd.tourType||"—"}</b></div>
-      <div className="dash-card"><span>Customer</span><b>{data.customer_name||"—"}</b></div>
-      <div className="dash-card"><span>OP</span><b>{data.owner_name||"—"}</b></div>
+    <section className="itinerary-overview-strip">
+      <div><span>Route</span><b>{qd.departureCity||"—"} → {data.destination||"—"}</b></div>
+      <div><span>Travel</span><b>{qd.travelStartDate||"—"}{qd.travelEndDate?" → "+qd.travelEndDate:""} · {data.days_count}D{data.nights_count}N</b></div>
+      <div><span>Pax</span><b>{qd.pax||"—"}</b></div>
+      <div><span>Customer</span><b>{data.customer_name||"—"}</b></div>
+      <div><span>OP</span><b>{data.owner_name||"—"}</b></div>
+      <div><span>Tour Type</span><b>{qd.tourType||"—"}</b></div>
     </section>
 
     {flights.length>0&&<section className="panel">
