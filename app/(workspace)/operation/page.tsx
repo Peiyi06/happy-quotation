@@ -84,14 +84,14 @@ export default async function OperationWorkspacePage({
         <p>以案件进度为中心查看 Operation 工作：New → In Progress → Under Review → Ready。</p>
       </div>
       <div className="operation-scope-switch">
-        <Link className={requestedScope==="mine"?"active":""} href="/operation">My Queue</Link>
-        {canViewAll&&<Link className={requestedScope==="all"?"active":""} href="/operation?scope=all">All Operation</Link>}
+        <Link className={requestedScope==="mine"?"active":""} href="/operation">My Operations</Link>
+        {canViewAll&&<Link className={requestedScope==="all"?"active":""} href="/operation?scope=all">All Operations</Link>}
       </div>
     </div>
 
     <section className="operation-toolbar">
       <div>
-        <strong>{requestedScope==="mine"?"My Operation Queue":"All Operation"}</strong>
+        <strong>{requestedScope==="mine"?"My Operations":"All Operations"}</strong>
         <span>{assigned.length} active case{assigned.length===1?"":"s"}</span>
       </div>
       <form>
