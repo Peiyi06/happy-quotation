@@ -10195,3 +10195,50 @@ td,
     justify-content:center;
   }
 }
+
+
+/* =========================================================
+   AI ITINERARY — ADJUSTMENT NOTES TYPING PROMPT
+   Decorative animated placeholder; never writes into textarea value.
+   ========================================================= */
+.ai-adjustment-textarea-wrap{
+  position:relative;
+}
+.ai-adjustment-textarea-wrap textarea{
+  position:relative;
+  z-index:1;
+  width:100%;
+  background:var(--color-bg-surface);
+}
+.ai-adjustment-typing{
+  position:absolute;
+  z-index:2;
+  top:12px;
+  left:12px;
+  right:12px;
+  pointer-events:none;
+  color:var(--color-text-tertiary);
+  font-size:12px;
+  line-height:1.55;
+  white-space:pre-wrap;
+}
+.ai-adjustment-typing i{
+  display:inline-block;
+  width:1px;
+  height:1.05em;
+  margin-left:2px;
+  vertical-align:-.12em;
+  background:var(--color-info-text);
+  opacity:.55;
+  animation:ai-adjustment-caret 1s steps(1,end) infinite;
+}
+@keyframes ai-adjustment-caret{
+  0%,48%{opacity:.55}
+  49%,100%{opacity:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .ai-adjustment-typing i{
+    display:none;
+    animation:none;
+  }
+}
