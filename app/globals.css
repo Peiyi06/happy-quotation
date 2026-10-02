@@ -10242,3 +10242,96 @@ td,
     animation:none;
   }
 }
+
+
+/* =========================================================
+   AI ITINERARY — CLEAN-UP PASS
+   Less visual noise, tighter generator density.
+   ========================================================= */
+.ai-foundation-section-generator{
+  padding-bottom:18px!important;
+}
+.ai-foundation-section-generator>.panel-head{
+  margin-bottom:12px!important;
+}
+.ai-generator-form{
+  gap:12px;
+  max-width:920px;
+}
+.ai-upload-field{
+  gap:5px;
+}
+.ai-upload-control{
+  min-height:54px;
+  padding:8px 10px;
+  grid-template-columns:30px minmax(0,1fr) auto;
+  gap:10px;
+}
+.ai-upload-icon{
+  width:30px;
+  height:30px;
+  border-radius:9px;
+  font-size:16px;
+}
+.ai-upload-copy strong{
+  font-size:12px;
+}
+.ai-upload-copy small{
+  font-size:10px;
+}
+.ai-upload-action{
+  min-height:30px;
+  padding:0 9px;
+  font-size:10.5px;
+}
+.ai-adjustment-field{
+  gap:5px;
+}
+.ai-adjustment-field textarea{
+  min-height:112px;
+}
+.ai-adjustment-helper{
+  font-size:10px;
+  line-height:1.4;
+}
+.ai-adjustment-typing{
+  color:#9A9AA1;
+  font-size:11.5px;
+  line-height:1.5;
+}
+.ai-generator-form .ai-import-primary-action{
+  padding-top:0;
+  margin-top:-1px!important;
+}
+.ai-generator-form .ai-import-primary-action .btn{
+  min-height:38px;
+}
+
+/* Once a draft exists, generation recedes and review takes over. */
+.ai-foundation-section-generator.has-result{
+  opacity:.86;
+}
+.ai-foundation-section-generator.has-result>.panel-head h2{
+  color:var(--color-text-secondary)!important;
+}
+.ai-foundation-section-generator.has-result .ai-generator-form{
+  max-width:860px;
+}
+.ai-foundation-section-generator.has-result .ai-upload-control{
+  background:var(--color-bg-soft);
+}
+.ai-foundation-section-generator.has-result .ai-import-primary-action .btn{
+  background:var(--color-bg-surface)!important;
+  color:var(--color-text-secondary)!important;
+  border-color:var(--color-border-default)!important;
+}
+
+@media(max-width:760px){
+  .ai-upload-control{
+    min-height:52px;
+    grid-template-columns:30px minmax(0,1fr);
+  }
+  .ai-adjustment-field textarea{
+    min-height:104px;
+  }
+}
