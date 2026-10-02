@@ -919,7 +919,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         <div>
           <span className="page-kicker">WORKFLOW</span>
           <h2>工作流程</h2>
-          <p className="panel-subtext">Quotation → Management Review → Itinerary。完成本页后，从这里推进下一步。</p>
+          <p className="panel-subtext">Quotation → Review → Itinerary</p>
         </div>
       </div>
 
@@ -931,13 +931,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           </div>
           <div className="simple-workflow-title">
             <h3>Quotation</h3>
-            <strong>{displayStatus==="revision_required"?"Revision Required":displayStatus==="under_review"||displayStatus==="ready"?"Quotation Submitted":"Prepare Final Quotation"}</strong>
+            <strong>{displayStatus==="revision_required"?"Revision Required":displayStatus==="under_review"||displayStatus==="ready"?"Submitted":"Prepare Quotation"}</strong>
           </div>
-          <p>{displayStatus==="revision_required"
-            ?"根据 Management 意见完成修改，再重新提交审核。"
-            :displayStatus==="under_review"||displayStatus==="ready"
-              ?"Quotation 已保存并提交，当前编辑阶段已完成。"
-              :"确认成本、利润与最终售价，然后提交 Management Review。"}</p>
           {(displayStatus==="draft"||displayStatus==="revision_required")&&<div className="simple-workflow-actions">
             <button className="btn" type="button" disabled={saving||!isDirty} onClick={()=>void saveQuotation()}>
               {saving?"Saving...":isDirty?"Save Quotation":"Saved ✓"}
@@ -957,13 +952,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           </div>
           <div className="simple-workflow-title">
             <h3>Management Review</h3>
-            <strong>{displayStatus==="ready"?"Quotation Approved":displayStatus==="under_review"?"Waiting Management Approval":"Available After Submission"}</strong>
+            <strong>{displayStatus==="ready"?"Approved":displayStatus==="under_review"?"Waiting for Approval":"After Submission"}</strong>
           </div>
-          <p>{displayStatus==="ready"
-            ?"Management 已批准报价。"
-            :displayStatus==="under_review"
-              ?"等待 Management 审核；如需修改会退回 Revision Required。"
-              :"提交 Quotation 后进入 Management Review。"}</p>
           {displayStatus==="under_review"&&<div className="quotation-workflow-waiting">Waiting Management Review</div>}
         </div>
 
@@ -976,11 +966,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           </div>
           <div className="simple-workflow-title">
             <h3>Itinerary</h3>
-            <strong>{displayStatus==="ready"?"Ready to Create":"Available After Approval"}</strong>
+            <strong>{displayStatus==="ready"?"Ready to Create":"After Approval"}</strong>
           </div>
-          <p>{displayStatus==="ready"
-            ?"Final Quotation 已批准，可以继续制作给客户的 Itinerary。"
-            :"Management 批准 Quotation 后才进入 Itinerary 阶段。"}</p>
           {displayStatus==="ready"&&resolvedSourceInquiryId&&<div className="simple-workflow-actions">
             <button className="btn primary" type="button" onClick={()=>router.push("/itineraries/new?sourceInquiry="+resolvedSourceInquiryId)}>Create Itinerary</button>
             <button className="btn" type="button" onClick={()=>router.push("/ai-import?sourceInquiry="+resolvedSourceInquiryId)}>AI Itinerary</button>
