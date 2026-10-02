@@ -310,15 +310,8 @@ export default function TravelMediaLibrary(){
   const pendingCount=useMemo(()=>docs.filter(x=>x.status==="pending_review").length,[docs]);
 
   return <div className="travel-library-workspace">
-    <section className="travel-library-flow-head">
-      <div>
-        <span className="page-kicker">{t("PROCESSING WORKSPACE","处理工作区")}</span>
-        <h2>{t("Travel Library Processing","旅游资料库处理")}</h2>
-        <p>{t("Upload → AI Review → Media Extraction → Human Review → Library","上传 → AI 审核 → 媒体提取 → 人工审核 → 资料库")}</p>
-      </div>
-      <div className="travel-library-flow-steps" aria-label={t("Travel Library processing flow","Travel Library 处理流程")}>
-        <span>{t("1 Upload","1 上传")}</span><b>→</b><span>{t("2 AI Review","2 AI 审核")}</span><b>→</b><span>{t("3 Extract Media","3 提取媒体")}</span><b>→</b><span>{t("4 Review","4 审核")}</span><b>→</b><span>{t("5 Library","5 资料库")}</span>
-      </div>
+    <section className="travel-library-process-strip" aria-label={t("Travel Library processing flow","Travel Library 处理流程")}>
+      <span>{t("1 Upload","1 上传")}</span><b>→</b><span>{t("2 AI Review","2 AI 审核")}</span><b>→</b><span>{t("3 Extract Media","3 提取媒体")}</span><b>→</b><span>{t("4 Human Review","4 人工审核")}</span><b>→</b><span>{t("5 Library","5 资料库")}</span>
     </section>
 
     <div className="travel-library-toolbar">
@@ -427,7 +420,7 @@ export default function TravelMediaLibrary(){
         <div className="travel-library-document-media-status">
           {mediaProcessing&&<span className="status status-under_review">{t("Processing...","处理中...")}</span>}
           <span className="status status-ready">{mediaReview.length} {t("To Review","待审核")}</span>
-          <button className="btn compact primary" type="button" disabled={mediaProcessing} onClick={()=>void processMediaBacklog()}>
+          <button className="btn compact travel-library-run-extraction" type="button" disabled={mediaProcessing} onClick={()=>void processMediaBacklog()}>
             {mediaProcessing?t("Running...","运行中..."):t("Run Media Extraction","运行媒体提取")}
           </button>
         </div>
@@ -558,7 +551,7 @@ export default function TravelMediaLibrary(){
           onKeyDown={e=>{if(e.key==="Enter") void searchInspector();}}
           placeholder={t("e.g. Kiyomizu-dera / DoubleTree Kyoto...","例如：清水寺 / Kiyomizu-dera / DoubleTree Kyoto...")}
         />
-        <button className="btn primary" type="button" disabled={inspectorLoading} onClick={()=>void searchInspector()}>
+        <button className="btn travel-library-inspector-search-btn" type="button" disabled={inspectorLoading} onClick={()=>void searchInspector()}>
           {inspectorLoading?t("Searching...","搜索中..."):t("Search Library","搜索资料库")}
         </button>
         <button
@@ -699,7 +692,7 @@ export default function TravelMediaLibrary(){
           <div className="travel-library-source-actions">
             <button className="btn compact" type="button" onClick={()=>void openSource(doc)}>{t("Open File","打开文件")}</button>
             {doc.status==="pending_review"&&<button className="btn compact" type="button" onClick={()=>setPreview({id:doc.id,file:{name:doc.fileName,path:doc.storagePath,mimeType:doc.mimeType},extraction:doc.extraction})}>{t("Review","审核")}</button>}
-            {doc.status==="pending_review"&&<button className="btn compact primary" type="button" onClick={()=>void confirm(doc.id)} disabled={savingId===doc.id}>{savingId===doc.id?t("Saving...","保存中..."):t("Save","保存")}</button>}
+            {doc.status==="pending_review"&&<button className="btn compact travel-library-source-save" type="button" onClick={()=>void confirm(doc.id)} disabled={savingId===doc.id}>{savingId===doc.id?t("Saving...","保存中..."):t("Save","保存")}</button>}
           </div>
         </article>)}
         {!loading&&!docs.length&&<div className="travel-library-inspector-empty">{t("No data yet. Upload the first itinerary, quotation, hotel document or image.","还没有资料。上传第一份行程、报价、酒店资料或图片。")}</div>}
