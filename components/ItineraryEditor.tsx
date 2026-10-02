@@ -1098,7 +1098,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     <section className="panel">
       <div className="panel-head">
         <div>
-          <h2>Included / Not Included｜配套包含与不包含</h2>
+          <h2 className="itinerary-section-title"><span>Included / Not Included</span><span className="itinerary-section-title-cn">配套包含与不包含</span></h2>
           <p className="panel-subtext">使用常用 Preset 快速加入，也可选择 Other 手动输入项目名称。</p>
         </div>
       </div>
@@ -1189,7 +1189,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     <section className="panel">
       <div className="panel-head">
         <div>
-          <h2>Friendly Reminder｜温馨提醒</h2>
+          <h2 className="itinerary-section-title"><span>Friendly Reminder</span><span className="itinerary-section-title-cn">温馨提醒</span></h2>
           <p className="panel-subtext">Optional｜有填写才会在 Detail / 未来 PDF 显示。</p>
         </div>
         <button className="btn itinerary-add-action" type="button" onClick={addReminder}>+ Add Reminder</button>
