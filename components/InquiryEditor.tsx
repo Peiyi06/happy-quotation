@@ -335,36 +335,32 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
     </section>
 
     {!initialInquiry?.id&&<section className="panel inquiry-workflow-panel new-inquiry-workflow-panel">
-      <div className="panel-head inquiry-workflow-panel-head">
+      <div className="panel-head inquiry-workflow-panel-head system-workflow-head">
         <div>
           <span className="page-kicker">WORKFLOW</span>
           <h2>下一步｜Next Step</h2>
-          <p className="panel-subtext">资料确认后，从这里建立 Inquiry 并交给 Operation 继续处理。</p>
+          
         </div>
       </div>
-      <div className="new-inquiry-workflow-grid">
+      <div className="new-inquiry-workflow-grid system-workflow-grid system-workflow-two-step">
         <div className="simple-workflow-card current">
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">01</span>
             <span className="simple-workflow-state">Current</span>
           </div>
           <div className="simple-workflow-title">
-            <h3>Inquiry</h3>
-            <strong>Complete Customer Request</strong>
+            <strong>Inquiry</strong>
           </div>
-          <p>确认客户资料、旅客组成、推荐航班及旅游需求。</p>
         </div>
         <div className="simple-workflow-arrow" aria-hidden="true">→</div>
         <div className="simple-workflow-card upcoming">
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">02</span>
-            <span className="simple-workflow-state">Upcoming</span>
+            <span className="simple-workflow-state">Next</span>
           </div>
           <div className="simple-workflow-title">
-            <h3>Operation</h3>
-            <strong>Hand Off to Operation</strong>
+            <strong>Operation</strong>
           </div>
-          <p>建立后案件进入 New，Operation 可开始 Review、Supplier Inquiry 与 Quotation。</p>
         </div>
       </div>
       <div className="new-inquiry-workflow-actions">
