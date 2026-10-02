@@ -15792,3 +15792,108 @@ td,
     --foundation-sidebar-title:20px;
   }
 }
+
+
+/* =========================================================
+   FOUNDATION SIDEBAR TYPOGRAPHY — AI LAB CONTEXT FIX
+   Audit correction: the live sidebar container is .ai-lab-context.
+   ========================================================= */
+
+/* Sidebar title */
+.ai-lab-context .ai-thread-panel-head>div:first-child>strong{
+  font-size:var(--foundation-sidebar-title)!important;
+  line-height:1.15!important;
+  font-weight:700!important;
+  letter-spacing:-.015em!important;
+}
+
+/* Header actions */
+.ai-lab-context .ai-thread-panel-actions button:not(.ai-thread-collapse-btn){
+  font-size:var(--foundation-sidebar-action)!important;
+  line-height:1!important;
+  font-weight:650!important;
+}
+
+/* Saved state / tertiary metadata */
+.ai-lab-context .ai-thread-save-state{
+  font-size:var(--foundation-sidebar-meta)!important;
+  line-height:1.2!important;
+}
+
+/* Segmented control */
+.ai-lab-context .ai-thread-panel .ai-thread-view-switch.ios-segmented-control>button{
+  font-size:var(--foundation-sidebar-item)!important;
+  line-height:1!important;
+  font-weight:600!important;
+}
+.ai-lab-context .ai-thread-panel .ai-thread-view-switch.ios-segmented-control>button>span{
+  font-size:var(--foundation-sidebar-meta)!important;
+  line-height:1!important;
+  font-weight:500!important;
+}
+
+/* Thread rows */
+.ai-lab-context .ai-thread-title{
+  font-size:var(--foundation-sidebar-item)!important;
+  line-height:1.28!important;
+  font-weight:650!important;
+}
+.ai-lab-context .ai-thread-meta,
+.ai-lab-context .ai-thread-time{
+  font-size:var(--foundation-sidebar-meta)!important;
+  line-height:1.3!important;
+  font-weight:500!important;
+}
+
+/* Empty/list helper copy */
+.ai-lab-context .ai-lab-context-empty{
+  font-size:var(--foundation-sidebar-helper)!important;
+  line-height:1.4!important;
+}
+
+/* Current context */
+.ai-lab-context .ai-lab-context-head>span{
+  font-size:var(--foundation-sidebar-meta)!important;
+  line-height:1!important;
+  font-weight:700!important;
+  letter-spacing:.065em!important;
+}
+.ai-lab-context .ai-lab-context-head>strong{
+  font-size:var(--foundation-sidebar-item)!important;
+  line-height:1.25!important;
+  font-weight:600!important;
+}
+
+/* Current case details */
+.ai-lab-context .ai-lab-current-case>span{
+  font-size:var(--foundation-sidebar-meta)!important;
+}
+.ai-lab-context .ai-lab-current-case>strong{
+  font-size:var(--foundation-sidebar-item)!important;
+}
+.ai-lab-context .ai-lab-current-case>small,
+.ai-lab-context .ai-lab-clear{
+  font-size:var(--foundation-sidebar-meta)!important;
+}
+.ai-lab-context .ai-lab-current-case .btn{
+  font-size:var(--foundation-sidebar-action)!important;
+}
+
+/* Safety */
+.ai-lab-context .ai-lab-safety-toggle>span{
+  font-size:var(--foundation-sidebar-helper)!important;
+  line-height:1.3!important;
+  font-weight:600!important;
+}
+.ai-lab-context .ai-lab-safety-toggle>b{
+  font-size:var(--foundation-sidebar-helper)!important;
+}
+.ai-lab-context .ai-lab-safety-body{
+  font-size:var(--foundation-sidebar-helper)!important;
+  line-height:1.45!important;
+}
+
+/* Keep collapse glyph as an icon, not typography. */
+.ai-lab-context .ai-thread-collapse-btn{
+  font-size:0!important;
+}
