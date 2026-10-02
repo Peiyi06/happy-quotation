@@ -260,7 +260,12 @@ export default function AiLabWorkspace(){
           <div className="ai-lab-bubble">
             {m.attachments&&m.attachments.length>0&&<div className="ai-lab-message-images">{m.attachments.map((a,i)=>a.url?<img key={i} src={a.url} alt={a.name}/>:<span key={i} className="ai-lab-restored-attachment">📎 {a.name}</span>)}</div>}
             <p>{m.text}</p>
-            {m.links&&m.links.length>0&&<div className="ai-lab-links">{m.links.map((link,i)=><a key={i} href={link.href}>{link.label}<span>→</span></a>)}</div>}
+            {m.links&&m.links.length>0&&<div className="ai-lab-links">{m.links.map((link,i)=>{
+              const href=link.kind==="inquiry"
+                ? link.href+(link.href.includes("?")?"&":"?")+"returnTo="+encodeURIComponent("/ai-lab")
+                : link.href;
+              return <a key={i} href={href}>{link.label}<span>→</span></a>;
+            })}</div>}
             {m.autoMemorySaved&&<div className="ai-lab-memory-autosaved">
               <span>✓ COMPANY RULE 已自动保存</span>
               <strong>{m.autoMemorySaved.title}</strong>
@@ -376,7 +381,7 @@ export default function AiLabWorkspace(){
               <span>INQUIRY</span>
               <strong>{contextTitle||contextInquiryId}</strong>
               <small>{contextInquiryId}</small>
-              <a className="btn ai-lab-nav-link" href={"/inquiries/"+contextInquiryId}>Open Inquiry</a>
+              <a className="btn ai-lab-nav-link" href={"/inquiries/"+contextInquiryId+"?returnTo="+encodeURIComponent("/ai-lab")}>Open Inquiry</a>
               <button className="ai-lab-clear" type="button" onClick={clearContext}>Clear Context</button>
             </div>
           : <p className="ai-lab-context-empty">当你提到一笔 Inquiry 后，它会留在这里。之后可以直接说「继续这笔」或「下一步」。</p>}
