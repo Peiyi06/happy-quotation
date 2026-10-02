@@ -35,7 +35,7 @@ export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
             <span className="page-kicker">{t("QUOTATION","报价")}</span>
             <h2>{t("Quotation Workspace","报价工作区")}</h2>
           </div>
-          <button type="button" className="quotation-type-close" onClick={()=>setOpen(false)} aria-label="Close">×</button>
+          <button type="button" className="quotation-type-close" onClick={()=>setOpen(false)} aria-label={t("Close","关闭")}>×</button>
         </div>
 
         <div className="quotation-type-grid workspace-module-grid">
@@ -53,7 +53,7 @@ export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
           <Link href="/quotations/new" className="quotation-type-card available" onClick={()=>setOpen(false)}>
             <div className="quotation-type-card-top">
               <span className="quotation-type-index">02</span>
-              <span className="quotation-type-status available">Available</span>
+              <span className="quotation-type-status available">{t("Available","可使用")}</span>
             </div>
             <div>
               <h3>{t("Outbound","出境旅游")}</h3>
