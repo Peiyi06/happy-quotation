@@ -134,9 +134,10 @@ export default function TravelMediaLibrary(){
       });
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){setError(data?.error||"Unable to update extracted media.");return;}
-      await loadMediaReview();
+      setMediaReview(current=>current.filter((item:any)=>item.id!==id));
       await load();
       if(inspectorQuery.trim()) await searchInspector();
+      void loadMediaReview();
     }finally{setMediaReviewBusyId("");}
   }
 
@@ -231,6 +232,17 @@ export default function TravelMediaLibrary(){
   const pendingCount=useMemo(()=>docs.filter(x=>x.status==="pending_review").length,[docs]);
 
   return <div className="travel-library-workspace">
+    <section className="travel-library-flow-head">
+      <div>
+        <span className="page-kicker">PROCESSING WORKSPACE</span>
+        <h2>Travel Library Processing</h2>
+        <p>Upload → AI Review → Media Extraction → Human Review → Library</p>
+      </div>
+      <div className="travel-library-flow-steps" aria-label="Travel Library processing flow">
+        <span>1 Upload</span><b>→</b><span>2 AI Review</span><b>→</b><span>3 Extract Media</span><b>→</b><span>4 Review</span><b>→</b><span>5 Library</span>
+      </div>
+    </section>
+
     <div className="travel-library-toolbar">
       <div>
         <strong>{docs.length} Sources</strong>
@@ -252,152 +264,6 @@ export default function TravelMediaLibrary(){
     </div>
 
     {error&&<div className="ai-import-error">{error}</div>}
-
-    <section className="panel travel-library-inspector">
-      <div className="panel-head">
-        <div>
-          <span className="page-kicker">MEDIA INSPECTOR</span>
-          <h2>Library Search & Validation｜资料库检查</h2>
-          <p className="panel-subtext">搜索已经正式存档的景点或酒店，检查系统目前关联的照片是否正确。</p>
-        </div>
-      </div>
-
-      <div className="travel-library-inspector-search">
-        <input
-          value={inspectorQuery}
-          onChange={e=>setInspectorQuery(e.target.value)}
-          onKeyDown={e=>{if(e.key==="Enter") void searchInspector();}}
-          placeholder="例如：清水寺 / Kiyomizu-dera / DoubleTree Kyoto..."
-        />
-        <button className="btn primary" type="button" disabled={inspectorLoading} onClick={()=>void searchInspector()}>
-          {inspectorLoading?"Searching...":"Search Library"}
-        </button>
-      </div>
-
-      {inspectorMessage&&<div className="travel-library-inspector-message">{inspectorMessage}</div>}
-
-      {inspectorResults.length>0&&<div className="travel-library-inspector-results">
-        {inspectorResults.map((place:any)=><article className="travel-library-inspector-place" key={place.placeId}>
-          <div className="travel-library-inspector-place-head">
-            <div>
-              <span className="page-kicker">{String(place.type||"PLACE").toUpperCase()}</span>
-              <h3>{place.canonicalName||"Unnamed Place"}</h3>
-              <p>{[place.destination,place.cityArea].filter(Boolean).join(" · ")||"—"}</p>
-            </div>
-            <div className="travel-library-inspector-badges">
-              <span className="status status-ready">{Array.isArray(place.images)?place.images.length:0} Photos</span>
-              <span className="travel-library-score">{Math.round(Number(place.score||0)*100)}% Name Match</span>
-            </div>
-          </div>
-
-          {Array.isArray(place.aliases)&&place.aliases.length>0&&<div className="travel-library-inspector-aliases">
-            <span>Aliases</span>
-            <div>{place.aliases.map((a:string,i:number)=><em key={i}>{a}</em>)}</div>
-          </div>}
-
-          {Array.isArray(place.images)&&place.images.length>0
-            ? <div className="travel-library-inspector-gallery">
-                {place.images.map((img:any)=><figure key={img.imageId}>
-                  <div className="travel-library-inspector-photo">
-                    <img src={img.url} alt={img.name||place.canonicalName}/>
-                  </div>
-                  <figcaption>
-                    <strong>{img.name||"Library Image"}</strong>
-                    <span>{img.createdAt?new Date(img.createdAt).toLocaleDateString("en-MY"):"Stored Library Image"}</span>
-                    <div>
-                      <a className="btn compact" href={img.url} target="_blank" rel="noreferrer">Open</a>
-                      <button className="btn compact" type="button" disabled={deletingId===img.imageId} onClick={()=>void mutateInspectorImage(img.imageId,"remove")}>
-                        Remove from Place
-                      </button>
-                      <button className="btn compact danger" type="button" disabled={deletingId===img.imageId} onClick={()=>void mutateInspectorImage(img.imageId,"delete")}>
-                        {deletingId===img.imageId?"Deleting...":"Delete"}
-                      </button>
-                    </div>
-                  </figcaption>
-                </figure>)}
-              </div>
-            : <div className="travel-library-inspector-empty">这个景点 / 酒店名称已经存档，但目前没有关联照片。</div>}
-        </article>)}
-      </div>}
-
-      {!inspectorLoading&&!inspectorResults.length&&!inspectorMessage&&<div className="travel-library-inspector-empty">
-        输入景点或酒店关键字，例如「清水寺」、「Kiyomizu」或酒店名称，系统会搜索已经存档的 Library Record 与照片。
-      </div>}
-    </section>
-
-    <section className="panel travel-library-document-media">
-      <div className="panel-head">
-        <div>
-          <span className="page-kicker">DOCUMENT MEDIA EXTRACTION</span>
-          <h2>Document Media Review｜文件图片匹配审核</h2>
-          <p className="panel-subtext">PDF / DOCX 内嵌照片会先拆出并由 AI 结合页内文字与视觉判断。你确认后才会进入正式 Travel Media Library。</p>
-        </div>
-        <div className="travel-library-document-media-status">
-          {mediaProcessing&&<span className="status status-under_review">Processing...</span>}
-          <span className="status status-ready">{mediaReview.length} To Review</span>
-          <button className="btn compact primary" type="button" disabled={mediaProcessing} onClick={()=>void processMediaBacklog()}>
-            {mediaProcessing?"Running...":"Run Media Extraction"}
-          </button>
-        </div>
-      </div>
-
-      {mediaBackfillMessage&&<div className="travel-library-inspector-message">{mediaBackfillMessage}</div>}
-
-      {mediaReview.length>0?<div className="travel-library-document-media-grid">
-        {mediaReview.map((item:any)=><article className="travel-library-document-media-card" key={item.id}>
-          <div className="travel-library-document-media-image">
-            <img src={item.imageUrl} alt={item.suggestedName||item.originalName||"Extracted media"}/>
-            <span>{item.sourcePage?"Page "+item.sourcePage:"DOCX"}</span>
-          </div>
-          <div className="travel-library-document-media-body">
-            <div className="travel-library-document-media-title">
-              <div>
-                <small>{item.documentTitle||item.fileName||"Library Source"}</small>
-                <strong>{item.suggestedName||"Needs manual review"}</strong>
-              </div>
-              <span className={"status "+(item.suggestedPlaceId?"status-ready":"status-under_review")}>
-                {Math.round(Number(item.confidence||0)*100)}%
-              </span>
-            </div>
-            <div className="travel-library-document-media-meta">
-              <div><span>Type</span><strong>{item.suggestedType||"unknown"}</strong></div>
-              <div><span>Match</span><strong>{item.suggestedPlaceId?"Library Record Found":"No confident record"}</strong></div>
-              <div><span>Method</span><strong>{String(item.matchMethod||"").replaceAll("_"," ")||"—"}</strong></div>
-              <div><span>Source</span><strong>{item.sourcePage?"Page "+item.sourcePage:"Document"}</strong></div>
-            </div>
-            <p>{item.reason||"—"}</p>
-            {item.nearbyText&&<details>
-              <summary>Show page context</summary>
-              <div>{item.nearbyText}</div>
-            </details>}
-            <div className="travel-library-document-media-actions">
-              <a className="btn compact" href={item.imageUrl} target="_blank" rel="noreferrer">Open</a>
-              <button
-                className="btn compact primary"
-                type="button"
-                disabled={!item.suggestedPlaceId||mediaReviewBusyId===item.id}
-                onClick={()=>void reviewMediaCandidate(item.id,"confirm")}
-              >
-                {mediaReviewBusyId===item.id?"Saving...":"✓ Confirm to Library"}
-              </button>
-              <button
-                className="btn compact danger"
-                type="button"
-                disabled={mediaReviewBusyId===item.id}
-                onClick={()=>void reviewMediaCandidate(item.id,"ignore")}
-              >
-                Ignore / Delete
-              </button>
-            </div>
-            {!item.suggestedPlaceId&&<div className="travel-library-verification-note">
-              AI 没有找到足够可信的景点 / 酒店记录，所以不能直接确认。先 Ignore，或之后加入手动改配功能。
-            </div>}
-          </div>
-        </article>)}
-      </div>:<div className="travel-library-inspector-empty">
-        {mediaProcessing?"正在分析现有 Library Sources...":"目前没有待审核的 PDF / DOCX 内嵌照片。点击 Run Media Extraction 手动开始。"}
-      </div>}
-    </section>
 
     {preview&&<section className="panel travel-library-review">
       <div className="panel-head">
@@ -473,6 +339,152 @@ export default function TravelMediaLibrary(){
       </div>
     </section>}
 
+    <section className="panel travel-library-document-media">
+      <div className="panel-head">
+        <div>
+          <span className="page-kicker">DOCUMENT MEDIA EXTRACTION</span>
+          <h2>Document Media Review｜文件图片匹配审核</h2>
+          <p className="panel-subtext">PDF / DOCX 内嵌照片会先拆出并由 AI 结合页内文字与视觉判断。你确认后才会进入正式 Travel Media Library。</p>
+        </div>
+        <div className="travel-library-document-media-status">
+          {mediaProcessing&&<span className="status status-under_review">Processing...</span>}
+          <span className="status status-ready">{mediaReview.length} To Review</span>
+          <button className="btn compact primary" type="button" disabled={mediaProcessing} onClick={()=>void processMediaBacklog()}>
+            {mediaProcessing?"Running...":"Run Media Extraction"}
+          </button>
+        </div>
+      </div>
+
+      {mediaBackfillMessage&&<div className="travel-library-inspector-message">{mediaBackfillMessage}</div>}
+
+      {mediaReview.length>0?<div className="travel-library-document-media-grid">
+        {mediaReview.map((item:any)=><article className="travel-library-document-media-card" key={item.id}>
+          <div className="travel-library-document-media-image">
+            <img src={item.imageUrl} alt={item.suggestedName||item.originalName||"Extracted media"}/>
+            <span>{item.sourcePage?"Page "+item.sourcePage:"DOCX"}</span>
+          </div>
+          <div className="travel-library-document-media-body">
+            <div className="travel-library-document-media-title">
+              <div>
+                <small>{item.documentTitle||item.fileName||"Library Source"}</small>
+                <strong>{item.suggestedName||"Needs manual review"}</strong>
+              </div>
+              <span className={"status "+(item.suggestedPlaceId?"status-ready":"status-under_review")}>
+                {Math.round(Number(item.confidence||0)*100)}%
+              </span>
+            </div>
+            <div className="travel-library-document-media-meta">
+              <div><span>Type</span><strong>{item.suggestedType||"unknown"}</strong></div>
+              <div><span>Match</span><strong>{item.suggestedPlaceId?"Library Record Found":"No confident record"}</strong></div>
+              <div><span>Method</span><strong>{String(item.matchMethod||"").replaceAll("_"," ")||"—"}</strong></div>
+              <div><span>Source</span><strong>{item.sourcePage?"Page "+item.sourcePage:"Document"}</strong></div>
+            </div>
+            <p>{item.reason||"—"}</p>
+            {item.nearbyText&&<details>
+              <summary>Show page context</summary>
+              <div>{item.nearbyText}</div>
+            </details>}
+            <div className="travel-library-document-media-actions">
+              <a className="btn compact" href={item.imageUrl} target="_blank" rel="noreferrer">Open</a>
+              <button
+                className="btn compact primary"
+                type="button"
+                disabled={!item.suggestedPlaceId||mediaReviewBusyId===item.id}
+                onClick={()=>void reviewMediaCandidate(item.id,"confirm")}
+              >
+                {mediaReviewBusyId===item.id?"Saving...":"✓ Confirm to Library"}
+              </button>
+              <button
+                className="btn compact danger"
+                type="button"
+                disabled={mediaReviewBusyId===item.id}
+                onClick={()=>void reviewMediaCandidate(item.id,"ignore")}
+              >
+                Ignore / Delete
+              </button>
+            </div>
+            {!item.suggestedPlaceId&&<div className="travel-library-verification-note">
+              AI 没有找到足够可信的景点 / 酒店记录，所以不能直接确认。先 Ignore，或之后加入手动改配功能。
+            </div>}
+          </div>
+        </article>)}
+      </div>:<div className="travel-library-inspector-empty">
+        {mediaProcessing?"正在分析现有 Library Sources...":"目前没有待审核的 PDF / DOCX 内嵌照片。点击 Run Media Extraction 手动开始。"}
+      </div>}
+    </section>
+
+    <section className="panel travel-library-inspector">
+      <div className="panel-head">
+        <div>
+          <span className="page-kicker">MEDIA INSPECTOR</span>
+          <h2>Library Search & Validation｜资料库检查</h2>
+          <p className="panel-subtext">搜索已经正式存档的景点或酒店，检查系统目前关联的照片是否正确。</p>
+        </div>
+      </div>
+
+      <div className="travel-library-inspector-search">
+        <input
+          value={inspectorQuery}
+          onChange={e=>setInspectorQuery(e.target.value)}
+          onKeyDown={e=>{if(e.key==="Enter") void searchInspector();}}
+          placeholder="例如：清水寺 / Kiyomizu-dera / DoubleTree Kyoto..."
+        />
+        <button className="btn primary" type="button" disabled={inspectorLoading} onClick={()=>void searchInspector()}>
+          {inspectorLoading?"Searching...":"Search Library"}
+        </button>
+      </div>
+
+      {inspectorMessage&&<div className="travel-library-inspector-message">{inspectorMessage}</div>}
+
+      {inspectorResults.length>0&&<div className="travel-library-inspector-results">
+        {inspectorResults.map((place:any)=><article className="travel-library-inspector-place" key={place.placeId}>
+          <div className="travel-library-inspector-place-head">
+            <div>
+              <span className="page-kicker">{String(place.type||"PLACE").toUpperCase()}</span>
+              <h3>{place.canonicalName||"Unnamed Place"}</h3>
+              <p>{[place.destination,place.cityArea].filter(Boolean).join(" · ")||"—"}</p>
+            </div>
+            <div className="travel-library-inspector-badges">
+              <span className="status status-ready">{Array.isArray(place.images)?place.images.length:0} Photos</span>
+              <span className="travel-library-score">{Math.round(Number(place.score||0)*100)}% Name Match</span>
+            </div>
+          </div>
+
+          {Array.isArray(place.aliases)&&place.aliases.length>0&&<div className="travel-library-inspector-aliases">
+            <span>Aliases</span>
+            <div>{place.aliases.map((a:string,i:number)=><em key={i}>{a}</em>)}</div>
+          </div>}
+
+          {Array.isArray(place.images)&&place.images.length>0
+            ? <div className="travel-library-inspector-gallery">
+                {place.images.map((img:any)=><figure key={img.imageId}>
+                  <div className="travel-library-inspector-photo">
+                    <img src={img.url} alt={img.name||place.canonicalName}/>
+                  </div>
+                  <figcaption>
+                    <strong>{img.name||"Library Image"}</strong>
+                    <span>{img.createdAt?new Date(img.createdAt).toLocaleDateString("en-MY"):"Stored Library Image"}</span>
+                    <div>
+                      <a className="btn compact" href={img.url} target="_blank" rel="noreferrer">Open</a>
+                      <button className="btn compact" type="button" disabled={deletingId===img.imageId} onClick={()=>void mutateInspectorImage(img.imageId,"remove")}>
+                        Remove from Place
+                      </button>
+                      <button className="btn compact danger" type="button" disabled={deletingId===img.imageId} onClick={()=>void mutateInspectorImage(img.imageId,"delete")}>
+                        {deletingId===img.imageId?"Deleting...":"Delete"}
+                      </button>
+                    </div>
+                  </figcaption>
+                </figure>)}
+              </div>
+            : <div className="travel-library-inspector-empty">这个景点 / 酒店名称已经存档，但目前没有关联照片。</div>}
+        </article>)}
+      </div>}
+
+      {!inspectorLoading&&!inspectorResults.length&&!inspectorMessage&&<div className="travel-library-inspector-empty">
+        输入景点或酒店关键字，例如「清水寺」、「Kiyomizu」或酒店名称，系统会搜索已经存档的 Library Record 与照片。
+      </div>}
+    </section>
+
     <section className="panel">
       <div className="panel-head">
         <div><h2>Library Sources</h2><p className="panel-subtext">原始 Word / PDF / 图片会保存在私有 Supabase Storage；价格只作为历史参考。</p></div>
@@ -507,5 +519,4 @@ export default function TravelMediaLibrary(){
         </table>
       </div>
     </section>
-  </div>;
-}
+  </div>;}
