@@ -490,33 +490,35 @@ export default function TravelMediaLibrary(){
         <div><h2>Library Sources</h2><p className="panel-subtext">原始 Word / PDF / 图片会保存在私有 Supabase Storage；价格只作为历史参考。</p></div>
       </div>
 
-      <div className="travel-library-table-wrap">
-        <table className="data-table travel-library-table">
-          <thead><tr><th>Source</th><th>Type</th><th>Destination</th><th>Status</th><th>Media Extraction</th><th>AI Extracted</th><th>Updated</th><th></th></tr></thead>
-          <tbody>
-            {docs.map(doc=><tr key={doc.id}>
-              <td><strong>{doc.title||doc.fileName}</strong><small>{doc.fileName} · {fmtSize(doc.fileSize)}</small></td>
-              <td>{doc.sourceType||"other"}</td>
-              <td>{doc.destination||"—"}</td>
-              <td><span className={"status "+(doc.status==="saved"?"status-ready":"status-under_review")}>{doc.status==="saved"?"Saved":"Pending Review"}</span></td>
-              <td><small>{doc.mediaExtractionStatus==="review"
-                ? Number(doc.mediaExtractionSummary?.found||0)+" found · "+Number(doc.mediaExtractionSummary?.matched||0)+" matched"
-                : doc.mediaExtractionStatus==="processing"?"Processing..."
-                : doc.mediaExtractionStatus==="completed"?"Completed"
-                : doc.mediaExtractionStatus==="queued"?"Queued"
-                : doc.mediaExtractionStatus==="failed"?"Failed"
-                :"Not Processed"}</small></td>
-              <td><small>{doc.extraction?.places?.length||0} places · {doc.extraction?.hotels?.length||0} hotels · {doc.extraction?.prices?.length||0} prices</small></td>
-              <td>{doc.updatedAt?new Date(doc.updatedAt).toLocaleDateString("en-MY"):"—"}</td>
-              <td><div className="row-actions">
-                <button type="button" onClick={()=>void openSource(doc)}>Open File</button>
-                {doc.status==="pending_review"&&<button type="button" onClick={()=>setPreview({id:doc.id,file:{name:doc.fileName,path:doc.storagePath},extraction:doc.extraction})}>Review</button>}
-                {doc.status==="pending_review"&&<button type="button" onClick={()=>void confirm(doc.id)} disabled={savingId===doc.id}>{savingId===doc.id?"Saving...":"Save"}</button>}
-              </div></td>
-            </tr>)}
-            {!loading&&!docs.length&&<tr><td colSpan={8} className="empty">还没有资料。上传第一份行程、报价、酒店资料或图片。</td></tr>}
-          </tbody>
-        </table>
+      <div className="travel-library-source-list">
+        {docs.map(doc=><article className="travel-library-source-card" key={doc.id}>
+          <div className="travel-library-source-main">
+            <div>
+              <strong>{doc.title||doc.fileName}</strong>
+              <small>{doc.fileName} · {fmtSize(doc.fileSize)}</small>
+            </div>
+            <span className={"status "+(doc.status==="saved"?"status-ready":"status-under_review")}>{doc.status==="saved"?"Saved":"Pending Review"}</span>
+          </div>
+          <div className="travel-library-source-meta">
+            <div><span>Type</span><strong>{doc.sourceType||"other"}</strong></div>
+            <div><span>Destination</span><strong>{doc.destination||"—"}</strong></div>
+            <div><span>Media</span><strong>{doc.mediaExtractionStatus==="review"
+              ? Number(doc.mediaExtractionSummary?.found||0)+" found · "+Number(doc.mediaExtractionSummary?.matched||0)+" matched"
+              : doc.mediaExtractionStatus==="processing"?"Processing..."
+              : doc.mediaExtractionStatus==="completed"?"Completed"
+              : doc.mediaExtractionStatus==="queued"?"Queued"
+              : doc.mediaExtractionStatus==="failed"?"Failed"
+              :"Not Processed"}</strong></div>
+            <div><span>AI Extracted</span><strong>{doc.extraction?.places?.length||0} places · {doc.extraction?.hotels?.length||0} hotels · {doc.extraction?.prices?.length||0} prices</strong></div>
+            <div><span>Updated</span><strong>{doc.updatedAt?new Date(doc.updatedAt).toLocaleDateString("en-MY"):"—"}</strong></div>
+          </div>
+          <div className="travel-library-source-actions">
+            <button className="btn compact" type="button" onClick={()=>void openSource(doc)}>Open File</button>
+            {doc.status==="pending_review"&&<button className="btn compact" type="button" onClick={()=>setPreview({id:doc.id,file:{name:doc.fileName,path:doc.storagePath,mimeType:doc.mimeType},extraction:doc.extraction})}>Review</button>}
+            {doc.status==="pending_review"&&<button className="btn compact primary" type="button" onClick={()=>void confirm(doc.id)} disabled={savingId===doc.id}>{savingId===doc.id?"Saving...":"Save"}</button>}
+          </div>
+        </article>)}
+        {!loading&&!docs.length&&<div className="travel-library-inspector-empty">还没有资料。上传第一份行程、报价、酒店资料或图片。</div>}
       </div>
     </section>
   </div>;}
