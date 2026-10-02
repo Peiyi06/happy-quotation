@@ -243,7 +243,7 @@ export default function AiSupplierImport(){
       </div>
       <button className="btn" type="button" onClick={()=>router.push("/inquiries/"+inquiryContext.id)}>{t("Open Inquiry","打开询价")}</button>
     </section>}
-    <section className="panel ai-import-upload-panel ai-foundation-section ai-foundation-section-generator">
+    <section className={"panel ai-import-upload-panel ai-foundation-section ai-foundation-section-generator "+(result?"has-result":"")}>
       <div className="panel-head">
         <div>
           <h2>{t("AI Itinerary Generator","智能行程生成")}</h2>
@@ -289,7 +289,7 @@ export default function AiSupplierImport(){
             </div>}
           </div>
           <small className="ai-adjustment-helper" id="ai-adjustment-helper">
-            {t("AI uses these notes during the first analysis. Add known flight details, duration changes, attraction moves, pacing or hotel requirements here. You can also analyze without notes.","AI 会在第一次分析时参考这些备注。可填写已知航班、天数变化、景点调整、节奏或酒店要求；没有备注也可以直接分析。")}
+            {t("Add flight changes, pacing, attraction moves or hotel requirements.","填写航班变化、行程节奏、景点调整或酒店要求。")}
           </small>
         </label>
 
