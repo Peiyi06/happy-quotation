@@ -23,7 +23,7 @@ export default function AiLabWorkspace(){
     t("Which Quotations are still in Draft?","有哪些 Quotation 还在 Draft？")
   ];
   const [messages,setMessages]=useState<Message[]>([
-    {role:"assistant",text:t("This is the independent AI Lab Beta. Existing system pages are unchanged. Ask about Inquiry, Quotation or Itinerary status, or let me guide you to the next step.","这是独立的 AI Lab Beta。现有系统页面不会被改变。你可以直接问我 Inquiry、Quotation、Itinerary 的状态，或让我带你去下一步。")}
+    {role:"assistant",text:t("Ask about Inquiry, Quotation or Itinerary status, or tell me what you want to handle next.","可以直接问 Inquiry、Quotation、Itinerary 的状态，或告诉我接下来要处理什么。")}
   ]);
   const [input,setInput]=useState("");
   const [loading,setLoading]=useState(false);
@@ -64,7 +64,7 @@ export default function AiLabWorkspace(){
     setThreadId("");
     setContextInquiryId("");
     setContextTitle("");
-    setMessages([{role:"assistant",text:t("A new work conversation is ready. Tell me what you want to handle; the Thread will be created and saved after the first message.","新的工作对话已经准备好。直接告诉我你要处理什么；第一次发送后会自动建立并保存 Thread。")}]);
+    setMessages([{role:"assistant",text:t("New work conversation ready. Tell me what you want to handle next.","新的工作对话已准备好。告诉我接下来要处理什么。")}]);
     setSaveState("");
   }
 
