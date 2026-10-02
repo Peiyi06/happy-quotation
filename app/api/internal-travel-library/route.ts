@@ -111,6 +111,7 @@ async function semanticLibraryMatch(db:any,token:string,key:string,type:"attract
     "Match this AI-identified travel photo subject against Happy Express Travel's existing private library.",
     "Choose a candidate only when it is clearly the SAME real-world attraction/place or the SAME hotel property.",
     "Translations, transliterations, common aliases and reordered naming are allowed.",
+    "matchKeywords are staff-curated matching hints. Treat an exact keyword hit as strong naming evidence, but still use destination/city context and never merge different hotel branches.",
     "For hotels, different branches are never the same property.",
     "Use destination and cityArea as supporting context.",
     "If uncertain, return samePlace=false. Never invent a placeId.",
@@ -120,6 +121,7 @@ async function semanticLibraryMatch(db:any,token:string,key:string,type:"attract
         placeId:String(x.placeId||""),
         canonicalName:String(x.canonicalName||""),
         aliases:Array.isArray(x.aliases)?x.aliases:[],
+        matchKeywords:Array.isArray(x.matchKeywords)?x.matchKeywords:[],
         destination:String(x.destination||""),
         cityArea:String(x.cityArea||"")
       }))
