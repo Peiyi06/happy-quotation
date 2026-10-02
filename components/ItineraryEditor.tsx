@@ -150,6 +150,12 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   const [message,setMessage]=useState("");
   const [uploadingAttraction,setUploadingAttraction]=useState<string|null>(null);
   const [uploadingHotel,setUploadingHotel]=useState<string|null>(null);
+  const [expandedAttractions,setExpandedAttractions]=useState<Set<string>>(
+    ()=>new Set(initialDays.flatMap(day=>day.attractions.filter(a=>!a.name.trim()).map(a=>a.id)))
+  );
+  const [expandedHotels,setExpandedHotels]=useState<Set<string>>(
+    ()=>new Set(hotels.filter(h=>!h.name.trim()).map(h=>h.id))
+  );
   const [pendingHref,setPendingHref]=useState<string|null>(null);
   const [isDirty,setIsDirty]=useState(false);
   const baselineRef=useRef("");
@@ -292,7 +298,17 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   }
 
   function addHotel(){
-    setHotels(items=>[...items,emptyHotel()]);
+    const hotel=emptyHotel();
+    setHotels(items=>[...items,hotel]);
+    setExpandedHotels(items=>new Set(items).add(hotel.id));
+  }
+
+  function toggleHotelEditor(id:string){
+    setExpandedHotels(items=>{
+      const next=new Set(items);
+      if(next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
   }
 
   function patchHotel(id:string,patch:Partial<HotelItem>){
@@ -313,6 +329,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     setHotels(items=>{
       const src=items[index];
       const copy={...src,id:uid(),images:src.images.map(img=>({...img}))};
+      setExpandedHotels(open=>new Set(open).add(copy.id));
       const next=[...items];
       next.splice(index+1,0,copy);
       return next;
@@ -330,6 +347,11 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       await fetch("/api/internal-itinerary-images",{method:"POST",body:form}).catch(()=>null);
     }
     setHotels(items=>items.filter((_,i)=>i!==index));
+    setExpandedHotels(items=>{
+      const next=new Set(items);
+      next.delete(hotel.id);
+      return next;
+    });
   }
 
   async function uploadHotelImages(hotelId:string,files:FileList|null){
@@ -487,10 +509,20 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   }
 
   function addAttraction(dayId:string){
+    const attraction:AttractionItem={id:uid(),name:"",images:[]};
     setDays(items=>items.map(day=>day.id===dayId?{
       ...day,
-      attractions:[...day.attractions,{id:uid(),name:"",images:[]}]
+      attractions:[...day.attractions,attraction]
     }:day));
+    setExpandedAttractions(items=>new Set(items).add(attraction.id));
+  }
+
+  function toggleAttractionEditor(id:string){
+    setExpandedAttractions(items=>{
+      const next=new Set(items);
+      if(next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
   }
 
   function patchAttraction(dayId:string,attractionId:string,patch:Partial<AttractionItem>){
@@ -505,6 +537,11 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       ...day,
       attractions:day.attractions.filter(a=>a.id!==attractionId)
     }:day));
+    setExpandedAttractions(items=>{
+      const next=new Set(items);
+      next.delete(attractionId);
+      return next;
+    });
   }
 
   async function uploadAttractionImages(dayId:string,attractionId:string,files:FileList|null){
