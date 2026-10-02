@@ -428,98 +428,113 @@ export default function TravelMediaLibrary(){
 
       {mediaBackfillMessage&&<div className="travel-library-inspector-message">{mediaBackfillMessage}</div>}
 
-      {mediaReview.filter((item:any)=>String(item?.status||"pending_review")==="pending_review"&&!reviewedMediaIdsRef.current.has(String(item?.id||""))).length>0?<div className="travel-library-document-media-grid">
-        {mediaReview.filter((item:any)=>String(item?.status||"pending_review")==="pending_review"&&!reviewedMediaIdsRef.current.has(String(item?.id||""))).map((item:any)=><article className="travel-library-document-media-card" key={item.id}>
-          <div className="travel-library-document-media-image">
+      {mediaReview.filter((item:any)=>String(item?.status||"pending_review")==="pending_review"&&!reviewedMediaIdsRef.current.has(String(item?.id||""))).length>0?<div className="travel-library-document-media-list">
+        {mediaReview.filter((item:any)=>String(item?.status||"pending_review")==="pending_review"&&!reviewedMediaIdsRef.current.has(String(item?.id||""))).map((item:any)=><article className="travel-library-media-review-row" key={item.id}>
+          <div className="travel-library-media-review-thumb">
             <img src={item.imageUrl} alt={item.suggestedName||item.originalName||t("Extracted media","已提取媒体")}/>
             <span>{item.sourcePage?t("Page ","第 ")+item.sourcePage+(language==="zh"?" 页":""):"DOCX"}</span>
           </div>
-          <div className="travel-library-document-media-body">
-            <div className="travel-library-document-media-title">
-              <div>
-                <small>{item.documentTitle||item.fileName||t("Library Source","资料来源")}</small>
-                <strong>{item.suggestedName||t("Needs manual review","需要人工审核")}</strong>
-              </div>
-              <span className={"status "+(item.suggestedPlaceId?"status-ready":"status-under_review")}>
-                {Math.round(Number(item.confidence||0)*100)}%
-              </span>
-            </div>
-            <div className="travel-library-document-media-meta">
-              <div><span>{t("Type","类型")}</span><strong>{item.suggestedType||"unknown"}</strong></div>
-              <div><span>{t("Match","匹配")}</span><strong>{item.suggestedPlaceId?t("Library Record Found","已找到资料库记录"):t("No confident record","没有可信记录")}</strong></div>
-              <div><span>{t("Method","方式")}</span><strong>{String(item.matchMethod||"").replaceAll("_"," ")||"—"}</strong></div>
-              <div><span>{t("Source","来源")}</span><strong>{item.sourcePage?t("Page ","第 ")+item.sourcePage+(language==="zh"?" 页":""):t("Document","文件")}</strong></div>
-            </div>
-            {item.suggestedPlaceId&&<div className="travel-library-keywords">
-              <div className="travel-library-keywords-head">
-                <div>
-                  <strong>{t("Match Keywords","匹配关键词")}</strong>
-                  <span>{t("Keywords can be added or removed. Keep at least one saved keyword before confirming media into the Library.","可新增或删除。至少保留 1 个已保存关键词，才能确认素材进入 Library。")}</span>
+
+          <div className="travel-library-media-review-main">
+            <small>{item.documentTitle||item.fileName||t("Library Source","资料来源")}</small>
+            <strong>{item.suggestedName||t("Needs manual review","需要人工审核")}</strong>
+            <span>{item.suggestedPlaceId?t("Library record found","已找到资料库记录"):t("No confident record","没有可信记录")} · {String(item.suggestedType||"unknown")}</span>
+          </div>
+
+          <span className={"status travel-library-media-confidence "+(item.suggestedPlaceId?"status-ready":"status-under_review")}>
+            {Math.round(Number(item.confidence||0)*100)}%
+          </span>
+
+          <div className="travel-library-media-review-actions">
+            <button
+              className="btn compact primary"
+              type="button"
+              disabled={
+                !item.suggestedPlaceId||
+                !Array.isArray(item.matchKeywords)||
+                item.matchKeywords.length<1||
+                mediaReviewBusyId===item.id
+              }
+              onClick={()=>void reviewMediaCandidate(item.id,"confirm")}
+            >
+              {mediaReviewBusyId===item.id?t("Saving...","保存中..."):t("Confirm","确认")}
+            </button>
+            <details className="travel-library-media-review-details">
+              <summary className="btn compact">{t("More","更多")}</summary>
+              <div className="travel-library-media-review-expanded">
+                <div className="travel-library-document-media-meta">
+                  <div><span>{t("Type","类型")}</span><strong>{item.suggestedType||"unknown"}</strong></div>
+                  <div><span>{t("Match","匹配")}</span><strong>{item.suggestedPlaceId?t("Library Record Found","已找到资料库记录"):t("No confident record","没有可信记录")}</strong></div>
+                  <div><span>{t("Method","方式")}</span><strong>{String(item.matchMethod||"").replaceAll("_"," ")||"—"}</strong></div>
+                  <div><span>{t("Source","来源")}</span><strong>{item.sourcePage?t("Page ","第 ")+item.sourcePage+(language==="zh"?" 页":""):t("Document","文件")}</strong></div>
+                </div>
+
+                {item.suggestedPlaceId&&<div className="travel-library-keywords">
+                  <div className="travel-library-keywords-head">
+                    <div>
+                      <strong>{t("Match Keywords","匹配关键词")}</strong>
+                      <span>{t("Keep at least one saved keyword before confirming media into the Library.","至少保留 1 个已保存关键词，才能确认素材进入 Library。")}</span>
+                    </div>
+                  </div>
+                  <div className="travel-library-keyword-chips">
+                    {(Array.isArray(item.matchKeywords)?item.matchKeywords:[]).map((keyword:string)=><button
+                      type="button"
+                      className="travel-library-keyword-chip"
+                      key={keyword}
+                      title={t("Remove keyword","删除关键词")}
+                      disabled={keywordBusyId===String(item.suggestedPlaceId)}
+                      onClick={()=>void updateMatchKeywords(
+                        String(item.suggestedPlaceId),
+                        (Array.isArray(item.matchKeywords)?item.matchKeywords:[]).filter((x:string)=>x!==keyword)
+                      )}
+                    >{keyword}<span>×</span></button>)}
+                    {(!Array.isArray(item.matchKeywords)||item.matchKeywords.length===0)&&<em>{t("No custom keywords yet","尚无自定义关键词")}</em>}
+                  </div>
+                  <div className="travel-library-keyword-input">
+                    <input
+                      value={keywordDrafts[String(item.suggestedPlaceId)]||""}
+                      onChange={e=>setKeywordDrafts(current=>({...current,[String(item.suggestedPlaceId)]:e.target.value}))}
+                      onKeyDown={e=>{if(e.key==="Enter"){e.preventDefault();addMatchKeyword(String(item.suggestedPlaceId),item.matchKeywords||[]);}}}
+                      placeholder={t("Add matching keyword...","新增匹配关键词...")}
+                    />
+                    <button className="btn compact" type="button"
+                      disabled={keywordBusyId===String(item.suggestedPlaceId)||!String(keywordDrafts[String(item.suggestedPlaceId)]||"").trim()}
+                      onClick={()=>addMatchKeyword(String(item.suggestedPlaceId),item.matchKeywords||[])}>
+                      {keywordBusyId===String(item.suggestedPlaceId)?t("Saving...","保存中..."):t("＋ Add Keyword","＋ 新增关键词")}
+                    </button>
+                  </div>
+                </div>}
+
+                <div className="travel-library-media-review-reason">
+                  <strong>{t("AI Review","AI 判断")}</strong>
+                  <p>{item.reason||"—"}</p>
+                </div>
+
+                {item.nearbyText&&<details className="travel-library-page-context">
+                  <summary>{t("Show page context","显示页面上下文")}</summary>
+                  <div>{item.nearbyText}</div>
+                </details>}
+
+                {!item.suggestedPlaceId&&<div className="travel-library-verification-note">
+                  {t("AI did not find a sufficiently reliable attraction / hotel record, so this cannot be confirmed directly. Ignore it for now or use manual remapping later.","AI 没有找到足够可信的景点 / 酒店记录，所以不能直接确认。先 Ignore，或之后加入手动改配功能。")}
+                </div>}
+                {item.suggestedPlaceId&&(!Array.isArray(item.matchKeywords)||item.matchKeywords.length<1)&&<div className="travel-library-verification-note">
+                  {t("Add and save at least one Match Keyword before confirming to Library.","请至少新增并保存 1 个 Match Keyword，才能确认到资料库。")}
+                </div>}
+
+                <div className="travel-library-media-expanded-actions">
+                  <a className="btn compact" href={item.imageUrl} target="_blank" rel="noreferrer">{t("Open Image","打开图片")}</a>
+                  <button
+                    className="btn compact danger"
+                    type="button"
+                    disabled={mediaReviewBusyId===item.id}
+                    onClick={()=>void reviewMediaCandidate(item.id,"ignore")}
+                  >
+                    {t("Ignore / Delete","忽略 / 删除")}
+                  </button>
                 </div>
               </div>
-              <div className="travel-library-keyword-chips">
-                {(Array.isArray(item.matchKeywords)?item.matchKeywords:[]).map((keyword:string)=><button
-                  type="button"
-                  className="travel-library-keyword-chip"
-                  key={keyword}
-                  title={t("Remove keyword","删除关键词")}
-                  disabled={keywordBusyId===String(item.suggestedPlaceId)}
-                  onClick={()=>void updateMatchKeywords(
-                    String(item.suggestedPlaceId),
-                    (Array.isArray(item.matchKeywords)?item.matchKeywords:[]).filter((x:string)=>x!==keyword)
-                  )}
-                >{keyword}<span>×</span></button>)}
-                {(!Array.isArray(item.matchKeywords)||item.matchKeywords.length===0)&&<em>{t("No custom keywords yet","尚无自定义关键词")}</em>}
-              </div>
-              <div className="travel-library-keyword-input">
-                <input
-                  value={keywordDrafts[String(item.suggestedPlaceId)]||""}
-                  onChange={e=>setKeywordDrafts(current=>({...current,[String(item.suggestedPlaceId)]:e.target.value}))}
-                  onKeyDown={e=>{if(e.key==="Enter"){e.preventDefault();addMatchKeyword(String(item.suggestedPlaceId),item.matchKeywords||[]);}}}
-                  placeholder={t("e.g. Kyoto Suntory, Suntory brewery...","例如：京都三得利，三得利酒厂...")}
-                />
-                <button className="btn compact" type="button"
-                  disabled={keywordBusyId===String(item.suggestedPlaceId)||!String(keywordDrafts[String(item.suggestedPlaceId)]||"").trim()}
-                  onClick={()=>addMatchKeyword(String(item.suggestedPlaceId),item.matchKeywords||[])}>
-                  {keywordBusyId===String(item.suggestedPlaceId)?t("Saving...","保存中..."):t("＋ Add Keyword","＋ 新增关键词")}
-                </button>
-              </div>
-            </div>}
-            <p>{item.reason||"—"}</p>
-            {item.nearbyText&&<details>
-              <summary>{t("Show page context","显示页面上下文")}</summary>
-              <div>{item.nearbyText}</div>
-            </details>}
-            <div className="travel-library-document-media-actions">
-              <a className="btn compact" href={item.imageUrl} target="_blank" rel="noreferrer">{t("Open","打开")}</a>
-              <button
-                className="btn compact primary"
-                type="button"
-                disabled={
-                  !item.suggestedPlaceId||
-                  !Array.isArray(item.matchKeywords)||
-                  item.matchKeywords.length<1||
-                  mediaReviewBusyId===item.id
-                }
-                onClick={()=>void reviewMediaCandidate(item.id,"confirm")}
-              >
-                {mediaReviewBusyId===item.id?t("Saving...","保存中..."):t("✓ Confirm to Library","✓ 确认到资料库")}
-              </button>
-              <button
-                className="btn compact danger"
-                type="button"
-                disabled={mediaReviewBusyId===item.id}
-                onClick={()=>void reviewMediaCandidate(item.id,"ignore")}
-              >
-                {t("Ignore / Delete","忽略 / 删除")}
-              </button>
-            </div>
-            {!item.suggestedPlaceId&&<div className="travel-library-verification-note">
-              {t("AI did not find a sufficiently reliable attraction / hotel record, so this cannot be confirmed directly. Ignore it for now or use manual remapping later.","AI 没有找到足够可信的景点 / 酒店记录，所以不能直接确认。先 Ignore，或之后加入手动改配功能。")}
-            </div>}
-            {item.suggestedPlaceId&&(!Array.isArray(item.matchKeywords)||item.matchKeywords.length<1)&&<div className="travel-library-verification-note">
-              {t("Add and save at least one Match Keyword before confirming to Library. Incorrect keywords can be removed with ×.","请至少新增并保存 1 个 Match Keyword，才能 Confirm to Library。错误的关键词可以直接点击 × 删除。")}
-            </div>}
+            </details>
           </div>
         </article>)}
       </div>:<div className="travel-library-inspector-empty">
