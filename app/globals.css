@@ -4726,3 +4726,44 @@ button,
     padding:0 9px!important;
   }
 }
+
+
+/* New Inquiry bottom workflow */
+.new-inquiry-workflow-panel{
+  margin-top:18px;
+}
+.new-inquiry-workflow-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr);
+  gap:10px;
+  align-items:stretch;
+}
+.new-inquiry-workflow-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:14px;
+  padding-top:14px;
+  border-top:1px solid #e6ecef;
+}
+.new-inquiry-workflow-actions .btn.primary{
+  min-width:230px;
+}
+@media(max-width:760px){
+  .new-inquiry-workflow-grid{
+    grid-template-columns:1fr;
+  }
+  .new-inquiry-workflow-grid .simple-workflow-arrow{
+    transform:rotate(90deg);
+    justify-self:center;
+  }
+  .new-inquiry-workflow-actions{
+    flex-direction:column-reverse;
+  }
+  .new-inquiry-workflow-actions .btn{
+    width:100%;
+  }
+  .new-inquiry-workflow-actions .btn.primary{
+    min-width:0;
+  }
+}
