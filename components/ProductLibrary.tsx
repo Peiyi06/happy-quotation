@@ -84,15 +84,17 @@ export default function ProductLibrary({initialProducts,canCreate}:{initialProdu
   }
 
   return <div className="product-library-page">
-    <div className="page-head product-page-head">
+    <div className="page-head page-compact-header product-page-head">
       <div>
         <span className="page-kicker">PRODUCT LIBRARY</span>
         <h1>Products</h1>
-        <p>Manage reusable travel products prepared by Operation.</p>
+        <p>Operation 预先建立与维护可重复销售的常规旅游产品。</p>
       </div>
-      {canCreate&&<button className="btn primary product-create-btn" type="button" onClick={()=>setCreating(v=>!v)}>
-        {creating?"Close":"＋ Create Product"}
-      </button>}
+      {canCreate&&<div className="detail-actions">
+        <button className="btn primary product-create-btn" type="button" onClick={()=>setCreating(v=>!v)}>
+          {creating?"Close":"＋ Create Product"}
+        </button>
+      </div>}
     </div>
 
     {creating&&<section className="panel ios-form-card product-create-panel">
