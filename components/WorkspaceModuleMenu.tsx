@@ -44,7 +44,7 @@ export default function WorkspaceModuleMenu({
               <span className="page-kicker">{pick(kicker)}</span>
               <h2>{pick(title)}</h2>
             </div>
-            <button type="button" className="quotation-type-close" onClick={()=>setOpen(false)} aria-label="Close">×</button>
+            <button type="button" className="quotation-type-close" onClick={()=>setOpen(false)} aria-label={language==="zh"?"关闭":"Close"}>×</button>
           </div>
 
           <div className="quotation-type-grid workspace-module-grid">
