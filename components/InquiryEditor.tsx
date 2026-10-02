@@ -334,19 +334,63 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
       </div>
     </section>
 
-    <div className={"inquiry-save-state "+(isDirty?"unsaved":"saved")}>
-      <div>
-        <strong>{isDirty?"● Unsaved Changes｜有未存档修改":"✓ All changes saved｜所有修改已存档"}</strong>
-        <span>{isDirty?"离开、刷新或关闭页面前请先 Save Inquiry。":"目前页面资料已存档。"}</span>
+    {!initialInquiry?.id&&<section className="panel inquiry-workflow-panel new-inquiry-workflow-panel">
+      <div className="panel-head inquiry-workflow-panel-head">
+        <div>
+          <span className="page-kicker">WORKFLOW</span>
+          <h2>下一步｜Next Step</h2>
+          <p className="panel-subtext">资料确认后，从这里建立 Inquiry 并交给 Operation 继续处理。</p>
+        </div>
       </div>
-      {isDirty&&<button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>{saving?"Saving...":"Save Inquiry"}</button>}
-    </div>
+      <div className="new-inquiry-workflow-grid">
+        <div className="simple-workflow-card current">
+          <div className="simple-workflow-card-head">
+            <span className="simple-workflow-index">01</span>
+            <span className="simple-workflow-state">Current</span>
+          </div>
+          <div className="simple-workflow-title">
+            <h3>Inquiry</h3>
+            <strong>Complete Customer Request</strong>
+          </div>
+          <p>确认客户资料、旅客组成、推荐航班及旅游需求。</p>
+        </div>
+        <div className="simple-workflow-arrow" aria-hidden="true">→</div>
+        <div className="simple-workflow-card upcoming">
+          <div className="simple-workflow-card-head">
+            <span className="simple-workflow-index">02</span>
+            <span className="simple-workflow-state">Upcoming</span>
+          </div>
+          <div className="simple-workflow-title">
+            <h3>Operation</h3>
+            <strong>Hand Off to Operation</strong>
+          </div>
+          <p>建立后案件进入 New，Operation 可开始 Review、Supplier Inquiry 与 Quotation。</p>
+        </div>
+      </div>
+      <div className="new-inquiry-workflow-actions">
+        <button className="btn" type="button" onClick={()=>requestNavigate(backHref)}>← Back</button>
+        <button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>
+          {saving?"Creating...":"Create Inquiry & Send to Operation"}
+        </button>
+      </div>
+      {message&&<div className="save-message">{message}</div>}
+    </section>}
 
-    <div className="detail-actions inquiry-save-actions">
-      <button className="btn" type="button" onClick={()=>requestNavigate(backHref)}>← Back</button>
-      <button className="btn primary" type="button" disabled={saving||!isDirty} onClick={()=>void save()}>{saving?"Saving...":isDirty?"Save Inquiry":"Saved ✓"}</button>
-    </div>
-    {message&&<div className="save-message">{message}</div>}
+    {initialInquiry?.id&&<>
+      <div className={"inquiry-save-state "+(isDirty?"unsaved":"saved")}>
+        <div>
+          <strong>{isDirty?"● Unsaved Changes｜有未存档修改":"✓ All changes saved｜所有修改已存档"}</strong>
+          <span>{isDirty?"离开、刷新或关闭页面前请先 Save Inquiry。":"目前页面资料已存档。"}</span>
+        </div>
+        {isDirty&&<button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>{saving?"Saving...":"Save Inquiry"}</button>}
+      </div>
+
+      <div className="detail-actions inquiry-save-actions">
+        <button className="btn" type="button" onClick={()=>requestNavigate(backHref)}>← Back</button>
+        <button className="btn primary" type="button" disabled={saving||!isDirty} onClick={()=>void save()}>{saving?"Saving...":isDirty?"Save Inquiry":"Saved ✓"}</button>
+      </div>
+      {message&&<div className="save-message">{message}</div>}
+    </>}
 
     {showUnsavedPrompt&&<div className="unsaved-overlay" onMouseDown={()=>setShowUnsavedPrompt(false)}>
       <div className="unsaved-modal" onMouseDown={e=>e.stopPropagation()}>
