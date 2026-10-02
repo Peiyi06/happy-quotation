@@ -84,7 +84,7 @@ export default async function ItineraryDetailPage({
       <div className="itinerary-hotel-detail-list">
         {hotels.map((hotel:any,index:number)=><article className="itinerary-hotel-detail-card" key={hotel.id||index}>
           <div className="itinerary-hotel-detail-head">
-            <div><span>HOTEL {String(index+1).padStart(2,"0")}</span><h3>{hotel.name||"Untitled Hotel"}</h3></div>
+            <div><span><UiText en="HOTEL" zh="酒店" /> {String(index+1).padStart(2,"0")}</span><h3>{hotel.name||<UiText en="Untitled Hotel" zh="未命名酒店" />}</h3></div>
             <strong>{hotel.starRating||"—"}</strong>
           </div>
           <div className="itinerary-hotel-detail-meta">
@@ -130,10 +130,10 @@ export default async function ItineraryDetailPage({
     </section>}
 
     <section className="panel">
-      <div className="panel-head"><h2><UiText en="Daily Itinerary" zh="行程安排" /></h2><span className={"status status-"+data.status}>{data.status}</span></div>
+      <div className="panel-head"><h2><UiText en="Daily Itinerary" zh="行程安排" /></h2><span className={"status status-"+data.status}>{data.status==="ready"?<UiText en="Ready" zh="已就绪" />:data.status==="confirmed"?<UiText en="Confirmed" zh="已确认" />:data.status==="archived"?<UiText en="Archived" zh="已归档" />:<UiText en="Draft" zh="草稿" />}</span></div>
       <div className="itinerary-detail-list">
         {days.map((day:any,index:number)=><article className="itinerary-detail-day" key={day.id||index}>
-          <div className="itinerary-detail-day-no"><span>DAY</span><strong>{String(index+1).padStart(2,"0")}</strong></div>
+          <div className="itinerary-detail-day-no"><span><UiText en="DAY" zh="第" /></span><strong>{String(index+1).padStart(2,"0")}</strong></div>
           <div className="itinerary-detail-day-content">
             <h3>{day.title||<UiText en="Untitled Day" zh="未命名行程日" />}</h3>
             <p>{day.content||"—"}</p>
