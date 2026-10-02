@@ -15350,3 +15350,46 @@ td,
     white-space:normal!important;
   }
 }
+
+
+/* =========================================================
+   NEW INQUIRY — WORKFLOW ACTION ALIGNMENT
+   Put the next-step CTA inside the next workflow card.
+   ========================================================= */
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-card{
+  display:flex!important;
+  flex-direction:column!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-actions{
+  margin-top:auto!important;
+  padding-top:12px!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-actions .btn.primary{
+  min-height:36px!important;
+  height:36px!important;
+  padding:0 12px!important;
+  border-radius:9px!important;
+  box-shadow:none!important;
+  font-size:10px!important;
+  font-weight:680!important;
+  white-space:nowrap!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-actions{
+  justify-content:flex-start!important;
+  border-top:0!important;
+  padding-top:10px!important;
+}
+
+.new-inquiry-template .new-inquiry-workflow-actions .btn{
+  min-width:0!important;
+}
+
+@media(max-width:760px){
+  .new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-actions .btn.primary{
+    width:100%!important;
+    white-space:normal!important;
+  }
+}
