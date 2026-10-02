@@ -9140,3 +9140,25 @@ td,
   background:var(--color-bg-page)!important;
   border-color:var(--color-border-strong)!important;
 }
+
+
+/* Dashboard compact header — final contrast guard.
+   Scoped because shared page typography intentionally uses dark text elsewhere. */
+.workspace-main .dashboard-page-head{
+  background:linear-gradient(135deg,var(--color-brand-primary),var(--color-brand-primary-hover));
+}
+.workspace-main .dashboard-page-head h1{
+  color:#fff!important;
+}
+.workspace-main .dashboard-page-head p{
+  color:#DCE7EF!important;
+}
+.workspace-main .dashboard-page-head .btn.primary{
+  background:#102E47!important;
+  border-color:#102E47!important;
+  color:#fff!important;
+}
+.workspace-main .dashboard-page-head .btn.primary:hover{
+  background:#0C263B!important;
+  border-color:#0C263B!important;
+}
