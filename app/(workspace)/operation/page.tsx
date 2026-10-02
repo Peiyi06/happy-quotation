@@ -102,7 +102,7 @@ export default async function OperationWorkspacePage({
 
     {error&&<div className="save-message">Unable to load Operation queue: {error.message}</div>}
 
-    {canViewAll&&requestedScope==="all"&&unassigned.length>0&&<section className="panel operation-unassigned">
+    {canViewAll&&requestedScope==="all"&&unassigned.length>0&&<section className="operation-queue-section operation-unassigned">
       <div className="panel-head">
         <div><h2>Unassigned</h2><p className="panel-subtext">这些 active Inquiry 尚未分配 Operation，需要先安排负责人。</p></div>
         <span className="operation-count">{unassigned.length}</span>
@@ -114,7 +114,7 @@ export default async function OperationWorkspacePage({
       {queues.map(queue=>{
         const expanded=expandedQueue===queue.key;
         const visibleItems=expanded?queue.items:queue.items.slice(0,3);
-        return <section className={"panel operation-queue-panel operation-queue-"+queue.key+" "+(expanded?"expanded":"")} key={queue.key}>
+        return <section className={"operation-queue-section operation-queue-panel operation-queue-"+queue.key+" "+(expanded?"expanded":"")} key={queue.key}>
           <div className="panel-head operation-queue-title">
             <div><h2>{queue.title}</h2><p className="panel-subtext">{queue.subtitle}</p></div>
             <span className="operation-count">{queue.items.length}</span>
@@ -133,6 +133,16 @@ export default async function OperationWorkspacePage({
 
 function OperationRows({items,returnTo}:{items:any[];returnTo:string}){
   return <div className="operation-case-list">
+    <div className="operation-case-columns" aria-hidden="true">
+      <span>Inquiry No.</span>
+      <span>Customer</span>
+      <span>Destination</span>
+      <span>Travel Date</span>
+      <span>Pax</span>
+      <span>Sales</span>
+      <span>Operation</span>
+      <span>Status</span>
+    </div>
     {items.map((item:any)=><Link className="operation-case-row" href={"/inquiries/"+item.id+"?returnTo="+encodeURIComponent(returnTo)} key={item.id}>
       <div className="operation-case-field operation-case-no">
         <span>Inquiry No.</span>
