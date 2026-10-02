@@ -922,7 +922,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         </div>
       </div>
 
-      <div className="simple-workflow-grid quotation-workflow-compact">
+      <div className="simple-workflow-grid quotation-workflow-compact system-workflow-grid">
         <div className={"simple-workflow-card "+((displayStatus==="under_review"||displayStatus==="ready")?"complete":"current")}>
           <div className="simple-workflow-card-head">
             <span className="simple-workflow-index">01</span>
