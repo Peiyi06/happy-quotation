@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 import {
   CalcMode, ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
   childRatio, computeProfit, currencyRate, leaderRowTotal, roundUpTo,
@@ -61,6 +62,47 @@ const defaultLeaderRows: LeaderCostRow[] = [
 
 export default function QuotationCalculator({workspaceMode=false,quotationId,initialQuotation,currentStaffId="",currentStaffName="",sourceInquiryId="",sourceInquiryNo="",sourceInquirySnapshot}:CalculatorProps) {
   const router = useRouter();
+  const {language}=useWorkspaceLanguage();
+  const t=(en:string,zh:string)=>language==="zh"?zh:en;
+  const calcModeLabel=(value:CalcMode)=>({
+    "每人":t("Per Person","每人"),
+    "每人每天":t("Per Person / Day","每人每天"),
+    "整团":t("Per Group","整团"),
+    "整团每天":t("Per Group / Day","整团每天")
+  } as Record<CalcMode,string>)[value]||value;
+  const profitModeLabel=(value:ProfitMode)=>({
+    "固定金额":t("Fixed Amount","固定金额"),
+    "按成本加价率":t("Markup on Cost","按成本加价率"),
+    "按售价毛利率":t("Margin on Selling Price","按售价毛利率")
+  } as Record<ProfitMode,string>)[value]||value;
+  const childModeLabel=(value:ChildMode)=>value==="手动成本"?t("Manual Cost","手动成本"):value;
+  const currencyLabel=(value:Currency)=>value==="其他"?t("Other","其他"):value;
+  const travelerTypeDisplay=(type:TravelerType)=>({
+    "成人不含领队":t("Adult · Twin Sharing · Excl. Leader","成人（双人一房）· 不含领队"),
+    "成人含领队":t("Adult · Twin Sharing · Incl. Leader","成人（双人一房）· 含领队"),
+    "小孩含床不含领队":t("Child with Bed · Excl. Leader","小孩加床 · 不含领队"),
+    "小孩含床含领队":t("Child with Bed · Incl. Leader","小孩加床 · 含领队"),
+    "小孩不含床不含领队":t("Child without Bed · Excl. Leader","小孩不加床 · 不含领队"),
+    "小孩不含床含领队":t("Child without Bed · Incl. Leader","小孩不加床 · 含领队")
+  } as Record<TravelerType,string>)[type];
+  const travelerBaseDisplay=(type:TravelerType)=>({
+    "成人不含领队":t("Adult","成人"),
+    "成人含领队":t("Adult","成人"),
+    "小孩含床不含领队":t("Child with Bed","小孩加床"),
+    "小孩含床含领队":t("Child with Bed","小孩加床"),
+    "小孩不含床不含领队":t("Child without Bed","小孩不加床"),
+    "小孩不含床含领队":t("Child without Bed","小孩不加床")
+  } as Record<TravelerType,string>)[type];
+  const costItemDisplay=(value:string)=>({
+    "地接报价":t("Ground Package","地接报价"),
+    "小费":t("Tips","小费"),
+    "旅游保险":t("Travel Insurance","旅游保险"),
+    "机场接送":t("Airport Transfer","机场接送"),
+    "机票":t("Air Ticket","机票"),
+    "单房":t("Single Room","单房"),
+    "工钱":t("Tour Leader Fee","工钱"),
+    "其他":t("Other","其他")
+  } as Record<string,string>)[value]||value;
   const resolvedSourceInquiryId=sourceInquiryId||initialQuotation?.source_inquiry_id||initialQuotation?.quotation_data?.sourceInquiryId||"";
   const resolvedSourceInquiryNo=sourceInquiryNo||initialQuotation?.quotation_data?.sourceInquiryNo||"";
   const resolvedSourceInquirySnapshot=sourceInquirySnapshot||initialQuotation?.quotation_data?.sourceInquirySnapshot||null;
@@ -145,11 +187,11 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
   const flightTicketType = useMemo(() => {
     const count = Number(pax) || 0;
-    if (count >= 1 && count <= 9) return { code:"FIT", label:"FIT Ticket｜散票", state:"fit" };
-    if (count >= 10 && count <= 200) return { code:"GIT", label:"GIT｜团体票", state:"git" };
-    if (count > 200) return { code:"REVIEW", label:"Manual Review｜需人工确认", state:"review" };
+    if (count >= 1 && count <= 9) return { code:"FIT", label:t("FIT Ticket","散票"), state:"fit" };
+    if (count >= 10 && count <= 200) return { code:"GIT", label:t("GIT","团体票"), state:"git" };
+    if (count > 200) return { code:"REVIEW", label:t("Manual Review","需人工确认"), state:"review" };
     return { code:"", label:"—", state:"pending" };
-  }, [pax]);
+  }, [pax,language]);
 
   const inferNextDay = (departure:string, arrival:string) => {
     if (!/^\d{2}:\d{2}$/.test(departure) || !/^\d{2}:\d{2}$/.test(arrival)) return false;
@@ -429,7 +471,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   } as Record<TravelerType, {cost:number;profit:number;suggested:number}>)[effectiveSelectedType];
 
   const selectedIncludesLeader = isLeaderType(effectiveSelectedType);
-  const selectedTravelerLabel = travelerBaseLabel(effectiveSelectedType);
+  const selectedTravelerLabel = travelerBaseDisplay(effectiveSelectedType);
   const selectedTravelerCost = ({
     "成人不含领队": calc.adultNoLeader.cost,
     "成人含领队": calc.adultNoLeader.cost,
@@ -438,7 +480,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     "小孩不含床不含领队": calc.childNoBedNoLeader.cost,
     "小孩不含床含领队": calc.childNoBedNoLeader.cost,
   } as Record<TravelerType, number>)[effectiveSelectedType];
-  const selectedSummaryLabel = `${selectedTravelerLabel} · ${selectedIncludesLeader ? "含领队" : "不含领队"}`;
+  const selectedSummaryLabel = `${selectedTravelerLabel} · ${selectedIncludesLeader ? t("Incl. Leader","含领队") : t("Excl. Leader","不含领队")}`;
 
   const finalQuote = manualQuote === "" ? roundUpTo(selected.suggested, roundUnit) : Number(manualQuote);
   const finalProfit = finalQuote - selected.cost;
@@ -500,17 +542,17 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
       if (!res.ok || !data?.ok) {
         if (res.status === 401) {
-          setSaveMessage("Session expired. Please login again.");
+          setSaveMessage(t("Session expired. Please login again.","登录已过期，请重新登录。"));
           setTimeout(() => router.push("/login"), 700);
           setSaving(false);
           return false;
         } else {
-          setSaveMessage(data?.error || "Unable to save quotation.");
+          setSaveMessage(data?.error || t("Unable to save quotation.","无法保存报价。"));
           setSaving(false);
           return false;
         }
       } else {
-        setSaveMessage(data?.review_required?"Saved · Revision Required":"Saved");
+        setSaveMessage(data?.review_required?t("Saved · Revision Required","已保存 · 需要修改"):t("Saved","已保存"));
         baselineRef.current = currentSnapshot;
         commercialBaselineRef.current = currentCommercialSnapshot;
         setIsDirty(false);
@@ -519,7 +561,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         router.refresh();
       }
     } catch {
-      setSaveMessage("Unable to save quotation. Please try again.");
+      setSaveMessage(t("Unable to save quotation. Please try again.","无法保存报价，请重试。"));
       setSaving(false);
       return false;
     }
@@ -552,11 +594,11 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       });
       const data=await res.json().catch(()=>({}));
       if(!res.ok||!data?.ok){
-        setSaveMessage(data?.error||"Unable to submit for review.");
+        setSaveMessage(data?.error||t("Unable to submit for review.","无法提交审核。"));
         return;
       }
       setStatus("under_review");
-      setSaveMessage("Submitted for management review");
+      setSaveMessage(t("Submitted for management review","已提交管理层审核"));
       router.refresh();
     }finally{
       setSaving(false);
@@ -573,7 +615,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   };
 
   const resetAll = () => {
-    if (!confirm("确认重置当前报价？未保存的修改会被清空。")) return;
+    if (!confirm(t("Reset this quotation? Unsaved changes will be cleared.","确认重置当前报价？未保存的修改会被清空。"))) return;
 
     setQuoteTitle("New Tour Quotation");
     setDestination("");
