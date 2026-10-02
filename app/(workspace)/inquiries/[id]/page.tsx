@@ -99,6 +99,8 @@ export default async function InquiryDetailPage({
           ?"← AI Workspace"
           :"← Back";
   const returnParam=encodeURIComponent(returnTo);
+  const currentInquiryHref="/inquiries/"+id+"?returnTo="+returnParam;
+  const currentInquiryParam=encodeURIComponent(currentInquiryHref);
 
   return <div>
     <div className="page-head inquiry-detail-head">
@@ -190,7 +192,7 @@ export default async function InquiryDetailPage({
           </div>
           {quotationReady&&approvedQuotes.length>0
             ? <div className="workflow-record-list">
-                {approvedQuotes.map((q:any)=><Link key={q.id} className="workflow-record-link" href={"/quotations/"+q.id}>
+                {approvedQuotes.map((q:any)=><Link key={q.id} className="workflow-record-link" href={"/quotations/"+q.id+"?returnTo="+currentInquiryParam}>
                   <b>{q.quotation_no}</b>
                   <span>{quotationStatusLabels[q.status]||q.status||"Ready"} · {q.owner_name||"—"}</span>
                 </Link>)}
@@ -221,7 +223,7 @@ export default async function InquiryDetailPage({
           </div>
           {linkedItineraries.length>0
             ? <div className="workflow-record-list">
-                {linkedItineraries.map((it:any)=><Link key={it.id} className="workflow-record-link" href={"/itineraries/"+it.id}>
+                {linkedItineraries.map((it:any)=><Link key={it.id} className="workflow-record-link" href={"/itineraries/"+it.id+"?returnTo="+currentInquiryParam}>
                   <b>{it.itinerary_no}</b>
                   <span>{itineraryStatusLabels[it.status]||it.status||"Draft"} · {it.days_count}D{it.nights_count}N</span>
                 </Link>)}
