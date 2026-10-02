@@ -41,8 +41,15 @@ const itineraryStatusLabels:Record<string,string>={
   archived:"Archived"
 };
 
-export default async function InquiryDetailPage({params}:{params:Promise<{id:string}>}){
+export default async function InquiryDetailPage({
+  params,
+  searchParams
+}:{
+  params:Promise<{id:string}>;
+  searchParams:Promise<{returnTo?:string}>;
+}){
   const {id}=await params;
+  const sp=await searchParams;
   const token=await internalToken();
   if(!token) notFound();
   const user=await internalUser();
@@ -80,6 +87,18 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
   const operationState=caseStatus==="new"?"New":operationComplete?"✓ Completed":"In Progress";
   const quotationState=caseStatus==="under_review"?"Under Review":caseStatus==="revision_required"?"Re-quote":quotationReady?"✓ Completed":"Preparing";
   const itineraryState=itineraryReady?"✓ Completed":salesCurrentStep==="itinerary"?"Current":"Upcoming";
+  const rawReturnTo=String(sp.returnTo||"");
+  const returnTo=rawReturnTo.startsWith("/")&&!rawReturnTo.startsWith("//")?rawReturnTo:"/inquiries";
+  const returnLabel=returnTo.startsWith("/operation")
+    ?"← Operation"
+    :returnTo.startsWith("/quotations/")
+      ?"← Quotation"
+      :returnTo.startsWith("/itineraries/")
+        ?"← Itinerary"
+        :returnTo.startsWith("/ai-lab")
+          ?"← AI Workspace"
+          :"← Back";
+  const returnParam=encodeURIComponent(returnTo);
 
   return <div>
     <div className="page-head inquiry-detail-head">
@@ -96,9 +115,9 @@ export default async function InquiryDetailPage({params}:{params:Promise<{id:str
           firstQuotationId={visibleQuotes[0]?.id}
         />
         <div className="detail-actions">
-          <Link className="btn" href="/inquiries">← Back</Link>
-          <Link className="btn" href={"/inquiries/"+id+"/operation"}>Operation Review</Link>
-          <Link className="btn" href={"/inquiries/"+id+"/edit"}>Edit Inquiry</Link>
+          <Link className="btn" href={returnTo}>{returnLabel}</Link>
+          <Link className="btn" href={"/inquiries/"+id+"/operation?returnTo="+returnParam}>Operation Review</Link>
+          <Link className="btn" href={"/inquiries/"+id+"/edit?returnTo="+returnParam}>Edit Inquiry</Link>
         </div>
       </div>
     </div>
