@@ -156,6 +156,15 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   const [expandedHotels,setExpandedHotels]=useState<Set<string>>(
     ()=>new Set(hotels.filter(h=>!h.name.trim()).map(h=>h.id))
   );
+  const [expandedPackageItems,setExpandedPackageItems]=useState<Set<string>>(
+    ()=>new Set([
+      ...includedItems.filter(item=>!item.name.trim()).map(item=>"included:"+item.id),
+      ...notIncludedItems.filter(item=>!item.name.trim()).map(item=>"excluded:"+item.id)
+    ])
+  );
+  const [expandedReminders,setExpandedReminders]=useState<Set<string>>(
+    ()=>new Set(reminders.filter(item=>!item.title.trim()&&!item.description.trim()).map(item=>item.id))
+  );
   const [pendingHref,setPendingHref]=useState<string|null>(null);
   const [isDirty,setIsDirty]=useState(false);
   const baselineRef=useRef("");
@@ -408,7 +417,18 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
 
   function addPackageItem(kind:"included"|"excluded"){
     const setter=kind==="included"?setIncludedItems:setNotIncludedItems;
-    setter(items=>[...items,emptyPackageItem()]);
+    const item=emptyPackageItem();
+    setter(items=>[...items,item]);
+    setExpandedPackageItems(items=>new Set(items).add(kind+":"+item.id));
+  }
+
+  function togglePackageItem(kind:"included"|"excluded",id:string){
+    const key=kind+":"+id;
+    setExpandedPackageItems(items=>{
+      const next=new Set(items);
+      if(next.has(key)) next.delete(key); else next.add(key);
+      return next;
+    });
   }
 
   function patchPackageItem(kind:"included"|"excluded",id:string,patch:Partial<PackageItem>){
@@ -436,8 +456,10 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     const setter=kind==="included"?setIncludedItems:setNotIncludedItems;
     setter(items=>{
       const src=items[index];
+      const copy={...src,id:uid()};
+      setExpandedPackageItems(open=>new Set(open).add(kind+":"+copy.id));
       const next=[...items];
-      next.splice(index+1,0,{...src,id:uid()});
+      next.splice(index+1,0,copy);
       return next;
     });
   }
@@ -445,6 +467,11 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   function removePackageItem(kind:"included"|"excluded",id:string){
     const setter=kind==="included"?setIncludedItems:setNotIncludedItems;
     setter(items=>items.filter(item=>item.id!==id));
+    setExpandedPackageItems(items=>{
+      const next=new Set(items);
+      next.delete(kind+":"+id);
+      return next;
+    });
   }
 
   function reminderPresetTitle(preset:string){
@@ -452,7 +479,17 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   }
 
   function addReminder(){
-    setReminders(items=>[...items,emptyReminder()]);
+    const item=emptyReminder();
+    setReminders(items=>[...items,item]);
+    setExpandedReminders(items=>new Set(items).add(item.id));
+  }
+
+  function toggleReminder(id:string){
+    setExpandedReminders(items=>{
+      const next=new Set(items);
+      if(next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
   }
 
   function patchReminder(id:string,patch:Partial<ReminderItem>){
@@ -476,14 +513,21 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   function duplicateReminder(index:number){
     setReminders(items=>{
       const src=items[index];
+      const copy={...src,id:uid()};
+      setExpandedReminders(open=>new Set(open).add(copy.id));
       const next=[...items];
-      next.splice(index+1,0,{...src,id:uid()});
+      next.splice(index+1,0,copy);
       return next;
     });
   }
 
   function removeReminder(id:string){
     setReminders(items=>items.filter(item=>item.id!==id));
+    setExpandedReminders(items=>{
+      const next=new Set(items);
+      next.delete(id);
+      return next;
+    });
   }
 
   function syncDays(){
