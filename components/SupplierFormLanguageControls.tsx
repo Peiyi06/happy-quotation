@@ -47,7 +47,7 @@ export default function SupplierFormLanguageControls({
   }
 
   return <div className="supplier-language-wrap">
-    <div className="supplier-language-switch" aria-label="Supplier form language">
+    <div className="supplier-language-switch ios-segmented-control" aria-label="Supplier form language">
       <button type="button" className={currentLanguage==="original"?"active":""} onClick={()=>go("original")}>Original</button>
       <button type="button" className={currentLanguage==="en"?"active":""} disabled={Boolean(loading)} onClick={()=>go("en")}>{loading==="en"?"Translating...":"English"}</button>
       <button type="button" className={currentLanguage==="zh"?"active":""} disabled={Boolean(loading)} onClick={()=>go("zh")}>{loading==="zh"?"翻译中...":"中文"}</button>
