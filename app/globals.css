@@ -3262,6 +3262,92 @@ button,
   }
 }
 
+/* Match Keywords */
+.travel-library-keywords{
+  display:grid;
+  gap:9px;
+  margin-top:11px;
+  padding:11px;
+  border:1px solid #dfe6ea;
+  border-radius:10px;
+  background:#fbfcfd;
+}
+.travel-library-keywords-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+.travel-library-keywords-head strong{
+  display:block;
+  color:var(--navy2);
+  font-size:12px;
+}
+.travel-library-keywords-head span{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:10.8px;
+  line-height:1.4;
+}
+.travel-library-keyword-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  align-items:center;
+}
+.travel-library-keyword-chips em{
+  color:var(--muted);
+  font-size:11px;
+  font-style:normal;
+}
+.travel-library-keyword-chip{
+  min-height:28px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:0 8px 0 10px;
+  border:1px solid #d5e0e6;
+  border-radius:999px;
+  background:#fff;
+  color:var(--navy2);
+  font-size:11px;
+  font-weight:650;
+  cursor:pointer;
+}
+.travel-library-keyword-chip:hover{
+  border-color:#d9aaa5;
+  background:#fff7f5;
+  color:#94372f;
+}
+.travel-library-keyword-chip span{
+  color:inherit;
+  font-size:14px;
+  line-height:1;
+}
+.travel-library-keyword-input{
+  display:flex;
+  gap:7px;
+  align-items:center;
+}
+.travel-library-keyword-input input{
+  min-width:0;
+  flex:1;
+  min-height:34px;
+  padding:0 10px;
+  border:1px solid #cfd9e2;
+  border-radius:8px;
+  background:#fff;
+  color:var(--navy2);
+  font-size:12px;
+}
+@media(max-width:680px){
+  .travel-library-keyword-input{
+    align-items:stretch;
+    flex-direction:column;
+  }
+}
+
 /* =========================================================
    Travel Media Library - Document Media Extraction
    ========================================================= */
