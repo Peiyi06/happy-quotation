@@ -55,8 +55,15 @@ function buildMatrix(q:any){
   };
 }
 
-export default async function QuotationDetailPage({params}:{params:Promise<{id:string}>}){
+export default async function QuotationDetailPage({
+  params,
+  searchParams
+}:{
+  params:Promise<{id:string}>;
+  searchParams:Promise<{returnTo?:string}>;
+}){
   const {id}=await params;
+  const sp=await searchParams;
   const token=await internalToken();
   if(!token) notFound();
   const user=await internalUser();
@@ -133,6 +140,10 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
         ? savedFinalQuote
         : roundUpTo(adultNoLeaderSuggested,roundUnit));
   const singleRoomSellingPrice=singleRoomSupplement==null?null:adultSellingPrice+singleRoomSupplement;
+  const rawReturnTo=String(sp.returnTo||"");
+  const returnTo=rawReturnTo.startsWith("/")&&!rawReturnTo.startsWith("//")?rawReturnTo:"/quotations";
+  const returnLabel=returnTo.startsWith("/inquiries/")?"← Inquiry":"← Back";
+  const currentQuoteHref="/quotations/"+id+"?returnTo="+encodeURIComponent(returnTo);
 
   return <div>
     <div className="page-head quote-detail-head">
@@ -142,7 +153,7 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
         <p>{data.quotation_no} · {data.status||"draft"}</p>
       </div>
       <div className="detail-actions">
-        <Link className="btn" href="/quotations">← Back</Link>
+        <Link className="btn" href={returnTo}>{returnLabel}</Link>
         <DuplicateQuotationButton id={id} />
         <Link className="btn primary" href={"/quotations/"+id+"/edit"}>Edit Quotation</Link>
       </div>
@@ -154,7 +165,7 @@ export default async function QuotationDetailPage({params}:{params:Promise<{id:s
         <strong>{qd.sourceInquiryNo||"Linked Inquiry"}</strong>
         {qd.sourceInquirySnapshot&&<small>{[qd.sourceInquirySnapshot.destination,qd.sourceInquirySnapshot.daysCount&&qd.sourceInquirySnapshot.nightsCount?`${qd.sourceInquirySnapshot.daysCount}D${qd.sourceInquirySnapshot.nightsCount}N`:"",qd.sourceInquirySnapshot.pax?`${qd.sourceInquirySnapshot.pax} Pax`:""].filter(Boolean).join(" · ")}</small>}
       </div>
-      <Link className="btn" href={"/inquiries/"+data.source_inquiry_id}>Open Inquiry</Link>
+      <Link className="btn" href={"/inquiries/"+data.source_inquiry_id+"?returnTo="+encodeURIComponent(currentQuoteHref)}>Open Inquiry</Link>
     </section>}
 
     <QuotationReviewActions
