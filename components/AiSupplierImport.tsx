@@ -180,7 +180,7 @@ export default function AiSupplierImport(){
   }
 
   return <div className="ai-import-workspace">
-    {inquiryContext&&<section className="quote-source-inquiry">
+    {inquiryContext&&<section className="quote-source-inquiry ai-itinerary-context-strip">
       <div>
         <span>{t("SOURCE INQUIRY","来源询价")}</span>
         <strong>{inquiryContext.inquiryNo||t("Linked Inquiry","关联询价")}</strong>
@@ -188,7 +188,7 @@ export default function AiSupplierImport(){
       </div>
       <button className="btn" type="button" onClick={()=>router.push("/inquiries/"+inquiryContext.id)}>{t("Open Inquiry","打开询价")}</button>
     </section>}
-    <section className="panel ai-import-upload-panel">
+    <section className="panel ai-import-upload-panel ai-foundation-section ai-foundation-section-generator">
       <div className="panel-head">
         <div>
           <h2>{t("AI Itinerary Generator","智能行程生成")}</h2>
@@ -233,13 +233,13 @@ export default function AiSupplierImport(){
       </div>
 
       <div className="ai-import-primary-action">
-        <button className="btn primary" type="button" disabled={!file||analyzing} onClick={()=>void analyze()}>{analyzing?t("AI Generating...","AI 生成中..."):t("Generate Itinerary Draft","生成行程草稿")}</button>
+        <button className={"btn "+(result?"":"primary")} type="button" disabled={!file||analyzing} onClick={()=>void analyze()}>{analyzing?t("AI Generating...","AI 生成中..."):t("Generate Itinerary Draft","生成行程草稿")}</button>
       </div>
       {error&&<div className="ai-import-error">{error}</div>}
     </section>
 
     {result&&<>
-      <section className="panel">
+      <section className="panel ai-import-draft-section ai-foundation-section">
         <div className="panel-head">
           <div><h2>{t("AI Itinerary Draft","智能行程草稿")}</h2><p className="panel-subtext">{t("AI generated an editable itinerary from the source material. Review it before creating the formal Itinerary.","AI 已根据来源资料生成可编辑行程，请检查内容后再建立正式 Itinerary。")}</p></div>
           {model&&<span className="ai-model-badge">{model}</span>}
@@ -266,7 +266,7 @@ export default function AiSupplierImport(){
         </div>
       </section>
 
-      <section className="panel ai-assistant-panel">
+      <section className="panel ai-assistant-panel ai-foundation-section">
         <div className="panel-head">
           <div>
             <h2>{t("AI Itinerary Assistant","AI 行程调整助手")}</h2>
@@ -296,7 +296,7 @@ export default function AiSupplierImport(){
               />
               <div className="ai-chat-compose-foot">
                 <span>{t("Ctrl / Cmd + Enter to send","Ctrl / Cmd + Enter 发送")}</span>
-                <button className="btn primary" type="button" disabled={!chatInput.trim()||chatting} onClick={()=>void askAssistant()}>{chatting?t("Adjusting...","调整中..."):t("Ask AI to Adjust","请 AI 调整")}</button>
+                <button className="btn ai-assistant-submit" type="button" disabled={!chatInput.trim()||chatting} onClick={()=>void askAssistant()}>{chatting?t("Adjusting...","调整中..."):t("Ask AI to Adjust","请 AI 调整")}</button>
               </div>
             </div>
           </div>
@@ -326,7 +326,7 @@ export default function AiSupplierImport(){
         </div>
       </section>
 
-      {(result.internalFindings.length>0||result.warnings.length>0)&&<section className="panel ai-internal-review">
+      {(result.internalFindings.length>0||result.warnings.length>0)&&<section className="panel ai-internal-review ai-foundation-section">
         <div className="panel-head"><div><h2>{t("Operation Review","内部检查")}</h2><p className="panel-subtext">{t("The content below will not be written into the customer-facing Itinerary.","以下内容不会写入客户版 Itinerary。")}</p></div></div>
         {result.internalFindings.length>0&&<div className="ai-internal-findings">
           {result.internalFindings.map((item,index)=><div key={index}>
@@ -340,7 +340,7 @@ export default function AiSupplierImport(){
         </div>}
       </section>}
 
-      <section className="panel ai-import-apply-panel">
+      <section className="panel ai-import-apply-panel ai-itinerary-final-action">
         <div>
           <strong>{t("Create the itinerary only after confirming the AI Draft does not include supplier costs or internal information in customer content.","确认 AI Draft 没有把供应商成本或内部资料放进客户内容后，再建立行程。")}</strong>
           <span>{t("After creation, you will enter the existing New Itinerary Editor for further editing.","建立后会直接进入现有 New Itinerary Editor，Jess 可以继续修改。")}</span>
