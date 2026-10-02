@@ -3938,3 +3938,173 @@ button,
     max-width:none;
   }
 }
+
+
+/* Inquiry detail — Sales Original vs Operation Version */
+.inquiry-requirements-panel{
+  overflow:hidden;
+}
+.inquiry-version-grid{
+  display:grid;
+  gap:16px;
+}
+.inquiry-version-grid.has-operation{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+.inquiry-version-grid.single{
+  grid-template-columns:minmax(0,1fr);
+}
+.inquiry-version-card{
+  min-width:0;
+  border:1px solid #dce5ea;
+  border-radius:18px;
+  padding:18px;
+  background:#fff;
+  box-shadow:none;
+}
+.inquiry-version-card.sales-original{
+  background:#fbfcfd;
+}
+.inquiry-version-card.operation-version{
+  background:#eef5fb;
+  border-color:#d4e3ef;
+}
+.inquiry-version-card-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  padding-bottom:14px;
+  border-bottom:1px solid rgba(76,105,122,.12);
+}
+.inquiry-version-card-head>div{
+  display:grid;
+  gap:4px;
+  min-width:0;
+}
+.inquiry-version-kicker{
+  font-size:10.5px;
+  font-weight:750;
+  letter-spacing:.11em;
+  color:#80909a;
+}
+.inquiry-version-card-head h3{
+  margin:0;
+  font-size:18px;
+  line-height:1.2;
+  font-weight:700;
+  color:var(--navy2);
+}
+.inquiry-version-badge{
+  flex:0 0 auto;
+  padding:5px 8px;
+  border-radius:999px;
+  background:#eef2f4;
+  color:#657680;
+  font-size:10.5px;
+  line-height:1;
+  font-weight:700;
+}
+.inquiry-version-badge.operation{
+  background:#dcecf8;
+  color:#356b95;
+}
+.inquiry-version-meta{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  padding:14px 0;
+}
+.inquiry-version-meta>div{
+  display:grid;
+  gap:3px;
+}
+.inquiry-version-meta span,
+.inquiry-version-field>span,
+.inquiry-version-field-label>span{
+  font-size:10.5px;
+  font-weight:650;
+  color:#7d8d97;
+}
+.inquiry-version-meta strong{
+  font-size:13px;
+  color:#2c4350;
+}
+.inquiry-version-fields{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.inquiry-version-field{
+  min-width:0;
+  padding:11px 12px;
+  border:1px solid rgba(98,125,141,.13);
+  border-radius:12px;
+  background:rgba(255,255,255,.7);
+  display:grid;
+  gap:5px;
+}
+.inquiry-version-card.sales-original .inquiry-version-field{
+  background:#fff;
+}
+.inquiry-version-field.long{
+  grid-column:1/-1;
+}
+.inquiry-version-field strong{
+  font-size:13px;
+  line-height:1.35;
+  color:#273f4c;
+}
+.inquiry-version-field p{
+  margin:0;
+  font-size:12.5px;
+  line-height:1.55;
+  color:#405964;
+  white-space:pre-wrap;
+}
+.inquiry-version-field-label{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.inquiry-version-field-label em{
+  font-style:normal;
+  font-size:9.5px;
+  line-height:1;
+  font-weight:700;
+  color:#8a989f;
+}
+.inquiry-version-field.changed{
+  border-color:#bfd7e8;
+  background:#f9fcff;
+}
+.inquiry-version-field.changed .inquiry-version-field-label em{
+  color:#2f6e9b;
+}
+.inquiry-version-field.operation-only{
+  background:#f7fbfe;
+  border-color:#cbdfea;
+}
+.inquiry-version-field.operation-only .inquiry-version-field-label em{
+  color:#477a99;
+}
+
+@media(max-width:980px){
+  .inquiry-version-grid.has-operation{
+    grid-template-columns:1fr;
+  }
+}
+@media(max-width:620px){
+  .inquiry-version-card{
+    padding:15px;
+    border-radius:16px;
+  }
+  .inquiry-version-meta,
+  .inquiry-version-fields{
+    grid-template-columns:1fr;
+  }
+  .inquiry-version-field.long{
+    grid-column:auto;
+  }
+}
