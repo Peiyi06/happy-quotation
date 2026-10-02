@@ -139,10 +139,10 @@ export default function InquiryAiIntake({
             {result.missingFields.length>0&&<div className="ai-intake-missing"><strong>{t("Missing / Needs follow-up:","缺少 / 需要跟进：")}</strong> {result.missingFields.join(", ")}</div>}
           </section>}
 
-          <section className="ai-intake-result-section">
+          <section className="ai-intake-result-section ai-intake-foundation-section">
             <div className="panel-head compact">
               <div><h3>{t("Trip Basics","基本资料")}</h3><p className="panel-subtext">{t("All AI results can be edited before applying.","所有 AI 识别结果都可以先修改再套用。")}</p></div>
-              <button className="btn" type="button" onClick={()=>onApply({trip:result.trip})}>{t("Apply Trip Info","套用行程资料")}</button>
+              <button className="btn ai-intake-section-apply" type="button" onClick={()=>onApply({trip:result.trip})}>{t("Apply Trip Info","套用行程资料")}</button>
             </div>
             <div className="itinerary-meta-grid">
               <label className="field"><span>{t("Departure City","出发城市")}</span><input value={result.trip.departureCity} onChange={e=>updateTrip("departureCity",e.target.value)}/></label>
@@ -155,10 +155,10 @@ export default function InquiryAiIntake({
             </div>
           </section>
 
-          <section className="ai-intake-result-section">
+          <section className="ai-intake-result-section ai-intake-foundation-section">
             <div className="panel-head compact">
               <div><h3>{t("Traveller Composition","旅客组成")}</h3></div>
-              <button className="btn" type="button" onClick={()=>onApply({composition:result.composition})}>{t("Apply Composition","套用旅客组成")}</button>
+              <button className="btn ai-intake-section-apply" type="button" onClick={()=>onApply({composition:result.composition})}>{t("Apply Composition","套用旅客组成")}</button>
             </div>
             <div className="itinerary-meta-grid">
               <label className="field"><span>{t("Adult","成人")}</span><input type="number" min="0" value={result.composition.adultCount??""} onChange={e=>updateComposition("adultCount",e.target.value===""?null:Number(e.target.value))}/></label>
@@ -173,10 +173,10 @@ export default function InquiryAiIntake({
             </div>
           </section>
 
-          <section className="ai-intake-result-section">
+          <section className="ai-intake-result-section ai-intake-foundation-section">
             <div className="panel-head compact">
               <div><h3>{t("Travel Requirements","旅游需求")}</h3></div>
-              <button className="btn" type="button" onClick={()=>onApply({requirements:result.requirements})}>{t("Apply Requirements","套用旅游需求")}</button>
+              <button className="btn ai-intake-section-apply" type="button" onClick={()=>onApply({requirements:result.requirements})}>{t("Apply Requirements","套用旅游需求")}</button>
             </div>
             <div className="inquiry-requirement-grid">
               <label className="field"><span>{t("Flight Requirement","航班需求")}</span><textarea value={result.requirements.flightRequirement} onChange={e=>updateReq("flightRequirement",e.target.value)}/></label>
@@ -187,10 +187,10 @@ export default function InquiryAiIntake({
             </div>
           </section>
 
-          <section className="ai-intake-result-section">
+          <section className="ai-intake-result-section ai-intake-foundation-section">
             <div className="panel-head compact">
               <div><h3>{t("Suggested Flights","推荐航班")}</h3><p className="panel-subtext">{t("Flight segments are added to Inquiry; Transit / Airport Transfer remain as recognition hints and are not created as flights.","Flight 会加入 Inquiry；Transit / Airport Transfer 作为识别提示保留，不会误建成航班。")}</p></div>
-              <button className="btn" type="button" disabled={!result.flights.some(f=>f.segmentType==="flight")} onClick={()=>onApply({flights:result.flights})}>{t("Apply Flights","套用航班")}</button>
+              <button className="btn ai-intake-section-apply" type="button" disabled={!result.flights.some(f=>f.segmentType==="flight")} onClick={()=>onApply({flights:result.flights})}>{t("Apply Flights","套用航班")}</button>
             </div>
             {result.flights.length===0?<div className="empty">{t("No flight information detected.","没有识别到航班资料。")}</div>:<div className="ai-flight-preview-list">
               {result.flights.map((f,index)=><div className={"ai-flight-preview "+f.confidence} key={index}>
