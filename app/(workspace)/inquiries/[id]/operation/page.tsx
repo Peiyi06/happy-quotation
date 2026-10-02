@@ -4,8 +4,15 @@ import { internalDb,internalToken,internalUser } from "@/lib/internalSession";
 import OperationReviewEditor from "@/components/OperationReviewEditor";
 import InquiryWorkflowAction from "@/components/InquiryWorkflowAction";
 
-export default async function OperationReviewPage({params}:{params:Promise<{id:string}>}){
+export default async function OperationReviewPage({
+  params,
+  searchParams
+}:{
+  params:Promise<{id:string}>;
+  searchParams:Promise<{returnTo?:string}>;
+}){
   const {id}=await params;
+  const sp=await searchParams;
   const token=await internalToken();
   const user=await internalUser();
   if(!token||!user) notFound();
@@ -17,6 +24,10 @@ export default async function OperationReviewPage({params}:{params:Promise<{id:s
   const canEdit=user.username.toLowerCase()==="long" || data.operation_assignee_id===user.id;
   const {data:linkedQuoteData}=await db.rpc("staff_list_quotes_for_inquiry",{p_token:token,p_inquiry_id:id});
   const linkedQuotes=Array.isArray(linkedQuoteData)?linkedQuoteData:[];
+  const rawReturnTo=String(sp.returnTo||"");
+  const returnTo=rawReturnTo.startsWith("/")&&!rawReturnTo.startsWith("//")?rawReturnTo:"/inquiries";
+  const returnParam=encodeURIComponent(returnTo);
+  const inquiryHref="/inquiries/"+id+"?returnTo="+returnParam;
 
   return <div>
     <div className="page-head inquiry-detail-head page-hero-header">
@@ -37,10 +48,10 @@ export default async function OperationReviewPage({params}:{params:Promise<{id:s
           firstQuotationId={linkedQuotes[0]?.id}
         />
         <div className="detail-actions">
-          <Link className="btn" href={"/inquiries/"+id}>← Inquiry</Link>
+          <Link className="btn" href={inquiryHref}>← Inquiry</Link>
         </div>
       </div>
     </div>
-    <OperationReviewEditor inquiry={data} canEdit={canEdit}/>
+    <OperationReviewEditor inquiry={data} canEdit={canEdit} returnTo={returnTo}/>
   </div>;
 }
