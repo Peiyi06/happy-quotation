@@ -73,8 +73,8 @@ export default function AiLabWorkspace(){
     const res=await fetch("/api/ai-lab/threads?id="+encodeURIComponent(id),{cache:"no-store"});
     const data=await res.json().catch(()=>({}));
     if(!res.ok||!data?.ok) return;
-    const t=data.thread||{};
-    const loaded=(Array.isArray(t.messages)?t.messages:[]).map((m:any)=>{
+    const thread=data.thread||{};
+    const loaded=(Array.isArray(thread.messages)?thread.messages:[]).map((m:any)=>{
       const payload=m.payload||{};
       return {
         role:m.role==="assistant"?"assistant":"user",
@@ -86,9 +86,9 @@ export default function AiLabWorkspace(){
         attachments:Array.isArray(payload.attachments)?payload.attachments:[]
       } as Message;
     });
-    setThreadId(String(t.id||id));
-    setContextInquiryId(String(t.linked_inquiry_id||""));
-    setContextTitle(String(t.context_title||""));
+    setThreadId(String(thread.id||id));
+    setContextInquiryId(String(thread.linked_inquiry_id||""));
+    setContextTitle(String(thread.context_title||""));
     setMessages(loaded.length?loaded:[{role:"assistant",text:t("This Thread has no messages yet.","这个 Thread 还没有消息。")}]);
     setSaveState("saved");
   }
