@@ -18,9 +18,15 @@ export default function AiLabWorkspace(){
   const t=(en:string,zh:string)=>language==="zh"?zh:en;
   const starterPrompts=[
     t("What needs my attention today?","今天有什么需要我注意？"),
+    t("Which Inquiries are still waiting for Supplier Quote?","哪些 Inquiry 还在等 Supplier Quote？")
+  ];
+  const composerExamples=[
+    t("Ask about an Inquiry, Quotation or Itinerary…","询问 Inquiry、Quotation 或 Itinerary…"),
+    t("Show me cases that need attention today…","显示今天需要我注意的案件…"),
     t("Which Inquiries are still waiting for Supplier Quote?","哪些 Inquiry 还在等 Supplier Quote？"),
-    t("Find the most recently updated Inquiries","帮我找最近更新的 Inquiry"),
-    t("Which Quotations are still in Draft?","有哪些 Quotation 还在 Draft？")
+    t("Summarize the latest Quotation changes…","总结最新的 Quotation 变更…"),
+    t("Which Itineraries are ready for review?","哪些 Itinerary 已经可以审核？"),
+    t("Find Inquiries with no recent follow-up…","找出最近没有跟进的 Inquiry…")
   ];
   const [messages,setMessages]=useState<Message[]>([]);
   const [input,setInput]=useState("");
@@ -34,13 +40,51 @@ export default function AiLabWorkspace(){
   const [archivedThreads,setArchivedThreads]=useState<WorkThread[]>([]);
   const [showArchived,setShowArchived]=useState(false);
   const [showSafety,setShowSafety]=useState(false);
-  const [showMoreStarters,setShowMoreStarters]=useState(false);
   const [sidebarCollapsed,setSidebarCollapsed]=useState(false);
   const [threadsLoading,setThreadsLoading]=useState(false);
   const [saveState,setSaveState]=useState<"saved"|"saving"|"">("");
   const [imageFiles,setImageFiles]=useState<File[]>([]);
   const [imagePreviews,setImagePreviews]=useState<Attachment[]>([]);
+  const [composerPlaceholder,setComposerPlaceholder]=useState("");
+  const [composerFocused,setComposerFocused]=useState(false);
   const fileInputRef=useRef<HTMLInputElement|null>(null);
+
+  useEffect(()=>{
+    if(composerFocused||input) return;
+    let phraseIndex=0;
+    let charIndex=0;
+    let deleting=false;
+    let timer:ReturnType<typeof setTimeout>|undefined;
+
+    const tick=()=>{
+      const phrase=composerExamples[phraseIndex];
+      if(!deleting){
+        charIndex=Math.min(charIndex+1,phrase.length);
+        setComposerPlaceholder(phrase.slice(0,charIndex));
+        if(charIndex>=phrase.length){
+          deleting=true;
+          timer=setTimeout(tick,1800);
+          return;
+        }
+        timer=setTimeout(tick,42);
+        return;
+      }
+
+      charIndex=Math.max(0,charIndex-1);
+      setComposerPlaceholder(phrase.slice(0,charIndex));
+      if(charIndex===0){
+        deleting=false;
+        phraseIndex=(phraseIndex+1)%composerExamples.length;
+        timer=setTimeout(tick,320);
+        return;
+      }
+      timer=setTimeout(tick,20);
+    };
+
+    setComposerPlaceholder("");
+    timer=setTimeout(tick,260);
+    return ()=>{if(timer) clearTimeout(timer);};
+  },[language,composerFocused,input]);
 
 
   async function loadThreads(){
@@ -294,18 +338,22 @@ export default function AiLabWorkspace(){
 
       {messages.length===0&&<div className="ai-lab-starter-wrap">
         <div className="ai-lab-starters">
-          {starterPrompts.slice(0,showMoreStarters?starterPrompts.length:2).map(p=><button key={p} type="button" onClick={()=>void send(p)}>{p}</button>)}
+          {starterPrompts.map(p=><button key={p} type="button" onClick={()=>void send(p)}>{p}</button>)}
         </div>
-        <button className="ai-lab-more-starters" type="button" onClick={()=>setShowMoreStarters(v=>!v)}>
-          {showMoreStarters?t("Fewer suggestions","收起建议"):t("More suggestions","更多建议")}
-        </button>
       </div>}
 
       {imagePreviews.length>0&&<div className="ai-lab-upload-previews">{imagePreviews.map((a,i)=><div key={a.url} className="ai-lab-upload-chip"><img src={a.url} alt={a.name}/><span>{a.name}</span><button className="icon-action-btn icon-action-remove" type="button" aria-label={t("Remove ","移除 ")+a.name} onClick={()=>removeImage(i)}>×</button></div>)}</div>}
       <div className="ai-lab-compose">
         <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onChange={e=>addImages(e.target.files)}/>
         <button type="button" className="ai-lab-attach-btn" disabled={loading||imageFiles.length>=4} onClick={()=>fileInputRef.current?.click()}>＋</button>
-        <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder={t("Ask about an Inquiry, Quotation or Itinerary…","询问 Inquiry、Quotation 或 Itinerary…")} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();void send();}}}/>
+        <textarea
+          value={input}
+          onChange={e=>setInput(e.target.value)}
+          onFocus={()=>setComposerFocused(true)}
+          onBlur={()=>setComposerFocused(false)}
+          placeholder={composerFocused?t("Ask about an Inquiry, Quotation or Itinerary…","询问 Inquiry、Quotation 或 Itinerary…"):composerPlaceholder}
+          onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();void send();}}}
+        />
         <button type="button" className="workflow-primary-btn ai-lab-send-primary" disabled={(!input.trim()&&!imageFiles.length)||loading} onClick={()=>void send()}>{loading?t("Thinking...","思考中..."):t("Send","发送")}</button>
       </div>
       <div className="ai-lab-compose-note">{t("Up to 4 images · Enter to send","最多 4 张图片 · Enter 发送")}</div>
