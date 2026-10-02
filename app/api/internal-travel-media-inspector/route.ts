@@ -39,10 +39,23 @@ export async function POST(request:Request){
   if(!token) return NextResponse.json({error:"Unauthorized"},{status:401});
   const body=await request.json().catch(()=>({}));
   const action=String(body.action||"");
+  const db=internalDb();
+
+  if(action==="update_keywords"){
+    const placeId=String(body.placeId||"");
+    const keywords=Array.isArray(body.keywords)
+      ? body.keywords.map((x:any)=>String(x||"").trim()).filter(Boolean).slice(0,80)
+      : [];
+    if(!placeId) return NextResponse.json({error:"Place id is required"},{status:400});
+    const {data,error}=await db.rpc("staff_update_travel_place_keywords",{
+      p_token:token,p_place_id:placeId,p_keywords:keywords
+    });
+    if(error||!data?.ok) return NextResponse.json({error:data?.error||error?.message||"Unable to update match keywords"},{status:400});
+    return NextResponse.json(data);
+  }
+
   const imageId=String(body.imageId||"");
   if(!imageId) return NextResponse.json({error:"Image id is required"},{status:400});
-
-  const db=internalDb();
 
   if(action==="remove"){
     const {data,error}=await db.rpc("staff_remove_travel_place_image",{p_token:token,p_image_id:imageId});
