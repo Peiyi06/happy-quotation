@@ -92,7 +92,7 @@ export default function InquiryAiIntake({
             <h2>{t("AI Intake","AI 资料录入")}</h2>
             <p>{t("Paste the customer's WhatsApp reply or upload flight screenshots. AI will prepare an editable preview before Sales applies it.","粘贴客户 WhatsApp 回复或上传航班截图，AI 先整理成可编辑预览，再由 Sales 决定是否套用。")}</p>
           </div>
-          <button className="quotation-type-close" type="button" onClick={close}>×</button>
+          <button className="quotation-type-close" type="button" onClick={close} aria-label={t("Close","关闭")}>×</button>
         </div>
 
         <div className="ai-intake-input-grid">
@@ -119,7 +119,7 @@ export default function InquiryAiIntake({
         </div>
         {files.length>0&&<div className="ai-intake-filechips">{files.map((f,i)=><span key={i} className="ai-intake-filechip">
           <span>{f.name}</span>
-          <button className="icon-action-btn icon-action-remove" type="button" aria-label={"Remove "+f.name} onClick={()=>{
+          <button className="icon-action-btn icon-action-remove" type="button" aria-label={t("Remove ","移除 ")+f.name} onClick={()=>{
             setFiles(prev=>prev.filter((_,index)=>index!==i));
             if(inputRef.current) inputRef.current.value="";
           }}>×</button>
