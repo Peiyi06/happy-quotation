@@ -6427,3 +6427,423 @@ td,
 .unsaved-dialog{
   box-shadow:var(--shadow-elevated);
 }
+
+
+/* =========================================================
+   QUOTATION FOUNDATION AUDIT v1
+   Align editor/detail/review/workflow with UI Foundation v1.
+   ========================================================= */
+
+/* Editor shell: replace legacy marketing-style hero with workspace header */
+.quotation-editor-shell .quotation-editor-header{
+  width:100%;
+  padding:22px 0 18px;
+  margin-bottom:22px;
+  border:0;
+  border-bottom:1px solid var(--color-border-default);
+  border-radius:0;
+  background:transparent;
+  color:var(--color-text-primary);
+  box-shadow:none;
+}
+.quotation-editor-shell .quotation-editor-header h1{
+  margin:0 0 6px;
+  color:var(--color-brand-primary);
+  font-size:32px;
+  line-height:1.1;
+  letter-spacing:-.025em;
+}
+.quotation-editor-shell .quotation-editor-header p{
+  color:var(--color-text-secondary);
+}
+.quotation-editor-shell .quotation-editor-header .quote-top-actions .btn{
+  background:var(--color-bg-surface);
+  border-color:var(--color-border-default);
+  color:var(--color-text-primary);
+}
+.quotation-editor-shell .quotation-editor-header .quote-top-actions .btn:hover{
+  background:var(--color-bg-page);
+  border-color:var(--color-border-strong);
+}
+.quotation-editor-shell .quotation-editor-header .quote-top-actions .btn.ghost{
+  background:var(--color-bg-surface);
+  border-color:var(--color-border-default);
+  color:var(--color-text-primary);
+}
+.quotation-editor-shell .quotation-editor-header .quote-top-actions .btn.danger{
+  background:var(--color-bg-surface);
+  border-color:var(--color-border-default);
+  color:var(--color-danger-text);
+}
+.quotation-editor-shell .quote-header-save{
+  font-weight:700;
+}
+
+/* Editor KPI strip: only the final quote gets strong emphasis */
+.quotation-editor-shell .summary-grid{
+  gap:0;
+  margin:0 0 var(--space-xl);
+  padding:4px 0 20px;
+  border-bottom:1px solid var(--color-border-default);
+}
+.quotation-editor-shell .summary-card{
+  padding:8px 18px;
+  border:0;
+  border-right:1px solid var(--color-border-default);
+  border-radius:0;
+  background:transparent;
+}
+.quotation-editor-shell .summary-card:first-child{
+  padding-left:0;
+}
+.quotation-editor-shell .summary-card:last-child{
+  border-right:0;
+}
+.quotation-editor-shell .summary-card span{
+  color:var(--color-text-secondary);
+}
+.quotation-editor-shell .summary-card b{
+  color:var(--color-text-primary);
+}
+.quotation-editor-shell .summary-card.strong{
+  background:var(--color-brand-primary-soft);
+  border:1px solid #DCE6EC;
+  border-radius:var(--radius-md);
+  margin:-4px 0 -4px 16px;
+}
+.quotation-editor-shell .summary-card.strong span{
+  color:var(--color-text-secondary);
+}
+.quotation-editor-shell .summary-card.strong b{
+  color:var(--color-brand-primary);
+}
+
+/* Quotation sections: calm surfaces, no repeated elevation */
+.quotation-editor-shell .section{
+  box-shadow:none!important;
+  border-color:var(--color-border-default)!important;
+  background:var(--color-bg-surface)!important;
+}
+.quotation-editor-shell .quote-meta-panel{
+  box-shadow:none!important;
+}
+.quotation-editor-shell .flight-block,
+.quotation-editor-shell .child-card{
+  background:var(--color-bg-soft);
+  border-color:var(--color-border-default);
+}
+
+/* Local actions are secondary, not page-primary */
+.quotation-editor-shell .section-head .btn:not(.danger),
+.quotation-editor-shell .leader-toggle-btn,
+.quotation-editor-shell .transit-toggle{
+  background:var(--color-bg-surface)!important;
+  color:var(--color-text-primary)!important;
+  border-color:var(--color-border-default)!important;
+  box-shadow:none!important;
+}
+.quotation-editor-shell .section-head .btn:not(.danger):hover,
+.quotation-editor-shell .leader-toggle-btn:hover,
+.quotation-editor-shell .transit-toggle:hover{
+  background:var(--color-bg-page)!important;
+  border-color:var(--color-border-strong)!important;
+}
+.quotation-editor-shell .leader-toggle-btn.active,
+.quotation-editor-shell .transit-toggle.active{
+  background:var(--color-brand-primary-soft)!important;
+  color:var(--color-brand-primary)!important;
+  border-color:#CFDFEA!important;
+}
+
+/* Inputs / readonly fields */
+.quotation-editor-shell .quote-meta-panel input[readonly],
+.quotation-editor-shell .system-fixed-input{
+  background:var(--color-bg-soft)!important;
+  color:var(--color-text-secondary)!important;
+  border-color:var(--color-border-default)!important;
+}
+
+/* Tables and matrix: remove legacy green grid treatment */
+.quotation-editor-shell .matrix td,
+.quotation-detail-template .matrix td{
+  background:var(--color-bg-surface)!important;
+}
+.quotation-editor-shell .matrix .label-cell,
+.quotation-detail-template .matrix .label-cell{
+  background:var(--color-bg-soft)!important;
+}
+.quotation-editor-shell .matrix .sale,
+.quotation-detail-template .matrix .sale{
+  background:var(--color-info-soft)!important;
+  color:var(--color-info-text)!important;
+  font-weight:750;
+}
+.quotation-editor-shell .metric{
+  background:var(--color-bg-soft)!important;
+  border-color:var(--color-border-default)!important;
+  border-radius:var(--radius-sm);
+}
+.quotation-editor-shell .metric span{
+  color:var(--color-text-secondary);
+}
+.quotation-editor-shell .metric b{
+  color:var(--color-text-primary);
+}
+.quotation-editor-shell .metric.strong{
+  background:var(--color-brand-primary-soft)!important;
+  border-color:#DCE6EC!important;
+}
+.quotation-editor-shell .metric.strong span{
+  color:var(--color-text-secondary)!important;
+}
+.quotation-editor-shell .metric.strong b{
+  color:var(--color-brand-primary)!important;
+}
+
+/* Semantic quotation statuses */
+.quote-status-readonly{
+  background:var(--color-neutral-status-soft)!important;
+  color:var(--color-neutral-status-text)!important;
+  border-color:var(--color-border-default)!important;
+}
+.quote-status-readonly.status-under_review{
+  background:var(--color-info-soft)!important;
+  color:var(--color-info-text)!important;
+  border-color:#CFDFEA!important;
+}
+.quote-status-readonly.status-revision_required{
+  background:var(--color-warning-soft)!important;
+  color:var(--color-warning-text)!important;
+  border-color:#E7D6B5!important;
+}
+.quote-status-readonly.status-ready{
+  background:var(--color-success-soft)!important;
+  color:var(--color-success-text)!important;
+  border-color:#D2E5D6!important;
+}
+.status-under_review{
+  border-color:#CFDFEA!important;
+}
+.status-revision_required{
+  border-color:#E7D6B5!important;
+}
+.status-ready,
+.status-ready_customer,
+.status-itinerary_ready{
+  border-color:#D2E5D6!important;
+}
+
+/* Review card */
+.quote-review-card{
+  background:var(--color-bg-surface);
+  border-color:var(--color-border-default);
+  border-radius:var(--radius-md);
+  box-shadow:none;
+}
+.quote-review-status>span,
+.quote-review-status>small{
+  color:var(--color-text-secondary);
+}
+.quote-review-status>strong{
+  color:var(--color-brand-primary);
+}
+.quote-review-waiting,
+.quote-editor-review-state{
+  background:var(--color-info-soft);
+  color:var(--color-info-text);
+}
+.quote-review-ready,
+.quote-editor-review-state.ready{
+  background:var(--color-success-soft);
+  color:var(--color-success-text);
+}
+.quote-commercial-change-note{
+  background:var(--color-warning-soft);
+  color:var(--color-warning-text);
+  border-color:#E7D6B5;
+}
+
+/* Workflow: Foundation semantic surfaces take priority over legacy gradients/shadows */
+.quotation-workflow-panel,
+.quotation-editor-workflow{
+  border-color:var(--color-border-default)!important;
+  background:var(--color-bg-surface)!important;
+  box-shadow:var(--shadow-elevated)!important;
+}
+.quotation-workflow-panel .inquiry-workflow-panel-head h2,
+.quotation-editor-workflow .inquiry-workflow-panel-head h2{
+  margin:0!important;
+  color:var(--color-brand-primary)!important;
+}
+.quotation-workflow-panel .simple-workflow-card,
+.quotation-editor-workflow .simple-workflow-card{
+  background:var(--color-bg-soft)!important;
+  border-color:var(--color-border-default)!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+.quotation-workflow-panel .simple-workflow-card.current,
+.quotation-workflow-panel .simple-workflow-card.active,
+.quotation-editor-workflow .simple-workflow-card.current,
+.quotation-editor-workflow .simple-workflow-card.active{
+  background:var(--color-info-soft)!important;
+  border-color:#CFDFEA!important;
+  box-shadow:none!important;
+}
+.quotation-workflow-panel .simple-workflow-card.complete,
+.quotation-editor-workflow .simple-workflow-card.complete{
+  background:var(--color-success-soft)!important;
+  border-color:#D2E5D6!important;
+}
+.quotation-workflow-panel .simple-workflow-card.upcoming,
+.quotation-editor-workflow .simple-workflow-card.upcoming{
+  background:var(--color-bg-soft)!important;
+  border-color:var(--color-border-default)!important;
+}
+.quotation-workflow-panel .simple-workflow-card.current .simple-workflow-index,
+.quotation-workflow-panel .simple-workflow-card.active .simple-workflow-index,
+.quotation-editor-workflow .simple-workflow-card.current .simple-workflow-index,
+.quotation-editor-workflow .simple-workflow-card.active .simple-workflow-index{
+  background:var(--color-brand-primary)!important;
+  box-shadow:none!important;
+}
+.quotation-workflow-panel .simple-workflow-actions .btn.primary,
+.quotation-editor-workflow .simple-workflow-actions .btn.primary{
+  background:var(--color-brand-primary)!important;
+  border-color:var(--color-brand-primary)!important;
+  box-shadow:none!important;
+}
+.quotation-workflow-waiting{
+  background:var(--color-info-soft);
+  color:var(--color-info-text);
+}
+.quotation-workflow-note{
+  background:var(--color-warning-soft);
+  border-color:#E7D6B5;
+}
+.quotation-workflow-note.success{
+  background:var(--color-success-soft);
+  border-color:#D2E5D6;
+}
+
+/* Quotation Detail follows the Detail Page Master */
+.quotation-detail-template .quote-detail-head{
+  align-items:flex-start;
+  margin-bottom:24px;
+  padding:4px 0 22px;
+  border-bottom:1px solid var(--color-border-default);
+}
+.quotation-detail-template .quotation-detail-title-block{
+  display:grid;
+  gap:7px;
+}
+.quotation-detail-template .quotation-detail-title-block h1{
+  margin:0!important;
+  font-size:36px!important;
+  line-height:1.08!important;
+  font-weight:700!important;
+  letter-spacing:-.028em!important;
+  color:var(--color-brand-primary)!important;
+}
+.quotation-detail-template .quotation-detail-meta-line{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  color:var(--color-text-secondary);
+  font-size:14px;
+}
+.quotation-detail-template .quotation-header-status{
+  text-transform:capitalize;
+}
+.quotation-detail-template .detail-actions .btn{
+  background:var(--color-bg-surface);
+  color:var(--color-text-primary);
+  border-color:var(--color-border-default);
+}
+.quotation-detail-template .quotation-back-action{
+  background:transparent;
+  border-color:transparent;
+  color:var(--color-text-secondary);
+  padding-left:0;
+}
+
+/* Pricing hierarchy: one strong hero, two supportive surfaces */
+.quotation-detail-template .final-price-grid{
+  gap:var(--space-md);
+}
+.quotation-detail-template .quote-result-hero{
+  background:var(--color-bg-surface);
+  color:var(--color-text-primary);
+  border:1px solid var(--color-border-default);
+  border-radius:var(--radius-lg);
+  box-shadow:none;
+}
+.quotation-detail-template .quote-result-hero:first-child{
+  background:var(--color-brand-primary);
+  border-color:var(--color-brand-primary);
+  color:#fff;
+}
+.quotation-detail-template .quote-result-hero:not(:first-child) span,
+.quotation-detail-template .quote-result-hero:not(:first-child) small{
+  color:var(--color-text-secondary);
+}
+.quotation-detail-template .quote-result-hero:not(:first-child) strong{
+  color:var(--color-brand-primary);
+}
+.quotation-detail-template .quote-detail-cards{
+  gap:0;
+  margin:0 0 var(--space-xl);
+  padding:0 0 20px;
+  border-bottom:1px solid var(--color-border-default);
+}
+.quotation-detail-template .quote-detail-cards .dash-card{
+  padding:8px 18px;
+  border:0;
+  border-right:1px solid var(--color-border-default);
+  border-radius:0;
+  background:transparent;
+}
+.quotation-detail-template .quote-detail-cards .dash-card:first-child{
+  padding-left:0;
+}
+.quotation-detail-template .quote-detail-cards .dash-card:last-child{
+  border-right:0;
+}
+.quotation-detail-template .quote-detail-cards .dash-card span{
+  color:var(--color-text-secondary);
+}
+.quotation-detail-template .quote-detail-cards .dash-card b{
+  color:var(--color-text-primary);
+  font-size:18px;
+}
+.quotation-detail-template .panel{
+  box-shadow:none;
+}
+.quotation-detail-template .detail-item{
+  background:var(--color-bg-soft);
+  border-color:var(--color-border-default);
+}
+
+@media(max-width:900px){
+  .quotation-editor-shell .summary-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+  }
+  .quotation-editor-shell .summary-card{
+    border:1px solid var(--color-border-default);
+    border-radius:var(--radius-md);
+    padding:14px;
+  }
+  .quotation-editor-shell .summary-card.strong{
+    margin:0;
+  }
+}
+@media(max-width:760px){
+  .quotation-editor-shell .quotation-editor-header{
+    gap:16px;
+  }
+  .quotation-detail-template .quotation-detail-title-block h1{
+    font-size:32px!important;
+  }
+}
