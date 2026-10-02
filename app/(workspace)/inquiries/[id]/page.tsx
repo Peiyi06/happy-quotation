@@ -165,7 +165,6 @@ export default async function InquiryDetailPage({
         transportRequirement={operationReview.transportRequirement||""}
         itineraryRequirement={operationReview.itineraryRequirement||""}
       />
-      </div>
     </section>
 
     <section className="panel inquiry-workflow-panel inquiry-elevated-section">
