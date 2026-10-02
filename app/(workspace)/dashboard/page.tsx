@@ -22,7 +22,6 @@ export default async function DashboardPage() {
   return <div>
     <div className="page-head page-compact-header">
       <div>
-        <span className="page-kicker"><UiText en="WORKSPACE" zh="工作区" /></span>
         <h1><UiText en="Good day" zh="你好" />, {user?.name || "Team"}</h1>
         <p>{user?.role==="manager"?<UiText en="Review team quotation performance and latest progress." zh="查看团队报价表现与最新进度。" />:<UiText en="Manage your quotations, tour groups and customer follow-up." zh="管理你的报价、团型与客户跟进。" />}</p>
       </div>
@@ -33,7 +32,7 @@ export default async function DashboardPage() {
       <DashCard label={user?.role==="manager"?<UiText en="Team Quotations" zh="团队报价" />:<UiText en="My Quotations" zh="我的报价" />} value={String(all.length)} />
       <DashCard label={<UiText en="Confirmed" zh="已确认" />} value={String(confirmed)} />
       <DashCard label={<UiText en="Quoted Value" zh="报价总额" />} value={money(total)} />
-      <DashCard label={<UiText en="Average Margin" zh="平均利润率" />} value={(avgMargin*100).toFixed(1)+"%"} strong />
+      <DashCard label={<UiText en="Average Margin" zh="平均利润率" />} value={(avgMargin*100).toFixed(1)+"%"} />
     </section>
 
     <section className="panel">
@@ -45,4 +44,4 @@ export default async function DashboardPage() {
     </section>
   </div>;
 }
-function DashCard({label,value,strong}:{label:React.ReactNode;value:string;strong?:boolean}){return <div className={"dash-card "+(strong?"strong":"")}><span>{label}</span><b>{value}</b></div>}
+function DashCard({label,value}:{label:React.ReactNode;value:string}){return <div className="dash-card"><span>{label}</span><b>{value}</b></div>}
