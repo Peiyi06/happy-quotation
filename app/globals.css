@@ -10988,3 +10988,150 @@ td,
     flex-wrap:wrap;
   }
 }
+
+
+/* =========================================================
+   AI INTAKE MICRO FOUNDATION
+   Preserve modal workflow, reduce competing action weight.
+   ========================================================= */
+.ai-intake-modal{
+  box-shadow:var(--shadow-elevated)!important;
+}
+.ai-intake-head{
+  padding-bottom:14px!important;
+  border-bottom:1px solid var(--color-border-default);
+}
+.ai-intake-head .page-kicker{
+  color:var(--color-text-tertiary)!important;
+}
+.ai-intake-head h2{
+  color:var(--color-brand-primary)!important;
+  letter-spacing:-.015em;
+}
+.ai-intake-input-grid{
+  gap:12px!important;
+}
+.ai-intake-upload{
+  margin-top:10px!important;
+  padding:12px 14px!important;
+  border-color:var(--color-border-default)!important;
+  background:var(--color-bg-soft)!important;
+  box-shadow:none!important;
+}
+.ai-intake-actionbar{
+  margin-top:12px!important;
+  padding-top:12px!important;
+  border-top:1px solid var(--color-border-default);
+}
+.ai-intake-results{
+  margin-top:16px!important;
+  display:grid;
+  gap:0!important;
+}
+.ai-intake-foundation-section{
+  margin:0!important;
+  padding:18px 0!important;
+  border:0!important;
+  border-top:1px solid var(--color-border-default)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.ai-intake-foundation-section>.panel-head{
+  margin:0 0 12px!important;
+}
+.ai-intake-foundation-section>.panel-head h3{
+  color:var(--color-text-primary)!important;
+  font-size:16px!important;
+  font-weight:700!important;
+  letter-spacing:-.01em;
+}
+.ai-intake-section-apply{
+  min-height:30px!important;
+  height:30px!important;
+  padding:0 8px!important;
+  border-color:transparent!important;
+  background:transparent!important;
+  color:var(--color-info-text)!important;
+  font-size:10.5px!important;
+  font-weight:600!important;
+  box-shadow:none!important;
+}
+.ai-intake-section-apply:hover:not(:disabled){
+  background:var(--color-brand-primary-soft)!important;
+  border-color:transparent!important;
+  color:var(--color-brand-primary)!important;
+}
+.ai-intake-foundation-section .itinerary-meta-grid,
+.ai-intake-foundation-section .inquiry-requirement-grid{
+  gap:10px!important;
+}
+.ai-intake-foundation-section .field{
+  gap:5px!important;
+}
+.ai-intake-foundation-section .field>span{
+  color:var(--color-text-secondary)!important;
+  font-size:10px!important;
+  font-weight:600!important;
+}
+.ai-intake-foundation-section input,
+.ai-intake-foundation-section select,
+.ai-intake-foundation-section textarea{
+  min-height:36px!important;
+  font-size:12px!important;
+}
+.ai-intake-foundation-section textarea{
+  min-height:76px!important;
+}
+.ai-flight-preview-list{
+  gap:10px!important;
+}
+.ai-flight-preview{
+  padding:12px!important;
+  border-color:var(--color-border-default)!important;
+  border-radius:10px!important;
+  box-shadow:none!important;
+}
+.ai-flight-preview-head{
+  margin-bottom:10px!important;
+}
+.ai-intake-alerts{
+  margin:0 0 4px!important;
+  display:grid;
+  gap:6px!important;
+}
+.ai-intake-warning,
+.ai-intake-missing{
+  padding:9px 10px!important;
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+.ai-intake-apply-all{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:0!important;
+  padding:16px 0 2px!important;
+  border-top:1px solid var(--color-border-default);
+}
+.ai-intake-apply-all .btn.primary{
+  min-height:40px;
+  padding:0 14px;
+  box-shadow:none!important;
+}
+
+@media(max-width:760px){
+  .ai-intake-foundation-section{
+    padding:16px 0!important;
+  }
+  .ai-intake-foundation-section>.panel-head{
+    align-items:flex-start;
+    gap:8px;
+  }
+  .ai-intake-section-apply{
+    flex:0 0 auto;
+  }
+  .ai-intake-apply-all .btn.primary{
+    width:100%;
+    justify-content:center;
+  }
+}
