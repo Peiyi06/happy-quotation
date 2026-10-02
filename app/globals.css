@@ -13330,3 +13330,59 @@ td,
   font-size:9px!important;
   font-weight:550!important;
 }
+
+
+/* =========================================================
+   AI LAB — SEGMENTED CONTROL TRUE 50 / 50
+   Flex-basis enforces exact equal segment geometry.
+   ========================================================= */
+.ai-thread-panel .ai-thread-view-switch.ios-segmented-control{
+  box-sizing:border-box!important;
+  width:calc(100% - 28px)!important;
+  min-width:0!important;
+  max-width:none!important;
+  margin:4px 14px 10px!important;
+  padding:3px!important;
+  display:flex!important;
+  align-items:stretch!important;
+  gap:2px!important;
+  height:40px!important;
+  min-height:40px!important;
+  border:0!important;
+  border-radius:12px!important;
+  background:#E8EDF1!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+}
+
+.ai-thread-panel .ai-thread-view-switch.ios-segmented-control>button{
+  box-sizing:border-box!important;
+  flex:1 1 0!important;
+  flex-basis:0!important;
+  width:0!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:34px!important;
+  min-height:34px!important;
+  margin:0!important;
+  padding:0 8px!important;
+  border:0!important;
+  border-radius:9px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:5px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+}
+
+.ai-thread-panel .ai-thread-view-switch.ios-segmented-control>button:first-child,
+.ai-thread-panel .ai-thread-view-switch.ios-segmented-control>button:last-child{
+  flex:1 1 0!important;
+  flex-basis:0!important;
+  width:0!important;
+}
+
+.ai-thread-panel .ai-thread-view-switch.ios-segmented-control>button>span{
+  flex:0 0 auto!important;
+}
