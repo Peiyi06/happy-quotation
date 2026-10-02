@@ -3581,3 +3581,54 @@ button,
     border-radius:10px;
   }
 }
+
+
+/* Workspace sidebar viewport + internal scrolling fix */
+@media(min-width:761px){
+  .workspace{
+    min-height:100vh;
+    align-items:start;
+  }
+  .sidebar{
+    position:sticky;
+    top:0;
+    height:100vh;
+    min-height:100vh;
+    overflow:hidden;
+    padding:24px 18px 18px;
+    gap:18px;
+  }
+  .sidebar-brand{
+    flex:0 0 auto;
+  }
+  .sidebar-nav{
+    flex:1 1 auto;
+    min-height:0;
+    overflow-y:auto;
+    overflow-x:hidden;
+    overscroll-behavior:contain;
+    padding:2px 2px 8px 0;
+    scrollbar-width:none;
+  }
+  .sidebar-nav::-webkit-scrollbar{
+    width:0;
+    height:0;
+  }
+  .sidebar-user{
+    flex:0 0 auto;
+    margin-top:0;
+    padding-top:14px;
+    background:#173b5c;
+  }
+  .sidebar-nav>a,
+  .sidebar-new-quote{
+    border:1px solid transparent!important;
+    outline:none;
+    box-shadow:none;
+  }
+  .sidebar-nav>a:focus-visible,
+  .sidebar-new-quote:focus-visible{
+    border-color:rgba(223,199,155,.72)!important;
+    box-shadow:0 0 0 2px rgba(223,199,155,.16)!important;
+  }
+}
