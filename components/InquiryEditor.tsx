@@ -371,9 +371,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
           </div>
         </div>
       </div>
-      <div className="new-inquiry-workflow-actions">
-        <button className="btn" type="button" onClick={()=>requestNavigate(backHref)}>{t("← Back","← 返回")}</button>
-      </div>
+
       {message&&<div className="save-message">{message}</div>}
     </section>}
 
