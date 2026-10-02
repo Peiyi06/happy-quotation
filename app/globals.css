@@ -2570,6 +2570,8 @@ button,
    Travel Media Library
    ========================================================= */
 .travel-library-workspace{
+  width:min(100%,1440px);
+  margin:0 auto;
   display:grid;
   gap:18px;
 }
@@ -2603,6 +2605,7 @@ button,
   align-items:center;
   flex-wrap:wrap;
   justify-content:flex-end;
+  max-width:860px;
 }
 .travel-library-toolbar input,
 .travel-library-toolbar select{
@@ -2970,6 +2973,7 @@ button,
   display:flex;
   gap:9px;
   align-items:center;
+  width:min(100%,920px);
   margin-bottom:14px;
 }
 .travel-library-inspector-search input{
@@ -3149,7 +3153,7 @@ button,
 }
 .travel-library-document-media-grid{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:14px;
 }
 .travel-library-document-media-card{
@@ -3268,7 +3272,12 @@ button,
   flex-wrap:wrap;
   margin-top:11px;
 }
-@media(max-width:900px){
+@media(max-width:1180px){
+  .travel-library-document-media-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+@media(max-width:760px){
   .travel-library-document-media-grid{
     grid-template-columns:1fr;
   }
