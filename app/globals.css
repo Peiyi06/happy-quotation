@@ -5152,3 +5152,53 @@ button,
     opacity:.42;
   }
 }
+
+
+/* Quotation workflow compact density */
+.quotation-workflow-panel .simple-workflow-card,
+.quotation-editor-workflow .simple-workflow-card{
+  padding:14px!important;
+  gap:9px!important;
+  min-height:0!important;
+}
+.quotation-workflow-panel .simple-workflow-card-head,
+.quotation-editor-workflow .simple-workflow-card-head{
+  min-height:28px;
+}
+.quotation-workflow-panel .simple-workflow-index,
+.quotation-editor-workflow .simple-workflow-index{
+  width:27px;
+  height:27px;
+  font-size:10px!important;
+}
+.quotation-workflow-panel .simple-workflow-state,
+.quotation-editor-workflow .simple-workflow-state{
+  min-height:22px;
+  padding:0 8px;
+  font-size:9px!important;
+}
+.quotation-workflow-panel .simple-workflow-title h3,
+.quotation-editor-workflow .simple-workflow-title h3{
+  font-size:12.5px!important;
+}
+.quotation-workflow-panel .simple-workflow-title>strong,
+.quotation-editor-workflow .simple-workflow-title>strong{
+  font-size:15px!important;
+  line-height:1.25;
+}
+.quotation-workflow-panel .simple-workflow-actions,
+.quotation-editor-workflow .simple-workflow-actions{
+  padding-top:8px!important;
+  gap:8px;
+}
+.quotation-workflow-panel .quotation-workflow-note,
+.quotation-editor-workflow .quotation-workflow-note{
+  margin-top:8px;
+}
+.quotation-workflow-panel .quotation-workflow-waiting,
+.quotation-editor-workflow .quotation-workflow-waiting{
+  margin-top:8px;
+  min-height:30px;
+  padding:0 10px;
+  font-size:10.5px;
+}
