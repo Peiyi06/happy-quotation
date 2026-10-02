@@ -17,10 +17,11 @@ export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
   return <>
     <button
       type="button"
-      className={compact?"sidebar-new-quote":"btn primary"}
+      className={compact?"sidebar-new-quote sidebar-module-btn":"btn primary"}
       onClick={()=>setOpen(true)}
     >
-      Quotation
+      <span>Quotation</span>
+      {compact&&<span className="sidebar-module-chevron" aria-hidden="true">›</span>}
     </button>
 
     {open && typeof document !== "undefined" && createPortal(
