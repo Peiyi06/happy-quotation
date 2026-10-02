@@ -219,6 +219,14 @@ async function storageAction(token:string,form:FormData){
   return {res,data};
 }
 
+async function cleanupStoredSource(token:string,path:string){
+  if(!path) return;
+  const form=new FormData();
+  form.set("action","delete");
+  form.set("path",path);
+  await storageAction(token,form).catch(()=>null);
+}
+
 export async function GET(request:Request){
   const token=await internalToken();
   if(!token) return NextResponse.json({error:"Unauthorized"},{status:401});
@@ -303,8 +311,12 @@ export async function POST(request:Request){
   const stored=await storageAction(token,storageForm);
   if(!stored.res.ok||!stored.data?.ok) return NextResponse.json({error:stored.data?.error||"Unable to store source file."},{status:400});
 
+  const storedPath=String(stored.data.path||"");
   const key=process.env.OPENAI_API_KEY;
-  if(!key) return NextResponse.json({error:"AI is not configured."},{status:503});
+  if(!key){
+    await cleanupStoredSource(token,storedPath);
+    return NextResponse.json({error:"AI is not configured."},{status:503});
+  }
 
   const bytes=Buffer.from(await file.arrayBuffer());
   const mime=file.type||(
@@ -349,13 +361,24 @@ Goals:
   });
 
   const raw=await openai.json().catch(()=>({}));
-  if(!openai.ok) return NextResponse.json({error:raw?.error?.message||"AI could not analyze this file."},{status:502});
+  if(!openai.ok){
+    await cleanupStoredSource(token,storedPath);
+    return NextResponse.json({error:raw?.error?.message||"AI could not analyze this file."},{status:502});
+  }
 
   const text=outputText(raw);
-  if(!text) return NextResponse.json({error:"AI returned no library extraction."},{status:502});
+  if(!text){
+    await cleanupStoredSource(token,storedPath);
+    return NextResponse.json({error:"AI returned no library extraction."},{status:502});
+  }
 
   let extraction:any;
-  try{extraction=JSON.parse(text);}catch{return NextResponse.json({error:"AI extraction could not be parsed."},{status:502});}
+  try{
+    extraction=JSON.parse(text);
+  }catch{
+    await cleanupStoredSource(token,storedPath);
+    return NextResponse.json({error:"AI extraction could not be parsed."},{status:502});
+  }
 
   if(mime.startsWith("image/")){
     extraction.photoMatch=await resolvePhotoMatch(db,token,key,extraction.photoIdentification||{});
@@ -367,7 +390,7 @@ Goals:
     p_token:token,
     p_title:String(extraction.title||file.name),
     p_file_name:file.name,
-    p_storage_path:String(stored.data.path||""),
+    p_storage_path:storedPath,
     p_mime_type:mime,
     p_file_size:file.size,
     p_source_type:String(extraction.sourceType||"other"),
@@ -376,7 +399,10 @@ Goals:
     p_extraction:extraction
   });
 
-  if(createError||!created?.ok) return NextResponse.json({error:created?.error||createError?.message||"Unable to save AI preview"},{status:400});
+  if(createError||!created?.ok){
+    await cleanupStoredSource(token,storedPath);
+    return NextResponse.json({error:created?.error||createError?.message||"Unable to save AI preview"},{status:400});
+  }
 
   return NextResponse.json({
     ok:true,
