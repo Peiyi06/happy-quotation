@@ -3,8 +3,15 @@ import { notFound } from "next/navigation";
 import { internalDb, internalToken } from "@/lib/internalSession";
 import ItineraryActions from "@/components/ItineraryActions";
 
-export default async function ItineraryDetailPage({params}:{params:Promise<{id:string}>}){
+export default async function ItineraryDetailPage({
+  params,
+  searchParams
+}:{
+  params:Promise<{id:string}>;
+  searchParams:Promise<{returnTo?:string}>;
+}){
   const {id}=await params;
+  const sp=await searchParams;
   const token=await internalToken();
   if(!token) notFound();
   const db=internalDb();
@@ -18,6 +25,10 @@ export default async function ItineraryDetailPage({params}:{params:Promise<{id:s
   const includedItems=Array.isArray(qd.includedItems)?qd.includedItems:[];
   const notIncludedItems=Array.isArray(qd.notIncludedItems)?qd.notIncludedItems:[];
   const reminders=Array.isArray(qd.reminders)?qd.reminders:[];
+  const rawReturnTo=String(sp.returnTo||"");
+  const returnTo=rawReturnTo.startsWith("/")&&!rawReturnTo.startsWith("//")?rawReturnTo:"/itineraries";
+  const returnLabel=returnTo.startsWith("/inquiries/")?"← Inquiry":"← Back";
+  const currentItineraryHref="/itineraries/"+id+"?returnTo="+encodeURIComponent(returnTo);
 
   return <div>
     <div className="page-head quote-detail-head">
@@ -27,7 +38,7 @@ export default async function ItineraryDetailPage({params}:{params:Promise<{id:s
         <p>{data.itinerary_no} · {data.status||"draft"}</p>
       </div>
       <div className="detail-actions">
-        <Link className="btn" href="/itineraries">← Back</Link>
+        <Link className="btn" href={returnTo}>{returnLabel}</Link>
         <ItineraryActions id={id}/>
         <Link className="btn primary" href={"/itineraries/"+id+"/edit"}>Edit Itinerary</Link>
       </div>
@@ -39,7 +50,7 @@ export default async function ItineraryDetailPage({params}:{params:Promise<{id:s
         <strong>{qd.sourceInquiryNo||"Linked Inquiry"}</strong>
         {qd.sourceInquirySnapshot&&<small>{[qd.sourceInquirySnapshot.destination,qd.sourceInquirySnapshot.daysCount&&qd.sourceInquirySnapshot.nightsCount?`${qd.sourceInquirySnapshot.daysCount}D${qd.sourceInquirySnapshot.nightsCount}N`:"",qd.sourceInquirySnapshot.pax?`${qd.sourceInquirySnapshot.pax} Pax`:""].filter(Boolean).join(" · ")}</small>}
       </div>
-      <Link className="btn" href={"/inquiries/"+data.source_inquiry_id}>Open Inquiry</Link>
+      <Link className="btn" href={"/inquiries/"+data.source_inquiry_id+"?returnTo="+encodeURIComponent(currentItineraryHref)}>Open Inquiry</Link>
     </section>}
 
     <section className="dashboard-cards itinerary-summary-cards">
