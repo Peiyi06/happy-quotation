@@ -22,11 +22,13 @@ export default async function InquiryListPage(){
   const data=response.data;
   const error=response.error;
   const items=Array.isArray(data)?data:[];
-  return <div className="inquiry-list-page">\n    <div className="page-head inquiry-list-header">
+  return <div className="inquiry-list-page">
+    <div className="page-head inquiry-list-header">
       <div className="inquiry-list-title"><span className="page-kicker"><UiText en="INQUIRY" zh="询价" /></span><h1><UiText en="Inquiries" zh="询价案件" /></h1><p><UiText en="Track customer requests, ownership and progress in one place." zh="集中查看客户需求、负责人以及案件进度。" /></p></div>
       <div className="detail-actions"><Link className="btn primary" href="/inquiries/new">+ <UiText en="New Inquiry" zh="新建询价" /></Link></div>
     </div>
-    <section className="panel inquiry-list-panel">\n      <div className="inquiry-list-toolbar"><div><strong><UiText en="All Inquiries" zh="全部询价" /></strong><span>{items.length} <UiText en="cases" zh="个案件" /></span></div></div>
+    <section className="panel inquiry-list-panel">
+      <div className="inquiry-list-toolbar"><div><strong><UiText en="All Inquiries" zh="全部询价" /></strong><span>{items.length} <UiText en="cases" zh="个案件" /></span></div></div>
       {error&&<div className="save-message">Unable to load inquiries: {error.message}</div>}
       <div className="data-table-wrap inquiry-list-table-wrap"><table className="data-table inquiry-list-table">
         <thead><tr>
