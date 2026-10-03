@@ -3685,53 +3685,11 @@ button,
 }
 
 
-/* Consolidated workspace navigation */
-.sidebar-nav>a,
-.sidebar-new-quote,
-.sidebar-module-btn{
-  box-sizing:border-box;
-  width:100%;
-  min-height:44px;
-  display:flex;
-  align-items:center;
-  padding:0 14px;
-  border:1px solid transparent;
-  border-radius:11px;
-  background:transparent;
-  color:inherit;
-  text-decoration:none;
-  font:inherit;
-  font-weight:700;
-  text-align:left;
-  cursor:pointer;
-  transition:background .16s ease,border-color .16s ease,box-shadow .16s ease;
-}
+/* Workspace navigation styling is owned by the locked Foundation
+   Workspace Navigation System later in this file. */
 .sidebar-module-btn{
   justify-content:space-between;
   gap:12px;
-}
-.sidebar-module-chevron{
-  color:#9fb6c7;
-  font-size:19px;
-  line-height:1;
-  font-weight:600;
-  transition:transform .16s ease,color .16s ease;
-}
-.sidebar-nav>a:hover,
-.sidebar-new-quote:hover,
-.sidebar-module-btn:hover{
-  background:rgba(255,255,255,.10);
-  border-color:#f1dfb4;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);
-}
-.sidebar-module-btn:hover .sidebar-module-chevron{
-  color:#f0d5a4;
-  transform:translateX(2px);
-}
-.sidebar-module-btn:focus-visible{
-  outline:none;
-  border-color:rgba(223,199,155,.72)!important;
-  box-shadow:0 0 0 2px rgba(223,199,155,.16)!important;
 }
 .workspace-module-modal{
   width:min(820px,calc(100vw - 40px));
@@ -9624,34 +9582,6 @@ td,
 .trash-table .btn:hover{
   background:var(--color-bg-soft);
   color:var(--color-text-primary);
-}
-
-/* Shared navigation: functional interaction uses Foundation blue/neutral, not Gold. */
-.sidebar-nav>a,
-.sidebar-new-quote,
-.sidebar-module-btn{
-  border-color:transparent!important;
-  box-shadow:none!important;
-}
-.sidebar-nav>a:hover,
-.sidebar-new-quote:hover,
-.sidebar-module-btn:hover{
-  background:rgba(255,255,255,.08)!important;
-  border-color:rgba(255,255,255,.12)!important;
-  box-shadow:none!important;
-}
-.sidebar-nav>a:focus-visible,
-.sidebar-new-quote:focus-visible,
-.sidebar-module-btn:focus-visible,
-.sidebar-user button:focus-visible{
-  outline:2px solid var(--color-focus-ring)!important;
-  outline-offset:2px;
-  border-color:transparent!important;
-  box-shadow:none!important;
-}
-.sidebar-module-chevron,
-.sidebar-module-btn:hover .sidebar-module-chevron{
-  color:#BFD1DE!important;
 }
 
 /* Workspace module modal uses neutral/blue interaction; Gold is no longer functional. */
@@ -17081,56 +17011,6 @@ td,
     min-width:980px!important;
     table-layout:fixed!important;
   }
-}
-
-
-/* =========================================================
-   QUOTATION LIBRARY — 6-COLUMN TRIAL
-   Remove Updated and redistribute space to primary content.
-   ========================================================= */
-.workspace-main .quotation-library-template .quotation-table th:nth-child(1),
-.workspace-main .quotation-library-template .quotation-table td:nth-child(1){width:14%!important;}
-.workspace-main .quotation-library-template .quotation-table th:nth-child(2),
-.workspace-main .quotation-library-template .quotation-table td:nth-child(2){width:38%!important;}
-.workspace-main .quotation-library-template .quotation-table th:nth-child(3),
-.workspace-main .quotation-library-template .quotation-table td:nth-child(3){width:18%!important;}
-.workspace-main .quotation-library-template .quotation-table th:nth-child(4),
-.workspace-main .quotation-library-template .quotation-table td:nth-child(4){width:6%!important;text-align:center!important;}
-.workspace-main .quotation-library-template .quotation-table th:nth-child(5),
-.workspace-main .quotation-library-template .quotation-table td:nth-child(5){width:12%!important;}
-.workspace-main .quotation-library-template .quotation-table th:nth-child(6),
-.workspace-main .quotation-library-template .quotation-table td:nth-child(6){width:12%!important;}
-
-.workspace-main .quotation-library-template .quotation-table td:nth-child(6){
-  overflow:visible!important;
-  text-overflow:clip!important;
-  white-space:nowrap!important;
-}
-
-
-/* =========================================================
-   QUOTATION LIBRARY — STATUS LABEL TRIAL
-   Compact review language and reduce visual weight.
-   ========================================================= */
-.workspace-main .quotation-library-template .quotation-table .status{
-  min-height:28px!important;
-  padding:0 10px!important;
-  border-radius:999px!important;
-  font-size:var(--foundation-type-meta)!important;
-  line-height:26px!important;
-  font-weight:650!important;
-  box-shadow:none!important;
-}
-
-.workspace-main .quotation-library-template .quotation-table .status-under_review{
-  background:#f3f7fa!important;
-  border:1px solid #d8e4ec!important;
-  color:#426b8a!important;
-}
-
-.workspace-main .quotation-library-template .quotation-table .status-ready,
-.workspace-main .quotation-library-template .quotation-table .status-confirmed{
-  border:1px solid transparent!important;
 }
 
 
