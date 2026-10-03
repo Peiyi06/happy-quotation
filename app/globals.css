@@ -1141,7 +1141,6 @@
 .ai-lab-safety-body span{font-size:11px;line-height:1.45;color:#71858c}
 @media(min-width:1600px){
   .ai-lab-shell{grid-template-columns:minmax(0,1fr) 460px}
-  .ai-lab-shell.sidebar-collapsed{grid-template-columns:minmax(0,1fr) 42px}
 }
 @media(max-width:680px){
   .ai-lab-hero{flex-direction:column}
@@ -3610,42 +3609,6 @@ button,
   border:0!important;
 }
 
-.ai-lab-shell.sidebar-collapsed{grid-template-columns:minmax(0,1fr) 42px}
-.ai-lab-shell.sidebar-collapsed .ai-lab-context{
-  width:42px;
-  min-width:42px;
-  padding:0;
-  border-radius:12px;
-  background:transparent;
-  border-color:transparent;
-  box-shadow:none;
-  overflow:visible;
-}
-.ai-lab-shell.sidebar-collapsed .ai-lab-context>*:not(.ai-lab-sidebar-restore){display:none!important}
-.ai-lab-sidebar-restore{
-  width:30px;
-  height:48px;
-  min-width:30px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin:0 0 0 auto;
-  border:1px solid #d9e2e5;
-  border-right:0;
-  border-radius:10px 0 0 10px;
-  background:#fff;
-  color:#6f858d;
-  font-size:21px;
-  font-weight:700;
-  line-height:1;
-  cursor:pointer;
-  box-shadow:0 4px 12px rgba(20,50,65,.05);
-}
-.ai-lab-sidebar-restore:hover{
-  background:#f4f8fa;
-  color:#294f5a;
-  border-color:#c4d0d5;
-}
 
 
 /* Workspace sidebar viewport + internal scrolling fix */
@@ -11364,13 +11327,32 @@ td,
 
 /* Narrow screens collapse naturally. */
 @media(max-width:820px){
-  .ai-lab-shell{
+  .ai-lab-shell,
+  .ai-lab-shell.sidebar-collapsed{
     grid-template-columns:1fr!important;
   }
-  .ai-lab-context{
+  .ai-lab-context,
+  .ai-lab-shell.sidebar-collapsed .ai-lab-context{
     position:static!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
     height:auto!important;
-    max-height:none!important;
+    padding:0!important;
+    overflow:hidden!important;
+  }
+  .ai-lab-shell.sidebar-collapsed .ai-thread-panel,
+  .ai-lab-shell.sidebar-collapsed .ai-lab-context-section,
+  .ai-lab-shell.sidebar-collapsed .ai-lab-safety{
+    display:revert!important;
+    opacity:1!important;
+    transform:none!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+  }
+  .ai-thread-collapse-btn,
+  .ai-lab-sidebar-restore{
+    display:none!important;
   }
   .ai-lab-workbench-head{
     grid-template-columns:1fr!important;
