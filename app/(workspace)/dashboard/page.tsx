@@ -37,9 +37,20 @@ export default async function DashboardPage() {
 
     <section className="panel dashboard-recent-panel">
       <div className="panel-head"><h2><UiText en="Recent Quotations" zh="最近报价" /></h2><Link href="/quotations"><UiText en="View all" zh="查看全部" /></Link></div>
-      <div className="data-table-wrap"><table className="data-table dashboard-recent-table"><thead><tr><th><UiText en="Quote No" zh="报价编号" /></th><th><UiText en="Tour" zh="行程" /></th><th><UiText en="Type" zh="类型" /></th><th><UiText en="Pax" zh="人数" /></th><th><UiText en="Status" zh="状态" /></th><th><UiText en="Selling" zh="售价" /></th><th><UiText en="Margin" zh="利润率" /></th><th><UiText en="Updated" zh="更新时间" /></th></tr></thead><tbody>
-        {recent.map((q:any)=><tr key={q.id}><td><Link href={"/quotations/"+q.id+"?returnTo="+encodeURIComponent("/dashboard")}>{q.quotation_no}</Link></td><td>{q.title}</td><td>{q.business_type||"—"}</td><td>{q.pax}</td><td><span className={"status status-"+q.status}>{q.status==="confirmed"?<UiText en="Confirmed" zh="已确认" />:q.status==="ready"?<UiText en="Ready" zh="已就绪" />:q.status==="under_review"?<UiText en="Under Review" zh="审核中" />:q.status==="revision_required"?<UiText en="Revision Required" zh="需要修改" />:q.status==="draft"?<UiText en="Draft" zh="草稿" />:q.status}</span></td><td>{money(Number(q.selling_price))}</td><td>{(Number(q.margin)*100).toFixed(1)}%</td><td>{new Date(q.updated_at).toLocaleDateString("en-MY")}</td></tr>)}
-        {!recent.length && <tr><td colSpan={8} className="empty"><UiText en="No quotations yet. Create the first quotation." zh="还没有报价。先建立第一张报价。" /></td></tr>}
+      <div className="data-table-wrap"><table className="data-table dashboard-recent-table"><thead><tr><th><UiText en="Quotation" zh="报价" /></th><th><UiText en="Type" zh="类型" /></th><th><UiText en="Pax" zh="人数" /></th><th><UiText en="Status" zh="状态" /></th><th><UiText en="Selling" zh="售价" /></th><th><UiText en="Margin" zh="利润率" /></th><th><UiText en="Updated" zh="更新时间" /></th></tr></thead><tbody>
+        {recent.map((q:any)=><tr key={q.id}>
+          <td className="dashboard-quotation-primary">
+            <Link href={"/quotations/"+q.id+"?returnTo="+encodeURIComponent("/dashboard")}>{q.quotation_no}</Link>
+            <small>{q.title||"—"}</small>
+          </td>
+          <td>{q.business_type||"—"}</td>
+          <td>{q.pax}</td>
+          <td><span className={"status status-"+q.status}>{q.status==="confirmed"?<UiText en="Confirmed" zh="已确认" />:q.status==="ready"?<UiText en="Ready" zh="已就绪" />:q.status==="under_review"?<UiText en="Under Review" zh="审核中" />:q.status==="revision_required"?<UiText en="Revision Required" zh="需要修改" />:q.status==="draft"?<UiText en="Draft" zh="草稿" />:q.status}</span></td>
+          <td>{money(Number(q.selling_price))}</td>
+          <td>{(Number(q.margin)*100).toFixed(1)}%</td>
+          <td>{new Date(q.updated_at).toLocaleDateString("en-MY")}</td>
+        </tr>)}
+        {!recent.length && <tr><td colSpan={7} className="empty"><UiText en="No quotations yet. Create the first quotation." zh="还没有报价。先建立第一张报价。" /></td></tr>}
       </tbody></table></div>
     </section>
   </div>;
