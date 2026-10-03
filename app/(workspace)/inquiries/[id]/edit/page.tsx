@@ -35,7 +35,7 @@ export default async function EditInquiryPage({
         </p>
       </div>
       <div className="detail-actions edit-inquiry-head-actions">
-        <Link className="btn edit-inquiry-back-action" href={backHref}><UiText en="← Back" zh="← 返回" /></Link>
+        <Link className="btn edit-inquiry-back-action" href={backHref}><UiText en="‹ Back" zh="‹ 返回" /></Link>
       </div>
     </div>
 
