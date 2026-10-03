@@ -16406,3 +16406,245 @@ td,
     flex-wrap:wrap!important;
   }
 }
+
+
+/* =========================================================
+   QUOTATION LIBRARY — SCREENSHOT CORRECTION / FINAL LOCK
+   Explicitly neutralize legacy compact/hero presentation and
+   fit all 10 columns within the desktop workspace.
+   ========================================================= */
+.workspace-main .quotation-library-template .quotation-library-head{
+  position:static!important;
+  overflow:visible!important;
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:space-between!important;
+  gap:18px!important;
+  min-height:0!important;
+  margin:0 0 18px!important;
+  padding:4px 0 20px!important;
+  border:0!important;
+  border-bottom:1px solid var(--color-border-default)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  color:var(--color-text-primary)!important;
+  box-shadow:none!important;
+}
+
+.workspace-main .quotation-library-template .quotation-library-head::before,
+.workspace-main .quotation-library-template .quotation-library-head::after{
+  content:none!important;
+  display:none!important;
+}
+
+.workspace-main .quotation-library-template .quotation-library-title-block h1{
+  margin:0!important;
+  color:var(--color-brand-primary)!important;
+  font-size:var(--foundation-type-page)!important;
+  line-height:1.08!important;
+  font-weight:700!important;
+  letter-spacing:-.025em!important;
+  text-shadow:none!important;
+}
+
+.workspace-main .quotation-library-template .quotation-library-title-block p{
+  margin:6px 0 0!important;
+  color:var(--color-text-secondary)!important;
+  font-size:var(--foundation-type-body)!important;
+  line-height:1.45!important;
+}
+
+.workspace-main .quotation-library-template .quotation-library-head>.btn,
+.workspace-main .quotation-library-template .quotation-library-head>button,
+.workspace-main .quotation-library-template .quotation-library-head .btn.primary{
+  min-height:40px!important;
+  height:40px!important;
+  padding:0 14px!important;
+  border:1px solid var(--color-brand-primary)!important;
+  border-radius:10px!important;
+  background:var(--color-brand-primary)!important;
+  color:#fff!important;
+  box-shadow:none!important;
+  font-size:var(--foundation-type-body)!important;
+  font-weight:650!important;
+}
+
+.workspace-main .quotation-library-template .quotation-library-head .btn.primary:hover{
+  background:var(--color-brand-primary-hover)!important;
+  border-color:var(--color-brand-primary-hover)!important;
+  transform:none!important;
+}
+
+/* Filters inherit the same desktop rhythm as Inquiry / Itinerary. */
+.workspace-main .quotation-library-template .filter-bar{
+  grid-template-columns:minmax(280px,2fr) minmax(170px,1fr) minmax(170px,1fr) auto!important;
+  gap:10px!important;
+  margin:0 0 16px!important;
+}
+
+.workspace-main .quotation-library-template .filter-bar input,
+.workspace-main .quotation-library-template .filter-bar select{
+  min-width:0!important;
+  min-height:40px!important;
+  height:40px!important;
+  padding:0 12px!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+  font-size:var(--foundation-type-body)!important;
+}
+
+.workspace-main .quotation-library-template .filter-bar .btn{
+  min-height:40px!important;
+  height:40px!important;
+  padding:0 14px!important;
+  border-radius:10px!important;
+  box-shadow:none!important;
+  font-size:var(--foundation-type-body)!important;
+}
+
+/* One quiet table surface. */
+.workspace-main .quotation-library-template .quotation-library-table-panel{
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+
+.workspace-main .quotation-library-template .quotation-library-table-panel .data-table-wrap{
+  width:100%!important;
+  min-width:0!important;
+  overflow-x:hidden!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table{
+  width:100%!important;
+  min-width:0!important;
+  table-layout:fixed!important;
+  border-collapse:collapse!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table th,
+.workspace-main .quotation-library-template .quotation-table td{
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  text-align:left!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table th{
+  position:static!important;
+  height:42px!important;
+  padding:0 10px!important;
+  background:#fafbfc!important;
+  color:var(--color-text-secondary)!important;
+  border-bottom:1px solid var(--color-border-default)!important;
+  font-size:var(--foundation-type-meta)!important;
+  font-weight:650!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table td{
+  min-height:58px!important;
+  padding:11px 10px!important;
+  background:#fff!important;
+  color:var(--color-text-primary)!important;
+  border-bottom:1px solid var(--color-border-default)!important;
+  font-size:var(--foundation-type-body)!important;
+  vertical-align:middle!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table tbody tr:last-child td{
+  border-bottom:0!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table tbody tr:hover td{
+  background:var(--color-bg-soft)!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table td:nth-child(2) strong{
+  display:block!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table td:nth-child(2) small{
+  display:block!important;
+  margin-top:3px!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  color:var(--color-text-tertiary)!important;
+  font-size:var(--foundation-type-meta)!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table .status{
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+
+/* 100% deliberate column geometry */
+.workspace-main .quotation-library-template .quotation-table th:nth-child(1),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(1){width:14%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(2),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(2){width:24%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(3),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(3){width:9%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(4),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(4){width:12%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(5),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(5){width:5%!important;text-align:center!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(6),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(6){width:11%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(7),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(7){width:9%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(8),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(8){width:6%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(9),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(9){width:7%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(10),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(10){width:3%!important;text-align:center!important;}
+
+.workspace-main .quotation-library-template .quotation-table td:nth-child(10) .danger-link{
+  max-width:100%!important;
+  padding:4px 0!important;
+  font-size:var(--foundation-type-meta)!important;
+}
+
+@media(max-width:1180px){
+  .workspace-main .quotation-library-template .quotation-library-table-panel .data-table-wrap{
+    overflow-x:auto!important;
+  }
+
+  .workspace-main .quotation-library-template .quotation-table{
+    min-width:1180px!important;
+    table-layout:auto!important;
+  }
+}
+
+@media(max-width:760px){
+  .workspace-main .quotation-library-template .quotation-library-head{
+    flex-direction:column!important;
+    gap:12px!important;
+  }
+
+  .workspace-main .quotation-library-template .quotation-library-head>.btn,
+  .workspace-main .quotation-library-template .quotation-library-head>button,
+  .workspace-main .quotation-library-template .quotation-library-head .btn.primary{
+    width:100%!important;
+  }
+
+  .workspace-main .quotation-library-template .filter-bar{
+    grid-template-columns:1fr!important;
+  }
+}
