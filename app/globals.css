@@ -18504,3 +18504,22 @@ td,
     border-top:1px solid var(--foundation-comparison-divider-soft);
   }
 }
+
+
+/* FOUNDATION — COMPARISON CARD RULE (LOCKED)
+   Status: LOCKED
+   Scope: Quotation multi-option / multi-mode financial comparison.
+
+   Foundation rules:
+   1. Use Traveller / Subject as the row anchor.
+   2. Compare modes as sibling cards, not additional spreadsheet columns.
+   3. Preferred desktop pattern: 3 subject rows × up to 2 comparison cards.
+   4. Supporting values (e.g. Cost / Profit) stay visually secondary.
+   5. Recommended / Suggested / Final result is the primary visual layer.
+   6. Use quiet blue emphasis for the recommended result; avoid loud fills.
+   7. No horizontal-scroll-first design for this comparison pattern.
+   8. On narrower screens, cards reflow vertically while preserving hierarchy.
+   9. Calculation logic must remain independent from this presentation layer.
+   10. Any future structural change to this pattern requires an explicit
+       Foundation revision, not a local page-only override.
+*/
