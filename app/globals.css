@@ -12575,14 +12575,13 @@ td,
 }
 .ai-thread-open{
   grid-column:1 / 2!important;
+  position:relative!important;
   width:auto!important;
   min-width:0!important;
   min-height:0!important;
   height:auto!important;
   margin:0!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:flex-start!important;
+  display:block!important;
   justify-self:stretch!important;
   align-self:stretch!important;
   text-align:left!important;
@@ -12622,7 +12621,11 @@ td,
 
 /* Thread text uses one shared left scan line across every row/state. */
 .ai-thread-content{
-  flex:1 1 auto!important;
+  position:absolute!important;
+  left:0!important;
+  right:0!important;
+  top:50%!important;
+  transform:translateY(-50%)!important;
   width:auto!important;
   min-width:0!important;
   max-width:none!important;
