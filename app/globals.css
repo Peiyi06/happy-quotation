@@ -17050,3 +17050,79 @@ td,
     table-layout:auto!important;
   }
 }
+
+
+/* =========================================================
+   QUOTATION LIBRARY — 7-COLUMN BALANCE TRIAL
+   Wider content hierarchy, tighter rows.
+   ========================================================= */
+.workspace-main .quotation-library-template .quotation-table th:nth-child(1),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(1){width:14%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(2),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(2){width:35%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(3),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(3){width:17%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(4),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(4){width:5%!important;text-align:center!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(5),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(5){width:11%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(6),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(6){width:10%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(7),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(7){width:8%!important;}
+
+.workspace-main .quotation-library-template .quotation-table th{
+  height:40px!important;
+  padding:0 14px!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table td{
+  height:76px!important;
+  min-height:76px!important;
+  padding:10px 14px!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table td:nth-child(1) a{
+  font-size:var(--foundation-type-body)!important;
+  font-weight:700!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table td:nth-child(2) strong{
+  font-size:var(--foundation-type-body)!important;
+  line-height:1.28!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table td:nth-child(2) small{
+  margin-top:3px!important;
+  font-size:var(--foundation-type-meta)!important;
+  line-height:1.25!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table td:nth-child(3){
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table td:nth-child(5){
+  overflow:visible!important;
+  text-overflow:clip!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table td:nth-child(6),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(7){
+  overflow:visible!important;
+  text-overflow:clip!important;
+  white-space:nowrap!important;
+}
+
+@media(max-width:1080px){
+  .workspace-main .quotation-library-template .quotation-library-table-panel .data-table-wrap{
+    overflow-x:auto!important;
+  }
+
+  .workspace-main .quotation-library-template .quotation-table{
+    min-width:980px!important;
+    table-layout:fixed!important;
+  }
+}
