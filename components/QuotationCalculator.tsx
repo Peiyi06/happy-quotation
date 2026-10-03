@@ -726,7 +726,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           :<p>{t("Outbound Tour Quotation Calculator","出境游报价计算器")}</p>}
       </div>
       <div className="top-actions quote-top-actions no-print">
-        {workspaceMode&&<button className="btn quotation-editor-back" type="button" onClick={()=>{const href=quotationId?"/quotations/"+quotationId:"/quotations";if(isDirty)setPendingHref(href);else router.push(href);}}>{t("← Back","← 返回")}</button>}
+        {workspaceMode&&<button className="btn quotation-editor-back" type="button" onClick={()=>{const href=quotationId?"/quotations/"+quotationId:"/quotations";if(isDirty)setPendingHref(href);else router.push(href);}}>{t("‹ Back","‹ 返回")}</button>}
         <button className="btn ghost quote-action-secondary" type="button" onClick={()=>window.print()}>{t("Print / PDF","打印 / PDF")}</button>
         {workspaceMode
           ?<div className="quotation-header-more">
