@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import DuplicateQuotationButton from "@/components/DuplicateQuotationButton";
+import QuotationDetailMoreActions from "@/components/QuotationDetailMoreActions";
 import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
 import QuotationReviewActions from "@/components/QuotationReviewActions";
 import {UiText} from "@/components/WorkspaceLanguage";
@@ -156,8 +156,8 @@ export default async function QuotationDetailPage({
       </div>
       <div className="detail-actions">
         <Link className="btn quotation-back-action" href={returnTo}>{returnTo.startsWith("/inquiries/")?<UiText en="← Inquiry" zh="← 询价" />:<UiText en="← Back" zh="← 返回" />}</Link>
-        <DuplicateQuotationButton id={id} />
         <Link className="btn" href={"/quotations/"+id+"/edit"}><UiText en="Edit Quotation" zh="编辑报价" /></Link>
+        <QuotationDetailMoreActions id={id} />
       </div>
     </div>
 
