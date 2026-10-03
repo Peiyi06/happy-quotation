@@ -8375,7 +8375,7 @@ td,
 
 /* Empty states become quiet placeholders instead of mini-cards. */
 .itinerary-editor .itinerary-editor-empty{
-  padding:12px 0;
+  padding:8px 0 6px;
   border:0;
   border-radius:0;
   background:transparent;
@@ -8553,13 +8553,6 @@ td,
 }
 
 /* Keep work sections closer together without removing breathing room. */
-.itinerary-editor>.panel{
-  margin-bottom:16px;
-}
-.itinerary-editor .itinerary-editor-empty{
-  padding-top:8px;
-  padding-bottom:6px;
-}
 
 @media(max-width:900px){
   .itinerary-editor .day-summary-meta{
