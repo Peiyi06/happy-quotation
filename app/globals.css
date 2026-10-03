@@ -17523,3 +17523,51 @@ td,
     padding:11px 12px!important;
   }
 }
+
+
+/* =========================================================
+   FOUNDATION COMPARISON MATRIX — MASTER RULE
+   Locked design principles for comparison-oriented financial /
+   operational matrices across the workspace.
+
+   1. Compare by group, not by continuously adding horizontal
+      spreadsheet columns.
+   2. Final recommendation / Suggested / Recommended is the
+      primary result layer and may use a quiet tint + stronger type.
+   3. Supporting metrics such as Cost / Profit remain secondary
+      and must not compete visually with the final recommendation.
+   4. Gridlines are structural only: restrained, low contrast,
+      and never decorative.
+   5. Primary rows may carry slightly stronger emphasis than
+      secondary rows without reducing readability.
+   6. Horizontal-scroll-first layouts are a fallback, not the
+      default for comparison matrices.
+   ========================================================= */
+:root{
+  --foundation-comparison-divider:#e7ebef;
+  --foundation-comparison-divider-soft:#edf0f2;
+  --foundation-comparison-result-bg:#f7fbfe;
+  --foundation-comparison-result-text:#2f6e9d;
+  --foundation-comparison-label:#87929c;
+}
+
+.foundation-comparison-matrix{
+  border:1px solid var(--color-border-default);
+  border-radius:14px;
+  overflow:hidden;
+  background:#fff;
+}
+
+.foundation-comparison-matrix [data-comparison-metric]{
+  border-color:var(--foundation-comparison-divider-soft);
+}
+
+.foundation-comparison-matrix [data-comparison-role="supporting"]{
+  color:var(--foundation-comparison-label);
+}
+
+.foundation-comparison-matrix [data-comparison-role="recommended"]{
+  background:var(--foundation-comparison-result-bg);
+  color:var(--foundation-comparison-result-text);
+  font-weight:700;
+}
