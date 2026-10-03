@@ -11140,7 +11140,7 @@ td,
 
 /* Composer is the main day-to-day action surface. */
 .ai-lab-compose textarea:focus{
-  border-color:#1b9aaa;box-shadow:0 0 0 3px rgba(27,154,170,.1)
+  border-color:#1b9aaa;box-shadow:0 0 0 3px rgba(27,154,170,.1);
   box-shadow:none!important;
 }
 .ai-lab-attach-btn{
@@ -11162,7 +11162,7 @@ td,
 }
 /* Starter prompts are suggestions, not cards. */
 .ai-lab-starters button:hover{
-  border-color:#1b9aaa;color:#14717d
+  border-color:#1b9aaa;color:#14717d;
   background:var(--color-bg-soft)!important;
   color:var(--color-text-primary)!important;
 }
@@ -11311,7 +11311,7 @@ td,
 
 /* Current Context reads as a separate lightweight section. */
 .ai-lab-context-empty{
-  margin:0;font-size:12px;line-height:1.5;color:#75898f
+  margin:0;font-size:12px;line-height:1.5;color:#75898f;
   margin:0!important;
   color:var(--color-text-secondary)!important;
   font-size:9.5px!important;
@@ -11484,7 +11484,7 @@ td,
   margin:6px 0 0;
 }
 .ai-lab-starters{
-  display:flex;flex-wrap:wrap;gap:8px;padding:0 24px 16px
+  display:flex;flex-wrap:wrap;gap:8px;padding:0 24px 16px;
   gap:6px!important;
   margin:8px 0 10px!important;
   display:grid!important;
@@ -11765,7 +11765,7 @@ td,
    One visual axis for attach, input and send controls.
    ========================================================= */
 .ai-lab-compose{
-  display:flex;gap:10px;padding:14px 18px 8px;border-top:1px solid var(--line);background:#fff
+  display:flex;gap:10px;padding:14px 18px 8px;border-top:1px solid var(--line);background:#fff;
   gap:8px!important;
   padding:10px!important;
   border-color:var(--color-border-default)!important;
@@ -12573,7 +12573,7 @@ td,
 
 /* Rail shell */
 .ai-lab-context{
-  align-self:start;position:sticky;top:18px;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:18px;background:#fff;padding:16px;display:grid;gap:15px;box-shadow:0 8px 24px rgba(20,50,65,.05);transition:padding .2s ease,border-radius .2s ease,box-shadow .2s ease
+  align-self:start;position:sticky;top:18px;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:18px;background:#fff;padding:16px;display:grid;gap:15px;box-shadow:0 8px 24px rgba(20,50,65,.05);transition:padding .2s ease,border-radius .2s ease,box-shadow .2s ease;
   border-left:1px solid var(--color-border-default)!important;
   background:var(--color-bg-soft)!important;
   min-width:0;
@@ -12806,7 +12806,7 @@ td,
 
 /* Current Context: grouped metadata section */
 .ai-lab-context-section{
-  display:grid;gap:10px;min-width:0
+  display:grid;gap:10px;min-width:0;
   margin:0!important;
   padding:12px!important;
   border-top:1px solid var(--color-border-default)!important;
@@ -12822,7 +12822,7 @@ td,
   background:var(--color-bg-surface)!important;
 }
 .ai-lab-context-head{
-  display:grid;gap:3px;padding-bottom:9px;border-bottom:1px solid var(--line)
+  display:grid;gap:3px;padding-bottom:9px;border-bottom:1px solid var(--line);
   margin:0 0 8px!important;
   padding:0 0 8px!important;
   border-bottom:1px solid var(--color-border-default)!important;
@@ -14737,7 +14737,7 @@ td,
   line-height:1.45!important;
 }
 .ai-lab-mode{
-  font-size:11px;font-weight:800;letter-spacing:.05em;color:#57727a;border:1px solid #cddde2;border-radius:999px;padding:7px 10px;background:#f8fbfc
+  font-size:11px;font-weight:800;letter-spacing:.05em;color:#57727a;border:1px solid #cddde2;border-radius:999px;padding:7px 10px;background:#f8fbfc;
   min-height:28px!important;
   padding:0 9px!important;
   border:1px solid #D9E7F1!important;
@@ -14772,7 +14772,7 @@ td,
 }
 .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-compose textarea,
 .ai-lab-compose textarea{
-  flex:1;min-height:64px;max-height:180px;resize:vertical;border:1px solid #bfd0d6;border-radius:12px;padding:13px 14px;font:inherit;font-size:14px;line-height:1.5;outline:none
+  flex:1;min-height:64px;max-height:180px;resize:vertical;border:1px solid #bfd0d6;border-radius:12px;padding:13px 14px;font:inherit;font-size:14px;line-height:1.5;outline:none;
   min-height:44px!important;
   max-height:140px;
   padding:9px 10px!important;
@@ -14791,7 +14791,7 @@ td,
 }
 .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-starters button,
 .ai-lab-starters button{
-  border:1px solid #c9dbe0;background:#fff;border-radius:999px;padding:9px 13px;font-size:12px;font-weight:600;color:#385965;cursor:pointer
+  border:1px solid #c9dbe0;background:#fff;border-radius:999px;padding:9px 13px;font-size:12px;font-weight:600;color:#385965;cursor:pointer;
   min-height:30px!important;
   padding:0 9px!important;
   border-color:var(--color-border-default)!important;
@@ -14860,7 +14860,7 @@ td,
 
 .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-compose-note,
 .ai-lab-compose-note{
-  padding:0 20px 12px;background:#fff;font-size:11px;line-height:1.4;color:#82949a
+  padding:0 20px 12px;background:#fff;font-size:11px;line-height:1.4;color:#82949a;
   margin-top:5px!important;
   color:var(--color-text-tertiary)!important;
   font-size:9px!important;
