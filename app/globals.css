@@ -1121,7 +1121,7 @@
 .ai-lab-compose textarea:focus{border-color:#1b9aaa;box-shadow:0 0 0 3px rgba(27,154,170,.1)}
 .ai-lab-compose .workflow-primary-btn{align-self:flex-end;min-width:78px}
 .ai-lab-compose-note{padding:0 20px 12px;background:#fff;font-size:11px;line-height:1.4;color:#82949a}
-.ai-lab-context{align-self:start;position:sticky;top:18px;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:18px;background:#fff;padding:16px;display:grid;gap:15px;box-shadow:0 8px 24px rgba(20,50,65,.05);transition:padding .2s ease,border-radius .2s ease,box-shadow .2s ease}
+.ai-lab-context{align-self:start;position:sticky;top:18px;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:18px;background:#fff;padding:16px;display:grid;gap:15px;box-shadow:0 8px 24px rgba(20,50,65,.05)}
 .ai-lab-context-section{display:grid;gap:10px;min-width:0}
 .ai-lab-context-head{display:grid;gap:3px;padding-bottom:9px;border-bottom:1px solid var(--line)}
 .ai-lab-context-head span{font-size:10.5px;font-weight:800;letter-spacing:.09em;color:#7f9298}
@@ -1169,7 +1169,7 @@
 .ai-lab-message-images img{width:86px;height:86px;object-fit:cover;border-radius:9px;border:1px solid rgba(255,255,255,.22)}
 .ai-lab-message.assistant .ai-lab-message-images img{border-color:#d6e2e7}
 
-.ai-lab-shell{grid-template-columns:minmax(0,1fr) 440px;transition:grid-template-columns .2s ease}
+.ai-lab-shell{grid-template-columns:minmax(0,1fr) 440px}
 .ai-thread-panel{display:grid;gap:8px;padding-bottom:11px;border-bottom:1px solid var(--line);min-width:0}
 .ai-thread-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;min-width:0}
 .ai-thread-panel-head>div{display:grid;gap:1px;min-width:0}
@@ -11812,8 +11812,10 @@ td,
    Collapse the whole rail, not just its contents.
    ========================================================= */
 /* =========================================================
-   AI LAB — SIDEBAR COLLAPSE MOTION
-   Integrated rail control with staged content + width transition.
+   AI LAB — MOTION FOUNDATION — LOCKED
+   Canonical ownership for sidebar collapse/expand motion,
+   rail-content staging, restore control and main-area expansion.
+   Interactive control micro-motion remains local to each control.
    ========================================================= */
 
 /* Header collapse control: proper icon button, not a loose glyph. */
@@ -11940,7 +11942,7 @@ td,
   }
 }
 
-/* Respect reduced-motion preferences. */
+/* Reduced motion is part of the Motion Foundation, not a visual override. */
 @media(prefers-reduced-motion:reduce){
   .ai-lab-shell,
   .ai-lab-context,
@@ -11949,7 +11951,9 @@ td,
   .ai-lab-safety,
   .ai-thread-collapse-btn,
   .ai-lab-sidebar-restore,
-  .ai-lab-main{
+  .ai-lab-main,
+  .ai-thread-view-switch.ios-segmented-control button,
+  .ai-thread-archive{
     transition:none!important;
   }
 }
