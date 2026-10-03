@@ -29,7 +29,7 @@ The audit is intentionally structural. A high duplicate-selector count does not 
 | Inquiry | Medium-High | Library is mature and locked. Inquiry detail/new/edit flows still contain several older local layouts and button/workflow overrides. | Medium |
 | Itinerary | Medium | Functional UI is stable but editor/detail styles still contain many local hard-coded dimensions and repeated selectors. | High |
 | Operation | High | Queue/list, header, toolbar, scope switch and review surfaces are consolidated onto locked Foundation systems. Remaining older base declarations are compatibility-only and no longer define final presentation. | Low |
-| AI Workspace | Medium-Low | Many repeated sidebar/thread/workbench rules accumulated through iterative refinement. Visually refined but cascade-heavy. | Highest |
+| AI Workspace | High | Phase 1 consolidated thread, workbench, composer, starter and context presentation under the locked Foundation. Remaining duplicate signals are primarily responsive/state scopes and global typography authority. | Low |
 
 ## Duplicate Selector Signals
 
@@ -43,13 +43,18 @@ Key repeated selectors found during the audit:
 - .operation-workspace-template .operation-queue-section — 5 blocks
 
 ### AI Workspace
-- .ai-thread-list — 13 blocks
-- .ai-thread-item — 12 blocks
-- .ai-thread-meta — 9 blocks
-- .ai-lab-workbench-head — 8 blocks
-- .ai-lab-compose — 8 blocks
-- .ai-lab-starters — 8 blocks
-- .ai-lab-context — 8 blocks
+Phase 1 post-consolidation signals:
+- .ai-thread-list — base presentation split by responsibility plus desktop/short-viewport/mobile scopes
+- .ai-thread-item — canonical base + short-viewport density scope
+- .ai-thread-meta — canonical base; unlinked state remains separate
+- .ai-lab-workbench-head — canonical base + tablet/mobile scopes
+- .ai-lab-compose — canonical base + responsive scopes; typography remains owned by the global Foundation Typography layer
+- .ai-lab-starters — canonical base + tablet/mobile scopes; typography remains owned by the global Foundation Typography layer
+- .ai-lab-context — canonical rail shell + desktop sticky/mobile/collapse motion scopes
+- .ai-lab-context-section — single canonical base block
+- .ai-lab-context-head — canonical base + mobile scope
+
+Residual duplicate counts are intentional when they represent responsive/state behavior or cross-page Foundation typography authority.
 
 ### Itinerary
 - .itinerary-editor .itinerary-more-menu-popover — 7 blocks
@@ -90,7 +95,7 @@ Do not perform a large all-at-once rewrite of globals.css.
 
 ## AI Workspace Phase 1 Lock
 
-Status: In progress, guarded consolidation.
+Status: Locked — Phase 1 complete.
 
 Completed:
 - Thread presentation was consolidated under the final Sidebar Foundation authority.
@@ -109,3 +114,18 @@ Audit rule:
 - Duplicate selector counts are signals, not automatic deletion targets.
 - Media/state-specific duplicates are allowed when they express real responsive or interaction behavior.
 - A consolidation pass must preserve selector scope and cascade order.
+
+
+### AI Workspace Phase 1 Final Audit
+
+Final audit result: PASS.
+
+The remaining repeated selectors are not treated as historical presentation debt when they are scoped to:
+- short desktop viewport density
+- tablet/mobile layout
+- desktop sticky rail behavior
+- sidebar collapse and motion
+- empty-state layout
+- global Foundation Typography authority
+
+Phase 1 is locked. Future AI Workspace work should extend the canonical Foundation rules or add explicit state/responsive modifiers rather than append new unscoped presentation overrides.
