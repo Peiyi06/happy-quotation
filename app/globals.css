@@ -15450,18 +15450,11 @@ td,
 
 
 /* =========================================================
-   FOUNDATION TYPOGRAPHY MASTER — FINAL LOCK
-   Page 34 / Section 20 / Body 14 / Meta 12 / Micro 11
-   This block intentionally sits last and supersedes earlier
-   page-specific typography experiments.
+   TYPOGRAPHY FOUNDATION — LEGACY APPLICATION RULES
+   Token values now live in the locked Foundation Typography
+   registry later in this file. These selectors remain as the
+   compatibility application layer for older workspace modules.
    ========================================================= */
-:root{
-  --foundation-type-page:34px;
-  --foundation-type-section:20px;
-  --foundation-type-body:14px;
-  --foundation-type-meta:12px;
-  --foundation-type-micro:11px;
-}
 
 /* Page titles */
 .workspace-main .page-head h1,
@@ -15682,13 +15675,7 @@ td,
   font-size:var(--foundation-type-body)!important;
 }
 
-/* Mobile keeps hierarchy but reduces only the page title. */
-@media(max-width:760px){
-  :root{
-    --foundation-type-page:30px;
-    --foundation-type-section:19px;
-  }
-}
+/* Mobile hierarchy tokens are defined by the locked Typography Foundation. */
 
 
 /* =========================================================
@@ -20047,3 +20034,27 @@ td,
     --foundation-type-section:19px;
   }
 }
+
+
+/* =========================================================
+   FOUNDATION MASTER TOKEN REGISTRY — CONSOLIDATION PHASE 1
+   Canonical locked systems:
+   Action / Spacing / Surface / Workspace Navigation /
+   Motion / Typography.
+   Legacy token families remain temporarily for compatibility
+   and should be migrated module-by-module before deletion.
+   ========================================================= */
+
+/* Safe aliases: legacy typography now resolves from the locked scale. */
+:root{
+  --type-page:var(--foundation-type-page);
+  --type-section:var(--foundation-type-section);
+  --type-body:var(--foundation-type-body);
+  --type-meta:var(--foundation-type-meta);
+}
+
+/*
+   Legacy --btn-* tokens are intentionally NOT remapped here yet.
+   They still serve historical modules whose 40px geometry has not
+   been migrated to the locked 38px Foundation Action System.
+*/
