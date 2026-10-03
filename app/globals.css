@@ -19472,12 +19472,14 @@ td,
 
 
 /* =========================================================
-   SURFACE FOUNDATION TRIAL — FOUR-LAYER SYSTEM
+   FOUNDATION SURFACE SYSTEM — LOCKED
    Page: no surface
    Section: spacing / divider
    Content Surface: white + fine border + 14px radius + no shadow
    Overlay: 16px radius + restrained elevated shadow
-   Do not treat as locked Foundation until explicitly approved.
+   Nested elevation should be avoided; overlays are the primary
+   elevated layer. Any structural surface change requires an
+   explicit Foundation revision.
    ========================================================= */
 :root{
   --foundation-surface-radius:14px;
