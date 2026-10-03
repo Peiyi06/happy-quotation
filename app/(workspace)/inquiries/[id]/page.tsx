@@ -91,14 +91,14 @@ export default async function InquiryDetailPage({
   const rawReturnTo=String(sp.returnTo||"");
   const returnTo=rawReturnTo.startsWith("/")&&!rawReturnTo.startsWith("//")?rawReturnTo:"/inquiries";
   const returnLabel=returnTo.startsWith("/operation")
-    ?"← Operation"
+    ?"‹ Operation"
     :returnTo.startsWith("/quotations/")
-      ?"← Quotation"
+      ?"‹ Quotation"
       :returnTo.startsWith("/itineraries/")
-        ?"← Itinerary"
+        ?"‹ Itinerary"
         :returnTo.startsWith("/ai-lab")
-          ?"← AI Workspace"
-          :"← Back";
+          ?"‹ AI Workspace"
+          :"‹ Back";
   const returnParam=encodeURIComponent(returnTo);
   const currentInquiryHref="/inquiries/"+id+"?returnTo="+returnParam;
   const currentInquiryParam=encodeURIComponent(currentInquiryHref);
