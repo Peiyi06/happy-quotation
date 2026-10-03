@@ -7912,7 +7912,7 @@ td,
   color:var(--color-success-text)!important;
 }
 .itinerary-editor .itinerary-day-actions{
-  gap:5px;
+  gap:4px;
   align-items:center;
 }
 .itinerary-editor .itinerary-day-actions button{
@@ -7959,7 +7959,8 @@ td,
   color:var(--color-danger-text)!important;
 }
 .itinerary-editor .itinerary-day-collapsed-summary{
-  padding:13px 16px;
+  gap:14px;
+  padding:10px 14px;
   border-top:0;
   background:var(--color-bg-soft);
   border-radius:0;
@@ -8125,8 +8126,8 @@ td,
   box-shadow:none;
 }
 .itinerary-editor .itinerary-hotel-head{
-  min-height:66px;
-  padding:12px 14px;
+  min-height:58px;
+  padding:9px 12px;
   border-bottom:0;
 }
 .itinerary-editor .itinerary-hotel-card.expanded .itinerary-hotel-head{
@@ -8135,7 +8136,7 @@ td,
 .itinerary-editor .itinerary-hotel-summary-copy{
   min-width:0;
   display:grid!important;
-  gap:2px!important;
+  gap:1px!important;
 }
 .itinerary-editor .itinerary-hotel-summary-copy>span{
   color:var(--color-text-secondary)!important;
@@ -8143,6 +8144,7 @@ td,
 }
 .itinerary-editor .itinerary-hotel-summary-copy>strong{
   color:var(--color-text-primary);
+  font-size:13px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
@@ -8162,14 +8164,14 @@ td,
 .itinerary-editor .itinerary-hotel-summary-images{
   display:flex;
   align-items:center;
-  gap:7px;
-  padding:0 14px 12px;
+  gap:5px;
+  padding:0 12px 9px;
 }
 .itinerary-editor .itinerary-hotel-summary-images img{
-  width:64px;
-  height:46px;
+  width:52px;
+  height:38px;
   object-fit:cover;
-  border-radius:8px;
+  border-radius:7px;
   border:1px solid var(--color-border-default);
 }
 .itinerary-editor .itinerary-hotel-summary-images span{
@@ -8519,16 +8521,6 @@ td,
   min-height:56px;
   padding:11px 14px;
 }
-.itinerary-editor .itinerary-day-actions{
-  gap:4px;
-}
-.itinerary-editor .itinerary-day-actions>button{
-  min-height:32px;
-}
-.itinerary-editor .itinerary-day-collapsed-summary{
-  gap:14px;
-  padding:10px 14px;
-}
 .itinerary-editor .day-summary-primary{
   gap:2px;
 }
@@ -8558,28 +8550,6 @@ td,
 /* Hotel summary uses the same compact action language. */
 .itinerary-editor .itinerary-hotel-list{
   gap:10px;
-}
-.itinerary-editor .itinerary-hotel-head{
-  min-height:58px;
-  padding:9px 12px;
-}
-.itinerary-editor .itinerary-hotel-summary-copy{
-  gap:1px!important;
-}
-.itinerary-editor .itinerary-hotel-summary-copy>strong{
-  font-size:13px;
-}
-.itinerary-editor .itinerary-hotel-summary-copy>small{
-  font-size:10px;
-}
-.itinerary-editor .itinerary-hotel-summary-images{
-  gap:5px;
-  padding:0 12px 9px;
-}
-.itinerary-editor .itinerary-hotel-summary-images img{
-  width:52px;
-  height:38px;
-  border-radius:7px;
 }
 
 /* Keep work sections closer together without removing breathing room. */
