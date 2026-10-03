@@ -20058,3 +20058,113 @@ td,
    They still serve historical modules whose 40px geometry has not
    been migrated to the locked 38px Foundation Action System.
 */
+
+
+/* =========================================================
+   FOUNDATION ACTION MIGRATION — LEGACY COMPATIBILITY PHASE 2
+   Standard legacy actions now resolve from the locked Action
+   Foundation. Compact utility controls remain intentionally
+   independent until their own control-density audit.
+   ========================================================= */
+:root{
+  --btn-height:var(--foundation-action-height);
+  --btn-radius:var(--foundation-action-radius);
+  --btn-font-size:var(--foundation-action-font);
+  --btn-font-weight:var(--foundation-action-weight);
+  --btn-pad-x:var(--foundation-action-pad-x);
+
+  --btn-border:var(--foundation-action-secondary-border);
+  --btn-text:var(--foundation-action-secondary-text);
+  --btn-bg:var(--foundation-action-secondary-bg);
+  --btn-hover:var(--foundation-action-secondary-bg-hover);
+
+  --btn-primary-bg:var(--foundation-action-primary-bg);
+  --btn-primary-border:var(--foundation-action-primary-bg);
+  --btn-primary-text:var(--foundation-action-primary-text);
+
+  --btn-danger-bg:var(--foundation-action-danger-bg);
+  --btn-danger-border:var(--foundation-action-danger-border);
+  --btn-danger-text:var(--foundation-action-danger-text);
+}
+
+/* Shared legacy action geometry now follows Foundation Action. */
+.workspace-main .btn,
+.workflow-primary-btn,
+.operation-secondary-btn{
+  min-height:var(--foundation-action-height)!important;
+  height:var(--foundation-action-height)!important;
+  padding-left:var(--foundation-action-pad-x)!important;
+  padding-right:var(--foundation-action-pad-x)!important;
+  border-radius:var(--foundation-action-radius)!important;
+  font-size:var(--foundation-action-font)!important;
+  font-weight:var(--foundation-action-weight)!important;
+  line-height:1!important;
+}
+
+/* Secondary */
+.workspace-main .btn:not(.primary):not(.danger):not(.ghost),
+.operation-secondary-btn{
+  border-color:var(--foundation-action-secondary-border)!important;
+  background:var(--foundation-action-secondary-bg)!important;
+  color:var(--foundation-action-secondary-text)!important;
+  box-shadow:none!important;
+}
+.workspace-main .btn:not(.primary):not(.danger):not(.ghost):hover,
+.operation-secondary-btn:hover{
+  border-color:var(--foundation-action-secondary-border-hover)!important;
+  background:var(--foundation-action-secondary-bg-hover)!important;
+  color:var(--foundation-action-secondary-text)!important;
+}
+
+/* Primary */
+.workspace-main .btn.primary:not(:disabled),
+.workflow-primary-btn:not(:disabled){
+  border-color:var(--foundation-action-primary-bg)!important;
+  background:var(--foundation-action-primary-bg)!important;
+  color:var(--foundation-action-primary-text)!important;
+  box-shadow:none!important;
+}
+.workspace-main .btn.primary:not(:disabled):hover,
+.workflow-primary-btn:not(:disabled):hover{
+  border-color:var(--foundation-action-primary-bg-hover)!important;
+  background:var(--foundation-action-primary-bg-hover)!important;
+}
+
+/* Destructive */
+.workspace-main .btn.danger:not(:disabled){
+  border-color:var(--foundation-action-danger-border)!important;
+  background:var(--foundation-action-danger-bg)!important;
+  color:var(--foundation-action-danger-text)!important;
+  box-shadow:none!important;
+}
+.workspace-main .btn.danger:not(:disabled):hover{
+  border-color:var(--foundation-action-danger-border-hover)!important;
+  background:var(--foundation-action-danger-bg-hover)!important;
+}
+
+/* Disabled */
+.workspace-main .btn:disabled,
+.workflow-primary-btn:disabled,
+.operation-secondary-btn:disabled{
+  opacity:1!important;
+  border-color:var(--foundation-action-disabled-border)!important;
+  background:var(--foundation-action-disabled-bg)!important;
+  color:var(--foundation-action-disabled-text)!important;
+  box-shadow:none!important;
+  cursor:not-allowed!important;
+  transform:none!important;
+}
+
+/* Pressed feedback follows Motion + Action Foundation. */
+.workspace-main .btn:not(:disabled):active,
+.workflow-primary-btn:not(:disabled):active,
+.operation-secondary-btn:not(:disabled):active{
+  transform:scale(.985)!important;
+  transition-duration:var(--foundation-motion-fast)!important;
+}
+
+/*
+   Compact legacy utility controls intentionally remain on:
+   --btn-compact-height / --btn-compact-radius / --btn-compact-font-size
+   until Control Density Foundation is audited.
+*/
