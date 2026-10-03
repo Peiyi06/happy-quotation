@@ -129,3 +129,40 @@ The remaining repeated selectors are not treated as historical presentation debt
 - global Foundation Typography authority
 
 Phase 1 is locked. Future AI Workspace work should extend the canonical Foundation rules or add explicit state/responsive modifiers rather than append new unscoped presentation overrides.
+
+## AI Workspace Phase 2 Lock
+
+Status: Locked — Phase 2 complete.
+
+Scope:
+- Sidebar State Foundation
+- Responsive Foundation
+- Density Foundation
+- Motion / Reduced-Motion Foundation
+- Final visual regression cleanup for thread rows and workspace sidebar alignment
+
+Final audit result: PASS.
+
+Canonical state ownership:
+- Desktop expanded/collapsed rail geometry is owned by `AI LAB — SIDEBAR STATE FOUNDATION — LOCKED`.
+- Responsive layout ownership is explicit: `>=1280px` large desktop, `821–1100px` compact two-column desktop/tablet, `<=820px` single-column mobile/narrow.
+- Mobile does not use the collapsed desktop rail; collapse/restore controls are hidden and context remains expanded.
+- Short desktop density is isolated to `(min-width:821px) and (max-height:820px)`.
+- Empty desktop workspace density is owned by `AI LAB — DENSITY FOUNDATION — LOCKED`.
+- Sidebar expansion/collapse animation and reduced-motion behavior are owned by `AI LAB — MOTION FOUNDATION — LOCKED`.
+
+Regression fixes completed before lock:
+- AI Thread title / metadata / timestamp now share one full-width left scan line across active, normal and archived rows.
+- Short-viewport thread rows keep enough vertical room for title + metadata + timestamp without overlap.
+- Workspace module buttons (including Itinerary and Settings) use the same left-aligned navigation geometry as normal sidebar links.
+
+Lock constraints:
+- Do not reintroduce legacy `1000px` AI shell breakpoints.
+- Do not add a second collapsed-rail geometry outside Sidebar State Foundation.
+- Do not compress short-viewport thread rows below the content-safe density without a visual audit.
+- Do not introduce unscoped AI Workspace motion outside Motion Foundation unless it is a local control micro-interaction.
+- New responsive/state behavior must extend the existing scoped authority rather than append a competing late override.
+- Preserve confirm-before-write and all existing business behavior.
+
+Phase 2 is locked. Future AI Workspace changes should be treated as feature work or targeted polish, not additional state-foundation consolidation.
+
