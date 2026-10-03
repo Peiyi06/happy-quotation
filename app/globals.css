@@ -19469,3 +19469,96 @@ td,
     margin-bottom:var(--foundation-space-4)!important;
   }
 }
+
+
+/* =========================================================
+   SURFACE FOUNDATION TRIAL — FOUR-LAYER SYSTEM
+   Page: no surface
+   Section: spacing / divider
+   Content Surface: white + fine border + 14px radius + no shadow
+   Overlay: 16px radius + restrained elevated shadow
+   Do not treat as locked Foundation until explicitly approved.
+   ========================================================= */
+:root{
+  --foundation-surface-radius:14px;
+  --foundation-overlay-radius:16px;
+  --foundation-surface-border:var(--color-border-default);
+  --foundation-surface-bg:#fff;
+  --foundation-surface-shadow:none;
+  --foundation-overlay-shadow:0 16px 42px rgba(16,42,67,.14);
+}
+
+/* Content surfaces — mature modules */
+.dashboard-recent-panel,
+.inquiry-library-template .panel,
+.product-library-page .product-table-panel,
+.product-library-page .product-create-panel,
+.quotation-editor-shell .section,
+.quotation-editor-shell .panel{
+  border:1px solid var(--foundation-surface-border)!important;
+  border-radius:var(--foundation-surface-radius)!important;
+  background:var(--foundation-surface-bg)!important;
+  box-shadow:var(--foundation-surface-shadow)!important;
+}
+
+/* Flat page headers remain page-level, not cards. */
+.inquiry-library-template .inquiry-library-head,
+.product-library-page .product-page-head{
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+/* Dashboard header is a deliberate branded hero surface, not a generic card. */
+.workspace-main .dashboard-page-head{
+  box-shadow:none!important;
+}
+
+/* Section-in-surface: use divider instead of another nested card. */
+.dashboard-recent-panel .panel-head,
+.product-library-page .product-create-panel>.panel-head,
+.quotation-editor-shell .section-head,
+.quotation-editor-shell .panel-head{
+  box-shadow:none!important;
+}
+
+/* Quotation workflow is a process surface: keep one boundary, not nested elevation. */
+.quotation-editor-shell .quotation-editor-workflow{
+  border:1px solid var(--foundation-surface-border)!important;
+  border-radius:var(--foundation-surface-radius)!important;
+  background:var(--foundation-surface-bg)!important;
+  box-shadow:none!important;
+}
+
+.quotation-editor-shell .quotation-editor-workflow .simple-workflow-card{
+  box-shadow:none!important;
+}
+
+/* Overlays are the only surfaces that should feel elevated. */
+.workspace-module-modal,
+.quotation-type-modal,
+.ai-intake-modal,
+.unsaved-modal,
+.quotation-editor-shell .quotation-header-more-menu,
+.quotation-detail-more-menu,
+.quotation-row-more-menu,
+.itinerary-editor .itinerary-more-menu-popover{
+  border-radius:var(--foundation-overlay-radius)!important;
+  box-shadow:var(--foundation-overlay-shadow)!important;
+}
+
+/* Popovers stay compact even though they share overlay elevation. */
+.quotation-editor-shell .quotation-header-more-menu,
+.quotation-detail-more-menu,
+.quotation-row-more-menu,
+.itinerary-editor .itinerary-more-menu-popover{
+  border:1px solid var(--foundation-surface-border)!important;
+  background:#fff!important;
+}
+
+/* Nested cards should not create a second elevation level. */
+.product-library-page .product-create-panel .field,
+.quotation-editor-shell .quotation-matrix-plan,
+.quotation-editor-shell .quotation-matrix-traveller{
+  box-shadow:none!important;
+}
