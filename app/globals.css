@@ -18098,3 +18098,201 @@ td,
     border-bottom:0;
   }
 }
+
+
+/* =========================================================
+   QUOTATION EDITOR — TRAVELLER COST FOUNDATION CARDS
+   Replace spreadsheet-first layout with editable cost cards.
+   ========================================================= */
+.quotation-editor-shell .traveller-cost-list{
+  display:grid;
+  gap:12px;
+}
+
+.quotation-editor-shell .traveller-cost-card{
+  display:grid;
+  gap:14px;
+  padding:16px;
+  border:1px solid var(--color-border-default);
+  border-radius:14px;
+  background:#fff;
+}
+
+.quotation-editor-shell .traveller-cost-card.fixed{
+  background:#fbfcfd;
+}
+
+.quotation-editor-shell .traveller-cost-inputs{
+  display:grid;
+  grid-template-columns:minmax(180px,1.3fr) minmax(120px,.75fr) minmax(150px,1fr) minmax(120px,.8fr) minmax(110px,.7fr) minmax(110px,.72fr);
+  gap:10px;
+  align-items:end;
+}
+
+.quotation-editor-shell .traveller-cost-card .field{
+  min-width:0;
+}
+
+.quotation-editor-shell .traveller-cost-card .field>span{
+  margin-bottom:6px!important;
+  color:var(--color-text-secondary)!important;
+  font-size:var(--foundation-type-meta)!important;
+  font-weight:600!important;
+}
+
+.quotation-editor-shell .traveller-cost-card input,
+.quotation-editor-shell .traveller-cost-card select{
+  width:100%!important;
+  min-width:0!important;
+  min-height:40px!important;
+  height:40px!important;
+  padding:0 11px!important;
+  border-radius:9px!important;
+  box-shadow:none!important;
+}
+
+.quotation-editor-shell .traveller-cost-lower{
+  display:grid;
+  grid-template-columns:minmax(280px,1.1fr) minmax(360px,1fr) auto;
+  gap:14px;
+  align-items:end;
+  padding-top:12px;
+  border-top:1px solid var(--color-border-default);
+}
+
+.quotation-editor-shell .traveller-cost-secondary-inputs{
+  display:grid;
+  grid-template-columns:minmax(120px,.55fr) minmax(180px,1.45fr);
+  gap:10px;
+}
+
+.quotation-editor-shell .traveller-cost-summary{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  border:1px solid var(--color-border-default);
+  border-radius:10px;
+  overflow:hidden;
+  background:#fbfcfd;
+}
+
+.quotation-editor-shell .traveller-cost-metric{
+  min-width:0;
+  padding:9px 11px;
+  display:grid;
+  gap:3px;
+  border-right:1px solid var(--color-border-default);
+}
+
+.quotation-editor-shell .traveller-cost-metric:last-child{
+  border-right:0;
+}
+
+.quotation-editor-shell .traveller-cost-metric span{
+  color:var(--color-text-tertiary);
+  font-size:var(--foundation-type-micro);
+  line-height:1.2;
+  font-weight:600;
+}
+
+.quotation-editor-shell .traveller-cost-metric strong{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:var(--color-text-primary);
+  font-size:var(--foundation-type-body);
+  line-height:1.25;
+  font-weight:650;
+}
+
+.quotation-editor-shell .traveller-cost-metric.primary{
+  background:#f7fbfe;
+}
+
+.quotation-editor-shell .traveller-cost-metric.primary strong{
+  color:var(--foundation-comparison-result-text);
+  font-weight:750;
+}
+
+.quotation-editor-shell .traveller-cost-metric.warn strong{
+  color:#9a6b21;
+}
+
+.quotation-editor-shell .traveller-cost-metric.deduction-value strong{
+  color:var(--color-danger-text);
+}
+
+.quotation-editor-shell .traveller-cost-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:6px;
+  min-height:40px;
+}
+
+.quotation-editor-shell .traveller-cost-actions button{
+  min-height:32px;
+  height:32px;
+  padding:0 9px;
+  border:1px solid var(--color-border-default);
+  border-radius:8px;
+  background:#fff;
+  color:var(--color-text-secondary);
+  font-size:var(--foundation-type-meta);
+  font-weight:650;
+  cursor:pointer;
+}
+
+.quotation-editor-shell .traveller-cost-actions button:hover{
+  background:var(--color-bg-soft);
+  color:var(--color-text-primary);
+}
+
+.quotation-editor-shell .traveller-cost-actions button:last-child{
+  color:var(--color-danger-text);
+}
+
+@media(max-width:1180px){
+  .quotation-editor-shell .traveller-cost-inputs{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+
+  .quotation-editor-shell .traveller-cost-lower{
+    grid-template-columns:1fr;
+    align-items:stretch;
+  }
+
+  .quotation-editor-shell .traveller-cost-actions{
+    justify-content:flex-start;
+  }
+}
+
+@media(max-width:760px){
+  .quotation-editor-shell .traveller-cost-card{
+    padding:14px;
+  }
+
+  .quotation-editor-shell .traveller-cost-inputs,
+  .quotation-editor-shell .traveller-cost-secondary-inputs{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .quotation-editor-shell .traveller-cost-summary{
+    grid-template-columns:1fr;
+  }
+
+  .quotation-editor-shell .traveller-cost-metric{
+    border-right:0;
+    border-bottom:1px solid var(--color-border-default);
+  }
+
+  .quotation-editor-shell .traveller-cost-metric:last-child{
+    border-bottom:0;
+  }
+}
+
+@media(max-width:520px){
+  .quotation-editor-shell .traveller-cost-inputs,
+  .quotation-editor-shell .traveller-cost-secondary-inputs{
+    grid-template-columns:1fr;
+  }
+}
