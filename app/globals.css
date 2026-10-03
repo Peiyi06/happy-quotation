@@ -17571,3 +17571,155 @@ td,
   color:var(--foundation-comparison-result-text);
   font-weight:700;
 }
+
+
+/* =========================================================
+   QUOTATION DETAIL — SUMMARY FOUNDATION PASS
+   Reduce dashboard weight and bring primary work content higher.
+   ========================================================= */
+.quotation-detail-template .final-price-grid{
+  gap:14px!important;
+  margin-top:0!important;
+  margin-bottom:14px!important;
+}
+
+.quotation-detail-template .quote-result-hero{
+  min-height:190px!important;
+  padding:24px 26px!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:16px!important;
+  background:#fff!important;
+  color:var(--color-text-primary)!important;
+  box-shadow:none!important;
+}
+
+.quotation-detail-template .quote-result-hero:first-child{
+  position:relative!important;
+  overflow:hidden!important;
+  background:#f4f8fb!important;
+  border-color:#d5e1ea!important;
+}
+
+.quotation-detail-template .quote-result-hero:first-child::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0 auto 0 0!important;
+  width:6px!important;
+  background:var(--color-brand-primary)!important;
+}
+
+.quotation-detail-template .quote-result-hero>span{
+  color:var(--color-text-secondary)!important;
+  font-size:var(--foundation-type-body)!important;
+  line-height:1.35!important;
+  font-weight:500!important;
+}
+
+.quotation-detail-template .quote-result-hero>strong{
+  margin-top:12px!important;
+  color:var(--color-brand-primary)!important;
+  font-size:42px!important;
+  line-height:1!important;
+  font-weight:750!important;
+  letter-spacing:-.025em!important;
+}
+
+.quotation-detail-template .quote-result-hero:first-child>strong{
+  font-size:46px!important;
+}
+
+.quotation-detail-template .quote-result-hero>small{
+  margin-top:10px!important;
+  color:var(--color-text-secondary)!important;
+  font-size:var(--foundation-type-meta)!important;
+  line-height:1.4!important;
+}
+
+.quotation-detail-template .quote-detail-cards{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:0!important;
+  margin:0 0 18px!important;
+  padding:0!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:14px!important;
+  overflow:hidden!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+
+.quotation-detail-template .quote-detail-cards .dash-card{
+  min-height:92px!important;
+  padding:18px 20px!important;
+  border:0!important;
+  border-right:1px solid var(--color-border-default)!important;
+  border-radius:0!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+
+.quotation-detail-template .quote-detail-cards .dash-card:last-child{
+  border-right:0!important;
+}
+
+.quotation-detail-template .quote-detail-cards .dash-card span{
+  color:var(--color-text-secondary)!important;
+  font-size:var(--foundation-type-meta)!important;
+  line-height:1.2!important;
+  font-weight:500!important;
+}
+
+.quotation-detail-template .quote-detail-cards .dash-card b{
+  margin-top:8px!important;
+  color:var(--color-brand-primary)!important;
+  font-size:28px!important;
+  line-height:1!important;
+  font-weight:700!important;
+  letter-spacing:-.015em!important;
+}
+
+.quotation-detail-template .quote-detail-cards + .quotation-matrix-panel{
+  margin-top:0!important;
+}
+
+@media(max-width:980px){
+  .quotation-detail-template .final-price-grid{
+    grid-template-columns:1fr!important;
+  }
+
+  .quotation-detail-template .quote-result-hero{
+    min-height:150px!important;
+  }
+
+  .quotation-detail-template .quote-detail-cards{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+
+  .quotation-detail-template .quote-detail-cards .dash-card:nth-child(2){
+    border-right:0!important;
+  }
+
+  .quotation-detail-template .quote-detail-cards .dash-card:nth-child(-n+2){
+    border-bottom:1px solid var(--color-border-default)!important;
+  }
+}
+
+@media(max-width:620px){
+  .quotation-detail-template .quote-result-hero>strong,
+  .quotation-detail-template .quote-result-hero:first-child>strong{
+    font-size:36px!important;
+  }
+
+  .quotation-detail-template .quote-detail-cards{
+    grid-template-columns:1fr!important;
+  }
+
+  .quotation-detail-template .quote-detail-cards .dash-card{
+    border-right:0!important;
+    border-bottom:1px solid var(--color-border-default)!important;
+  }
+
+  .quotation-detail-template .quote-detail-cards .dash-card:last-child{
+    border-bottom:0!important;
+  }
+}
