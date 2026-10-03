@@ -78,3 +78,24 @@ aiSelectors.forEach(selector=>{
 });
 
 console.log("Note: exact blocks include responsive/state-scoped rules. Review structurally; do not flatten media/state rules into base rules.");
+
+console.log("\nAI Workspace Phase 2 lock markers");
+console.log("---------------------------------");
+
+const aiPhase2Markers=[
+  "AI LAB — SIDEBAR STATE FOUNDATION — LOCKED",
+  "AI LAB — RESPONSIVE FOUNDATION — LOCKED",
+  "AI LAB — DENSITY FOUNDATION — LOCKED",
+  "AI LAB — MOTION FOUNDATION — LOCKED"
+];
+
+const missingAiPhase2=aiPhase2Markers.filter(marker=>!css.includes(marker));
+aiPhase2Markers.forEach(marker=>{
+  console.log(`${marker}: ${css.includes(marker)?"present":"missing"}`);
+});
+
+if(!missingAiPhase2.length){
+  console.log("AI Workspace Phase 2 state architecture: locked");
+}else{
+  console.log("AI Workspace Phase 2 state architecture: review required");
+}
