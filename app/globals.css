@@ -12615,6 +12615,16 @@ td,
   overflow:hidden!important;
   text-overflow:ellipsis!important;
   justify-self:start!important;
+  text-align:left!important;
+}
+
+/* Thread text uses one shared left scan line across every row/state. */
+.ai-thread-open>.ai-thread-title,
+.ai-thread-open>.ai-thread-meta,
+.ai-thread-open>.ai-thread-time{
+  width:100%!important;
+  justify-self:stretch!important;
+  text-align:left!important;
 }
 .ai-thread-item:hover{
   background:var(--color-bg-soft)!important;
