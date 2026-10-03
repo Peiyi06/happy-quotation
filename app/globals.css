@@ -19744,12 +19744,14 @@ td,
 
 
 /* =========================================================
-   MOTION FOUNDATION TRIAL — CORE TIMING SYSTEM
+   FOUNDATION MOTION SYSTEM — LOCKED
    Fast 120ms: pressed / icon feedback
    Standard 180ms: hover / active / row / control state
    Enter 240ms: popover / modal / overlay appearance
    Continuous workflow flow animation remains independent.
-   Do not treat as locked Foundation until explicitly approved.
+   Reduced-motion preferences must be respected.
+   Any structural timing/easing change requires an explicit
+   Foundation revision.
    ========================================================= */
 :root{
   --foundation-motion-fast:120ms;
