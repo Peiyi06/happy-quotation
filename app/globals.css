@@ -17423,3 +17423,103 @@ td,
     border-bottom:0;
   }
 }
+
+
+/* =========================================================
+   QUOTATION DETAIL — MATRIX FOUNDATION POLISH TRIAL
+   Preserve comparison structure; reduce spreadsheet weight.
+   ========================================================= */
+.quotation-detail-template .quotation-matrix-head{
+  min-height:40px!important;
+  background:#fbfcfd!important;
+}
+
+.quotation-detail-template .quotation-matrix-head>span{
+  padding:0 14px!important;
+  color:var(--color-text-secondary)!important;
+  font-size:var(--foundation-type-meta)!important;
+  font-weight:650!important;
+}
+
+.quotation-detail-template .quotation-matrix-row{
+  min-height:108px!important;
+}
+
+.quotation-detail-template .quotation-matrix-row:first-of-type{
+  min-height:114px!important;
+}
+
+.quotation-detail-template .quotation-matrix-traveller{
+  padding:14px 16px!important;
+  background:#fcfdfe!important;
+  border-right-color:#e5eaee!important;
+}
+
+.quotation-detail-template .quotation-matrix-traveller strong{
+  font-size:15px!important;
+  line-height:1.3!important;
+  font-weight:700!important;
+}
+
+.quotation-detail-template .quotation-matrix-plan{
+  border-right-color:#e7ebef!important;
+}
+
+.quotation-detail-template .quotation-matrix-metric{
+  padding:12px 14px!important;
+  gap:4px!important;
+  border-right-color:#edf0f2!important;
+}
+
+.quotation-detail-template .quotation-matrix-metric>span{
+  color:#87929c!important;
+  font-size:var(--foundation-type-meta)!important;
+  line-height:1.2!important;
+  font-weight:500!important;
+}
+
+.quotation-detail-template .quotation-matrix-metric>strong{
+  color:var(--color-text-primary)!important;
+  font-size:14px!important;
+  line-height:1.2!important;
+  font-weight:650!important;
+}
+
+.quotation-detail-template .quotation-matrix-metric.suggested{
+  background:#f7fbfe!important;
+}
+
+.quotation-detail-template .quotation-matrix-metric.suggested>span{
+  color:#62809a!important;
+  font-weight:650!important;
+}
+
+.quotation-detail-template .quotation-matrix-metric.suggested>strong{
+  color:#2f6e9d!important;
+  font-size:15px!important;
+  font-weight:750!important;
+}
+
+/* Child rows are slightly quieter than the primary adult row. */
+.quotation-detail-template .quotation-matrix-row:not(:first-of-type) .quotation-matrix-traveller strong{
+  font-size:14px!important;
+  font-weight:650!important;
+}
+
+.quotation-detail-template .quotation-matrix-row:not(:first-of-type) .quotation-matrix-metric>strong{
+  font-size:13.5px!important;
+}
+
+@media(max-width:980px){
+  .quotation-detail-template .quotation-matrix-row{
+    min-height:0!important;
+  }
+
+  .quotation-detail-template .quotation-matrix-traveller{
+    padding:12px 14px 9px!important;
+  }
+
+  .quotation-detail-template .quotation-matrix-metric{
+    padding:11px 12px!important;
+  }
+}
