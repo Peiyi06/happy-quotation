@@ -155,7 +155,7 @@ export default async function QuotationDetailPage({
         </div>
       </div>
       <div className="detail-actions">
-        <Link className="btn quotation-back-action" href={returnTo}>{returnTo.startsWith("/inquiries/")?<UiText en="← Inquiry" zh="← 询价" />:<UiText en="← Back" zh="← 返回" />}</Link>
+        <Link className="btn quotation-back-action" href={returnTo}>{returnTo.startsWith("/inquiries/")?<UiText en="‹ Inquiry" zh="‹ 询价" />:<UiText en="‹ Back" zh="‹ 返回" />}</Link>
         <Link className="btn" href={"/quotations/"+id+"/edit"}><UiText en="Edit Quotation" zh="编辑报价" /></Link>
         <QuotationDetailMoreActions id={id} />
       </div>
