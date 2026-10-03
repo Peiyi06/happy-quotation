@@ -195,27 +195,32 @@ export default async function QuotationDetailPage({
       <div className="dash-card"><span><UiText en="Pax" zh="人数" /></span><b>{data.pax||0}</b></div>
     </section>
 
-    <section className="panel">
+    <section className="panel quotation-matrix-panel">
       <div className="panel-head"><h2><UiText en="Final Quotation Matrix" zh="最终报价矩阵" /></h2></div>
-      <div className="matrix-wrap">
-        <table className="matrix detail-matrix">
-          <thead><tr>
-            <th><UiText en="Traveller Type" zh="旅客类型" /></th>
-            <th><UiText en="Cost · Excl. Leader" zh="不含领队成本" /></th>
-            <th><UiText en="Profit · Excl. Leader" zh="不含领队利润" /></th>
-            <th><UiText en="Suggested Price · Excl. Leader" zh="不含领队建议售价" /></th>
-            {hasLeader&&<><th><UiText en="Cost · Incl. Leader" zh="含领队成本" /></th><th><UiText en="Profit · Incl. Leader" zh="含领队利润" /></th><th><UiText en="Suggested Price · Incl. Leader" zh="含领队建议售价" /></th></>}
-          </tr></thead>
-          <tbody>
-            {matrix.map(([label,a,b])=><tr key={label}>
-              <td className="label-cell">{label==="成人（双人一房）"?<UiText en="Adult · Twin Sharing" zh="成人（双人一房）" />:label==="小孩加床"?<UiText en="Child with Bed" zh="小孩加床" />:<UiText en="Child without Bed" zh="小孩不加床" />}</td>
-              <td>{money(a.cost)}</td>
-              <td>{money(a.profit)}</td>
-              <td className="sale">{money(a.selling)}</td>
-              {hasLeader&&<><td>{money(b.cost)}</td><td>{money(b.profit)}</td><td className="sale">{money(b.selling)}</td></>}
-            </tr>)}
-          </tbody>
-        </table>
+      <div className={"quotation-matrix-compare"+(hasLeader?" has-leader":"")}>
+        <div className="quotation-matrix-head">
+          <span><UiText en="Traveller Type" zh="旅客类型" /></span>
+          <span><UiText en="Excl. Leader" zh="不含领队" /></span>
+          {hasLeader&&<span><UiText en="Incl. Leader" zh="含领队" /></span>}
+        </div>
+
+        {matrix.map(([label,a,b])=><div className="quotation-matrix-row" key={label}>
+          <div className="quotation-matrix-traveller">
+            <strong>{label==="成人（双人一房）"?<UiText en="Adult · Twin Sharing" zh="成人（双人一房）" />:label==="小孩加床"?<UiText en="Child with Bed" zh="小孩加床" />:<UiText en="Child without Bed" zh="小孩不加床" />}</strong>
+          </div>
+
+          <div className="quotation-matrix-plan">
+            <div className="quotation-matrix-metric"><span><UiText en="Cost" zh="成本" /></span><strong>{money(a.cost)}</strong></div>
+            <div className="quotation-matrix-metric"><span><UiText en="Profit" zh="利润" /></span><strong>{money(a.profit)}</strong></div>
+            <div className="quotation-matrix-metric suggested"><span><UiText en="Suggested" zh="建议售价" /></span><strong>{money(a.selling)}</strong></div>
+          </div>
+
+          {hasLeader&&<div className="quotation-matrix-plan">
+            <div className="quotation-matrix-metric"><span><UiText en="Cost" zh="成本" /></span><strong>{money(b.cost)}</strong></div>
+            <div className="quotation-matrix-metric"><span><UiText en="Profit" zh="利润" /></span><strong>{money(b.profit)}</strong></div>
+            <div className="quotation-matrix-metric suggested"><span><UiText en="Suggested" zh="建议售价" /></span><strong>{money(b.selling)}</strong></div>
+          </div>}
+        </div>)}
       </div>
     </section>
 
