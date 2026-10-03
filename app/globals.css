@@ -11478,8 +11478,11 @@ td,
   padding:0 8px 8px!important;
   display:grid!important;
   gap:0!important;
-  max-height:430px!important;
+  max-height:292px!important;
+  min-height:0!important;
   overflow:auto!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
 }
 /* Thread row presentation is owned by the final Sidebar Foundation pass. */
 
@@ -11603,14 +11606,7 @@ td,
   padding-bottom:0!important;
 }
 
-/* Keep the auxiliary column compact enough that Current Context
-   remains visible without scrolling through a long thread archive. */
-.ai-thread-list{
-  max-height:292px!important;
-  min-height:0!important;
-  overflow-y:auto!important;
-  overscroll-behavior:contain;
-}
+/* Thread list base sizing is consolidated in the canonical list block above. */
 .ai-thread-view-switch{
   margin-bottom:6px!important;
 }
@@ -12793,30 +12789,6 @@ td,
   color:var(--color-text-secondary)!important;
 }
 
-/* 3. Thread scrollbar: quieter, slimmer, no heavy chrome. */
-.ai-thread-list{
-  scrollbar-width:thin;
-  scrollbar-color:rgba(87,103,116,.30) transparent;
-}
-.ai-thread-list::-webkit-scrollbar{
-  width:6px;
-}
-.ai-thread-list::-webkit-scrollbar-track{
-  background:transparent;
-}
-.ai-thread-list::-webkit-scrollbar-thumb{
-  min-height:36px;
-  border-radius:999px;
-  background:rgba(87,103,116,.26);
-}
-.ai-thread-list:hover::-webkit-scrollbar-thumb{
-  background:rgba(87,103,116,.42);
-}
-.ai-thread-list::-webkit-scrollbar-button{
-  width:0;
-  height:0;
-  display:none;
-}
 
 /* 4. Empty workspace: keep breathing room, but bring the action dock upward. */
 @media(min-width:821px){
@@ -13168,6 +13140,7 @@ td,
   background:transparent!important;
 }
 .ai-thread-list::-webkit-scrollbar-thumb{
+  min-height:36px;
   border-radius:999px!important;
   background:rgba(87,103,116,.24)!important;
 }
