@@ -17870,3 +17870,57 @@ td,
     min-height:0!important;
   }
 }
+
+
+/* =========================================================
+   FOUNDATION NAVIGATION RULE — CHEVRON BACK MASTER LOCK
+   LOCKED
+   1. Back navigation uses the single chevron glyph ‹, never ←.
+   2. Back belongs to Header Right / Navigation, never Bottom Workflow.
+   3. Contextual labels may be Back / Inquiry / Quotation /
+      Itinerary / AI Workspace (or localized equivalents).
+   4. Back is always a secondary navigation control, never a
+      primary workflow CTA.
+   5. Workflow forward arrows / flow animation remain independent.
+   ========================================================= */
+:root{
+  --foundation-nav-back-height:36px;
+  --foundation-nav-back-radius:9px;
+  --foundation-nav-back-gap:6px;
+}
+
+.foundation-back-action,
+.new-inquiry-back-action,
+.edit-inquiry-back-action,
+.operation-review-back,
+.itinerary-back-action,
+.itinerary-editor-back,
+.quotation-back-action,
+.quotation-editor-back{
+  min-height:var(--foundation-nav-back-height)!important;
+  height:var(--foundation-nav-back-height)!important;
+  padding:0 12px!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:var(--foundation-nav-back-radius)!important;
+  background:#fff!important;
+  color:var(--color-text-secondary)!important;
+  box-shadow:none!important;
+  font-size:var(--foundation-type-body)!important;
+  font-weight:650!important;
+  line-height:1!important;
+  text-decoration:none!important;
+}
+
+.foundation-back-action:hover,
+.new-inquiry-back-action:hover,
+.edit-inquiry-back-action:hover,
+.operation-review-back:hover,
+.itinerary-back-action:hover,
+.itinerary-editor-back:hover,
+.quotation-back-action:hover,
+.quotation-editor-back:hover{
+  background:var(--color-bg-soft)!important;
+  border-color:var(--color-border-strong)!important;
+  color:var(--color-text-primary)!important;
+  transform:none!important;
+}
