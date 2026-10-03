@@ -11152,22 +11152,6 @@ td,
 }
 
 /* Composer is the main day-to-day action surface. */
-.ai-lab-compose{
-  gap:8px!important;
-  padding:10px!important;
-  border-color:var(--color-border-default)!important;
-  border-radius:12px!important;
-  background:var(--color-bg-surface)!important;
-  box-shadow:none!important;
-}
-.ai-lab-compose textarea{
-  min-height:44px!important;
-  max-height:140px;
-  padding:9px 10px!important;
-  border:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-}
 .ai-lab-compose textarea:focus{
   box-shadow:none!important;
 }
@@ -11187,12 +11171,6 @@ td,
   border-color:var(--color-brand-primary)!important;
   color:#fff!important;
   box-shadow:none!important;
-}
-.ai-lab-compose-note{
-  margin-top:5px!important;
-  color:var(--color-text-tertiary)!important;
-  font-size:9px!important;
-  line-height:1.35!important;
 }
 
 /* Starter prompts are suggestions, not cards. */
@@ -11334,16 +11312,6 @@ td,
 }
 
 /* Composer stays visually attached to the conversation. */
-.ai-lab-compose{
-  margin-top:8px!important;
-  padding:8px!important;
-}
-.ai-lab-compose textarea{
-  min-height:40px!important;
-}
-.ai-lab-compose-note{
-  margin-bottom:0!important;
-}
 
 /* Sidebar: auxiliary panel, not a second main page. */
 .ai-lab-context{
@@ -11514,14 +11482,6 @@ td,
 .ai-lab-upload-previews{
   margin:6px 0!important;
 }
-.ai-lab-compose{
-  position:static!important;
-  inset:auto!important;
-  margin:6px 0 0!important;
-}
-.ai-lab-compose-note{
-  padding-bottom:0!important;
-}
 
 /* Thread list base sizing is consolidated in the canonical list block above. */
 .ai-thread-view-switch{
@@ -11587,12 +11547,6 @@ td,
 .ai-lab-starters{
   margin-bottom:0!important;
 }
-.ai-lab-compose{
-  margin-top:clamp(18px,4.5vh,42px)!important;
-}
-.ai-lab-compose-note{
-  margin-top:4px!important;
-}
 
 /* Current Context already has the right content density; only align
    its spacing with the refined sidebar rhythm. */
@@ -11647,12 +11601,6 @@ td,
 .ai-lab-more-starters:hover{
   color:var(--color-brand-primary);
   text-decoration:underline;
-}
-.ai-lab-compose{
-  margin-top:10px!important;
-}
-.ai-lab-compose-note{
-  opacity:.72;
 }
 
 /* The right rail owns its own vertical scrolling. */
@@ -11909,11 +11857,19 @@ td,
    One visual axis for attach, input and send controls.
    ========================================================= */
 .ai-lab-compose{
+  position:static!important;
+  inset:auto!important;
   display:grid!important;
   grid-template-columns:auto minmax(0,1fr) auto!important;
   align-items:center!important;
+  gap:8px!important;
   column-gap:12px!important;
+  margin:10px 0 0!important;
   padding:10px 12px!important;
+  border-color:var(--color-border-default)!important;
+  border-radius:12px!important;
+  background:var(--color-bg-surface)!important;
+  box-shadow:none!important;
 }
 
 .ai-lab-attach-btn,
@@ -11925,7 +11881,11 @@ td,
   align-self:center!important;
   min-height:42px!important;
   height:42px!important;
+  max-height:140px;
   padding:10px 2px 8px!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
   line-height:24px!important;
   resize:none!important;
   overflow-y:auto!important;
@@ -11933,6 +11893,15 @@ td,
 
 .ai-lab-compose textarea::placeholder{
   line-height:24px!important;
+}
+
+.ai-lab-compose-note{
+  margin:4px 0 0!important;
+  padding-bottom:0!important;
+  color:var(--color-text-tertiary)!important;
+  font-size:9px!important;
+  line-height:1.35!important;
+  opacity:.72;
 }
 
 .ai-lab-attach-btn{
