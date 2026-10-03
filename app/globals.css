@@ -7558,6 +7558,17 @@ td,
 
 
 /* =========================================================
+   OPERATION FOUNDATION COVERAGE — LOCKED
+   Status: HIGH
+   Scope: Workspace Header / Toolbar / Scope Switch / Queue /
+   Case Row / Status / Review Header / Review Surfaces /
+   Review Form Controls / Responsive Behavior.
+   Shared visual behavior must resolve from the locked Foundation
+   systems. Future structural changes require an explicit Operation
+   or Foundation revision, not another late override.
+   ========================================================= */
+
+/* =========================================================
    ITINERARY LIST + DETAIL FOUNDATION v1
    ========================================================= */
 .itinerary-library-template .itinerary-library-head{
