@@ -152,6 +152,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [saving, setSaving] = useState(false);
   const [pendingHref, setPendingHref] = useState<string | null>(null);
   const [isDirty, setIsDirty] = useState(false);
+  const [showHeaderMore,setShowHeaderMore]=useState(false);
   const baselineRef = useRef("");
   const commercialBaselineRef = useRef("");
   const [tourCode, setTourCode] = useState("");
@@ -711,6 +712,33 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   ] as const;
 
   return <main className={"app-shell "+(workspaceMode?"quotation-editor-shell":"")}>
+    <header className={"topbar "+(workspaceMode?"quotation-editor-header":"")}>
+      <div className="quotation-editor-title-block">
+        {!workspaceMode&&<div className="eyebrow">HAPPY EXPRESS TRAVEL</div>}
+        <h1>{t("Outbound Quotation","出境游报价")}</h1>
+        {workspaceMode
+          ?<div className="quotation-editor-meta-line">
+              <span>{initialQuotation?.quotation_no||t("New Draft","新草稿")}</span>
+              <span className={"status quotation-editor-status status-"+displayStatus}>
+                {displayStatus==="under_review"?t("Under Review","审核中"):displayStatus==="revision_required"?t("Revision Required","需要修改"):displayStatus==="ready"?t("Ready","已就绪"):displayStatus==="sent"?t("Sent","已发送"):displayStatus==="revised"?t("Revised","已修改"):displayStatus==="confirmed"?t("Confirmed","已确认"):displayStatus==="lost"?t("Lost","未成交"):displayStatus==="archived"?t("Archived","已归档"):t("Draft","草稿")}
+              </span>
+            </div>
+          :<p>{t("Outbound Tour Quotation Calculator","出境游报价计算器")}</p>}
+      </div>
+      <div className="top-actions quote-top-actions no-print">
+        {workspaceMode&&<button className="btn quotation-editor-back" type="button" onClick={()=>{const href=quotationId?"/quotations/"+quotationId:"/quotations";if(isDirty)setPendingHref(href);else router.push(href);}}>{t("← Back","← 返回")}</button>}
+        <button className="btn ghost quote-action-secondary" type="button" onClick={()=>window.print()}>{t("Print / PDF","打印 / PDF")}</button>
+        {workspaceMode
+          ?<div className="quotation-header-more">
+              <button className="btn quotation-header-more-trigger" type="button" aria-expanded={showHeaderMore} aria-label={t("More actions","更多操作")} onClick={()=>setShowHeaderMore(v=>!v)}>•••</button>
+              {showHeaderMore&&<div className="quotation-header-more-menu">
+                <button type="button" className="quotation-header-reset" onClick={()=>{setShowHeaderMore(false);resetAll();}}>{t("Reset Quotation","重置报价")}</button>
+              </div>}
+            </div>
+          :<button className="btn danger quote-action-danger" onClick={resetAll}>{t("Reset","重置")}</button>}
+      </div>
+    </header>
+
     {workspaceMode&&resolvedSourceInquiryId&&<section className="quote-source-inquiry">
       <div>
         <span>{t("SOURCE INQUIRY","来源询价")}</span>
@@ -719,22 +747,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </div>
       <button className="btn" type="button" onClick={()=>{const href="/inquiries/"+resolvedSourceInquiryId;if(isDirty)setPendingHref(href);else router.push(href);}}>{t("Open Inquiry","打开询价")}</button>
     </section>}
-    <header className={"topbar "+(workspaceMode?"quotation-editor-header":"")}>
-      <div>
-        {!workspaceMode&&<div className="eyebrow">HAPPY EXPRESS TRAVEL</div>}
-        <h1>{t("Outbound Quotation","出境游报价")}</h1>
-        <p>{workspaceMode?t("Quotation Workspace","报价工作区"):t("Outbound Tour Quotation Calculator","出境游报价计算器")}</p>
-      </div>
-      <div className="top-actions quote-top-actions no-print">
-        {workspaceMode && isDirty && <span className="unsaved-badge">{t("Unsaved changes","尚未保存")}</span>}
-        {workspaceMode && <button className="btn quote-header-save" onClick={()=>void saveQuotation()} disabled={saving}>{saving?t("Saving...","保存中..."):t("Save Quotation","保存报价")}</button>}
-        {workspaceMode&&displayStatus==="under_review"&&<span className="quote-editor-review-state">{t("Under Review","审核中")}</span>}
-        {workspaceMode&&displayStatus==="ready"&&<span className="quote-editor-review-state ready">{t("Ready","已就绪")}</span>}
-        {workspaceMode&&status==="ready"&&commercialDirty&&<span className="quote-commercial-change-note">{t("Commercial changes pending save","商务数据修改尚未保存")}</span>}
-        <button className="btn ghost quote-action-secondary" onClick={()=>window.print()}>{t("Print / PDF","打印 / PDF")}</button>
-        <button className="btn danger quote-action-danger" onClick={resetAll}>{t("Reset","重置")}</button>
-      </div>
-    </header>
 
     <section className="summary-grid">
       <Summary label={`${t("Traveller Cost","旅客成本")} / ${selectedTravelerLabel}`} value={money(selectedTravelerCost)} />
@@ -956,6 +968,14 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </tbody></table></div>
     </Section>
 
+    {workspaceMode&&<div className={"quotation-save-state "+(isDirty?"unsaved":"saved")}>
+      <div>
+        <strong>{isDirty?t("● Unsaved Changes","● 有未保存修改"):t("✓ All changes saved","✓ 所有修改已保存")}</strong>
+        <span>{isDirty?t("Save this quotation before submitting or leaving the workspace.","提交审核或离开工作区前，请先保存这份报价。"):quotationId?t("This quotation is saved.","当前报价已保存。"):t("Save the draft to create this quotation.","保存草稿后会正式建立这份报价。")}</span>
+      </div>
+      {isDirty&&<button className="btn primary" type="button" disabled={saving} onClick={()=>void saveQuotation()}>{saving?t("Saving...","保存中..."):quotationId?t("Save Quotation","保存报价"):t("Save Draft","保存草稿")}</button>}
+    </div>}
+
     {workspaceMode&&<section className="panel inquiry-workflow-panel quotation-editor-workflow">
       <div className="panel-head inquiry-workflow-panel-head quotation-workflow-compact-head">
         <div>
@@ -973,12 +993,11 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             <strong>{t("Quotation","报价")}</strong>
           </div>
           {(displayStatus==="draft"||displayStatus==="revision_required")&&<div className="simple-workflow-actions">
-            <button className="btn" type="button" disabled={saving||!isDirty} onClick={()=>void saveQuotation()}>
-              {saving?t("Saving...","保存中..."):isDirty?t("Save","保存"):t("Saved ✓","已保存 ✓")}
-            </button>
-            {quotationId&&<button className="btn primary" type="button" disabled={saving} onClick={()=>void submitForReview()}>
-              {saving?t("Working...","处理中..."):displayStatus==="revision_required"?t("Resubmit","重新提交"):t("Submit","提交")}
-            </button>}
+            {quotationId
+              ?<button className="btn primary" type="button" disabled={saving||isDirty} onClick={()=>void submitForReview()}>
+                  {saving?t("Working...","处理中..."):displayStatus==="revision_required"?t("Resubmit for Review","重新提交审核"):t("Submit for Review","提交审核")}
+                </button>
+              :<span className="quotation-workflow-waiting">{t("Save the draft first to enable submission.","先保存草稿后才可提交审核。")}</span>}
           </div>}
         </div>
 
@@ -1029,7 +1048,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </div>
     </div>}
 
-    <footer>{workspaceMode?t("Saved quotations sync to the company cloud database and can be reopened from Quotation Library.","报价保存后会同步至公司云端数据库，可在 Quotation Library 重新打开及修改。"):t("Data is automatically saved in this browser's Local Storage.","数据会自动保存在此浏览器 Local Storage。")} {t("For non-primary currencies without an exchange rate, the rate displays — to prevent silent miscalculation.","其他非主要币种若未设为主要币种，汇率会显示 —，避免静默误算。")}</footer>
+    {!workspaceMode&&<footer>{t("Data is automatically saved in this browser's Local Storage.","数据会自动保存在此浏览器 Local Storage。")} {t("For non-primary currencies without an exchange rate, the rate displays — to prevent silent miscalculation.","其他非主要币种若未设为主要币种，汇率会显示 —，避免静默误算。")}</footer>}
   </main>
 }
 
