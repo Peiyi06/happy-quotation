@@ -12581,8 +12581,10 @@ td,
   display:grid!important;
   grid-auto-rows:auto;
   align-content:center!important;
+  justify-self:stretch!important;
+  align-self:stretch!important;
+  justify-items:stretch!important;
   gap:3px!important;
-  justify-items:start!important;
   text-align:left!important;
   padding:0!important;
   overflow:hidden!important;
@@ -12622,7 +12624,10 @@ td,
 .ai-thread-open>.ai-thread-title,
 .ai-thread-open>.ai-thread-meta,
 .ai-thread-open>.ai-thread-time{
+  display:block!important;
   width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
   justify-self:stretch!important;
   text-align:left!important;
 }
