@@ -7269,9 +7269,9 @@ td,
 /* =========================================================
    OPERATION WORKSPACE — CONSOLIDATED MODULE FOUNDATION
    Final queue architecture:
-   - desktop: 2 × 2 queue surfaces
-   - queue item: two-column information layout + full-width state
-   - responsive: 4 / 2 / 1-column work rows below desktop preview
+   - desktop: single-column queue surfaces
+   - queue item: full-width information row
+   - responsive: compact row reflow on narrower screens
    - shared spacing / surface / typography / motion use Foundation tokens
    This block supersedes the previous queue density / final structure /
    final polish / 2x2 preview trial layers.
@@ -7504,40 +7504,6 @@ td,
   white-space:nowrap;
 }
 
-@media(min-width:1180px){
-  .operation-workspace-template .operation-queue-grid{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-  }
-
-  .operation-workspace-template .operation-queue-panel,
-  .operation-workspace-template .operation-unassigned{
-    min-width:0;
-  }
-
-  .operation-workspace-template .operation-case-row{
-    grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
-    gap:10px 14px;
-    padding:12px 0;
-  }
-
-  .operation-workspace-template .operation-case-field.compact{
-    display:none;
-  }
-
-  .operation-workspace-template .operation-case-state{
-    grid-column:1/-1;
-    display:flex;
-    align-items:center;
-    gap:var(--foundation-space-2);
-    justify-items:initial;
-    padding-top:2px;
-  }
-
-  .operation-workspace-template .operation-queue-panel.expanded{
-    grid-column:1/-1;
-  }
-}
-
 @media(max-width:760px){
   .operation-workspace-template .operation-case-row{
     grid-template-columns:repeat(2,minmax(0,1fr));
@@ -7560,8 +7526,8 @@ td,
 /* =========================================================
    OPERATION FOUNDATION COVERAGE — LOCKED
    Status: HIGH
-   Scope: Workspace Header / Toolbar / Scope Switch / Queue /
-   Case Row / Status / Review Header / Review Surfaces /
+   Scope: Workspace Header / Toolbar / Scope Switch / Single-Column Queue /
+   Full-Width Case Row / Status / Review Header / Review Surfaces /
    Review Form Controls / Responsive Behavior.
    Shared visual behavior must resolve from the locked Foundation
    systems. Future structural changes require an explicit Operation
