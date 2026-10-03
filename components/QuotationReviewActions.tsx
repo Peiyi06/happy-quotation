@@ -81,7 +81,6 @@ export default function QuotationReviewActions({
         </div>
         {status==="revision_required"&&reviewNote&&<div className="quotation-workflow-note"><span>{t("Review Note","审核备注")}</span><strong>{reviewNote}</strong></div>}
         {canSubmit&&(status==="draft"||status==="revision_required")&&<div className="simple-workflow-actions">
-          <Link className="btn" href={"/quotations/"+quotationId+"/edit"}>{t("Edit","编辑")}</Link>
           <button className="btn primary" type="button" disabled={Boolean(busy)} onClick={()=>void run("submit")}>
             {busy==="submit"?t("Submitting...","提交中..."):status==="revision_required"?t("Resubmit","重新提交"):t("Submit","提交")}
           </button>
