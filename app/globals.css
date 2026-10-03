@@ -12621,9 +12621,20 @@ td,
 }
 
 /* Thread text uses one shared left scan line across every row/state. */
-.ai-thread-open>.ai-thread-title,
-.ai-thread-open>.ai-thread-meta,
-.ai-thread-open>.ai-thread-time{
+.ai-thread-content{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  display:grid!important;
+  grid-auto-rows:auto!important;
+  align-content:center!important;
+  justify-items:stretch!important;
+  gap:3px!important;
+  text-align:left!important;
+}
+.ai-thread-content>.ai-thread-title,
+.ai-thread-content>.ai-thread-meta,
+.ai-thread-content>.ai-thread-time{
   display:block!important;
   width:100%!important;
   min-width:0!important;
