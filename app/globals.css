@@ -18806,3 +18806,153 @@ td,
     table-layout:fixed!important;
   }
 }
+
+
+/* DASHBOARD — RECENT QUOTATIONS TABLE LIST FOUNDATION 7-COLUMN LOCK
+   Reuses the locked Table List Foundation used by Quotation / Inquiry. */
+.dashboard-recent-panel{
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+
+.dashboard-recent-panel .panel-head{
+  margin:0!important;
+  min-height:52px!important;
+  padding:0 16px!important;
+  border-bottom:1px solid var(--color-border-default)!important;
+}
+
+.dashboard-recent-panel .panel-head h2{
+  margin:0!important;
+  font-size:var(--foundation-type-section)!important;
+}
+
+.dashboard-recent-panel .panel-head a{
+  color:var(--color-brand-primary)!important;
+  font-size:var(--foundation-type-body)!important;
+  font-weight:650!important;
+  text-decoration:none!important;
+}
+
+.dashboard-recent-panel .panel-head a:hover{
+  text-decoration:underline!important;
+  text-underline-offset:2px!important;
+}
+
+.dashboard-recent-panel .data-table-wrap{
+  width:100%!important;
+  min-width:0!important;
+  overflow-x:hidden!important;
+}
+
+.dashboard-recent-table{
+  width:100%!important;
+  min-width:0!important;
+  table-layout:fixed!important;
+  border-collapse:collapse!important;
+}
+
+.dashboard-recent-table th,
+.dashboard-recent-table td{
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  text-align:left!important;
+}
+
+.dashboard-recent-table th{
+  position:static!important;
+  height:42px!important;
+  padding:0 12px!important;
+  background:#fafbfc!important;
+  color:var(--color-text-secondary)!important;
+  border-bottom:1px solid var(--color-border-default)!important;
+  font-size:var(--foundation-type-meta)!important;
+  font-weight:650!important;
+}
+
+.dashboard-recent-table td{
+  min-height:58px!important;
+  padding:10px 12px!important;
+  background:#fff!important;
+  color:var(--color-text-primary)!important;
+  border-bottom:1px solid var(--color-border-default)!important;
+  font-size:var(--foundation-type-body)!important;
+  vertical-align:middle!important;
+}
+
+.dashboard-recent-table tbody tr:last-child td{
+  border-bottom:0!important;
+}
+
+.dashboard-recent-table tbody tr:hover td{
+  background:var(--color-bg-soft)!important;
+}
+
+.dashboard-recent-table .dashboard-quotation-primary a{
+  display:block!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  color:var(--color-brand-primary)!important;
+  font-size:var(--foundation-type-body)!important;
+  font-weight:700!important;
+  text-decoration:none!important;
+}
+
+.dashboard-recent-table .dashboard-quotation-primary a:hover{
+  text-decoration:underline!important;
+  text-underline-offset:2px!important;
+}
+
+.dashboard-recent-table .dashboard-quotation-primary small{
+  display:block!important;
+  margin-top:3px!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  color:var(--color-text-tertiary)!important;
+  font-size:var(--foundation-type-meta)!important;
+  line-height:1.2!important;
+}
+
+.dashboard-recent-table .status{
+  display:inline-flex!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+
+/* 7-column geometry */
+.dashboard-recent-table th:nth-child(1),
+.dashboard-recent-table td:nth-child(1){width:30%!important;}
+.dashboard-recent-table th:nth-child(2),
+.dashboard-recent-table td:nth-child(2){width:13%!important;}
+.dashboard-recent-table th:nth-child(3),
+.dashboard-recent-table td:nth-child(3){width:7%!important;text-align:center!important;}
+.dashboard-recent-table th:nth-child(4),
+.dashboard-recent-table td:nth-child(4){width:14%!important;}
+.dashboard-recent-table th:nth-child(5),
+.dashboard-recent-table td:nth-child(5){width:13%!important;}
+.dashboard-recent-table th:nth-child(6),
+.dashboard-recent-table td:nth-child(6){width:10%!important;}
+.dashboard-recent-table th:nth-child(7),
+.dashboard-recent-table td:nth-child(7){width:13%!important;}
+
+@media(max-width:980px){
+  .dashboard-recent-panel .data-table-wrap{
+    overflow-x:auto!important;
+  }
+
+  .dashboard-recent-table{
+    min-width:900px!important;
+    table-layout:fixed!important;
+  }
+}
