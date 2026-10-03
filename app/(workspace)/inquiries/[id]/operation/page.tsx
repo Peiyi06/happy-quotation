@@ -40,7 +40,7 @@ export default async function OperationReviewPage({
         </div>
       </div>
       <div className="detail-actions">
-        <Link className="btn operation-review-back" href={inquiryHref}><UiText en="← Inquiry" zh="← 询价" /></Link>
+        <Link className="btn operation-review-back" href={inquiryHref}><UiText en="‹ Inquiry" zh="‹ 询价" /></Link>
       </div>
     </div>
     <OperationReviewEditor inquiry={data} canEdit={canEdit} returnTo={returnTo}/>
