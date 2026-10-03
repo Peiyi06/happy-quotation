@@ -19356,9 +19356,12 @@ td,
 
 
 /* =========================================================
-   SPACING FOUNDATION TRIAL — CORE RHYTHM
-   Trial scale: 4 / 8 / 12 / 16 / 24 / 32 / 48
-   Do not treat as locked Foundation until explicitly approved.
+   FOUNDATION SPACING SYSTEM — LOCKED
+   Core scale: 4 / 8 / 12 / 16 / 24 / 32 / 48
+   Applies as the default spacing rhythm for workspace pages,
+   sections, cards, controls, toolbars and responsive padding.
+   Future spacing changes should use these tokens unless an
+   explicit Foundation revision is approved.
    ========================================================= */
 :root{
   --foundation-space-1:4px;
