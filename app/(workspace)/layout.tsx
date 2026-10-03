@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { internalUser } from "@/lib/internalSession";
 import WorkspaceUserMenu from "@/components/WorkspaceUserMenu";
 import NewQuotationMenu from "@/components/NewQuotationMenu";
 import WorkspaceModuleMenu from "@/components/WorkspaceModuleMenu";
+import WorkspaceSidebarLink from "@/components/WorkspaceSidebarLink";
 import {UiText, WorkspaceLanguageProvider} from "@/components/WorkspaceLanguage";
 
 export default async function WorkspaceLayout({ children }: { children: React.ReactNode }) {
@@ -19,18 +19,19 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
           <div><strong>Happy Express</strong><span><UiText en="Quotation Workspace" zh="报价工作区" /></span></div>
         </div>
         <nav className="sidebar-nav">
-          <Link href="/dashboard"><UiText en="Dashboard" zh="仪表板" /></Link>
-          {user.username.toLowerCase() === "long" && <Link href="/ai-lab"><UiText en="AI Workspace Beta" zh="AI 工作区 Beta" /></Link>}
-          <Link href="/inquiries"><UiText en="Inquiry" zh="询价" /></Link>
-          {user.role === "manager" && <Link href="/operation"><UiText en="Operation" zh="运营" /></Link>}
-          <Link href="/products"><UiText en="Product" zh="产品" /></Link>
+          <WorkspaceSidebarLink href="/dashboard"><UiText en="Dashboard" zh="仪表板" /></WorkspaceSidebarLink>
+          {user.username.toLowerCase() === "long" && <WorkspaceSidebarLink href="/ai-lab"><UiText en="AI Workspace Beta" zh="AI 工作区 Beta" /></WorkspaceSidebarLink>}
+          <WorkspaceSidebarLink href="/inquiries"><UiText en="Inquiry" zh="询价" /></WorkspaceSidebarLink>
+          {user.role === "manager" && <WorkspaceSidebarLink href="/operation"><UiText en="Operation" zh="运营" /></WorkspaceSidebarLink>}
+          <WorkspaceSidebarLink href="/products"><UiText en="Product" zh="产品" /></WorkspaceSidebarLink>
           <NewQuotationMenu compact />
-          <Link href="/tour-groups"><UiText en="Tour Group" zh="旅游团" /></Link>
+          <WorkspaceSidebarLink href="/tour-groups"><UiText en="Tour Group" zh="旅游团" /></WorkspaceSidebarLink>
 
           <WorkspaceModuleMenu
             label={{en:"Itinerary",zh:"行程"}}
             kicker={{en:"ITINERARY",zh:"行程"}}
             title={{en:"Itinerary Workspace",zh:"行程工作区"}}
+            activePaths={["/itineraries","/ai-import","/travel-library"]}
             items={[
               {title:{en:"Itinerary Templates",zh:"行程模板"},href:"/itineraries",action:{en:"Open →",zh:"打开 →"}},
               ...(["jess","long"].includes(user.username.toLowerCase())
@@ -44,6 +45,7 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
             label={{en:"Settings",zh:"设置"}}
             kicker={{en:"SETTINGS",zh:"设置"}}
             title={{en:"Workspace Settings",zh:"系统设置"}}
+            activePaths={["/team","/trash","/settings"]}
             items={[
               ...(user.role === "manager"
                 ? [
