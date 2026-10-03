@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { createPortal } from "react-dom";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 
 export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
   const [open,setOpen]=useState(false);
+  const pathname=usePathname();
+  const active=pathname==="/quotations"||pathname.startsWith("/quotations/");
   const {language}=useWorkspaceLanguage();
   const t=(en:string,zh:string)=>language==="zh"?zh:en;
 
@@ -20,7 +23,8 @@ export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
   return <>
     <button
       type="button"
-      className={compact?"sidebar-new-quote sidebar-module-btn":"btn primary"}
+      className={compact?`sidebar-new-quote sidebar-module-btn ${active?"active":""}`:"btn primary"}
+      aria-current={compact&&active?"page":undefined}
       onClick={()=>setOpen(true)}
     >
       <span>{compact?t("Quotation","报价"):t("+ New Quotation","+ 新建报价")}</span>
