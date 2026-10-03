@@ -19118,3 +19118,69 @@ td,
     table-layout:fixed!important;
   }
 }
+
+
+/* PRODUCT LIBRARY — READINESS DENSITY CORRECTION
+   Keep the 7-column Foundation structure while restoring
+   row density and full Readiness labels. */
+.product-library-page .product-table td{
+  height:68px!important;
+  min-height:68px!important;
+  padding:9px 12px!important;
+}
+
+.product-library-page .product-readiness-stack{
+  display:grid!important;
+  gap:3px!important;
+  min-width:0!important;
+  width:100%!important;
+}
+
+.product-library-page .product-readiness-stack>span{
+  display:grid!important;
+  grid-template-columns:minmax(72px,1fr) auto!important;
+  align-items:center!important;
+  gap:8px!important;
+  min-width:0!important;
+}
+
+.product-library-page .product-readiness-stack b{
+  overflow:visible!important;
+  text-overflow:clip!important;
+  white-space:nowrap!important;
+  color:var(--color-text-secondary)!important;
+  font-size:10.5px!important;
+  line-height:1.2!important;
+  font-weight:600!important;
+}
+
+.product-library-page .product-readiness-stack em{
+  min-width:42px!important;
+  color:var(--color-text-tertiary)!important;
+  font-size:10.5px!important;
+  line-height:1.2!important;
+  font-style:normal!important;
+  font-weight:650!important;
+  text-align:right!important;
+  white-space:nowrap!important;
+}
+
+.product-library-page .product-readiness-stack em.ready{
+  color:#4f765a!important;
+}
+
+/* Give Readiness enough room without disturbing the 7-column lock. */
+.product-library-page .product-table th:nth-child(1),
+.product-library-page .product-table td:nth-child(1){width:26%!important;}
+.product-library-page .product-table th:nth-child(2),
+.product-library-page .product-table td:nth-child(2){width:13%!important;}
+.product-library-page .product-table th:nth-child(3),
+.product-library-page .product-table td:nth-child(3){width:10%!important;}
+.product-library-page .product-table th:nth-child(4),
+.product-library-page .product-table td:nth-child(4){width:16%!important;}
+.product-library-page .product-table th:nth-child(5),
+.product-library-page .product-table td:nth-child(5){width:10%!important;}
+.product-library-page .product-table th:nth-child(6),
+.product-library-page .product-table td:nth-child(6){width:16%!important;}
+.product-library-page .product-table th:nth-child(7),
+.product-library-page .product-table td:nth-child(7){width:9%!important;}
