@@ -18296,3 +18296,211 @@ td,
     grid-template-columns:1fr;
   }
 }
+
+
+/* =========================================================
+   QUOTATION EDITOR — FINAL MATRIX 3×2 CARD FOUNDATION
+   Traveller × Leader Mode comparison. Calculation logic is
+   unchanged; Suggested Price is the primary visual result.
+   ========================================================= */
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards{
+  display:grid;
+  gap:12px;
+  margin-top:4px;
+  padding:0;
+  border:0;
+  border-radius:0;
+  overflow:visible;
+  background:transparent;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-row,
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards.has-leader .quotation-matrix-row{
+  display:grid;
+  grid-template-columns:minmax(150px,.62fr) minmax(0,1fr);
+  gap:12px;
+  min-height:0;
+  padding:0;
+  border:0;
+  background:transparent;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards.has-leader .quotation-matrix-row{
+  grid-template-columns:minmax(150px,.62fr) repeat(2,minmax(0,1fr));
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-traveller{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  gap:5px;
+  min-width:0;
+  padding:16px 17px;
+  border:1px solid var(--color-border-default);
+  border-radius:14px;
+  background:#fbfcfd;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-traveller>span{
+  color:var(--color-text-tertiary);
+  font-size:10px;
+  line-height:1.2;
+  font-weight:650;
+  letter-spacing:.055em;
+  text-transform:uppercase;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-traveller>strong,
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-row:not(:first-of-type) .quotation-matrix-traveller>strong{
+  color:var(--color-brand-primary);
+  font-size:14px;
+  line-height:1.3;
+  font-weight:700;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-plan{
+  display:grid;
+  grid-template-columns:1fr;
+  min-width:0;
+  overflow:hidden;
+  border:1px solid var(--color-border-default);
+  border-radius:14px;
+  background:#fff;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-plan:last-child{
+  border-right:1px solid var(--color-border-default);
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-plan-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-height:42px;
+  padding:0 14px;
+  border-bottom:1px solid var(--foundation-comparison-divider-soft);
+  background:#fbfcfd;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-plan-head>span{
+  color:var(--color-text-tertiary);
+  font-size:10px;
+  line-height:1.2;
+  font-weight:600;
+  letter-spacing:.045em;
+  text-transform:uppercase;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-plan-head>strong{
+  color:var(--color-text-secondary);
+  font-size:12px;
+  line-height:1.2;
+  font-weight:700;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-plan-metrics{
+  display:grid;
+  grid-template-columns:minmax(0,.82fr) minmax(0,.82fr) minmax(0,1.36fr);
+  min-width:0;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-metric{
+  min-height:74px;
+  padding:13px 14px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  gap:6px;
+  border-right:1px solid var(--foundation-comparison-divider-soft);
+  background:#fff;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-metric:last-child{
+  border-right:0;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-metric>span{
+  color:var(--foundation-comparison-label);
+  font-size:10px;
+  line-height:1.2;
+  font-weight:550;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-metric>strong,
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-row:not(:first-of-type) .quotation-matrix-metric>strong{
+  color:var(--color-text-primary);
+  font-size:13px;
+  line-height:1.2;
+  font-weight:650;
+  white-space:nowrap;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-metric.suggested{
+  position:relative;
+  background:#f4f8fb;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-metric.suggested::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width:3px;
+  background:#7ea7c4;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-metric.suggested>span{
+  color:#5d7890;
+  font-size:10px;
+  font-weight:650;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-metric.suggested>strong,
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-row:not(:first-of-type) .quotation-matrix-metric.suggested>strong{
+  color:var(--color-brand-primary);
+  font-size:18px;
+  line-height:1.05;
+  font-weight:750;
+  letter-spacing:-.015em;
+}
+
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-row:first-child .quotation-matrix-traveller,
+.quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-row:first-child .quotation-matrix-plan{
+  border-color:#d8e2ea;
+}
+
+@media(max-width:1080px){
+  .quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-row,
+  .quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards.has-leader .quotation-matrix-row{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-traveller{
+    grid-column:1 / -1;
+    min-height:58px;
+    padding:12px 14px;
+  }
+}
+
+@media(max-width:720px){
+  .quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-row,
+  .quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards.has-leader .quotation-matrix-row{
+    grid-template-columns:1fr;
+  }
+
+  .quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-traveller{
+    grid-column:auto;
+  }
+
+  .quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-plan-metrics{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .quotation-editor-shell .quotation-editor-matrix.quotation-matrix-cards .quotation-matrix-metric.suggested{
+    grid-column:1 / -1;
+    min-height:68px;
+    border-top:1px solid var(--foundation-comparison-divider-soft);
+  }
+}
