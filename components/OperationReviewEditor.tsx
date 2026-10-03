@@ -277,7 +277,7 @@ export default function OperationReviewEditor({
     </section>
 
     <div className="detail-actions operation-review-actions">
-      <button className="btn" type="button" onClick={()=>router.push(inquiryHref)}>{t("← Inquiry","← 询价")}</button>
+      <button className="btn" type="button" onClick={()=>router.push(inquiryHref)}>{t("‹ Inquiry","‹ 询价")}</button>
       {canEdit&&<button className="btn primary" type="button" disabled={saving} onClick={()=>void save()}>{saving?t("Saving...","保存中..."):t("Save Operation Review","保存 Operation Review")}</button>}
     </div>
     {message&&<div className="save-message">{message}</div>}
