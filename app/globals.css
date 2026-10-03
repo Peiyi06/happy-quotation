@@ -17176,3 +17176,83 @@ td,
 .workspace-main .quotation-library-template .quotation-table .status-confirmed{
   border:1px solid transparent!important;
 }
+
+
+/* =========================================================
+   QUOTATION LIBRARY — FOUNDATION MASTER LOCK
+   LOCKED RULES
+   1. A library table exposes no more than 7 primary columns.
+      Extra information belongs in secondary text or Detail.
+   2. Normal workflow status vocabulary stays compact:
+      Draft / Review / Ready / Confirmed.
+      Exception states may remain explicit (e.g. Revision Required).
+   3. This block is the final authority for Quotation Library
+      density and status presentation unless the Foundation itself
+      is intentionally revised.
+   ========================================================= */
+.workspace-main .quotation-library-template .quotation-table{
+  width:100%!important;
+  min-width:0!important;
+  table-layout:fixed!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table th,
+.workspace-main .quotation-library-template .quotation-table td{
+  font-size:var(--foundation-type-body)!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table .status{
+  min-height:28px!important;
+  padding:0 10px!important;
+  border-radius:999px!important;
+  font-size:var(--foundation-type-meta)!important;
+  line-height:26px!important;
+  font-weight:650!important;
+  box-shadow:none!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table .status-draft{
+  background:#f1f2f5!important;
+  border:1px solid transparent!important;
+  color:#6d737c!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table .status-under_review{
+  background:#f3f7fa!important;
+  border:1px solid #d8e4ec!important;
+  color:#426b8a!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table .status-ready{
+  background:#eef6f0!important;
+  border:1px solid #d6e8db!important;
+  color:#4e7559!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table .status-confirmed{
+  background:#eef6f0!important;
+  border:1px solid transparent!important;
+  color:#3f6d4c!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table .status-revision_required{
+  background:#fff6e8!important;
+  border:1px solid #efdcbc!important;
+  color:#8a6528!important;
+}
+
+/* Current locked 6-column Quotation Library layout.
+   It may grow to 7 columns maximum, never beyond that without
+   an explicit Foundation change. */
+.workspace-main .quotation-library-template .quotation-table th:nth-child(1),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(1){width:14%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(2),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(2){width:38%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(3),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(3){width:18%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(4),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(4){width:6%!important;text-align:center!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(5),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(5){width:12%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(6),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(6){width:12%!important;}
