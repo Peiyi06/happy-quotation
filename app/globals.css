@@ -14596,10 +14596,6 @@ td,
   font-size:14px;
 }
 
-.inquiry-library-template .panel{
-  box-shadow:none;
-}
-
 .inquiry-library-template .filter-bar{
   grid-template-columns:minmax(0,2fr) minmax(180px,.75fr) auto!important;
   gap:10px!important;
@@ -16140,10 +16136,6 @@ td,
 }
 
 /* Workflow advances state; it no longer duplicates Save. */
-.quotation-editor-shell .quotation-editor-workflow{
-  margin-top:0!important;
-}
-
 .quotation-editor-shell .quotation-editor-workflow .simple-workflow-actions{
   align-items:center!important;
 }
@@ -18273,7 +18265,8 @@ td,
    Foundation-aligned visual refinement only; workflow logic unchanged. */
 .quotation-editor-shell .quotation-save-state{
   gap:14px!important;
-  margin:14px 0 10px!important;
+  margin-top:var(--foundation-space-4)!important;
+  margin-bottom:var(--foundation-space-3)!important;
   padding:10px 12px 10px 14px!important;
   min-height:58px!important;
   border-radius:11px!important;
@@ -18310,6 +18303,7 @@ td,
 
 /* Workflow becomes a compact process strip rather than three dashboard cards. */
 .quotation-editor-shell .quotation-editor-workflow{
+  margin-top:0!important;
   padding:18px 22px!important;
   border-radius:16px!important;
 }
@@ -18430,6 +18424,7 @@ td,
    desktop avoids horizontal-scroll-first behavior. */
 .inquiry-library-template .panel{
   margin:0!important;
+  margin-bottom:0!important;
   padding:0!important;
   overflow:hidden!important;
   border:1px solid var(--color-border-default)!important;
@@ -18567,7 +18562,7 @@ td,
 .dashboard-recent-panel .panel-head{
   margin:0!important;
   min-height:52px!important;
-  padding:0 16px!important;
+  padding:0 var(--foundation-space-4)!important;
   border-bottom:1px solid var(--color-border-default)!important;
 }
 
@@ -19138,11 +19133,6 @@ td,
   margin-bottom:var(--foundation-space-6)!important;
 }
 
-.dashboard-recent-panel .panel-head{
-  padding-left:var(--foundation-space-4)!important;
-  padding-right:var(--foundation-space-4)!important;
-}
-
 /* Product create form: consistent field and action spacing. */
 .product-library-page .product-create-grid{
   gap:var(--foundation-space-3)!important;
@@ -19158,24 +19148,11 @@ td,
   display:block;
 }
 
-.inquiry-library-template .panel{
-  margin-bottom:0!important;
-}
-
 /* Quotation editor: section rhythm and bottom action flow. */
 .quotation-editor-shell .section,
 .quotation-editor-shell .panel{
   margin-top:var(--foundation-space-4);
   margin-bottom:var(--foundation-space-4);
-}
-
-.quotation-editor-shell .quotation-save-state{
-  margin-top:var(--foundation-space-4)!important;
-  margin-bottom:var(--foundation-space-3)!important;
-}
-
-.quotation-editor-shell .quotation-editor-workflow{
-  margin-top:0!important;
 }
 
 .quotation-editor-shell .quotation-workflow-compact-head{
