@@ -12,7 +12,7 @@ export default async function NewInquiryPage(){
         <p><UiText en="Create the customer case record used by Operation, Itinerary and Quotation." zh="建立客户案件主档案，后续 Operation / Itinerary / Quotation 共用。" /></p>
       </div>
       <div className="detail-actions new-inquiry-head-actions">
-        <Link className="btn new-inquiry-back-action" href="/inquiries"><UiText en="← Back" zh="← 返回" /></Link>
+        <Link className="btn new-inquiry-back-action" href="/inquiries"><UiText en="‹ Back" zh="‹ 返回" /></Link>
       </div>
     </div>
     <InquiryEditor currentStaffName={user?.name||""}/>
