@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { createPortal } from "react-dom";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 
@@ -19,8 +20,11 @@ export default function WorkspaceModuleMenu({
   kicker,
   title,
   items,
-}:{label:Bilingual;kicker:Bilingual;title:Bilingual;items:ModuleItem[]}) {
+  activePaths=[],
+}:{label:Bilingual;kicker:Bilingual;title:Bilingual;items:ModuleItem[];activePaths?:string[]}) {
   const [open,setOpen]=useState(false);
+  const pathname=usePathname();
+  const active=activePaths.some(path=>pathname===path||pathname.startsWith(path+"/"));
   const {language}=useWorkspaceLanguage();
   const pick=(value:Bilingual)=>value[language];
 
@@ -32,7 +36,7 @@ export default function WorkspaceModuleMenu({
   },[open]);
 
   return <>
-    <button type="button" className="sidebar-module-btn" onClick={()=>setOpen(true)}>
+    <button type="button" className={"sidebar-module-btn "+(active?"active":"")} aria-current={active?"page":undefined} onClick={()=>setOpen(true)}>
       <span>{pick(label)}</span><span className="sidebar-module-chevron">›</span>
     </button>
 
