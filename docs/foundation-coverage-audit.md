@@ -28,7 +28,7 @@ The audit is intentionally structural. A high duplicate-selector count does not 
 | Quotation | High / Medium debt | Visual Foundation is mature: workflow, comparison cards, actions, navigation and table list are locked. Historical quotation CSS still has several older geometry/shell layers. | Medium |
 | Inquiry | Medium-High | Library is mature and locked. Inquiry detail/new/edit flows still contain several older local layouts and button/workflow overrides. | Medium |
 | Itinerary | Medium | Functional UI is stable but editor/detail styles still contain many local hard-coded dimensions and repeated selectors. | High |
-| Operation | Medium-Low | Largest duplicate-selector concentration in core workspace rows/state/queue structures. Strong candidate for the next controlled consolidation pass. | Highest |
+| Operation | High | Queue/list, header, toolbar, scope switch and review surfaces are consolidated onto locked Foundation systems. Remaining older base declarations are compatibility-only and no longer define final presentation. | Low |
 | AI Workspace | Medium-Low | Many repeated sidebar/thread/workbench rules accumulated through iterative refinement. Visually refined but cascade-heavy. | Highest |
 
 ## Duplicate Selector Signals
@@ -69,12 +69,11 @@ Key repeated selectors found during the audit:
 
 ## Recommended Migration Order
 
-1. Operation workspace
-2. AI Workspace
-3. Itinerary editor/detail
-4. Inquiry detail/new/edit
-5. Quotation historical cleanup
-6. Dashboard/Product final polish only
+1. AI Workspace
+2. Itinerary editor/detail
+3. Inquiry detail/new/edit
+4. Quotation historical cleanup
+5. Dashboard/Product final polish only
 
 ## Consolidation Rule
 
