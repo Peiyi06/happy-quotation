@@ -3587,10 +3587,6 @@ button,
 .ai-lab-context,.ai-lab-context *{max-width:100%}
 .ai-lab-context button,.ai-lab-context a{min-width:0}
 
-.ai-thread-archive,
-
-
-
 /* Workspace sidebar viewport + internal scrolling fix */
 @media(min-width:761px){
   .workspace{
