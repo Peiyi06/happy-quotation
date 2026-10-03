@@ -19184,3 +19184,175 @@ td,
 .product-library-page .product-table td:nth-child(6){width:16%!important;}
 .product-library-page .product-table th:nth-child(7),
 .product-library-page .product-table td:nth-child(7){width:9%!important;}
+
+
+/* =========================================================
+   INTERACTION FOUNDATION TRIAL — ACTION SYSTEM
+   Trial scope:
+   - Create Product
+   - Save Quotation
+   - Submit for Review
+   - More (icon-only)
+   - Reset Quotation
+   Do not treat as locked Foundation until explicitly approved.
+   ========================================================= */
+:root{
+  --foundation-action-height:38px;
+  --foundation-action-radius:10px;
+  --foundation-action-gap:8px;
+  --foundation-action-pad-x:14px;
+  --foundation-action-font:12px;
+  --foundation-action-weight:700;
+
+  --foundation-action-primary-bg:var(--color-brand-primary);
+  --foundation-action-primary-bg-hover:var(--color-brand-primary-hover);
+  --foundation-action-primary-text:#fff;
+
+  --foundation-action-secondary-bg:#fff;
+  --foundation-action-secondary-bg-hover:var(--color-bg-soft);
+  --foundation-action-secondary-border:var(--color-border-default);
+  --foundation-action-secondary-border-hover:var(--color-border-strong);
+  --foundation-action-secondary-text:var(--color-text-primary);
+
+  --foundation-action-danger-bg:#fff;
+  --foundation-action-danger-bg-hover:#fff7f5;
+  --foundation-action-danger-border:#efcbc5;
+  --foundation-action-danger-border-hover:#e2aaa1;
+  --foundation-action-danger-text:var(--color-danger-text,#9b2d24);
+
+  --foundation-action-disabled-bg:#e9eef2;
+  --foundation-action-disabled-border:#d8e0e6;
+  --foundation-action-disabled-text:#8796a1;
+}
+
+/* Shared trial geometry */
+.product-page-head .product-create-btn,
+.quotation-editor-shell .quotation-save-state .btn.primary,
+.quotation-editor-shell .quotation-editor-workflow .simple-workflow-actions .btn.primary,
+.quotation-editor-shell .quotation-header-more-trigger{
+  min-height:var(--foundation-action-height)!important;
+  height:var(--foundation-action-height)!important;
+  border-radius:var(--foundation-action-radius)!important;
+  font-size:var(--foundation-action-font)!important;
+  font-weight:var(--foundation-action-weight)!important;
+  line-height:1!important;
+  box-shadow:none!important;
+  transition:
+    background-color .16s ease,
+    border-color .16s ease,
+    color .16s ease,
+    transform .12s ease,
+    opacity .16s ease!important;
+}
+
+/* Primary */
+.product-page-head .product-create-btn.primary,
+.quotation-editor-shell .quotation-save-state .btn.primary:not(:disabled),
+.quotation-editor-shell .quotation-editor-workflow .simple-workflow-actions .btn.primary:not(:disabled){
+  padding:0 var(--foundation-action-pad-x)!important;
+  border:1px solid var(--foundation-action-primary-bg)!important;
+  background:var(--foundation-action-primary-bg)!important;
+  color:var(--foundation-action-primary-text)!important;
+}
+
+.product-page-head .product-create-btn.primary:hover,
+.quotation-editor-shell .quotation-save-state .btn.primary:not(:disabled):hover,
+.quotation-editor-shell .quotation-editor-workflow .simple-workflow-actions .btn.primary:not(:disabled):hover{
+  border-color:var(--foundation-action-primary-bg-hover)!important;
+  background:var(--foundation-action-primary-bg-hover)!important;
+  transform:none!important;
+}
+
+.product-page-head .product-create-btn.primary:active,
+.quotation-editor-shell .quotation-save-state .btn.primary:not(:disabled):active,
+.quotation-editor-shell .quotation-editor-workflow .simple-workflow-actions .btn.primary:not(:disabled):active{
+  transform:scale(.985)!important;
+}
+
+/* Secondary state for Create Product when panel is already open ("Close"). */
+.product-page-head .product-create-btn:not(.primary){
+  padding:0 var(--foundation-action-pad-x)!important;
+  border:1px solid var(--foundation-action-secondary-border)!important;
+  background:var(--foundation-action-secondary-bg)!important;
+  color:var(--foundation-action-secondary-text)!important;
+}
+
+.product-page-head .product-create-btn:not(.primary):hover{
+  border-color:var(--foundation-action-secondary-border-hover)!important;
+  background:var(--foundation-action-secondary-bg-hover)!important;
+}
+
+/* Disabled: same language across Save / Workflow trial actions. */
+.quotation-editor-shell .quotation-save-state .btn.primary:disabled,
+.quotation-editor-shell .quotation-editor-workflow .simple-workflow-actions .btn.primary:disabled{
+  opacity:1!important;
+  border:1px solid var(--foundation-action-disabled-border)!important;
+  background:var(--foundation-action-disabled-bg)!important;
+  color:var(--foundation-action-disabled-text)!important;
+  cursor:not-allowed!important;
+  transform:none!important;
+}
+
+/* Loading: keep stable width and remove jumpy visual changes. */
+.quotation-editor-shell .quotation-save-state .btn.primary[disabled],
+.product-create-panel .product-create-actions .btn.primary[disabled]{
+  min-width:112px;
+}
+
+/* Icon-only More */
+.quotation-editor-shell .quotation-header-more-trigger{
+  width:var(--foundation-action-height)!important;
+  min-width:var(--foundation-action-height)!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+  border:1px solid var(--foundation-action-secondary-border)!important;
+  background:var(--foundation-action-secondary-bg)!important;
+  color:var(--color-text-secondary)!important;
+  letter-spacing:.08em!important;
+}
+
+.quotation-editor-shell .quotation-header-more-trigger:hover{
+  border-color:var(--foundation-action-secondary-border-hover)!important;
+  background:var(--foundation-action-secondary-bg-hover)!important;
+  color:var(--color-text-primary)!important;
+}
+
+.quotation-editor-shell .quotation-header-more-trigger:active{
+  transform:scale(.97)!important;
+}
+
+/* Destructive item inside More menu */
+.quotation-editor-shell .quotation-header-reset{
+  min-height:38px!important;
+  border-radius:9px!important;
+  color:var(--foundation-action-danger-text)!important;
+  background:transparent!important;
+  font-size:var(--foundation-action-font)!important;
+  font-weight:650!important;
+}
+
+.quotation-editor-shell .quotation-header-reset:hover{
+  background:var(--foundation-action-danger-bg-hover)!important;
+  color:var(--foundation-action-danger-text)!important;
+}
+
+/* Visible focus for keyboard navigation */
+.product-page-head .product-create-btn:focus-visible,
+.quotation-editor-shell .quotation-save-state .btn.primary:focus-visible,
+.quotation-editor-shell .quotation-editor-workflow .simple-workflow-actions .btn.primary:focus-visible,
+.quotation-editor-shell .quotation-header-more-trigger:focus-visible,
+.quotation-editor-shell .quotation-header-reset:focus-visible{
+  outline:0!important;
+  box-shadow:0 0 0 3px var(--color-focus-soft)!important;
+}
+
+/* Respect reduced motion. */
+@media(prefers-reduced-motion:reduce){
+  .product-page-head .product-create-btn,
+  .quotation-editor-shell .quotation-save-state .btn.primary,
+  .quotation-editor-shell .quotation-editor-workflow .simple-workflow-actions .btn.primary,
+  .quotation-editor-shell .quotation-header-more-trigger{
+    transition:none!important;
+  }
+}
