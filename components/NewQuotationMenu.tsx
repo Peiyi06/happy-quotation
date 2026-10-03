@@ -38,49 +38,46 @@ export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
           <button type="button" className="quotation-type-close" onClick={()=>setOpen(false)} aria-label={t("Close","关闭")}>×</button>
         </div>
 
-        <div className="quotation-type-grid workspace-module-grid">
-          <Link href="/quotations" className="quotation-type-card available" onClick={()=>setOpen(false)}>
+        <div className="quotation-type-primary-grid">
+          <Link href="/quotations" className="quotation-type-primary-card library" onClick={()=>setOpen(false)}>
             <div className="quotation-type-card-top">
               <span className="quotation-type-index">01</span>
               <span className="quotation-type-status available">{t("Available","可使用")}</span>
             </div>
-            <div>
+            <div className="quotation-type-card-copy">
               <h3>{t("My Quotations","我的报价")}</h3>
+              <p>{t("Open and manage saved quotation records.","打开并管理已保存的报价记录。")}</p>
             </div>
-            <span className="quotation-type-enter">{t("Open →","打开 →")}</span>
+            <span className="quotation-type-enter">{t("Open Library →","打开资料库 →")}</span>
           </Link>
 
-          <Link href="/quotations/new" className="quotation-type-card available" onClick={()=>setOpen(false)}>
+          <Link href="/quotations/new" className="quotation-type-primary-card create" onClick={()=>setOpen(false)}>
             <div className="quotation-type-card-top">
               <span className="quotation-type-index">02</span>
               <span className="quotation-type-status available">{t("Available","可使用")}</span>
             </div>
-            <div>
+            <div className="quotation-type-card-copy">
               <h3>{t("Outbound","出境旅游")}</h3>
+              <p>{t("Create a new outbound tour quotation.","建立新的出境旅游报价。")}</p>
             </div>
-            <span className="quotation-type-enter">{t("Create →","建立 →")}</span>
+            <span className="quotation-type-enter">{t("Create Quotation →","建立报价 →")}</span>
           </Link>
+        </div>
 
-          <div className="quotation-type-card coming" aria-disabled="true">
-            <div className="quotation-type-card-top">
+        <div className="quotation-type-coming-list" aria-label={t("Coming soon modules","即将推出模块")}>
+          <div className="quotation-type-coming-row" aria-disabled="true">
+            <div>
               <span className="quotation-type-index">03</span>
-              <span className="quotation-type-status">{t("Coming Soon","即将推出")}</span>
+              <strong>{t("Inbound","入境旅游")}</strong>
             </div>
-            <div>
-              <h3>{t("Inbound","入境旅游")}</h3>
-            </div>
-            <span className="quotation-type-enter muted">{t("Setup","设置")}</span>
+            <span className="quotation-type-status">{t("Coming Soon","即将推出")}</span>
           </div>
-
-          <div className="quotation-type-card coming" aria-disabled="true">
-            <div className="quotation-type-card-top">
-              <span className="quotation-type-index">04</span>
-              <span className="quotation-type-status">{t("Coming Soon","即将推出")}</span>
-            </div>
+          <div className="quotation-type-coming-row" aria-disabled="true">
             <div>
-              <h3>{t("Island","海岛旅游")}</h3>
+              <span className="quotation-type-index">04</span>
+              <strong>{t("Island","海岛旅游")}</strong>
             </div>
-            <span className="quotation-type-enter muted">{t("Setup","设置")}</span>
+            <span className="quotation-type-status">{t("Coming Soon","即将推出")}</span>
           </div>
         </div>
       </div>
