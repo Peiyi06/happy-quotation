@@ -6,6 +6,7 @@ import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 export default function QuotationRowActions({id}:{id:string}){
   const router=useRouter();
   const [busy,setBusy]=useState(false);
+  const [open,setOpen]=useState(false);
   const {language}=useWorkspaceLanguage();
   const t=(en:string,zh:string)=>language==="zh"?zh:en;
 
@@ -26,7 +27,25 @@ export default function QuotationRowActions({id}:{id:string}){
     router.refresh();
   }
 
-  return <button className="danger-link" disabled={busy} onClick={hideQuotation}>
-    {busy?t("Hiding...","处理中..."):t("Delete","删除")}
-  </button>;
+  return <div className="quotation-row-actions">
+    <button
+      className="quotation-row-more-trigger"
+      type="button"
+      aria-expanded={open}
+      aria-label={t("More actions","更多操作")}
+      onClick={()=>setOpen(v=>!v)}
+    >
+      •••
+    </button>
+    {open&&<div className="quotation-row-more-menu">
+      <button
+        className="quotation-row-delete"
+        type="button"
+        disabled={busy}
+        onClick={()=>{setOpen(false);void hideQuotation();}}
+      >
+        {busy?t("Hiding...","处理中..."):t("Delete","删除")}
+      </button>
+    </div>}
+  </div>;
 }
