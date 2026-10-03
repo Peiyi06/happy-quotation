@@ -11193,10 +11193,6 @@ td,
 }
 
 /* Context/thread sidebar stays a separate work surface, but quieter. */
-.ai-lab-context{
-  border-left:1px solid var(--color-border-default)!important;
-  background:var(--color-bg-soft)!important;
-}
 .ai-thread-panel{
   box-shadow:none!important;
 }
@@ -11265,9 +11261,6 @@ td,
 .ai-lab-main{
   min-width:0;
 }
-.ai-lab-context{
-  min-width:0;
-}
 
 /* Header becomes a slim workbench bar. */
 
@@ -11298,12 +11291,6 @@ td,
 /* Composer stays visually attached to the conversation. */
 
 /* Sidebar: auxiliary panel, not a second main page. */
-.ai-lab-context{
-  border:1px solid var(--color-border-default)!important;
-  border-radius:12px!important;
-  background:var(--color-bg-surface)!important;
-  overflow:hidden!important;
-}
 .ai-thread-panel{
   padding:0!important;
   background:transparent!important;
@@ -11356,26 +11343,6 @@ td,
 /* Thread row presentation is owned by the final Sidebar Foundation pass. */
 
 /* Current Context reads as a separate lightweight section. */
-.ai-lab-context-section{
-  margin:0!important;
-  padding:12px!important;
-  border-top:1px solid var(--color-border-default)!important;
-  background:var(--color-bg-soft)!important;
-}
-.ai-lab-context-head{
-  margin:0 0 8px!important;
-  padding:0 0 8px!important;
-  border-bottom:1px solid var(--color-border-default)!important;
-}
-.ai-lab-context-head>span{
-  color:var(--color-text-tertiary)!important;
-  font-size:8.5px!important;
-  letter-spacing:.07em!important;
-}
-.ai-lab-context-head>strong{
-  font-size:14px!important;
-  color:var(--color-text-primary)!important;
-}
 .ai-lab-context-empty{
   margin:0!important;
   color:var(--color-text-secondary)!important;
@@ -11466,13 +11433,6 @@ td,
 .ai-thread-view-switch{
   margin-bottom:6px!important;
 }
-.ai-lab-context-section{
-  padding:10px 12px!important;
-}
-.ai-lab-context-head{
-  margin-bottom:6px!important;
-  padding-bottom:6px!important;
-}
 .ai-lab-safety-toggle{
   min-height:40px!important;
 }
@@ -11526,10 +11486,6 @@ td,
 
 /* Current Context already has the right content density; only align
    its spacing with the refined sidebar rhythm. */
-.ai-lab-context-section{
-  padding-top:9px!important;
-  padding-bottom:9px!important;
-}
 
 @media(max-width:1100px){
   .ai-lab-main{
@@ -11921,41 +11877,9 @@ td,
    AI LAB — RIGHT RAIL HIERARCHY
    Keep Threads primary; Current Context and Safety stay secondary.
    ========================================================= */
-.ai-lab-context-section{
-  padding:10px 14px!important;
-  background:var(--color-bg-surface)!important;
-}
 
-.ai-lab-context-head{
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr) auto!important;
-  grid-template-areas:
-    "label state";
-  align-items:center!important;
-  gap:10px!important;
-  margin:0!important;
-  padding:0!important;
-  border-bottom:0!important;
-}
 
-.ai-lab-context-head>span{
-  grid-area:label;
-  margin:0!important;
-  color:var(--color-text-tertiary)!important;
-  font-size:8.25px!important;
-  font-weight:700!important;
-  letter-spacing:.065em!important;
-}
 
-.ai-lab-context-head>strong{
-  grid-area:state;
-  margin:0!important;
-  color:var(--color-text-primary)!important;
-  font-size:11.5px!important;
-  font-weight:650!important;
-  line-height:1.25!important;
-  text-align:right;
-}
 
 .ai-lab-context-section>.ai-lab-context-empty{
   margin:5px 0 0!important;
@@ -12665,6 +12589,8 @@ td,
 
 /* Rail shell */
 .ai-lab-context{
+  min-width:0;
+  overflow:hidden!important;
   border:1px solid var(--color-border-default)!important;
   border-radius:16px!important;
   background:var(--color-bg-surface)!important;
@@ -12901,6 +12827,7 @@ td,
 .ai-lab-context-head{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) auto!important;
+  grid-template-areas:"label state";
   align-items:center!important;
   gap:10px!important;
   margin:0!important;
@@ -12908,6 +12835,8 @@ td,
   border:0!important;
 }
 .ai-lab-context-head>span{
+  grid-area:label;
+  margin:0!important;
   color:var(--color-text-tertiary)!important;
   font-size:8.25px!important;
   line-height:1!important;
@@ -12915,6 +12844,8 @@ td,
   letter-spacing:.065em!important;
 }
 .ai-lab-context-head>strong{
+  grid-area:state;
+  margin:0!important;
   color:var(--color-text-primary)!important;
   font-size:11.25px!important;
   line-height:1.2!important;
