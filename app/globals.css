@@ -7878,8 +7878,8 @@ td,
   box-shadow:none;
 }
 .itinerary-editor .itinerary-day-head{
-  min-height:64px;
-  padding:14px 16px;
+  min-height:56px;
+  padding:11px 14px;
   border-bottom:1px solid var(--color-border-default);
   background:var(--color-bg-surface);
 }
@@ -8210,9 +8210,6 @@ td,
   }
 }
 @media(max-width:760px){
-  .itinerary-editor .itinerary-attraction-summary{
-    grid-template-columns:30px 44px minmax(0,1fr);
-  }
   .itinerary-editor .itinerary-attraction-summary-actions{
     grid-column:1/-1;
     justify-content:flex-start;
@@ -8436,18 +8433,19 @@ td,
    ITINERARY EDITOR — ACTION DENSITY + COMPACT SUMMARY POLISH
    ========================================================= */
 .itinerary-editor .itinerary-add-action{
-  min-height:34px!important;
-  height:34px;
-  padding:0 11px!important;
+  min-height:32px!important;
+  height:32px!important;
+  padding:0 10px!important;
   border-color:var(--color-border-default)!important;
-  background:var(--color-bg-surface)!important;
+  background:transparent!important;
   color:var(--color-text-secondary)!important;
-  font-size:11px!important;
+  font-size:10px!important;
   font-weight:650!important;
   box-shadow:none!important;
 }
 .itinerary-editor .itinerary-add-action:hover{
   background:var(--color-bg-soft)!important;
+  border-color:var(--color-border-strong)!important;
   color:var(--color-text-primary)!important;
 }
 
@@ -8517,10 +8515,6 @@ td,
 }
 
 /* Day card: keep only state + disclosure visible in the header. */
-.itinerary-editor .itinerary-day-head{
-  min-height:56px;
-  padding:11px 14px;
-}
 .itinerary-editor .day-summary-primary{
   gap:2px;
 }
@@ -8591,21 +8585,6 @@ td,
   border-top-color:#E7C7C3!important;
 }
 
-.itinerary-editor .itinerary-add-action{
-  min-height:32px!important;
-  height:32px!important;
-  padding:0 10px!important;
-  border-color:var(--color-border-default)!important;
-  background:transparent!important;
-  color:var(--color-text-secondary)!important;
-  font-size:10px!important;
-  font-weight:650!important;
-}
-.itinerary-editor .itinerary-add-action:hover{
-  background:var(--color-bg-soft)!important;
-  border-color:var(--color-border-strong)!important;
-  color:var(--color-text-primary)!important;
-}
 
 .itinerary-editor .itinerary-section-title{
   display:flex;
