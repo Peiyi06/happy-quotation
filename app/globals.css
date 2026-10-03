@@ -427,12 +427,12 @@
 .itinerary-table{min-width:980px}
 .itinerary-summary-cards .dash-card b{font-size:18px;line-height:1.3}
 .itinerary-detail-list{display:grid;gap:14px}
-.itinerary-detail-day{display:grid;grid-template-columns:82px 1fr;gap:18px;border:1px solid var(--line);border-radius:14px;padding:18px;background:#fbfcfd}
+.itinerary-detail-day{display:grid;grid-template-columns:82px 1fr;gap:18px;border:1px solid var(--line);border-radius:var(--radius-md);padding:18px;background:#fbfcfd}
 .itinerary-detail-day-no{border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:center}
-.itinerary-detail-day-no span{font-size:10px;letter-spacing:.16em;color:var(--gold);font-weight:900}
+.itinerary-detail-day-no span{font-size:10px;letter-spacing:.16em;color:var(--color-text-tertiary)!important;font-weight:900}
 .itinerary-detail-day-no strong{font-size:28px;color:var(--navy2)}
 .itinerary-detail-day-content h3{margin:0 0 9px;color:var(--navy2);font-size:18px}
-.itinerary-detail-day-content p{margin:0;color:#465766;line-height:1.7;white-space:pre-wrap}
+.itinerary-detail-day-content p{margin:0;color:var(--color-text-primary);line-height:1.7;white-space:pre-wrap}
 .itinerary-delete-btn{background:#fff4f2;color:var(--red);border:1px solid #f2c7c2}
 .itinerary-editor .field input,.itinerary-editor .field select{height:48px}
 @media(max-width:1150px){.itinerary-meta-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -463,7 +463,7 @@
 .itinerary-detail-attractions{margin-top:16px}
 .itinerary-detail-attractions h4{margin:0 0 10px;color:var(--navy2);font-size:14px}
 .itinerary-detail-attraction-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.itinerary-detail-attraction{border:1px solid var(--line);border-radius:10px;background:white;overflow:hidden}
+.itinerary-detail-attraction{border:1px solid var(--color-border-default);border-radius:10px;background:var(--color-bg-surface);overflow:hidden}
 .itinerary-detail-attraction img{width:100%;height:140px;object-fit:cover;display:block}
 .itinerary-detail-attraction strong{display:block;padding:9px 10px;color:var(--navy2);font-size:12px}
 @media(max-width:1100px){.itinerary-attraction-row{grid-template-columns:42px 1fr 1fr}.itinerary-attraction-preview,.itinerary-attraction-actions{grid-column:2/-1}.itinerary-detail-meta{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -5891,9 +5891,6 @@ body{
 .tour-card>span,
 .itinerary-code-preview,
 .itinerary-day-head span,
-.itinerary-detail-day-no span{
-  color:var(--color-text-tertiary)!important;
-}
 
 /* Shared typography colors */
 .page-head h1,
@@ -6281,17 +6278,7 @@ td,
 
 /* Itinerary */
 .itinerary-day-card,
-.itinerary-detail-day{
-  border-radius:var(--radius-md);
-}
-.itinerary-detail-day-content p{
-  color:var(--color-text-primary);
-}
 .itinerary-detail-meta>div,
-.itinerary-detail-attraction{
-  background:var(--color-bg-surface);
-  border-color:var(--color-border-default);
-}
 .itinerary-package-card.included{
   border-top-color:var(--color-success-text);
 }
