@@ -87,3 +87,25 @@ For each module:
 7. Verify production build after every controlled pass.
 
 Do not perform a large all-at-once rewrite of globals.css.
+
+## AI Workspace Phase 1 Lock
+
+Status: In progress, guarded consolidation.
+
+Completed:
+- Thread presentation was consolidated under the final Sidebar Foundation authority.
+- Superseded thread presentation layers were removed without changing thread/context/memory/action behavior.
+- The right rail remains governed by the Apple/iOS + Foundation visual system already approved in the live UI.
+- Production deployment for the thread consolidation passed.
+
+Locked constraints for the remaining AI Workspace cleanup:
+- Do not flatten responsive or state-scoped rules into base selectors.
+- Do not change confirm-before-write behavior.
+- Do not redesign the current AI Workspace.
+- Preserve sidebar collapse, empty-state, reduced-motion, short-viewport, and mobile behavior.
+- Remove historical overrides only when their final computed effect is already represented by the canonical Foundation rule.
+
+Audit rule:
+- Duplicate selector counts are signals, not automatic deletion targets.
+- Media/state-specific duplicates are allowed when they express real responsive or interaction behavior.
+- A consolidation pass must preserve selector scope and cascade order.
