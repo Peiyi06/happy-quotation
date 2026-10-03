@@ -8091,6 +8091,7 @@ td,
   font-weight:650;
 }
 .itinerary-editor .itinerary-attraction-summary-actions .disclosure-action{
+  padding:0 7px;
   border-color:transparent;
   color:var(--color-link);
 }
@@ -8485,10 +8486,6 @@ td,
   z-index:40;
   width:150px;
   padding:6px;
-  border:1px solid var(--color-border-default);
-  border-radius:var(--radius-md);
-  background:var(--color-bg-surface);
-  box-shadow:var(--shadow-elevated);
 }
 .itinerary-editor .itinerary-more-menu-popover button{
   display:flex!important;
@@ -8556,10 +8553,6 @@ td,
 .itinerary-editor .itinerary-attraction-index{
   width:30px;
   height:30px;
-}
-.itinerary-editor .itinerary-attraction-summary-actions>.disclosure-action{
-  min-height:30px;
-  padding:0 7px;
 }
 
 /* Hotel summary uses the same compact action language. */
