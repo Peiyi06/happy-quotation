@@ -400,11 +400,13 @@ export default function AiLabWorkspace(){
               ? <div className="ai-thread-list">
                   {threads.map(thread=><div key={thread.id} className={"ai-thread-item "+(threadId===thread.id?"active":"")}>
                     <button type="button" className="ai-thread-open" onClick={()=>void openThread(thread.id)}>
-                      <span className="ai-thread-title">{thread.title||(language==="zh"?"未命名对话":"Untitled Thread")}</span>
-                      {(thread.destination||thread.inquiry_status)&&<span className="ai-thread-meta">
+                      <span className="ai-thread-content">
+                        <span className="ai-thread-title">{thread.title||(language==="zh"?"未命名对话":"Untitled Thread")}</span>
+                        {(thread.destination||thread.inquiry_status)&&<span className="ai-thread-meta">
   {[thread.destination,thread.inquiry_status].filter(Boolean).join(" · ")}
 </span>}
-                      <span className="ai-thread-time">{thread.last_active_at?new Date(thread.last_active_at).toLocaleString(): ""}</span>
+                        <span className="ai-thread-time">{thread.last_active_at?new Date(thread.last_active_at).toLocaleString(): ""}</span>
+                      </span>
                     </button>
                     <button type="button" className="ai-thread-archive" aria-label={t("Archive thread","归档对话")} title={t("Archive Thread","归档对话")} onClick={()=>void setThreadArchived(thread.id,true)}>
                       <span aria-hidden="true">⌄</span>
@@ -416,11 +418,13 @@ export default function AiLabWorkspace(){
               ? <div className="ai-thread-list archived">
                   {archivedThreads.map(thread=><div key={thread.id} className="ai-thread-item archived-item">
                     <button type="button" className="ai-thread-open" onClick={()=>void openThread(thread.id)}>
-                      <span className="ai-thread-title">{thread.title||(language==="zh"?"未命名对话":"Untitled Thread")}</span>
-                      {(thread.destination||thread.inquiry_status)&&<span className="ai-thread-meta">
+                      <span className="ai-thread-content">
+                        <span className="ai-thread-title">{thread.title||(language==="zh"?"未命名对话":"Untitled Thread")}</span>
+                        {(thread.destination||thread.inquiry_status)&&<span className="ai-thread-meta">
   {[thread.destination,thread.inquiry_status].filter(Boolean).join(" · ")}
 </span>}
-                      <span className="ai-thread-time">{thread.last_active_at?new Date(thread.last_active_at).toLocaleString(): ""}</span>
+                        <span className="ai-thread-time">{thread.last_active_at?new Date(thread.last_active_at).toLocaleString(): ""}</span>
+                      </span>
                     </button>
                     <button type="button" className="ai-thread-archive restore" aria-label={t("Restore thread","恢复对话")} title={t("Restore Thread","恢复对话")} onClick={()=>void setThreadArchived(thread.id,false)}>
                       <span aria-hidden="true">↺</span>
