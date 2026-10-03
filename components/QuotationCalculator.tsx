@@ -963,9 +963,43 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     </Section>
 
     <Section title={t("Final Quotation Matrix","最终报价矩阵")}>
-      <div className="matrix-wrap"><table className="matrix"><thead><tr><th>{t("Traveller Type","旅客类型")}</th><th>{t("Cost · Excl. Leader","不含领队成本")}</th><th>{t("Profit · Excl. Leader","不含领队利润")}</th><th>{t("Suggested Price · Excl. Leader","不含领队建议售价")}</th>{hasLeader&&<><th>{t("Cost · Incl. Leader","含领队成本")}</th><th>{t("Profit · Incl. Leader","含领队利润")}</th><th>{t("Suggested Price · Incl. Leader","含领队建议售价")}</th></>}</tr></thead><tbody>
-        {matrix.map(([label,a,b])=><tr key={label}><td className="label-cell">{label==="成人（双人一房）"?t("Adult · Twin Sharing","成人（双人一房）"):label==="小孩加床"?t("Child with Bed","小孩加床"):t("Child without Bed","小孩不加床")}</td><td>{money(a.cost)}</td><td>{money(a.profit)}</td><td className="sale">{money(a.suggested)}</td>{hasLeader&&<><td>{money(b.cost)}</td><td>{money(b.profit)}</td><td className="sale">{money(b.suggested)}</td></>}</tr>)}
-      </tbody></table></div>
+      <div className={"quotation-matrix-compare foundation-comparison-matrix quotation-editor-matrix"+(hasLeader?" has-leader":"")}>
+        <div className="quotation-matrix-head">
+          <span>{t("Traveller Type","旅客类型")}</span>
+          <span>{t("Excl. Leader","不含领队")}</span>
+          {hasLeader&&<span>{t("Incl. Leader","含领队")}</span>}
+        </div>
+
+        {matrix.map(([label,a,b])=><div className="quotation-matrix-row" key={label}>
+          <div className="quotation-matrix-traveller">
+            <strong>{label==="成人（双人一房）"?t("Adult · Twin Sharing","成人（双人一房）"):label==="小孩加床"?t("Child with Bed","小孩加床"):t("Child without Bed","小孩不加床")}</strong>
+          </div>
+
+          <div className="quotation-matrix-plan">
+            <div className="quotation-matrix-metric" data-comparison-metric data-comparison-role="supporting">
+              <span>{t("Cost","成本")}</span><strong>{money(a.cost)}</strong>
+            </div>
+            <div className="quotation-matrix-metric" data-comparison-metric data-comparison-role="supporting">
+              <span>{t("Profit","利润")}</span><strong>{money(a.profit)}</strong>
+            </div>
+            <div className="quotation-matrix-metric suggested" data-comparison-metric data-comparison-role="recommended">
+              <span>{t("Suggested","建议售价")}</span><strong>{money(a.suggested)}</strong>
+            </div>
+          </div>
+
+          {hasLeader&&<div className="quotation-matrix-plan">
+            <div className="quotation-matrix-metric" data-comparison-metric data-comparison-role="supporting">
+              <span>{t("Cost","成本")}</span><strong>{money(b.cost)}</strong>
+            </div>
+            <div className="quotation-matrix-metric" data-comparison-metric data-comparison-role="supporting">
+              <span>{t("Profit","利润")}</span><strong>{money(b.profit)}</strong>
+            </div>
+            <div className="quotation-matrix-metric suggested" data-comparison-metric data-comparison-role="recommended">
+              <span>{t("Suggested","建议售价")}</span><strong>{money(b.suggested)}</strong>
+            </div>
+          </div>}
+        </div>)}
+      </div>
     </Section>
 
     {workspaceMode&&<div className={"quotation-save-state "+(isDirty?"unsaved":"saved")}>
