@@ -19885,10 +19885,14 @@ td,
 
 
 /* =========================================================
-   TYPOGRAPHY FOUNDATION TRIAL — CORE HIERARCHY
+   FOUNDATION TYPOGRAPHY SYSTEM — LOCKED
    Page 34 / Section 20 / Body 14 / Meta 12 / Micro 11
    Button 12 / Sidebar Item 14
-   Do not treat as locked Foundation until explicitly approved.
+   Typography hierarchy, weight, line-height and tracking
+   should use these shared tokens by default.
+   Special display figures may intentionally exceed this scale.
+   Any structural typography change requires an explicit
+   Foundation revision.
    ========================================================= */
 :root{
   --foundation-type-page:34px;
