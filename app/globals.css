@@ -12574,17 +12574,17 @@ td,
   border-bottom:0!important;
 }
 .ai-thread-open{
-  width:100%!important;
+  grid-column:1 / 2!important;
+  width:auto!important;
   min-width:0!important;
   min-height:0!important;
   height:auto!important;
-  display:grid!important;
-  grid-auto-rows:auto;
-  align-content:center!important;
+  margin:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
   justify-self:stretch!important;
   align-self:stretch!important;
-  justify-items:stretch!important;
-  gap:3px!important;
   text-align:left!important;
   padding:0!important;
   overflow:hidden!important;
@@ -12622,9 +12622,11 @@ td,
 
 /* Thread text uses one shared left scan line across every row/state. */
 .ai-thread-content{
-  width:100%!important;
+  flex:1 1 auto!important;
+  width:auto!important;
   min-width:0!important;
-  max-width:100%!important;
+  max-width:none!important;
+  margin:0!important;
   display:grid!important;
   grid-auto-rows:auto!important;
   align-content:center!important;
