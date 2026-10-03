@@ -163,8 +163,7 @@ export default function ProductLibrary({initialProducts,canCreate}:{initialProdu
             <th>{t("Duration","天数")}</th>
             <th>{t("Selling Price","售价")}</th>
             <th>{t("Pax Basis","人数基准")}</th>
-            <th>{t("Quotation","报价")}</th>
-            <th>{t("Itinerary","行程")}</th>
+            <th>{t("Readiness","准备状态")}</th>
             <th>{t("Status","状态")}</th>
           </tr></thead>
           <tbody>
@@ -174,11 +173,15 @@ export default function ProductLibrary({initialProducts,canCreate}:{initialProdu
               <td>{p.days_count}D{p.nights_count}N</td>
               <td>{p.selling_price===null||p.selling_price===undefined?"—":"RM "+Number(p.selling_price).toLocaleString("en-MY",{minimumFractionDigits:0,maximumFractionDigits:2})+" / pax"}</td>
               <td>{p.pax_basis?String(p.pax_basis)+" pax":"—"}</td>
-              <td><span className={"product-readiness "+(p.quotation_ready?"ready":"empty")}>{p.quotation_ready?t("Ready","已就绪"):"—"}</span></td>
-              <td><span className={"product-readiness "+(p.itinerary_ready?"ready":"empty")}>{p.itinerary_ready?t("Ready","已就绪"):"—"}</span></td>
+              <td>
+                <div className="product-readiness-stack">
+                  <span><b>{t("Quotation","报价")}</b><em className={p.quotation_ready?"ready":"empty"}>{p.quotation_ready?t("Ready","已就绪"):"—"}</em></span>
+                  <span><b>{t("Itinerary","行程")}</b><em className={p.itinerary_ready?"ready":"empty"}>{p.itinerary_ready?t("Ready","已就绪"):"—"}</em></span>
+                </div>
+              </td>
               <td><span className={"product-status status-"+p.status}>{statusText(p.status)}</span></td>
             </tr>)}
-            {!filtered.length&&<tr><td colSpan={8} className="empty">{t("No products match the current view.","目前没有符合条件的产品。")}</td></tr>}
+            {!filtered.length&&<tr><td colSpan={7} className="empty">{t("No products match the current view.","目前没有符合条件的产品。")}</td></tr>}
           </tbody>
         </table>
       </div>
