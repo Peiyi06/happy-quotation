@@ -11025,15 +11025,6 @@ td,
 .ai-lab-main{
   min-width:0;
 }
-.ai-lab-workbench-head{
-  min-height:0!important;
-  margin-bottom:14px!important;
-  padding:14px 16px!important;
-  border:1px solid var(--color-border-default)!important;
-  border-radius:var(--radius-md)!important;
-  background:var(--color-bg-surface)!important;
-  box-shadow:none!important;
-}
 .ai-lab-workbench-head>div:first-child{
   min-width:0;
 }
@@ -11335,15 +11326,6 @@ td,
 }
 
 /* Header becomes a slim workbench bar. */
-.ai-lab-workbench-head{
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr) auto!important;
-  align-items:center!important;
-  gap:14px!important;
-  padding:10px 12px!important;
-  margin-bottom:10px!important;
-  border-radius:10px!important;
-}
 .ai-lab-workbench-head>div:first-child{
   display:grid;
   grid-template-columns:auto minmax(0,1fr);
@@ -11661,11 +11643,6 @@ td,
    AI LAB — FINAL BALANCE POLISH
    Final proportion tuning after live visual review.
    ========================================================= */
-.ai-lab-workbench-head{
-  padding:8px 10px!important;
-  margin-bottom:8px!important;
-  gap:10px!important;
-}
 .ai-lab-workbench-head>div:first-child{
   column-gap:8px!important;
 }
@@ -11795,9 +11772,6 @@ td,
 }
 
 /* Final left header reduction: functional, not introductory. */
-.ai-lab-workbench-head{
-  padding:7px 9px!important;
-}
 .ai-lab-workbench-head h1{
   font-size:18px!important;
 }
@@ -11914,9 +11888,17 @@ td,
    Two-level header, quiet safety state, grouped suggestions.
    ========================================================= */
 .ai-lab-workbench-head{
+  display:grid!important;
+  min-height:0!important;
   grid-template-columns:minmax(0,1fr) auto!important;
   align-items:center!important;
+  gap:10px!important;
+  margin-bottom:8px!important;
   padding:9px 12px!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:10px!important;
+  background:var(--color-bg-surface)!important;
+  box-shadow:none!important;
 }
 .ai-lab-workbench-head>div:first-child{
   display:block!important;
