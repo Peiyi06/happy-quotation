@@ -38,7 +38,7 @@ export default async function QuotationsPage({ searchParams }:{searchParams:Prom
           </td>
           <td>{x.customer_name||"—"}</td>
           <td>{x.pax}</td>
-          <td><span className={"status status-"+x.status}>{x.status==="under_review"?<UiText en="Under Review" zh="审核中" />:x.status==="revision_required"?<UiText en="Revision Required" zh="需要修改" />:x.status==="ready"?<UiText en="Ready" zh="已就绪" />:x.status==="sent"?<UiText en="Sent" zh="已发送" />:x.status==="revised"?<UiText en="Revised" zh="已修改" />:x.status==="confirmed"?<UiText en="Confirmed" zh="已确认" />:x.status==="lost"?<UiText en="Lost" zh="未成交" />:x.status==="archived"?<UiText en="Archived" zh="已归档" />:<UiText en="Draft" zh="草稿" />}</span></td>
+          <td><span className={"status status-"+x.status}>{x.status==="under_review"?<UiText en="Review" zh="审核" />:x.status==="revision_required"?<UiText en="Revision Required" zh="需要修改" />:x.status==="ready"?<UiText en="Ready" zh="已就绪" />:x.status==="sent"?<UiText en="Sent" zh="已发送" />:x.status==="revised"?<UiText en="Revised" zh="已修改" />:x.status==="confirmed"?<UiText en="Confirmed" zh="已确认" />:x.status==="lost"?<UiText en="Lost" zh="未成交" />:x.status==="archived"?<UiText en="Archived" zh="已归档" />:<UiText en="Draft" zh="草稿" />}</span></td>
           <td>{money(Number(x.selling_price))}</td>
         </tr>)}
         {!quotes.length&&<tr><td colSpan={6} className="empty"><UiText en="No quotations match the current filters." zh="没有符合条件的报价。" /></td></tr>}
