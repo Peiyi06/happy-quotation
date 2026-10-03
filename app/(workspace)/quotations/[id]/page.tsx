@@ -291,9 +291,9 @@ export default async function QuotationDetailPage({
       </div>
     </section>
 
-    <section className="panel">
+    <section className="panel quotation-information-panel">
       <div className="panel-head"><h2><UiText en="Quotation Information" zh="报价资料" /></h2></div>
-      <div className="detail-grid">
+      <div className="detail-grid quotation-information-grid">
         <Detail label={<UiText en="Customer" zh="客户" />} value={data.customer_name||"—"}/>
         <Detail label={<UiText en="Destination" zh="目的地" />} value={data.destination||"—"}/>
         <Detail label={<UiText en="Departure Date" zh="出发日期" />} value={data.departure_date?new Date(data.departure_date+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
