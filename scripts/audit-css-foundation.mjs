@@ -55,3 +55,26 @@ if(!missing.length && !reintroduced.length && canonicalStart>=0 && compatibility
 }else{
   console.log("\nArchitecture status: review recommended");
 }
+
+console.log("\nAI Workspace consolidation signals");
+console.log("----------------------------------");
+
+const aiSelectors=[
+  ".ai-thread-list",
+  ".ai-thread-item",
+  ".ai-thread-meta",
+  ".ai-lab-workbench-head",
+  ".ai-lab-compose",
+  ".ai-lab-context",
+  ".ai-lab-starters"
+];
+
+const escapeRegExp=(value)=>value.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+const countExactBlocks=(selector)=>(css.match(new RegExp("^\\s*"+escapeRegExp(selector)+"\\s*\\{","gm"))||[]).length;
+const countOccurrences=(selector)=>(css.match(new RegExp(escapeRegExp(selector),"g"))||[]).length;
+
+aiSelectors.forEach(selector=>{
+  console.log(`${selector}: exact blocks=${countExactBlocks(selector)}, total references=${countOccurrences(selector)}`);
+});
+
+console.log("Note: exact blocks include responsive/state-scoped rules. Review structurally; do not flatten media/state rules into base rules.");
