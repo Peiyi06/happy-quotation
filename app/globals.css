@@ -1962,21 +1962,8 @@ input::placeholder,textarea::placeholder{font-family:inherit;color:#8b98a3}
    Primary / Secondary / Danger / Compact
    ========================================================= */
 :root{
-  --btn-height:40px;
-  --btn-radius:9px;
-  --btn-font-size:13px;
-  --btn-font-weight:700;
-  --btn-pad-x:15px;
-  --btn-border:#cbd6df;
-  --btn-text:#173b43;
-  --btn-bg:#ffffff;
-  --btn-hover:#f5f8fa;
-  --btn-primary-bg:var(--gold);
-  --btn-primary-border:#b99558;
-  --btn-primary-text:#ffffff;
-  --btn-danger-bg:#fffafa;
-  --btn-danger-border:#e6c1bd;
-  --btn-danger-text:#a33f36;
+  /* Legacy compact utility controls only. Standard actions resolve
+     from the locked Foundation Action System in the registry below. */
   --btn-compact-height:31px;
   --btn-compact-radius:7px;
   --btn-compact-font-size:12px;
@@ -5977,24 +5964,6 @@ button,
    HAPPY WORKSPACE UI FOUNDATION v1 — SYSTEM APPLICATION
    Semantic colors, surfaces, controls and shared components.
    ========================================================= */
-:root{
-  --btn-height:40px;
-  --btn-radius:var(--radius-sm);
-  --btn-font-size:13px;
-  --btn-font-weight:700;
-  --btn-pad-x:15px;
-  --btn-border:var(--color-border-default);
-  --btn-text:var(--color-text-primary);
-  --btn-bg:var(--color-bg-surface);
-  --btn-hover:var(--color-bg-page);
-  --btn-primary-bg:var(--color-brand-primary);
-  --btn-primary-border:var(--color-brand-primary);
-  --btn-primary-text:#fff;
-  --btn-danger-bg:var(--color-bg-surface);
-  --btn-danger-border:var(--color-border-default);
-  --btn-danger-text:var(--color-danger-text);
-}
-
 html,
 body{
   background:var(--color-bg-page);
