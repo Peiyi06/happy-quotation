@@ -19187,14 +19187,11 @@ td,
 
 
 /* =========================================================
-   INTERACTION FOUNDATION TRIAL — ACTION SYSTEM
-   Trial scope:
-   - Create Product
-   - Save Quotation
-   - Submit for Review
-   - More (icon-only)
-   - Reset Quotation
-   Do not treat as locked Foundation until explicitly approved.
+   FOUNDATION ACTION SYSTEM — LOCKED
+   Applies as the default interaction standard for:
+   Primary / Secondary / Destructive / Disabled / Loading /
+   Icon-only actions, with consistent focus and pressed feedback.
+   Any future structural change requires an explicit Foundation revision.
    ========================================================= */
 :root{
   --foundation-action-height:38px;
