@@ -11938,47 +11938,6 @@ td,
    Collapse the whole rail, not just its contents.
    ========================================================= */
 @media(min-width:821px){
-  .ai-lab-shell.sidebar-collapsed{
-    grid-template-columns:minmax(0,1fr) 48px!important;
-    gap:12px!important;
-  }
-
-  .ai-lab-shell.sidebar-collapsed .ai-lab-context{
-    width:48px!important;
-    min-width:48px!important;
-    max-width:48px!important;
-    padding:0!important;
-    border-radius:14px!important;
-    overflow:hidden!important;
-    display:block!important;
-    height:calc(100vh - 40px)!important;
-  }
-
-  .ai-lab-shell.sidebar-collapsed .ai-thread-panel,
-  .ai-lab-shell.sidebar-collapsed .ai-lab-context-section,
-  .ai-lab-shell.sidebar-collapsed .ai-lab-safety{
-    display:none!important;
-  }
-
-  .ai-lab-shell.sidebar-collapsed .ai-lab-sidebar-restore{
-    position:sticky!important;
-    top:12px!important;
-    width:44px!important;
-    min-width:44px!important;
-    height:44px!important;
-    margin:0 auto!important;
-    border:0!important;
-    border-radius:12px!important;
-    background:transparent!important;
-    box-shadow:none!important;
-    color:var(--color-text-secondary)!important;
-  }
-
-  .ai-lab-shell.sidebar-collapsed .ai-lab-sidebar-restore:hover{
-    background:var(--color-bg-soft)!important;
-    color:var(--color-text-primary)!important;
-  }
-
   .ai-lab-main:has(> .ai-lab-chat:empty) .ai-lab-starter-wrap{
     margin-bottom:6px!important;
   }
@@ -12057,12 +12016,7 @@ td,
       transform .14s ease!important;
   }
 
-  /* Collapsing: fade content first, then the rail contracts. */
-  .ai-lab-shell.sidebar-collapsed{
-    grid-template-columns:minmax(0,1fr) 48px!important;
-    gap:12px!important;
-  }
-
+  /* Collapsing: content fades while canonical rail geometry contracts. */
   .ai-lab-shell.sidebar-collapsed .ai-thread-panel,
   .ai-lab-shell.sidebar-collapsed .ai-lab-context-section,
   .ai-lab-shell.sidebar-collapsed .ai-lab-safety{
@@ -12071,15 +12025,6 @@ td,
     pointer-events:none!important;
     visibility:hidden!important;
     display:block!important;
-  }
-
-  .ai-lab-shell.sidebar-collapsed .ai-lab-context{
-    width:48px!important;
-    min-width:48px!important;
-    max-width:48px!important;
-    padding:0!important;
-    display:block!important;
-    overflow:hidden!important;
   }
 
   /* Restore handle: same visual language as the header control. */
@@ -12274,39 +12219,6 @@ td,
   font-size:9px!important;
   font-weight:550!important;
 }
-
-/* Collapsed restore uses the same clean icon language. */
-@media(min-width:821px){
-  .ai-lab-shell.sidebar-collapsed .ai-lab-sidebar-restore{
-    width:32px!important;
-    min-width:32px!important;
-    height:32px!important;
-    border:1px solid var(--color-border-default)!important;
-    border-radius:10px!important;
-    background:var(--color-bg-surface)!important;
-    color:var(--color-text-secondary)!important;
-    font-size:0!important;
-    line-height:0!important;
-    overflow:hidden!important;
-  }
-
-  .ai-lab-shell.sidebar-collapsed .ai-lab-sidebar-restore::before{
-    content:""!important;
-    width:7px!important;
-    height:7px!important;
-    border:0!important;
-    border-right:1.7px solid currentColor!important;
-    border-top:1.7px solid currentColor!important;
-    transform:rotate(45deg)!important;
-  }
-
-  .ai-lab-shell.sidebar-collapsed .ai-lab-sidebar-restore:hover{
-    background:var(--color-bg-soft)!important;
-    border-color:var(--color-border-strong)!important;
-    color:var(--color-text-primary)!important;
-  }
-}
-
 
 /* =========================================================
    AI LAB — SEGMENTED CONTROL GEOMETRY FIX
@@ -12918,22 +12830,61 @@ td,
   height:0!important;
 }
 
-/* Collapsed rail keeps the same visual system */
+/* =========================================================
+   AI LAB — SIDEBAR STATE FOUNDATION — LOCKED
+   Desktop expanded/collapsed rail geometry and restore control.
+   Motion remains in the dedicated collapse-motion rules above.
+   ========================================================= */
 @media(min-width:821px){
+  .ai-lab-shell.sidebar-collapsed{
+    grid-template-columns:minmax(0,1fr) 48px!important;
+    gap:12px!important;
+  }
+
   .ai-lab-shell.sidebar-collapsed .ai-lab-context{
+    width:48px!important;
+    min-width:48px!important;
+    max-width:48px!important;
+    height:calc(100vh - 40px)!important;
+    padding:0!important;
+    display:block!important;
+    overflow:hidden!important;
     border-radius:16px!important;
     background:var(--color-bg-surface)!important;
   }
+
   .ai-lab-shell.sidebar-collapsed .ai-lab-sidebar-restore{
+    position:sticky!important;
+    top:12px!important;
     width:32px!important;
     min-width:32px!important;
     height:32px!important;
+    margin:0 auto!important;
+    padding:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
     border:0!important;
     border-radius:10px!important;
     background:transparent!important;
+    box-shadow:none!important;
     color:var(--color-text-tertiary)!important;
+    font-size:0!important;
+    line-height:0!important;
+    overflow:hidden!important;
     opacity:.72!important;
   }
+
+  .ai-lab-shell.sidebar-collapsed .ai-lab-sidebar-restore::before{
+    content:""!important;
+    width:7px!important;
+    height:7px!important;
+    border:0!important;
+    border-right:1.7px solid currentColor!important;
+    border-top:1.7px solid currentColor!important;
+    transform:rotate(45deg)!important;
+  }
+
   .ai-lab-shell.sidebar-collapsed .ai-lab-sidebar-restore:hover{
     background:var(--color-bg-soft)!important;
     color:var(--color-text-secondary)!important;
