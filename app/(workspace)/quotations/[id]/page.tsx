@@ -195,6 +195,8 @@ export default async function QuotationDetailPage({
       <div className="dash-card"><span><UiText en="Pax" zh="人数" /></span><b>{data.pax||0}</b></div>
     </section>
 
+    {/* FOUNDATION LOCK: comparison matrices use grouped comparison,
+        keep supporting metrics secondary, and emphasize the final recommendation. */}
     <section className="panel quotation-matrix-panel">
       <div className="panel-head"><h2><UiText en="Final Quotation Matrix" zh="最终报价矩阵" /></h2></div>
       <div className={"quotation-matrix-compare"+(hasLeader?" has-leader":"")}>
