@@ -11174,18 +11174,18 @@ td,
 }
 
 /* Starter prompts are suggestions, not cards. */
-.ai-lab-starters{
-  gap:6px!important;
-  margin:8px 0 10px!important;
-}
 .ai-lab-starters button{
-  min-height:30px!important;
-  padding:0 9px!important;
+  width:100%;
+  min-height:32px!important;
+  padding:0 10px!important;
+  justify-content:flex-start!important;
+  text-align:left!important;
   border-color:var(--color-border-default)!important;
-  border-radius:999px!important;
-  background:var(--color-bg-surface)!important;
+  border-radius:9px!important;
+  background:rgba(255,255,255,.72)!important;
   color:var(--color-text-secondary)!important;
   box-shadow:none!important;
+  font-size:10.5px!important;
 }
 .ai-lab-starters button:hover{
   background:var(--color-bg-soft)!important;
@@ -11294,22 +11294,6 @@ td,
 }
 
 /* Starter prompts become a compact 2-column suggestion grid. */
-.ai-lab-starters{
-  display:grid!important;
-  grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  gap:6px!important;
-  max-width:760px;
-  margin:6px 0 10px!important;
-}
-.ai-lab-starters button{
-  width:100%;
-  min-height:32px!important;
-  padding:0 10px!important;
-  justify-content:flex-start!important;
-  text-align:left!important;
-  border-radius:9px!important;
-  font-size:10.5px!important;
-}
 
 /* Composer stays visually attached to the conversation. */
 
@@ -11474,11 +11458,6 @@ td,
 .ai-lab-message:last-child{
   margin-bottom:6px!important;
 }
-.ai-lab-starters{
-  position:static!important;
-  align-self:auto!important;
-  margin:4px 0 8px!important;
-}
 .ai-lab-upload-previews{
   margin:6px 0!important;
 }
@@ -11544,9 +11523,6 @@ td,
 .ai-lab-main{
   min-height:560px!important;
 }
-.ai-lab-starters{
-  margin-bottom:0!important;
-}
 
 /* Current Context already has the right content density; only align
    its spacing with the refined sidebar rhythm. */
@@ -11581,6 +11557,8 @@ td,
   margin:6px 0 0;
 }
 .ai-lab-starters{
+  position:static!important;
+  align-self:auto!important;
   display:grid!important;
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
   gap:6px!important;
@@ -11712,10 +11690,6 @@ td,
 /* Suggestions read as one quiet group rather than four loose controls. */
 .ai-lab-starter-wrap{
   padding:0;
-}
-.ai-lab-starters button{
-  border-color:var(--color-border-default)!important;
-  background:rgba(255,255,255,.72)!important;
 }
 .ai-lab-more-starters{
   color:var(--color-text-secondary)!important;
