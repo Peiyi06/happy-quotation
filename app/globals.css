@@ -17723,3 +17723,150 @@ td,
     border-bottom:0!important;
   }
 }
+
+
+/* =========================================================
+   QUOTATION DETAIL — INFORMATION + WORKFLOW FOUNDATION PASS
+   Flat information grid; workflow reserved for advancement.
+   ========================================================= */
+.quotation-detail-template .quotation-information-panel{
+  padding:22px 26px!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:16px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+
+.quotation-detail-template .quotation-information-panel .panel-head{
+  margin:0 0 10px!important;
+  padding:0!important;
+  border:0!important;
+}
+
+.quotation-detail-template .quotation-information-grid{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:0!important;
+  border-top:1px solid var(--color-border-default)!important;
+}
+
+.quotation-detail-template .quotation-information-grid .detail-item{
+  min-height:74px!important;
+  padding:15px 18px!important;
+  border:0!important;
+  border-right:1px solid var(--color-border-default)!important;
+  border-bottom:1px solid var(--color-border-default)!important;
+  border-radius:0!important;
+  background:transparent!important;
+}
+
+.quotation-detail-template .quotation-information-grid .detail-item:nth-child(3n){
+  border-right:0!important;
+}
+
+.quotation-detail-template .quotation-information-grid .detail-item:nth-last-child(-n+2){
+  border-bottom:0!important;
+}
+
+.quotation-detail-template .quotation-information-grid .detail-item span{
+  margin:0 0 5px!important;
+  color:var(--color-text-tertiary)!important;
+  font-size:var(--foundation-type-meta)!important;
+  line-height:1.2!important;
+  font-weight:500!important;
+}
+
+.quotation-detail-template .quotation-information-grid .detail-item strong{
+  color:var(--color-text-primary)!important;
+  font-size:var(--foundation-type-body)!important;
+  line-height:1.35!important;
+  font-weight:650!important;
+}
+
+/* Compact workflow: less empty card volume, more process continuity. */
+.quotation-detail-template .quotation-workflow-panel{
+  padding:18px 22px!important;
+}
+
+.quotation-detail-template .quotation-workflow-panel .inquiry-workflow-panel-head{
+  margin-bottom:12px!important;
+}
+
+.quotation-detail-template .quotation-workflow-panel .simple-workflow-card{
+  min-height:150px!important;
+  padding:15px 16px!important;
+  gap:9px!important;
+}
+
+.quotation-detail-template .quotation-workflow-panel .simple-workflow-card-head{
+  min-height:28px!important;
+}
+
+.quotation-detail-template .quotation-workflow-panel .simple-workflow-index{
+  width:28px!important;
+  height:28px!important;
+}
+
+.quotation-detail-template .quotation-workflow-panel .simple-workflow-title>strong{
+  font-size:15px!important;
+}
+
+.quotation-detail-template .quotation-workflow-panel .simple-workflow-actions{
+  padding-top:8px!important;
+  margin-top:auto!important;
+}
+
+.quotation-detail-template .quotation-workflow-panel .simple-workflow-actions .btn{
+  min-height:36px!important;
+  height:36px!important;
+  padding:0 13px!important;
+  font-size:var(--foundation-type-body)!important;
+}
+
+.quotation-detail-template .quotation-workflow-panel .simple-workflow-arrow{
+  opacity:.62!important;
+}
+
+@media(max-width:900px){
+  .quotation-detail-template .quotation-information-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+
+  .quotation-detail-template .quotation-information-grid .detail-item{
+    border-right:1px solid var(--color-border-default)!important;
+    border-bottom:1px solid var(--color-border-default)!important;
+  }
+
+  .quotation-detail-template .quotation-information-grid .detail-item:nth-child(2n){
+    border-right:0!important;
+  }
+
+  .quotation-detail-template .quotation-information-grid .detail-item:nth-last-child(-n+2){
+    border-bottom:0!important;
+  }
+}
+
+@media(max-width:620px){
+  .quotation-detail-template .quotation-information-panel{
+    padding:18px!important;
+  }
+
+  .quotation-detail-template .quotation-information-grid{
+    grid-template-columns:1fr!important;
+  }
+
+  .quotation-detail-template .quotation-information-grid .detail-item{
+    min-height:64px!important;
+    padding:13px 4px!important;
+    border-right:0!important;
+    border-bottom:1px solid var(--color-border-default)!important;
+  }
+
+  .quotation-detail-template .quotation-information-grid .detail-item:last-child{
+    border-bottom:0!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-panel .simple-workflow-card{
+    min-height:0!important;
+  }
+}
