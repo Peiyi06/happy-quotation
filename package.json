@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "audit:css": "node scripts/audit-css-foundation.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "latest",
