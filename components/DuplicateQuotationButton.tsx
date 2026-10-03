@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 
-export default function DuplicateQuotationButton({id}:{id:string}){
+export default function DuplicateQuotationButton({id,compact=false}:{id:string;compact?:boolean}){
   const router=useRouter();
   const [busy,setBusy]=useState(false);
   const {language}=useWorkspaceLanguage();
@@ -31,7 +31,7 @@ export default function DuplicateQuotationButton({id}:{id:string}){
     }
   }
 
-  return <button className="btn" type="button" onClick={duplicate} disabled={busy}>
+  return <button className={compact?"quotation-detail-menu-action":"btn"} type="button" onClick={duplicate} disabled={busy}>
     {busy?t("Duplicating...","复制中..."):t("Duplicate Quotation","复制报价")}
   </button>;
 }
