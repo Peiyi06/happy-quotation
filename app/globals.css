@@ -16970,3 +16970,83 @@ td,
     min-width:1160px!important;
   }
 }
+
+
+/* =========================================================
+   QUOTATION LIBRARY — 7-COLUMN TRIAL
+   Trial only: simplify the library to scanning essentials.
+   ========================================================= */
+.workspace-main .quotation-library-template .quotation-table{
+  min-width:0!important;
+  table-layout:fixed!important;
+}
+
+.workspace-main .quotation-library-template .quotation-library-table-panel .data-table-wrap{
+  overflow-x:hidden!important;
+}
+
+/* Quote No | Tour | Customer | Pax | Status | Selling | Updated */
+.workspace-main .quotation-library-template .quotation-table th:nth-child(1),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(1){width:15%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(2),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(2){width:31%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(3),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(3){width:15%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(4),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(4){width:6%!important;text-align:center!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(5),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(5){width:13%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(6),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(6){width:11%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(7),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(7){width:9%!important;}
+
+/* Neutralize geometry from the previous 10-column experiment. */
+.workspace-main .quotation-library-template .quotation-table th:nth-child(n+8),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(n+8){
+  width:auto!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table td:nth-child(1),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(6),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(7){
+  overflow:visible!important;
+  text-overflow:clip!important;
+  white-space:nowrap!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table td:nth-child(2) strong{
+  display:block!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table td:nth-child(2) strong a{
+  color:var(--color-text-primary)!important;
+  font-weight:700!important;
+  text-decoration:none!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table td:nth-child(2) strong a:hover{
+  color:var(--color-brand-primary)!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table td:nth-child(2) small{
+  display:block!important;
+  margin-top:4px!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  color:var(--color-text-tertiary)!important;
+}
+
+@media(max-width:980px){
+  .workspace-main .quotation-library-template .quotation-library-table-panel .data-table-wrap{
+    overflow-x:auto!important;
+  }
+  .workspace-main .quotation-library-template .quotation-table{
+    min-width:900px!important;
+    table-layout:auto!important;
+  }
+}
