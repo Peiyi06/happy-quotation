@@ -8219,18 +8219,20 @@ td,
   gap:14px;
 }
 .itinerary-editor .itinerary-package-card{
-  padding:14px;
+  padding:12px;
   border:1px solid var(--color-border-default);
   border-radius:var(--radius-md);
   box-shadow:none;
 }
 .itinerary-editor .itinerary-package-card.included{
-  background:var(--color-success-soft);
-  border-top:1px solid var(--color-success-text);
+  background:#F7FBF8;
+  border-color:#DCEBE0;
+  border-top-color:#AFCDB8;
 }
 .itinerary-editor .itinerary-package-card.excluded{
-  background:var(--color-bg-soft);
-  border-top:1px solid var(--color-danger-text);
+  background:var(--color-bg-surface);
+  border-color:var(--color-border-default);
+  border-top-color:#E7C7C3;
 }
 .itinerary-editor .itinerary-package-list{
   gap:8px;
@@ -8561,18 +8563,6 @@ td,
    Softer semantics, lighter add actions, tighter empty states,
    and clearer bilingual section title hierarchy.
    ========================================================= */
-.itinerary-editor .itinerary-package-card.included{
-  background:#F7FBF8!important;
-  border-color:#DCEBE0!important;
-  border-top-color:#AFCDB8!important;
-}
-.itinerary-editor .itinerary-package-card.excluded{
-  background:var(--color-bg-surface)!important;
-  border-color:var(--color-border-default)!important;
-  border-top-color:#E7C7C3!important;
-}
-
-
 .itinerary-editor .itinerary-section-title{
   display:flex;
   align-items:baseline;
@@ -8609,9 +8599,6 @@ td,
 }
 .itinerary-editor>.panel>.panel-head{
   margin-bottom:10px;
-}
-.itinerary-editor .itinerary-package-card{
-  padding:12px;
 }
 .itinerary-editor .itinerary-package-card .itinerary-editor-empty{
   padding:7px 0 2px;
