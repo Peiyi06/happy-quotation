@@ -23,7 +23,7 @@ export default function NewQuotationMenu({compact=false}:{compact?:boolean}) {
       className={compact?"sidebar-new-quote sidebar-module-btn":"btn primary"}
       onClick={()=>setOpen(true)}
     >
-      <span>{t("Quotation","报价")}</span>
+      <span>{compact?t("Quotation","报价"):t("+ New Quotation","+ 新建报价")}</span>
       {compact&&<span className="sidebar-module-chevron" aria-hidden="true">›</span>}
     </button>
 
