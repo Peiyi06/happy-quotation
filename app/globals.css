@@ -19741,3 +19741,142 @@ td,
     transition:none!important;
   }
 }
+
+
+/* =========================================================
+   MOTION FOUNDATION TRIAL — CORE TIMING SYSTEM
+   Fast 120ms: pressed / icon feedback
+   Standard 180ms: hover / active / row / control state
+   Enter 240ms: popover / modal / overlay appearance
+   Continuous workflow flow animation remains independent.
+   Do not treat as locked Foundation until explicitly approved.
+   ========================================================= */
+:root{
+  --foundation-motion-fast:120ms;
+  --foundation-motion-standard:180ms;
+  --foundation-motion-enter:240ms;
+  --foundation-motion-ease:cubic-bezier(.2,.8,.2,1);
+  --foundation-motion-ease-out:cubic-bezier(.16,1,.3,1);
+}
+
+/* Shared interactive state changes */
+.sidebar-nav>a,
+.sidebar-new-quote,
+.sidebar-module-btn,
+.sidebar-module-chevron,
+.product-page-head .product-create-btn,
+.quotation-editor-shell .quotation-save-state .btn.primary,
+.quotation-editor-shell .quotation-editor-workflow .simple-workflow-actions .btn.primary,
+.quotation-editor-shell .quotation-header-more-trigger,
+.inquiry-library-template .inquiry-table tbody tr,
+.dashboard-recent-table tbody tr,
+.product-library-page .product-table tbody tr{
+  transition-duration:var(--foundation-motion-standard)!important;
+  transition-timing-function:var(--foundation-motion-ease)!important;
+}
+
+/* Pressed feedback stays shorter than hover feedback. */
+.product-page-head .product-create-btn:active,
+.quotation-editor-shell .quotation-save-state .btn.primary:not(:disabled):active,
+.quotation-editor-shell .quotation-editor-workflow .simple-workflow-actions .btn.primary:not(:disabled):active,
+.quotation-editor-shell .quotation-header-more-trigger:active{
+  transition-duration:var(--foundation-motion-fast)!important;
+}
+
+/* Keep lift restrained: 1px maximum on interactive cards. */
+.quotation-type-primary-card,
+.workspace-module-grid .quotation-type-card.available{
+  transition:
+    background-color var(--foundation-motion-standard) var(--foundation-motion-ease),
+    border-color var(--foundation-motion-standard) var(--foundation-motion-ease),
+    transform var(--foundation-motion-standard) var(--foundation-motion-ease)!important;
+}
+
+.quotation-type-primary-card:hover,
+.workspace-module-grid .quotation-type-card.available:hover{
+  transform:translateY(-1px)!important;
+}
+
+/* Overlay entry: one quiet fade + scale language. */
+@keyframes foundation-overlay-fade-in{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+@keyframes foundation-surface-enter{
+  from{
+    opacity:0;
+    transform:translateY(4px) scale(.992);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+.quotation-type-overlay,
+.unsaved-overlay{
+  animation:foundation-overlay-fade-in var(--foundation-motion-enter) var(--foundation-motion-ease-out) both;
+}
+
+.workspace-module-modal,
+.quotation-type-modal,
+.ai-intake-modal,
+.unsaved-modal,
+.quotation-editor-shell .quotation-header-more-menu,
+.quotation-detail-more-menu,
+.quotation-row-more-menu,
+.itinerary-editor .itinerary-more-menu-popover{
+  transform-origin:top center;
+  animation:foundation-surface-enter var(--foundation-motion-enter) var(--foundation-motion-ease-out) both;
+}
+
+/* Menus are smaller than modals, so their entry should finish faster. */
+.quotation-editor-shell .quotation-header-more-menu,
+.quotation-detail-more-menu,
+.quotation-row-more-menu,
+.itinerary-editor .itinerary-more-menu-popover{
+  animation-duration:var(--foundation-motion-standard);
+}
+
+/* State fades should never feel sluggish. */
+.quotation-editor-shell .quotation-editor-workflow .simple-workflow-card,
+.quotation-editor-shell .quotation-save-state,
+.product-readiness-stack em,
+.status,
+.product-status{
+  transition:
+    background-color var(--foundation-motion-standard) var(--foundation-motion-ease),
+    border-color var(--foundation-motion-standard) var(--foundation-motion-ease),
+    color var(--foundation-motion-standard) var(--foundation-motion-ease),
+    opacity var(--foundation-motion-standard) var(--foundation-motion-ease)!important;
+}
+
+@media(prefers-reduced-motion:reduce){
+  .quotation-type-overlay,
+  .unsaved-overlay,
+  .workspace-module-modal,
+  .quotation-type-modal,
+  .ai-intake-modal,
+  .unsaved-modal,
+  .quotation-editor-shell .quotation-header-more-menu,
+  .quotation-detail-more-menu,
+  .quotation-row-more-menu,
+  .itinerary-editor .itinerary-more-menu-popover{
+    animation:none!important;
+  }
+
+  .sidebar-nav>a,
+  .sidebar-new-quote,
+  .sidebar-module-btn,
+  .sidebar-module-chevron,
+  .product-page-head .product-create-btn,
+  .quotation-editor-shell .quotation-save-state .btn.primary,
+  .quotation-editor-shell .quotation-editor-workflow .simple-workflow-actions .btn.primary,
+  .quotation-editor-shell .quotation-header-more-trigger,
+  .inquiry-library-template .inquiry-table tbody tr,
+  .dashboard-recent-table tbody tr,
+  .product-library-page .product-table tbody tr{
+    transition:none!important;
+  }
+}
