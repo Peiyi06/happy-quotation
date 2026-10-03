@@ -51,8 +51,7 @@ export default async function InquiryListPage({
       <div className="data-table-wrap">
         <table className="data-table inquiry-table">
           <thead><tr>
-            <th><UiText en="Inquiry No." zh="询价编号" /></th>
-            <th><UiText en="Customer" zh="客户" /></th>
+            <th><UiText en="Inquiry" zh="询价" /></th>
             <th><UiText en="Destination" zh="目的地" /></th>
             <th><UiText en="Travel Date" zh="旅游日期" /></th>
             <th><UiText en="Pax" zh="人数" /></th>
@@ -62,8 +61,10 @@ export default async function InquiryListPage({
           </tr></thead>
           <tbody>
             {items.map((i:any)=><tr key={i.id}>
-              <td><Link href={"/inquiries/"+i.id}>{i.inquiry_no}</Link></td>
-              <td>{i.customer_name||"—"}</td>
+              <td className="inquiry-primary-cell">
+                <Link href={"/inquiries/"+i.id}>{i.inquiry_no}</Link>
+                <small>{i.customer_name||"—"}</small>
+              </td>
               <td>{i.destination||"—"}</td>
               <td>{i.travel_start_date||"—"}{i.travel_end_date?" → "+i.travel_end_date:""}</td>
               <td>{i.pax||"—"}</td>
@@ -77,7 +78,7 @@ export default async function InquiryListPage({
                     :i.status}
               </span></td>
             </tr>)}
-            {!items.length&&<tr><td colSpan={8} className="empty"><UiText en="No inquiries yet." zh="还没有询价案件。" /></td></tr>}
+            {!items.length&&<tr><td colSpan={7} className="empty"><UiText en="No inquiries yet." zh="还没有询价案件。" /></td></tr>}
           </tbody>
         </table>
       </div>
