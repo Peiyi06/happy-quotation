@@ -17150,3 +17150,29 @@ td,
   text-overflow:clip!important;
   white-space:nowrap!important;
 }
+
+
+/* =========================================================
+   QUOTATION LIBRARY — STATUS LABEL TRIAL
+   Compact review language and reduce visual weight.
+   ========================================================= */
+.workspace-main .quotation-library-template .quotation-table .status{
+  min-height:28px!important;
+  padding:0 10px!important;
+  border-radius:999px!important;
+  font-size:var(--foundation-type-meta)!important;
+  line-height:26px!important;
+  font-weight:650!important;
+  box-shadow:none!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table .status-under_review{
+  background:#f3f7fa!important;
+  border:1px solid #d8e4ec!important;
+  color:#426b8a!important;
+}
+
+.workspace-main .quotation-library-template .quotation-table .status-ready,
+.workspace-main .quotation-library-template .quotation-table .status-confirmed{
+  border:1px solid transparent!important;
+}
