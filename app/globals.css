@@ -19567,9 +19567,16 @@ td,
 
 
 /* =========================================================
-   WORKSPACE NAVIGATION FOUNDATION TRIAL — SIDEBAR
-   Goal: quiet macOS/iOS-like navigation hierarchy.
-   Do not treat as locked Foundation until explicitly approved.
+   FOUNDATION WORKSPACE NAVIGATION SYSTEM — LOCKED
+   Quiet macOS/iOS-like sidebar hierarchy.
+   Rules:
+   - current page uses true pathname-based active state
+   - active is a light surface, never an outline pill
+   - hover stays quieter than active
+   - keyboard focus uses an inset accessible ring
+   - module chevrons use one consistent navigation language
+   - user/account area is tertiary navigation
+   Any structural change requires an explicit Foundation revision.
    ========================================================= */
 :root{
   --foundation-sidebar-bg:#173b5c;
