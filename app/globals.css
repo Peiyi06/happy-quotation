@@ -16294,3 +16294,115 @@ td,
     width:100%;
   }
 }
+
+
+/* =========================================================
+   QUOTATION LIBRARY + DETAIL — FOUNDATION ALIGNMENT
+   Library matches Inquiry / Itinerary. Detail utilities collapse
+   low-frequency actions into More.
+   ========================================================= */
+.quotation-library-template{
+  width:100%;
+  min-width:0;
+}
+
+.quotation-library-template .quotation-library-head{
+  align-items:flex-start!important;
+  margin-bottom:18px!important;
+}
+
+.quotation-library-template .quotation-library-title-block{
+  display:grid;
+  gap:4px;
+}
+
+.quotation-library-template .quotation-library-title-block h1{
+  margin:0!important;
+  font-size:var(--foundation-type-page)!important;
+  line-height:1.08!important;
+  font-weight:700!important;
+  letter-spacing:-.025em!important;
+}
+
+.quotation-library-template .quotation-library-title-block p{
+  margin:0!important;
+  color:var(--color-text-secondary)!important;
+  font-size:var(--foundation-type-body)!important;
+  line-height:1.45!important;
+}
+
+.quotation-library-template .filter-bar{
+  margin-bottom:16px!important;
+}
+
+.quotation-library-template .quotation-library-table-panel{
+  margin-bottom:0!important;
+}
+
+/* Quotation detail utility menu */
+.quotation-detail-template .quote-detail-head .detail-actions{
+  align-items:center!important;
+  flex-wrap:nowrap!important;
+}
+
+.quotation-detail-more{
+  position:relative;
+  flex:0 0 auto;
+}
+
+.quotation-detail-more-trigger{
+  width:38px!important;
+  min-width:38px!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:0!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:9px!important;
+  background:#fff!important;
+  color:var(--color-text-secondary)!important;
+  box-shadow:none!important;
+  letter-spacing:.08em;
+}
+
+.quotation-detail-more-menu{
+  position:absolute;
+  top:42px;
+  right:0;
+  z-index:40;
+  min-width:190px;
+  padding:6px;
+  border:1px solid var(--color-border-default);
+  border-radius:11px;
+  background:#fff;
+  box-shadow:0 10px 28px rgba(16,42,67,.12);
+}
+
+.quotation-detail-menu-action{
+  width:100%;
+  min-height:36px;
+  padding:0 10px;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:var(--color-text-primary);
+  text-align:left;
+  font-size:var(--foundation-type-body);
+  font-weight:600;
+  cursor:pointer;
+}
+
+.quotation-detail-menu-action:hover{
+  background:var(--color-bg-soft);
+}
+
+.quotation-detail-menu-action:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+@media(max-width:760px){
+  .quotation-detail-template .quote-detail-head .detail-actions{
+    width:100%!important;
+    flex-wrap:wrap!important;
+  }
+}
