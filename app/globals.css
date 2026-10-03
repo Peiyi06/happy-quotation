@@ -19564,3 +19564,173 @@ td,
 .quotation-editor-shell .quotation-matrix-traveller{
   box-shadow:none!important;
 }
+
+
+/* =========================================================
+   WORKSPACE NAVIGATION FOUNDATION TRIAL — SIDEBAR
+   Goal: quiet macOS/iOS-like navigation hierarchy.
+   Do not treat as locked Foundation until explicitly approved.
+   ========================================================= */
+:root{
+  --foundation-sidebar-bg:#173b5c;
+  --foundation-sidebar-item-h:42px;
+  --foundation-sidebar-item-radius:10px;
+  --foundation-sidebar-item-pad-x:12px;
+  --foundation-sidebar-active-bg:rgba(255,255,255,.10);
+  --foundation-sidebar-hover-bg:rgba(255,255,255,.065);
+  --foundation-sidebar-text:#f4f7fa;
+  --foundation-sidebar-muted:#bfd0dc;
+  --foundation-sidebar-chevron:#b7cad8;
+}
+
+.sidebar{
+  background:var(--foundation-sidebar-bg)!important;
+  padding:20px 14px!important;
+  gap:22px!important;
+}
+
+.sidebar-brand{
+  padding:0 4px!important;
+  gap:12px!important;
+}
+
+.brand-mark{
+  width:40px!important;
+  height:40px!important;
+  border-radius:12px!important;
+  box-shadow:none!important;
+}
+
+.sidebar-brand strong{
+  font-size:15px!important;
+  line-height:1.15!important;
+  font-weight:720!important;
+  letter-spacing:-.01em!important;
+}
+
+.sidebar-brand span{
+  margin-top:3px!important;
+  color:var(--foundation-sidebar-muted)!important;
+  font-size:11px!important;
+  line-height:1.2!important;
+}
+
+.sidebar-nav{
+  gap:4px!important;
+}
+
+.sidebar-nav>a,
+.sidebar-new-quote,
+.sidebar-module-btn{
+  width:100%!important;
+  min-height:var(--foundation-sidebar-item-h)!important;
+  height:var(--foundation-sidebar-item-h)!important;
+  padding:0 var(--foundation-sidebar-item-pad-x)!important;
+  border:0!important;
+  border-radius:var(--foundation-sidebar-item-radius)!important;
+  background:transparent!important;
+  color:var(--foundation-sidebar-text)!important;
+  box-shadow:none!important;
+  font-size:14px!important;
+  line-height:1!important;
+  font-weight:650!important;
+  letter-spacing:-.005em!important;
+  transition:background-color .14s ease,color .14s ease!important;
+}
+
+.sidebar-nav>a:hover,
+.sidebar-new-quote:hover,
+.sidebar-module-btn:hover{
+  border:0!important;
+  background:var(--foundation-sidebar-hover-bg)!important;
+  box-shadow:none!important;
+  color:#fff!important;
+}
+
+/* True current-page state: light surface, no outline-pill treatment. */
+.sidebar-nav>a.active,
+.sidebar-new-quote.active,
+.sidebar-module-btn.active{
+  border:0!important;
+  background:var(--foundation-sidebar-active-bg)!important;
+  color:#fff!important;
+  box-shadow:none!important;
+  font-weight:700!important;
+}
+
+/* Focus stays accessible but visually quiet and inset. */
+.sidebar-nav>a:focus-visible,
+.sidebar-new-quote:focus-visible,
+.sidebar-module-btn:focus-visible,
+.sidebar-user button:focus-visible{
+  outline:0!important;
+  border:0!important;
+  box-shadow:inset 0 0 0 2px rgba(191,214,230,.72)!important;
+}
+
+.sidebar-module-chevron{
+  flex:0 0 auto!important;
+  color:var(--foundation-sidebar-chevron)!important;
+  font-size:18px!important;
+  line-height:1!important;
+  font-weight:500!important;
+  transform:none!important;
+  transition:color .14s ease,transform .14s ease!important;
+}
+
+.sidebar-module-btn:hover .sidebar-module-chevron,
+.sidebar-module-btn.active .sidebar-module-chevron{
+  color:#e9f1f6!important;
+}
+
+.sidebar-module-btn:hover .sidebar-module-chevron{
+  transform:translateX(1px)!important;
+}
+
+/* User area is tertiary navigation, not another card. */
+.sidebar-user{
+  margin-top:auto!important;
+  padding:14px 2px 0!important;
+  border-top:1px solid rgba(255,255,255,.13)!important;
+  gap:10px!important;
+}
+
+.sidebar-user strong{
+  color:#fff!important;
+  font-size:13px!important;
+  line-height:1.2!important;
+  font-weight:650!important;
+}
+
+.sidebar-user span{
+  margin-top:3px!important;
+  color:var(--foundation-sidebar-muted)!important;
+  font-size:10px!important;
+  line-height:1.2!important;
+  font-weight:600!important;
+  letter-spacing:.055em!important;
+}
+
+.sidebar-user button{
+  padding:6px 7px!important;
+  border:0!important;
+  border-radius:8px!important;
+  background:transparent!important;
+  color:var(--foundation-sidebar-muted)!important;
+  font-size:11px!important;
+  font-weight:600!important;
+}
+
+.sidebar-user button:hover{
+  background:rgba(255,255,255,.065)!important;
+  color:#fff!important;
+}
+
+@media(prefers-reduced-motion:reduce){
+  .sidebar-nav>a,
+  .sidebar-new-quote,
+  .sidebar-module-btn,
+  .sidebar-module-chevron{
+    transition:none!important;
+  }
+}
