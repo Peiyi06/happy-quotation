@@ -17126,3 +17126,27 @@ td,
     table-layout:fixed!important;
   }
 }
+
+
+/* =========================================================
+   QUOTATION LIBRARY — 6-COLUMN TRIAL
+   Remove Updated and redistribute space to primary content.
+   ========================================================= */
+.workspace-main .quotation-library-template .quotation-table th:nth-child(1),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(1){width:14%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(2),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(2){width:38%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(3),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(3){width:18%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(4),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(4){width:6%!important;text-align:center!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(5),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(5){width:12%!important;}
+.workspace-main .quotation-library-template .quotation-table th:nth-child(6),
+.workspace-main .quotation-library-template .quotation-table td:nth-child(6){width:12%!important;}
+
+.workspace-main .quotation-library-template .quotation-table td:nth-child(6){
+  overflow:visible!important;
+  text-overflow:clip!important;
+  white-space:nowrap!important;
+}
