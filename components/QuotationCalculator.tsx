@@ -160,6 +160,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [scenarioRows,setScenarioRows]=useState<ScenarioCostRow[]>([]);
   const [leaderRows, setLeaderRows] = useState<LeaderCostRow[]>(defaultLeaderRows);
   const [leaderOpen, setLeaderOpen] = useState(false);
+  const [childOpen, setChildOpen] = useState(false);
   const [singleRoomAmount, setSingleRoomAmount] = useState<number | "">("");
   const [singleRoomCurrency, setSingleRoomCurrency] = useState<Currency>("RM");
 
@@ -918,13 +919,15 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     </section>
 
     <div className="two-col">
-      <section className="section leader-toggle-section">
-        <div className="section-head leader-toggle-head">
-          <button className={"btn leader-toggle-btn "+(leaderOpen?"active":"")} onClick={()=>setLeaderOpen(v=>!v)}>
-            {t("Tour Leader","领队陪同")}
-          </button>
-          {leaderOpen&&<button type="button" className="btn no-print" onClick={addLeader}>{t("+ Add Cost Row","+ 新增成本项目")}</button>}
-        </div>
+      <section className={"section cost-setup-collapsible "+(leaderOpen?"open":"collapsed")}>
+        <button type="button" className="cost-setup-toggle" onClick={()=>setLeaderOpen(v=>!v)} aria-expanded={leaderOpen}>
+          <span>{t("Tour Leader Cost Setup","领队成本设置")}</span>
+          <span className="cost-setup-chevron" aria-hidden="true">⌄</span>
+        </button>
+        {leaderOpen&&<div className="cost-setup-content">
+          <div className="cost-setup-actions no-print">
+            <button type="button" className="btn" onClick={addLeader}>{t("+ Add Cost Row","+ 新增成本项目")}</button>
+          </div>
         {leaderOpen&&<div className="traveller-cost-table leader-cost-table">
           <div className="traveller-cost-table-head" aria-hidden="true">
             <span>{t("Cost Item","成本项目")}</span>
@@ -985,15 +988,21 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
               </div>
             })}
           </div>
-        </div>}
+        </div></div>}
       </section>
 
-      <Section title={t("Child Cost Setup","儿童成本设置")}>
-        <div className="child-grid">
-          <ChildCostCard title={t("Child with Bed","小孩含床")} t={t} setup={childBedSetup} setSetup={setChildBedSetup} pax={Math.max(1,Number(pax)||1)} mainCurrency={mainCurrency} mainRate={mainRate} displayItem={costItemDisplay} calcModeLabel={calcModeLabel} />
-          <ChildCostCard title={t("Child without Bed","小孩不含床")} t={t} setup={childNoBedSetup} setSetup={setChildNoBedSetup} pax={Math.max(1,Number(pax)||1)} mainCurrency={mainCurrency} mainRate={mainRate} displayItem={costItemDisplay} calcModeLabel={calcModeLabel} />
-        </div>
-      </Section>
+      <section className={"section cost-setup-collapsible "+(childOpen?"open":"collapsed")}>
+        <button type="button" className="cost-setup-toggle" onClick={()=>setChildOpen(v=>!v)} aria-expanded={childOpen}>
+          <span>{t("Child Cost Setup","儿童成本设置")}</span>
+          <span className="cost-setup-chevron" aria-hidden="true">⌄</span>
+        </button>
+        {childOpen&&<div className="cost-setup-content">
+          <div className="child-grid">
+            <ChildCostCard title={t("Child with Bed","小孩含床")} t={t} setup={childBedSetup} setSetup={setChildBedSetup} pax={Math.max(1,Number(pax)||1)} mainCurrency={mainCurrency} mainRate={mainRate} displayItem={costItemDisplay} calcModeLabel={calcModeLabel} />
+            <ChildCostCard title={t("Child without Bed","小孩不含床")} t={t} setup={childNoBedSetup} setSetup={setChildNoBedSetup} pax={Math.max(1,Number(pax)||1)} mainCurrency={mainCurrency} mainRate={mainRate} displayItem={costItemDisplay} calcModeLabel={calcModeLabel} />
+          </div>
+        </div>}
+      </section>
     </div>
 
     <Section title={t("Customer Quotation","对客报价")}>
