@@ -727,7 +727,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <div>
         <span>{t("SOURCE INQUIRY","来源询价")}</span>
         <strong>{resolvedSourceInquiryNo||t("Linked Inquiry","关联询价")}</strong>
-        {resolvedSourceInquirySnapshot&&<small>{[resolvedSourceInquirySnapshot.destination,resolvedSourceInquirySnapshot.daysCount&&resolvedSourceInquirySnapshot.nightsCount?`${resolvedSourceInquirySnapshot.daysCount}D${resolvedSourceInquirySnapshot.nightsCount}N`:"",resolvedSourceInquirySnapshot.pax?`${resolvedSourceInquirySnapshot.pax} Pax`:""].filter(Boolean).join(" · ")}</small>}
+        {resolvedSourceInquirySnapshot&&<small>{[resolvedSourceInquirySnapshot.destination,resolvedSourceInquirySnapshot.daysCount?`${resolvedSourceInquirySnapshot.daysCount} Days`:"",resolvedSourceInquirySnapshot.pax?`${resolvedSourceInquirySnapshot.pax} Pax`:""].filter(Boolean).join(" · ")}</small>}
       </div>
       <button className="btn" type="button" onClick={()=>{const href="/inquiries/"+resolvedSourceInquiryId;if(isDirty)setPendingHref(href);else router.push(href);}}>{t("Open Inquiry","打开询价")}</button>
     </section>}
