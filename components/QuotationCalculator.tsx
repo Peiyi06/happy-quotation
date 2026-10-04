@@ -214,7 +214,12 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   });
 
   const currentCommercialSnapshot=JSON.stringify({
-    supplier,flightTotalPrice,flightPriceCurrency,calculationInput
+    supplier,pax,mainCurrency,mainRate,flightTotalPrice,flightPriceCurrency,
+    travelerRows,leaderRows,singleRoomAmount,singleRoomCurrency,
+    profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
+    childBedMode,childBedManual,childBedCurrency,
+    childNoBedMode,childNoBedManual,childNoBedCurrency,
+    selectedType,manualQuote
   });
   const commercialDirty = Boolean(
     hydrated &&
