@@ -17423,6 +17423,7 @@ td,
 :root{
   --foundation-type-page:34px;
   --foundation-type-section:20px;
+  --foundation-type-subsection:15px;
   --foundation-type-body:14px;
   --foundation-type-meta:12px;
   --foundation-type-micro:11px;
@@ -17431,19 +17432,26 @@ td,
 
   --foundation-weight-page:700;
   --foundation-weight-section:700;
+  --foundation-weight-subsection:700;
   --foundation-weight-body:500;
   --foundation-weight-strong:650;
   --foundation-weight-action:700;
 
   --foundation-line-page:1.08;
   --foundation-line-section:1.2;
+  --foundation-line-subsection:1.3;
   --foundation-line-body:1.45;
   --foundation-line-meta:1.3;
   --foundation-line-control:1;
 
   --foundation-track-page:-.025em;
   --foundation-track-section:-.01em;
+  --foundation-track-subsection:-.005em;
   --foundation-track-body:0;
+
+  --foundation-title-level-1-color:var(--color-brand-primary);
+  --foundation-title-level-2-color:var(--color-text-primary);
+  --foundation-title-level-3-color:#3A3A3C;
   --foundation-track-meta:0;
 }
 
@@ -17481,6 +17489,39 @@ td,
   line-height:var(--foundation-line-section)!important;
   font-weight:var(--foundation-weight-section)!important;
   letter-spacing:var(--foundation-track-section)!important;
+}
+
+/* QUOTATION TYPOGRAPHY HIERARCHY — FOUNDATION PREVIEW
+   L1 Page = Deep Navy
+   L2 Section = Primary Black
+   L3 Subsection/Card = Dark Neutral
+*/
+.quotation-editor-shell .quotation-editor-title h1,
+.quotation-editor-shell .page-head h1{
+  color:var(--foundation-title-level-1-color)!important;
+}
+
+.quotation-editor-shell .section h2,
+.quotation-editor-shell .panel-head h2,
+.quotation-editor-shell .quotation-workflow-compact-head h2,
+.quotation-editor-shell .quotation-identity-head h3,
+.quotation-editor-shell .quotation-trip-context-head h3,
+.quotation-editor-shell .flight-info-head h3,
+.quotation-editor-shell .cost-setup-toggle>span:first-child{
+  color:var(--foundation-title-level-2-color)!important;
+  font-size:var(--foundation-type-section)!important;
+  line-height:var(--foundation-line-section)!important;
+  font-weight:var(--foundation-weight-section)!important;
+  letter-spacing:var(--foundation-track-section)!important;
+}
+
+.quotation-editor-shell .child-cost-card-head h3,
+.quotation-editor-shell .flight-block h4{
+  color:var(--foundation-title-level-3-color)!important;
+  font-size:var(--foundation-type-subsection)!important;
+  line-height:var(--foundation-line-subsection)!important;
+  font-weight:var(--foundation-weight-subsection)!important;
+  letter-spacing:var(--foundation-track-subsection)!important;
 }
 
 /* Core body */
@@ -19332,10 +19373,6 @@ td,
 
 .quotation-editor-shell .child-cost-card-head h3{
   margin:0;
-  color:var(--color-text-primary);
-  font-size:var(--foundation-type-section);
-  line-height:1.2;
-  font-weight:700;
 }
 
 .quotation-editor-shell .child-cost-total{
@@ -19647,11 +19684,7 @@ td,
 }
 
 .quotation-editor-shell .cost-setup-toggle>span:first-child{
-  color:var(--color-brand-primary);
-  font-size:var(--foundation-type-section);
-  line-height:var(--foundation-line-section);
-  font-weight:var(--foundation-weight-section);
-  letter-spacing:var(--foundation-track-section);
+  color:var(--foundation-title-level-2-color);
 }
 
 .quotation-editor-shell .cost-setup-chevron{
