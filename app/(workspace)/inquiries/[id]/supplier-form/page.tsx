@@ -36,7 +36,6 @@ export default async function SupplierInquiryFormPage({
   const startDate=pick("travelStartDate",data.travel_start_date)||"";
   const endDate=pick("travelEndDate",data.travel_end_date)||"";
   const days=Number(pick("daysCount",data.days_count))||1;
-  const nights=Number(pick("nightsCount",data.nights_count))||0;
   const pax=pick("pax",data.pax);
   const budget=pick("budget",data.budget)||"";
   const tourType=pick("tourType",data.tour_type)||"";
@@ -46,8 +45,23 @@ export default async function SupplierInquiryFormPage({
   const special=pick("specialRequest",data.special_request)||"";
   const transport=pick("transportRequirement","")||"";
   const itinerary=pick("itineraryRequirement","")||"";
-  const salesFlights=Array.isArray(data?.inquiry_data?.suggestedFlights)?data.inquiry_data.suggestedFlights:[];
-  const finalFlights=r?.overrideSuggestedFlights===true&&Array.isArray(r?.suggestedFlights)?r.suggestedFlights:salesFlights;
+  const salesFlightInformation=data?.inquiry_data?.flightInformation||{};
+  const finalFlightInformation=r?.overrideFlightInformation===true&&r?.flightInformation?r.flightInformation:salesFlightInformation;
+  const flightLegs=[
+    finalFlightInformation?.outbound,
+    finalFlightInformation?.outboundTransitOpen?finalFlightInformation?.outboundTransit:null,
+    finalFlightInformation?.returning,
+    finalFlightInformation?.returnTransitOpen?finalFlightInformation?.returnTransit:null
+  ].filter(Boolean);
+  const finalFlights=flightLegs.filter((leg:any)=>leg?.fromAirport||leg?.toAirport||leg?.flightNo||leg?.flightDate||leg?.departureTime||leg?.arrivalTime).map((leg:any)=>({
+    from:leg.fromAirport||"",
+    to:leg.toAirport||"",
+    flightNo:leg.flightNo||"",
+    date:leg.flightDate||"",
+    departureTime:leg.departureTime||"",
+    arrivalTime:leg.arrivalTime||"",
+    remarks:leg.nextDay?"+1 Next Day":""
+  }));
   const salesComposition=data?.inquiry_data?.travellerComposition||{};
   const finalComposition=r?.overrideTravellerComposition===true&&r?.travellerComposition?r.travellerComposition:salesComposition;
 
@@ -101,7 +115,7 @@ export default async function SupplierInquiryFormPage({
     [L("Destination","目的地"),displayDestination],
     [L("Departure City","出发城市"),displayDepartureCity],
     [L("Travel Date","旅游日期"),`${displayDate(startDate)} - ${displayDate(endDate)}`],
-    [L("Duration","天数"),language==="zh"?`${days}天${nights}晚`:`${days} Days ${nights} Nights`],
+    [L("Duration","天数"),language==="zh"?`${days}天`:`${days} Days`],
     [L("Pax","人数"),pax?String(pax):"—"],
     [L("Tour Type","团型"),displayTourType]
   ];
