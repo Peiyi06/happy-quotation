@@ -928,7 +928,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           <div className="cost-setup-actions no-print">
             <button type="button" className="btn" onClick={addLeader}>{t("+ Add Cost Row","+ 新增成本项目")}</button>
           </div>
-        {leaderOpen&&<div className="traveller-cost-table leader-cost-table">
+        <div className="traveller-cost-table leader-cost-table">
           <div className="traveller-cost-table-head" aria-hidden="true">
             <span>{t("Cost Item","成本项目")}</span>
             <span>{t("Type","类型")}</span>
