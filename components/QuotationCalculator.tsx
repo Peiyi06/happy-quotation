@@ -239,7 +239,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
     childBedMode,childBedManual,childBedCurrency,
     childNoBedMode,childNoBedManual,childNoBedCurrency,
-    selectedType,manualQuote
+    selectedType,manualQuote,pricingMode,pricingScenarios,scenarioRows
   });
   const commercialDirty = Boolean(
     hydrated &&
@@ -821,7 +821,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </div>}
     >
       <div className="scenario-matrix-wrap">
-        <div className="scenario-cost-matrix">
+        <div className="scenario-cost-matrix" style={{gridTemplateColumns:`minmax(390px,1.45fr) repeat(${pricingScenarios.length},minmax(155px,1fr))`}}>
           <div className="scenario-matrix-header scenario-matrix-static">
             <span>{t("Cost Item","成本项目")}</span>
             <span>{t("Method","计算方式")}</span>
@@ -833,7 +833,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             <small>{t("Unit Price · Qty","单价 · 数量")}</small>
           </div>)}
 
-          {scenarioRows.map((row,index)=><div className="scenario-matrix-row" key={row.id}>
+          {scenarioRows.map((row,index)=><div className="scenario-matrix-row" key={row.id} style={{gridTemplateColumns:`minmax(390px,1.45fr) repeat(${pricingScenarios.length},minmax(155px,1fr))`}}>
             <div className="scenario-matrix-static scenario-row-meta">
               <div className="scenario-item-field">
                 <input value={costItemDisplay(row.item)} onChange={e=>setScenarioRow(row.id,{item:e.target.value})} placeholder={t("Cost item","成本项目")} />
