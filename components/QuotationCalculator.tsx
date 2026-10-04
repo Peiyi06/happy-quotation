@@ -716,7 +716,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         </div>
         <div className="scenario-mode-switch no-print">
           <button type="button" className={pricingMode==="single"?"active":""} onClick={()=>setPricingMode("single")}>
-            {t("Single Pax","单一人数")}
+            {t("Fixed Pax","固定人数")}
           </button>
           <button type="button" className={pricingMode==="scenario"?"active":""} onClick={enableScenarioPricing}>
             {t("Scenario Package","多人数组合")}
@@ -731,85 +731,94 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     </section>
 
     {pricingMode==="single" ? <>
-    <Section title={t("Traveller Cost Input","旅客成本输入")} action={<button className="btn no-print" onClick={addTraveler}>{t("+ Add Cost Row","+ 新增成本项目")}</button>}>
-      <div className="traveller-cost-list">
-        {travelerRows.map((r,index)=>{
-          const isGroundQuote=index===0;
-          const rate=currencyRate(r.currency,mainCurrency,mainRate);
-          const total=travelerRowTotal(r,pax,mainCurrency,mainRate);
-          const pp=travelerRowPerPax(r,pax,mainCurrency,mainRate);
-          return <div className={"traveller-cost-card"+(isGroundQuote?" fixed":"")} key={r.id}>
-            <div className="traveller-cost-inputs">
-              <Field label={t("Cost Item","成本项目")}>
-                {isGroundQuote
-                  ? <input value={t("Ground Package","地接报价")} readOnly className="system-fixed-input" />
-                  : <input value={costItemDisplay(r.item)} onChange={e=>setTraveler(r.id,{item:e.target.value})}/>}
-              </Field>
+    <Section title={t("Cost Breakdown","成本明细")} action={<button className="btn no-print" onClick={addTraveler}>{t("+ Add Cost Row","+ 新增成本项目")}</button>}>
+      <div className="traveller-cost-table">
+        <div className="traveller-cost-table-head" aria-hidden="true">
+          <span>{t("Cost Item","成本项目")}</span>
+          <span>{t("Type","类型")}</span>
+          <span>{t("Calculation","计算方式")}</span>
+          <span>{t("Unit Price","单价")}</span>
+          <span>{t("Qty / Days","数量 / 天数")}</span>
+          <span>{t("Currency","币种")}</span>
+          <span>{t("Cost / Pax","每人成本")}</span>
+        </div>
 
-              <Field label={t("Type","类型")}>
-                {isGroundQuote
-                  ? <select value="cost" disabled className="system-fixed-input"><option value="cost">{t("Cost +","成本 +")}</option></select>
-                  : <select value={r.direction||"cost"} onChange={e=>setTraveler(r.id,{direction:e.target.value as "cost"|"deduction"})}>
-                      <option value="cost">{t("Cost +","成本 +")}</option>
-                      <option value="deduction">{t("Deduction −","扣减 −")}</option>
-                    </select>}
-              </Field>
-
-              <Field label={t("Calculation","计算方式")}>
-                <select value={r.mode} onChange={e=>setTraveler(r.id,{mode:e.target.value as CalcMode})}>{calcModes.map(x=><option key={x} value={x}>{calcModeLabel(x)}</option>)}</select>
-              </Field>
-
-              <Field label={t("Unit Price","单价")}>
-                <input type="number" min="0" value={r.unitPrice} onChange={e=>setTraveler(r.id,{unitPrice:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
-              </Field>
-
-              <Field label={t("Qty / Days","数量 / 天数")}>
-                <input type="number" value={r.qty} onChange={e=>setTraveler(r.id,{qty:e.target.value===""?"":Number(e.target.value)})}/>
-              </Field>
-
-              <Field label={t("Currency","币种")}>
-                {isGroundQuote
-                  ? <select value={mainCurrency} disabled className="system-fixed-input">{currencies.map(c=><option key={c} value={c}>{currencyLabel(c)}</option>)}</select>
-                  : <select value={r.currency} onChange={e=>setTraveler(r.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c} value={c}>{currencyLabel(c)}</option>)}</select>}
-              </Field>
-            </div>
-
-            <div className="traveller-cost-lower">
-              <div className="traveller-cost-secondary-inputs">
-                <Field label={t("Child Ratio","儿童比例")}>
-                  <select value={r.childRatioApplicable?"yes":"no"} onChange={e=>setTraveler(r.id,{childRatioApplicable:e.target.value==="yes"})}>
-                    <option value="yes">{t("Yes","是")}</option>
-                    <option value="no">{t("No","否")}</option>
-                  </select>
-                </Field>
-                <Field label={t("Remarks","备注")}>
-                  <input value={r.note} onChange={e=>setTraveler(r.id,{note:e.target.value})}/>
-                </Field>
-              </div>
-
-              <div className="traveller-cost-summary">
-                <div className={"traveller-cost-metric "+(rate===0?"warn":"")}>
-                  <span>{t("Rate","汇率")}</span>
-                  <strong>{rate || "—"}</strong>
+        <div className="traveller-cost-table-body">
+          {travelerRows.map((r,index)=>{
+            const isGroundQuote=index===0;
+            const rate=currencyRate(r.currency,mainCurrency,mainRate);
+            const total=travelerRowTotal(r,pax,mainCurrency,mainRate);
+            const pp=travelerRowPerPax(r,pax,mainCurrency,mainRate);
+            return <div className={"traveller-cost-row"+(isGroundQuote?" fixed":"")} key={r.id}>
+              <div className="traveller-cost-row-main">
+                <div className="traveller-cost-cell item">
+                  {isGroundQuote
+                    ? <input aria-label={t("Cost Item","成本项目")} value={t("Ground Package","地接报价")} readOnly className="system-fixed-input" />
+                    : <input aria-label={t("Cost Item","成本项目")} value={costItemDisplay(r.item)} onChange={e=>setTraveler(r.id,{item:e.target.value})}/>}
                 </div>
-                <div className={"traveller-cost-metric "+(total<0?"deduction-value":"")}>
-                  <span>{t("Total Cost","总成本")}</span>
-                  <strong>{money(total)}</strong>
+
+                <div className="traveller-cost-cell">
+                  {isGroundQuote
+                    ? <select aria-label={t("Type","类型")} value="cost" disabled className="system-fixed-input"><option value="cost">{t("Cost +","成本 +")}</option></select>
+                    : <select aria-label={t("Type","类型")} value={r.direction||"cost"} onChange={e=>setTraveler(r.id,{direction:e.target.value as "cost"|"deduction"})}>
+                        <option value="cost">{t("Cost +","成本 +")}</option>
+                        <option value="deduction">{t("Deduction −","扣减 −")}</option>
+                      </select>}
                 </div>
-                <div className={"traveller-cost-metric primary "+(pp<0?"deduction-value":"")}>
+
+                <div className="traveller-cost-cell">
+                  <select aria-label={t("Calculation","计算方式")} value={r.mode} onChange={e=>setTraveler(r.id,{mode:e.target.value as CalcMode})}>{calcModes.map(x=><option key={x} value={x}>{calcModeLabel(x)}</option>)}</select>
+                </div>
+
+                <div className="traveller-cost-cell">
+                  <input aria-label={t("Unit Price","单价")} type="number" min="0" value={r.unitPrice} onChange={e=>setTraveler(r.id,{unitPrice:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
+                </div>
+
+                <div className="traveller-cost-cell">
+                  <input aria-label={t("Qty / Days","数量 / 天数")} type="number" value={r.qty} onChange={e=>setTraveler(r.id,{qty:e.target.value===""?"":Number(e.target.value)})}/>
+                </div>
+
+                <div className="traveller-cost-cell">
+                  {isGroundQuote
+                    ? <select aria-label={t("Currency","币种")} value={mainCurrency} disabled className="system-fixed-input">{currencies.map(c=><option key={c} value={c}>{currencyLabel(c)}</option>)}</select>
+                    : <select aria-label={t("Currency","币种")} value={r.currency} onChange={e=>setTraveler(r.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c} value={c}>{currencyLabel(c)}</option>)}</select>}
+                </div>
+
+                <div className={"traveller-cost-result "+(pp<0?"deduction-value":"")}>
                   <span>{t("Cost / Pax","每人成本")}</span>
                   <strong>{money(pp)}</strong>
                 </div>
               </div>
 
-              <div className="traveller-cost-actions no-print">
-                {isGroundQuote
-                  ? <span className="fixed-row-label">{t("Fixed","固定")}</span>
-                  : <><button type="button" onClick={()=>duplicateTraveler(r.id)}>{t("Duplicate","复制")}</button><button type="button" onClick={()=>removeTraveler(r.id)}>{t("Delete","删除")}</button></>}
+              <div className="traveller-cost-row-meta">
+                <div className="traveller-cost-meta-group">
+                  <label>
+                    <span>{t("Child Ratio","儿童比例")}</span>
+                    <select value={r.childRatioApplicable?"yes":"no"} onChange={e=>setTraveler(r.id,{childRatioApplicable:e.target.value==="yes"})}>
+                      <option value="yes">{t("Yes","是")}</option>
+                      <option value="no">{t("No","否")}</option>
+                    </select>
+                  </label>
+                  <label className="traveller-cost-remark">
+                    <span>{t("Remarks","备注")}</span>
+                    <input value={r.note} onChange={e=>setTraveler(r.id,{note:e.target.value})} placeholder={t("Add remark","添加备注")}/>
+                  </label>
+                </div>
+
+                <div className="traveller-cost-readonly">
+                  <span>{t("Rate","汇率")} <strong className={rate===0?"warn":""}>{rate || "—"}</strong></span>
+                  <span>{t("Total Cost","总成本")} <strong className={total<0?"deduction-value":""}>{money(total)}</strong></span>
+                </div>
+
+                <div className="traveller-cost-actions no-print">
+                  {isGroundQuote
+                    ? <span className="fixed-row-label">{t("Fixed","固定")}</span>
+                    : <><button type="button" onClick={()=>duplicateTraveler(r.id)}>{t("Duplicate","复制")}</button><button type="button" onClick={()=>removeTraveler(r.id)}>{t("Delete","删除")}</button></>}
+                </div>
               </div>
             </div>
-          </div>
-        })}
+          })}
+        </div>
       </div>
     </Section>
     </> : <Section
