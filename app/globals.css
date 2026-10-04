@@ -311,8 +311,7 @@
 .flight-day-status{font-family:inherit;cursor:pointer;width:100%}
 .flight-day-status:focus-visible{outline:2px solid var(--color-brand-primary);outline-offset:2px}
 .inquiry-flights-ios .shared-flight-information.compact{margin-top:0;padding-top:0;border-top:0}
-.inquiry-flights-ios .shared-flight-information .flight-info-head{margin-bottom:14px}
-.inquiry-flights-ios .shared-flight-information .flight-info-head h2{font-size:15px}
+.inquiry-flights-ios .shared-flight-information .flight-info-head{margin-bottom:16px}
 .inquiry-flights-ios .shared-flight-information .flight-block{box-shadow:none}
 
 
@@ -19897,5 +19896,55 @@ td,
   }
   .quotation-editor-shell .cost-setup-content{
     padding:0 16px 16px;
+  }
+}
+
+
+/* FOUNDATION: Flight Information Surface */
+.quotation-editor-shell .flight-section-surface,
+.inquiry-editor .flight-section-surface{
+  min-width:0;
+  padding:20px;
+  border:1px solid var(--color-border-default);
+  border-radius:18px;
+  background:var(--color-bg-surface);
+  box-shadow:none;
+}
+
+.quotation-editor-shell .flight-section-surface .shared-flight-information,
+.inquiry-editor .flight-section-surface .shared-flight-information{
+  margin-top:0;
+  padding-top:0;
+  border-top:0;
+}
+
+.quotation-editor-shell .flight-section-surface .flight-info-head,
+.inquiry-editor .flight-section-surface .flight-info-head{
+  margin-bottom:18px;
+}
+
+.quotation-editor-shell .flight-section-surface .flight-block,
+.inquiry-editor .flight-section-surface .flight-block{
+  background:var(--color-bg-soft);
+  border-color:var(--color-border-default);
+  box-shadow:none;
+}
+
+.quotation-editor-shell .quotation-flight-section{
+  margin-top:18px;
+}
+
+.inquiry-editor .inquiry-flights-ios.flight-section-surface{
+  padding:20px!important;
+  background:var(--color-bg-surface)!important;
+  border-color:var(--color-border-default)!important;
+  box-shadow:none!important;
+}
+
+@media(max-width:700px){
+  .quotation-editor-shell .flight-section-surface,
+  .inquiry-editor .flight-section-surface{
+    padding:16px;
+    border-radius:16px;
   }
 }
