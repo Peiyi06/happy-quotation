@@ -18405,3 +18405,128 @@ td,
   overflow-x:auto;
   scrollbar-gutter:stable;
 }
+
+
+/* FOUNDATION REFINEMENT P4: stacked scenario cells */
+.scenario-cost-matrix.default-scenarios{
+  width:100%;
+  min-width:0;
+}
+.scenario-cost-matrix.default-scenarios .scenario-matrix-static{
+  grid-template-columns:150px 110px 70px;
+  gap:0;
+}
+.scenario-cost-matrix.default-scenarios .scenario-matrix-static > *{
+  min-width:0;
+}
+.scenario-cost-matrix.default-scenarios .scenario-row-meta{
+  padding:10px 10px;
+  column-gap:10px;
+}
+.scenario-cost-matrix.default-scenarios .scenario-row-meta input,
+.scenario-cost-matrix.default-scenarios .scenario-row-meta select{
+  height:38px;
+  min-height:38px;
+  font-size:13px;
+}
+.scenario-cost-matrix.default-scenarios .scenario-matrix-pax-head{
+  padding:10px 12px 9px;
+}
+.scenario-cost-matrix.default-scenarios .scenario-cell-labels{
+  display:block;
+  margin-top:2px;
+}
+.scenario-cost-matrix.default-scenarios .scenario-cell-labels span{
+  font-size:10px;
+  color:#98a2b3;
+}
+.scenario-cost-matrix.default-scenarios .scenario-cost-cell{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:7px;
+  padding:10px 12px;
+  border-left:1px solid #f1f4f7;
+}
+.scenario-cost-matrix.default-scenarios .scenario-unit-price-input{
+  width:100%;
+  min-width:0;
+  height:38px;
+  min-height:38px;
+}
+.scenario-cost-matrix.default-scenarios .scenario-qty-control{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:7px;
+}
+.scenario-cost-matrix.default-scenarios .scenario-qty-control span{
+  font-size:10px;
+  color:#98a2b3;
+  white-space:nowrap;
+}
+.scenario-cost-matrix.default-scenarios .scenario-qty-input{
+  width:52px;
+  min-width:52px;
+  height:30px;
+  min-height:30px;
+  padding:4px 7px;
+  text-align:center;
+  font-size:12px;
+}
+.scenario-cost-matrix.default-scenarios .scenario-matrix-row{
+  border-bottom:1px solid #f3f5f8;
+}
+.scenario-cost-matrix.default-scenarios .scenario-row-actions{
+  margin-top:4px;
+}
+.scenario-cost-matrix.default-scenarios .scenario-row-actions button{
+  font-size:10px;
+}
+.scenario-cost-matrix.extended-scenarios{
+  width:max-content;
+  min-width:max-content;
+}
+.scenario-cost-matrix.extended-scenarios .scenario-matrix-static{
+  grid-template-columns:150px 110px 70px;
+  gap:0;
+}
+.scenario-cost-matrix.extended-scenarios .scenario-row-meta{
+  padding:10px;
+  column-gap:10px;
+}
+.scenario-cost-matrix.extended-scenarios .scenario-cost-cell{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:7px;
+  padding:10px 12px;
+}
+.scenario-cost-matrix.extended-scenarios .scenario-unit-price-input{
+  width:100%;
+  min-width:0;
+  height:38px;
+}
+.scenario-cost-matrix.extended-scenarios .scenario-qty-control{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:7px;
+}
+.scenario-cost-matrix.extended-scenarios .scenario-qty-control span{
+  font-size:10px;
+  color:#98a2b3;
+}
+.scenario-cost-matrix.extended-scenarios .scenario-qty-input{
+  width:52px;
+  min-width:52px;
+  height:30px;
+  min-height:30px;
+  text-align:center;
+  font-size:12px;
+}
+@media (min-width:1180px){
+  .scenario-matrix-wrap:has(.scenario-cost-matrix.default-scenarios){
+    overflow-x:hidden;
+  }
+}
