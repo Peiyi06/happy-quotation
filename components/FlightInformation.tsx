@@ -41,7 +41,7 @@ export const emptyFlightInformation=():FlightInformationValue=>({
   returnTransit:emptyLeg()
 });
 
-export function flightInformationFromLegacyFlights(flights:any[]):FlightInformationValue{
+export function flightInformationFromFlightList(flights:any[]):FlightInformationValue{
   const list=Array.isArray(flights)?flights:[];
   const result=emptyFlightInformation();
   const toLeg=(f:any):FlightLeg=>({
@@ -67,26 +67,6 @@ export function flightInformationFromLegacyFlights(flights:any[]):FlightInformat
   }else if(list.length===2){
     result.returning=toLeg(list[1]);
   }
-  return result;
-}
-
-export function flightInformationToLegacyFlights(value:FlightInformationValue){
-  const fromLeg=(leg:FlightLeg)=>({
-    id:Math.random().toString(36).slice(2,10),
-    from:leg.fromAirport,
-    to:leg.toAirport,
-    flightNo:leg.flightNo,
-    date:leg.flightDate,
-    departureTime:leg.departureTime,
-    arrivalTime:leg.arrivalTime,
-    remarks:leg.nextDay?"+1 Next Day":""
-  });
-  const result:any[]=[];
-  const has=(leg:FlightLeg)=>Boolean(leg.fromAirport||leg.toAirport||leg.flightNo||leg.flightDate||leg.departureTime||leg.arrivalTime);
-  if(has(value.outbound)) result.push(fromLeg(value.outbound));
-  if(value.outboundTransitOpen&&has(value.outboundTransit)) result.push(fromLeg(value.outboundTransit));
-  if(has(value.returning)) result.push(fromLeg(value.returning));
-  if(value.returnTransitOpen&&has(value.returnTransit)) result.push(fromLeg(value.returnTransit));
   return result;
 }
 
