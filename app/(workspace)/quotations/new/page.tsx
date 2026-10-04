@@ -82,6 +82,8 @@ export default async function NewQuotationPage({searchParams}:{searchParams:Prom
         sourceInquiryNo=data.inquiry_no||"";
         sourceInquirySnapshot={
           inquiryNo:data.inquiry_no||"",
+          customerName:data.customer_name||"",
+          contact:data.contact||"",
           destination:pick("destination",data.destination)||"",
           departureCity:pick("departureCity",data.departure_city)||"",
           travelStartDate:pick("travelStartDate",data.travel_start_date)||"",
