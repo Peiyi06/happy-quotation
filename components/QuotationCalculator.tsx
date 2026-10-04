@@ -703,6 +703,29 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </details>
     </Section>
 
+    <section className="section quotation-pricing-mode-section">
+      <div className="section-head scenario-pricing-mode-head">
+        <div>
+          <span className="page-kicker">{t("PRICING MODE","报价模式")}</span>
+          <h2>{t("Pricing Structure","报价结构")}</h2>
+        </div>
+        <div className="scenario-mode-switch no-print">
+          <button type="button" className={pricingMode==="single"?"active":""} onClick={()=>setPricingMode("single")}>
+            {t("Single Pax","单一人数")}
+          </button>
+          <button type="button" className={pricingMode==="scenario"?"active":""} onClick={enableScenarioPricing}>
+            {t("Scenario Package","多人数组合")}
+          </button>
+        </div>
+      </div>
+      <p className="scenario-mode-note">
+        {pricingMode==="single"
+          ? t("Use the Inquiry pax as one pricing scenario.","根据 Inquiry 的固定人数计算单一报价。")
+          : t("Compare and calculate multiple pax scenarios side by side.","同屏比较并计算不同人数的配套价格。")}
+      </p>
+    </section>
+
+    {pricingMode==="single" ? <>
     <Section title={t("Traveller Cost Input","旅客成本输入")} action={<button className="btn no-print" onClick={addTraveler}>{t("+ Add Cost Row","+ 新增成本项目")}</button>}>
       <div className="traveller-cost-list">
         {travelerRows.map((r,index)=>{
@@ -784,7 +807,98 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         })}
       </div>
     </Section>
+    </> : <Section
+      title={t("Scenario Cost Matrix","人数成本矩阵")}
+      action={<div className="scenario-section-actions no-print">
+        <button className="btn" type="button" onClick={addPricingScenario}>{t("+ Add Pax","+ 新增人数")}</button>
+        <button className="btn" type="button" onClick={addScenarioRow}>{t("+ Add Cost Row","+ 新增成本项目")}</button>
+      </div>}
+    >
+      <div className="scenario-matrix-wrap">
+        <div className="scenario-cost-matrix" style={{"--scenario-count":String(pricingScenarios.length)} as React.CSSProperties}>
+          <div className="scenario-matrix-header scenario-matrix-static">
+            <span>{t("Cost Item","成本项目")}</span>
+            <span>{t("Method","计算方式")}</span>
+            <span>{t("Currency","币种")}</span>
+          </div>
+          {pricingScenarios.map(s=><div className="scenario-matrix-header scenario-matrix-pax-head" key={s.id}>
+            <strong>{s.pax} Pax</strong>
+            <button type="button" className="scenario-remove-pax no-print" onClick={()=>removePricingScenario(s.id)} disabled={pricingScenarios.length<=1}>×</button>
+            <small>{t("Unit Price · Qty","单价 · 数量")}</small>
+          </div>)}
 
+          {scenarioRows.map((row,index)=><div className="scenario-matrix-row" key={row.id}>
+            <div className="scenario-matrix-static scenario-row-meta">
+              <div className="scenario-item-field">
+                <input value={costItemDisplay(row.item)} onChange={e=>setScenarioRow(row.id,{item:e.target.value})} placeholder={t("Cost item","成本项目")} />
+                {index>0&&<div className="scenario-row-actions no-print">
+                  <button type="button" onClick={()=>duplicateScenarioRow(row.id)}>{t("Copy","复制")}</button>
+                  <button type="button" onClick={()=>removeScenarioRow(row.id)}>{t("Delete","删除")}</button>
+                </div>}
+              </div>
+              <select value={row.mode} onChange={e=>setScenarioRow(row.id,{mode:e.target.value as CalcMode})}>
+                {calcModes.map(mode=><option key={mode} value={mode}>{calcModeLabel(mode)}</option>)}
+              </select>
+              <select value={row.currency} onChange={e=>setScenarioRow(row.id,{currency:e.target.value as Currency})}>
+                {currencies.map(cur=><option key={cur} value={cur}>{currencyLabel(cur)}</option>)}
+              </select>
+            </div>
+            {pricingScenarios.map(s=>{
+              const value=row.values[s.id]||{unitPrice:"",qty:1};
+              return <div className="scenario-cost-cell" key={s.id}>
+                <input
+                  aria-label={t(`${row.item||"Cost"} unit price for ${s.pax} pax`,`${row.item||"成本"} ${s.pax}人单价`)}
+                  type="number" min="0" value={value.unitPrice}
+                  onChange={e=>setScenarioCell(row.id,s.id,{unitPrice:e.target.value===""?"":Math.max(0,Number(e.target.value))})}
+                  placeholder="0.00"
+                />
+                <span>×</span>
+                <input
+                  aria-label={t(`${row.item||"Cost"} quantity for ${s.pax} pax`,`${row.item||"成本"} ${s.pax}人数量`)}
+                  type="number" min="0" value={value.qty}
+                  onChange={e=>setScenarioCell(row.id,s.id,{qty:e.target.value===""?"":Math.max(0,Number(e.target.value))})}
+                  placeholder="1"
+                />
+              </div>;
+            })}
+          </div>)}
+        </div>
+      </div>
+      <div className="scenario-formula-note">
+        <span>{t("Package Days","配套天数")}: <strong>{travelDuration.days||"—"}</strong></span>
+        <span>{t("Per Person / Day and Per Group / Day automatically use Package Days.","每人每天及整团每天会自动使用配套天数。")}</span>
+      </div>
+    </Section>}
+
+    {pricingMode==="scenario"&&<Section title={t("Scenario Pricing Results","人数报价结果")}>
+      <div className="scenario-result-grid">
+        {scenarioResults.map(result=><article className="scenario-result-card" key={result.id}>
+          <div className="scenario-result-head">
+            <div><span>{t("SCENARIO","人数方案")}</span><strong>{result.pax} Pax</strong></div>
+            <span className="scenario-result-days">{travelDuration.days||"—"} {t("Days","天")}</span>
+          </div>
+          <div className="scenario-result-metrics">
+            <Metric label={t("Cost / Pax","每人成本")} value={money(result.costPerPax)} />
+            <Metric label={t("System Suggested","系统建议价")} value={money(result.suggestedPrice)} />
+          </div>
+          <Field label={t("Manual Final Price","手动最终报价")}>
+            <input type="number" min="0" value={pricingScenarios.find(s=>s.id===result.id)?.manualFinalPrice??""}
+              onChange={e=>setScenarioManual(result.id,e.target.value===""?"":Math.max(0,Number(e.target.value)))}
+              placeholder={money(result.roundedPrice)} />
+          </Field>
+          <div className="scenario-result-final">
+            <span>{t("Final Price / Pax","最终报价 / 人")}</span>
+            <strong>{money(result.finalPrice)}</strong>
+          </div>
+          <div className="scenario-result-foot">
+            <span>{t("Profit","利润")} <strong>{money(result.finalProfit)}</strong></span>
+            <span>{t("Margin","毛利率")} <strong>{pct(result.finalMargin)}</strong></span>
+          </div>
+        </article>)}
+      </div>
+    </Section>}
+
+    {pricingMode==="single"&&<>
     <section className="section single-room-section">
       <div className="section-head"><h2>{t("Single Room","单人房")}</h2></div>
       <div className="single-room-grid">
@@ -876,7 +990,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         </div>)}
       </div>
     </Section>
-
+    </>}
     {workspaceMode&&<div className={"quotation-save-state "+(isDirty?"unsaved":"saved")}>
       <div>
         <strong>{isDirty?t("● Unsaved Changes","● 有未保存修改"):t("✓ All changes saved","✓ 所有修改已保存")}</strong>
