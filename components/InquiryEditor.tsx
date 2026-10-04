@@ -285,7 +285,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
           />
           <div className="customer-request-copy-menu">
             <button className="btn customer-request-copy-trigger" type="button" aria-expanded={showCopyMenu} onClick={()=>setShowCopyMenu(v=>!v)}>
-              {t("Copy Customer Request","复制客户资料模板")} <span className="customer-request-copy-chevron" aria-hidden="true">⌄</span>
+              {t("Request Template","资料收集模板")} <span className="customer-request-copy-chevron" aria-hidden="true">⌄</span>
             </button>
             {showCopyMenu&&<div className="customer-request-copy-popover">
               <div className="customer-request-copy-group">
