@@ -821,7 +821,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </div>}
     >
       <div className="scenario-matrix-wrap">
-        <div className="scenario-cost-matrix" style={{gridTemplateColumns:`minmax(330px,1.2fr) repeat(${pricingScenarios.length},minmax(132px,1fr))`}}>
+        <div className={"scenario-cost-matrix"+(pricingScenarios.length<=4?" default-scenarios":" extended-scenarios")} style={{gridTemplateColumns:pricingScenarios.length<=4?`minmax(278px,.92fr) repeat(${pricingScenarios.length},minmax(0,1fr))`:`minmax(300px,1fr) repeat(${pricingScenarios.length},minmax(122px,1fr))`}}>
           <div className="scenario-matrix-header scenario-matrix-static">
             <span>{t("Cost Item","成本项目")}</span>
             <span>{t("Method","计算方式")}</span>
@@ -839,7 +839,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             </div>
           </div>)}
 
-          {scenarioRows.map((row,index)=><div className="scenario-matrix-row" key={row.id} style={{gridTemplateColumns:`minmax(330px,1.2fr) repeat(${pricingScenarios.length},minmax(132px,1fr))`}}>
+          {scenarioRows.map((row,index)=><div className="scenario-matrix-row" key={row.id} style={{gridTemplateColumns:pricingScenarios.length<=4?`minmax(278px,.92fr) repeat(${pricingScenarios.length},minmax(0,1fr))`:`minmax(300px,1fr) repeat(${pricingScenarios.length},minmax(122px,1fr))`}}>
             <div className="scenario-matrix-static scenario-row-meta">
               <div className="scenario-item-field">
                 <input value={costItemDisplay(row.item)} onChange={e=>setScenarioRow(row.id,{item:e.target.value})} placeholder={t("Cost item","成本项目")} />
