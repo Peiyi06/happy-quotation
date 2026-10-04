@@ -324,54 +324,16 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const displayStatus:QuoteStatus =
     status==="ready" && commercialDirty ? "revision_required" : status;
 
-  const itinerarySummary = useMemo(() => {
-    const addDays = (date:string, days:number) => {
-      if (!date) return "";
-      const [year,month,day] = date.split("-").map(Number);
-      const d = new Date(Date.UTC(year, month - 1, day));
-      d.setUTCDate(d.getUTCDate() + days);
-      return d.toISOString().slice(0,10);
-    };
-    const diffDays = (start:string, end:string) => {
-      if (!start || !end) return 0;
-      const [sy,sm,sd] = start.split("-").map(Number);
-      const [ey,em,ed] = end.split("-").map(Number);
-      const a = Date.UTC(sy, sm - 1, sd);
-      const b = Date.UTC(ey, em - 1, ed);
-      return Math.round((b-a)/86400000);
-    };
-    const finalReturnFlightDate = returnTransitOpen && returnTransitFlightDate ? returnTransitFlightDate : returnFlightDate;
-    const finalReturnNextDay = returnTransitOpen && returnTransitFlightDate ? returnTransitNextDay : returnNextDay;
-    const arrivalReturnDate = finalReturnFlightDate ? addDays(finalReturnFlightDate, finalReturnNextDay ? 1 : 0) : "";
-    const days = departureDate && arrivalReturnDate ? diffDays(departureDate, arrivalReturnDate) + 1 : 0;
-
-    let nights = 0;
-    const finalOutboundFlightDate = outboundTransitOpen && outboundTransitFlightDate ? outboundTransitFlightDate : outboundFlightDate;
-    const finalOutboundNextDay = outboundTransitOpen && outboundTransitFlightDate ? outboundTransitNextDay : outboundNextDay;
-    const finalOutboundArrivalTime = outboundTransitOpen && outboundTransitFlightDate ? outboundTransitArrivalTime : outboundArrivalTime;
-    if (finalOutboundFlightDate && returnFlightDate) {
-      let hotelStart = finalOutboundFlightDate;
-      if (finalOutboundNextDay) {
-        const arrivalMinutes = finalOutboundArrivalTime ? Number(finalOutboundArrivalTime.slice(0,2))*60 + Number(finalOutboundArrivalTime.slice(3,5)) : 9999;
-        hotelStart = arrivalMinutes <= 180 ? finalOutboundFlightDate : addDays(finalOutboundFlightDate,1);
-      }
-      nights = Math.max(0, diffDays(hotelStart, returnFlightDate));
-    }
-    return {
-      returnDate: arrivalReturnDate,
-      days,
-      nights,
-      label: days ? `${days}D${nights}N` : ""
-    };
-  }, [departureDate,outboundFlightDate,outboundArrivalTime,outboundNextDay,outboundTransitOpen,outboundTransitFlightDate,outboundTransitArrivalTime,outboundTransitNextDay,returnFlightDate,returnNextDay,returnTransitOpen,returnTransitFlightDate,returnTransitNextDay]);
-
-  useEffect(() => {
-    setDepartureDate(outboundFlightDate);
-  }, [outboundFlightDate]);
-
-  useEffect(() => {
-    if (itinerarySummary.returnDate) setReturnDate(itinerarySummary.returnDate);
-  }, [itinerarySummary.returnDate]);
+  const travelDuration = useMemo(() => {
+    if (!departureDate || !returnDate) return {days:0,label:""};
+    const [sy,sm,sd]=departureDate.split("-").map(Number);
+    const [ey,em,ed]=returnDate.split("-").map(Number);
+    const start=Date.UTC(sy,sm-1,sd);
+    const end=Date.UTC(ey,em-1,ed);
+    if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) return {days:0,label:""};
+    const days=Math.floor((end-start)/86400000)+1;
+    return {days,label:`${days} ${t("Days","天")}`};
+  }, [departureDate,returnDate,language]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -515,7 +477,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       returnFromAirport,returnToAirport,returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
       returnTransitOpen,returnTransitFromAirport,returnTransitToAirport,returnTransitFlightNo,returnTransitFlightDate,returnTransitDepartureTime,returnTransitArrivalTime,returnTransitNextDay,
       flightTotalPrice,flightPriceCurrency,flightTicketType:flightTicketType.code,
-      itineraryDays:itinerarySummary.days,itineraryNights:itinerarySummary.nights,itineraryLabel:itinerarySummary.label,
+      itineraryDays:travelDuration.days,itineraryNights:null,itineraryLabel:travelDuration.label,
       travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType:effectiveSelectedType,manualQuote,sourceInquiryId:resolvedSourceInquiryId,sourceInquiryNo:resolvedSourceInquiryNo,sourceInquirySnapshot:resolvedSourceInquirySnapshot};
     const payload = {
       source_inquiry_id: resolvedSourceInquiryId || "",
@@ -805,9 +767,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             <span className="page-kicker">{t("FLIGHT INFORMATION","航班信息")}</span>
             <h3>{t("Flight Information","航班信息")}</h3>
           </div>
-          {itinerarySummary.label && <div className="itinerary-pill">
-            <strong>{itinerarySummary.days}{t("D","天")}{itinerarySummary.nights}{t("N","晚")}</strong>
-            <span>{itinerarySummary.label}</span>
+          {travelDuration.label && <div className="itinerary-pill">
+            <strong>{travelDuration.days} {t("Days","天")}</strong>
+            <span>{t("Travel Duration","行程天数")}</span>
           </div>}
         </div>
 
@@ -823,7 +785,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
               <Field label={t("From Airport Code","出发机场代码")}><input maxLength={3} value={outboundFromAirport} onChange={e=>setOutboundFromAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="KUL" /></Field>
               <Field label={t("To Airport Code","抵达机场代码")}><input maxLength={3} value={outboundToAirport} onChange={e=>setOutboundToAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="CSX" /></Field>
               <Field label={t("Airline / Flight No.","航空公司 / 航班号")}><input value={outboundFlightNo} onChange={e=>setOutboundFlightNo(e.target.value.toUpperCase())} placeholder="CZ1234" /></Field>
-              <Field label={t("Departure Flight Date","去程航班日期")}><input type="date" value={outboundFlightDate} onChange={e=>{setOutboundFlightDate(e.target.value); setDepartureDate(e.target.value);}} /></Field>
+              <Field label={t("Departure Flight Date","去程航班日期")}><input type="date" value={outboundFlightDate} onChange={e=>setOutboundFlightDate(e.target.value)} /></Field>
               <TimeField label={t("Departure Time","起飞时间")} value={outboundDepartureTime} setValue={setOutboundDepartureTime} />
               <TimeField label={t("Arrival Time","抵达时间")} value={outboundArrivalTime} setValue={setOutboundArrivalTime} />
               <div className={"flight-day-status "+(outboundDepartureTime&&outboundArrivalTime?(outboundNextDay?"next":"same"):"pending")}>
