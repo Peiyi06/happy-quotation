@@ -6222,6 +6222,8 @@ td,
   background:var(--color-bg-surface)!important;
 }
 .quotation-editor-shell .quote-meta-panel{
+  background:var(--color-bg-surface)!important;
+  border-color:var(--color-border-default)!important;
   box-shadow:none!important;
 }
 
@@ -6233,7 +6235,7 @@ td,
   padding:16px;
   border:1px solid var(--color-border-default);
   border-radius:14px;
-  background:var(--color-bg-soft);
+  background:var(--color-bg-surface);
   box-shadow:none;
 }
 .quotation-editor-shell .quotation-identity-head,
@@ -19947,4 +19949,22 @@ td,
     padding:16px;
     border-radius:16px;
   }
+}
+
+
+/* FOUNDATION: Quotation Meta Surface Correction */
+.quotation-editor-shell .quote-meta-panel,
+.quotation-editor-shell .quotation-identity-block,
+.quotation-editor-shell .quotation-trip-context,
+.quotation-editor-shell .quotation-flight-section,
+.inquiry-editor .inquiry-flights-ios.flight-section-surface{
+  background:var(--color-bg-surface)!important;
+}
+
+.quotation-editor-shell .quotation-identity-block,
+.quotation-editor-shell .quotation-trip-context,
+.quotation-editor-shell .quotation-flight-section,
+.inquiry-editor .inquiry-flights-ios.flight-section-surface{
+  border-color:var(--color-border-default)!important;
+  box-shadow:none!important;
 }
