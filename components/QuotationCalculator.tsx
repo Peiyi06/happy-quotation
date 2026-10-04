@@ -635,8 +635,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <div className="quotation-trip-context">
         <div className="quotation-trip-context-head">
           <div>
-            <span className="page-kicker">{t("CUSTOMER & TRIP","客户与行程")}</span>
-            <h3>{t("Customer & Trip Information","客户与行程资料")}</h3>
+            <h3>{t("Customer & Trip","客户与行程")}</h3>
           </div>
           <span className={"quotation-source-mode "+(resolvedSourceInquiryId?"linked":"direct")}>
             {resolvedSourceInquiryId?t("Linked Inquiry","来自 Inquiry"):t("Direct Quotation","直接报价")}
@@ -712,7 +711,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     <section className="section quotation-pricing-mode-section">
       <div className="section-head scenario-pricing-mode-head">
         <div>
-          <span className="page-kicker">{t("PRICING MODE","报价模式")}</span>
           <h2>{t("Pricing Structure","报价结构")}</h2>
         </div>
         <div className="scenario-mode-switch no-print">
