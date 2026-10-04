@@ -370,7 +370,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   }, [outboundFlightDate]);
 
   useEffect(() => {
-    setReturnDate(itinerarySummary.returnDate);
+    if (itinerarySummary.returnDate) setReturnDate(itinerarySummary.returnDate);
   }, [itinerarySummary.returnDate]);
 
   useEffect(() => {
