@@ -792,13 +792,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
               <div className="traveller-cost-row-meta">
                 <div className="traveller-cost-meta-group">
-                  <label>
-                    <span>{t("Child Ratio","儿童比例")}</span>
-                    <select value={r.childRatioApplicable?"yes":"no"} onChange={e=>setTraveler(r.id,{childRatioApplicable:e.target.value==="yes"})}>
-                      <option value="yes">{t("Yes","是")}</option>
-                      <option value="no">{t("No","否")}</option>
-                    </select>
-                  </label>
                   <label className="traveller-cost-remark">
                     <span>{t("Remarks","备注")}</span>
                     <input value={r.note} onChange={e=>setTraveler(r.id,{note:e.target.value})} placeholder={t("Add remark","添加备注")}/>
