@@ -19182,3 +19182,73 @@ td,
     box-shadow:none;
   }
 }
+
+
+/* FOUNDATION: Quotation Record Identity Field */
+.quotation-editor-shell .quotation-identity-block{
+  max-width:none!important;
+  margin-bottom:24px!important;
+  padding-bottom:20px;
+  border-bottom:1px solid var(--color-border-default);
+}
+
+.quotation-editor-shell .quotation-identity-block .field{
+  max-width:820px;
+  display:grid!important;
+  gap:7px!important;
+}
+
+.quotation-editor-shell .quotation-identity-block .field>span{
+  margin:0!important;
+  color:var(--color-text-tertiary)!important;
+  font-size:10px!important;
+  line-height:1.2!important;
+  font-weight:650!important;
+  letter-spacing:.015em;
+}
+
+.quotation-editor-shell .quotation-identity-block .field>input{
+  width:100%!important;
+  height:54px!important;
+  min-height:54px!important;
+  padding:0 16px!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:12px!important;
+  background:var(--color-bg-surface)!important;
+  color:var(--color-brand-primary)!important;
+  font-size:20px!important;
+  line-height:1.2!important;
+  font-weight:700!important;
+  letter-spacing:-.015em;
+  box-shadow:none!important;
+}
+
+.quotation-editor-shell .quotation-identity-block .field>input::placeholder{
+  color:var(--color-text-tertiary)!important;
+  font-weight:600!important;
+}
+
+.quotation-editor-shell .quotation-identity-block .field>input:hover{
+  border-color:var(--color-border-strong)!important;
+}
+
+.quotation-editor-shell .quotation-identity-block .field>input:focus{
+  outline:0!important;
+  border-color:var(--color-info-text)!important;
+  box-shadow:0 0 0 3px var(--color-focus-soft)!important;
+}
+
+@media(max-width:760px){
+  .quotation-editor-shell .quotation-identity-block{
+    margin-bottom:20px!important;
+    padding-bottom:16px;
+  }
+  .quotation-editor-shell .quotation-identity-block .field{
+    max-width:none;
+  }
+  .quotation-editor-shell .quotation-identity-block .field>input{
+    height:50px!important;
+    min-height:50px!important;
+    font-size:17px!important;
+  }
+}
