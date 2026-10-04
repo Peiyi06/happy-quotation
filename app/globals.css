@@ -19952,43 +19952,62 @@ td,
 }
 
 
-/* FOUNDATION: Flat Level-2 Section Hierarchy
-   Quotation Title / Customer & Trip / Flight Information are sibling
-   Level-2 content groups inside one parent surface. They must not create
-   same-level nested cards. Inquiry Flight Information keeps its one
-   outer section surface, while the shared flight content stays flat. */
-.quotation-editor-shell .quote-meta-panel{
-  background:var(--color-bg-surface)!important;
-  border-color:var(--color-border-default)!important;
-  box-shadow:none!important;
-}
-
-.quotation-editor-shell .quotation-identity-block,
-.quotation-editor-shell .quotation-trip-context,
-.quotation-editor-shell .quotation-flight-section{
-  width:100%;
-  margin:0 0 24px!important;
-  padding:0 0 24px!important;
+/* FOUNDATION: Quotation Information + Flight Section Surfaces
+   1. Quotation Title + Customer & Trip share one Level-2 white section.
+   2. Flight Information is a separate Level-2 white section.
+   3. Same-level groups never create nested surface cards.
+   4. Departure / Return Flight remain Level-3 soft inner cards.
+   5. Inquiry uses the same Flight Information surface system. */
+.quotation-editor-shell .quotation-information-stack{
+  display:grid;
+  gap:18px;
+  margin:16px 0;
+  padding:0!important;
   border:0!important;
-  border-bottom:1px solid var(--color-border-default)!important;
   border-radius:0!important;
   background:transparent!important;
   box-shadow:none!important;
 }
 
-.quotation-editor-shell .quotation-flight-section{
-  margin-bottom:0!important;
-  padding-bottom:0!important;
-  border-bottom:0!important;
+.quotation-editor-shell .quotation-context-section,
+.quotation-editor-shell .quotation-flight-section,
+.inquiry-editor .inquiry-flights-ios.flight-section-surface{
+  min-width:0;
+  padding:28px 30px!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:18px!important;
+  background:var(--color-bg-surface)!important;
+  box-shadow:none!important;
+}
+
+.quotation-editor-shell .quotation-identity-block,
+.quotation-editor-shell .quotation-trip-context{
+  width:100%;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+.quotation-editor-shell .quotation-identity-block{
+  padding-bottom:24px!important;
+  margin-bottom:24px!important;
+  border-bottom:1px solid var(--color-border-default)!important;
 }
 
 .quotation-editor-shell .quotation-identity-head,
 .quotation-editor-shell .quotation-trip-context-head,
-.quotation-editor-shell .quotation-flight-section .flight-info-head{
+.quotation-editor-shell .quotation-flight-section .flight-info-head,
+.inquiry-editor .inquiry-flights-ios .flight-info-head{
   margin-bottom:16px;
 }
 
-/* Shared Flight Information content never adds another section surface. */
+.quotation-editor-shell .quotation-title-input{
+  max-width:none;
+}
+
 .quotation-editor-shell .quotation-flight-section .shared-flight-information,
 .inquiry-editor .inquiry-flights-ios .shared-flight-information{
   margin:0!important;
@@ -19999,39 +20018,46 @@ td,
   box-shadow:none!important;
 }
 
-/* Inquiry keeps exactly one white outer section card. */
-.inquiry-editor .inquiry-flights-ios.flight-section-surface{
+.quotation-editor-shell .quotation-flight-section .flight-block,
+.inquiry-editor .inquiry-flights-ios .flight-block{
   padding:20px!important;
+  background:var(--color-bg-soft)!important;
   border:1px solid var(--color-border-default)!important;
-  border-radius:18px!important;
-  background:var(--color-bg-surface)!important;
+  border-radius:14px!important;
   box-shadow:none!important;
 }
 
-.quotation-editor-shell .quotation-flight-section .flight-block,
-.inquiry-editor .inquiry-flights-ios .flight-block{
-  background:var(--color-bg-soft)!important;
-  border-color:var(--color-border-default)!important;
-  box-shadow:none!important;
+.quotation-editor-shell .quotation-flight-section .flight-pair-grid,
+.inquiry-editor .inquiry-flights-ios .flight-pair-grid{
+  gap:18px;
+}
+
+.quotation-editor-shell .quotation-flight-section .flight-total-price-row{
+  margin-top:20px;
+  padding-top:20px;
+  border-top:1px solid var(--color-border-default);
 }
 
 @media(max-width:700px){
-  .quotation-editor-shell .quotation-identity-block,
-  .quotation-editor-shell .quotation-trip-context,
-  .quotation-editor-shell .quotation-flight-section{
-    margin-bottom:20px!important;
-    padding:0 0 20px!important;
-    border-radius:0!important;
+  .quotation-editor-shell .quotation-information-stack{
+    gap:14px;
   }
 
-  .quotation-editor-shell .quotation-flight-section{
-    margin-bottom:0!important;
-    padding-bottom:0!important;
-  }
-
+  .quotation-editor-shell .quotation-context-section,
+  .quotation-editor-shell .quotation-flight-section,
   .inquiry-editor .inquiry-flights-ios.flight-section-surface{
-    padding:16px!important;
+    padding:20px 18px!important;
     border-radius:16px!important;
+  }
+
+  .quotation-editor-shell .quotation-identity-block{
+    padding-bottom:20px!important;
+    margin-bottom:20px!important;
+  }
+
+  .quotation-editor-shell .quotation-flight-section .flight-block,
+  .inquiry-editor .inquiry-flights-ios .flight-block{
+    padding:16px!important;
   }
 }
 
