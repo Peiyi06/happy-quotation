@@ -143,7 +143,7 @@ export default async function InquiryDetailPage({
 
     <section className="dashboard-cards itinerary-summary-cards inquiry-overview-strip">
       <div className="dash-card"><span><UiText en="Destination" zh="目的地" /></span><b>{data.destination||"—"}</b></div>
-      <div className="dash-card"><span><UiText en="Travel" zh="行程日期" /></span><b>{data.travel_start_date||"—"}{data.travel_end_date?" → "+data.travel_end_date:""} · {data.days_count}D{data.nights_count}N</b></div>
+      <div className="dash-card"><span><UiText en="Travel" zh="行程日期" /></span><b>{data.travel_start_date||"—"}{data.travel_end_date?" → "+data.travel_end_date:""} · {data.days_count} Days</b></div>
       <div className="dash-card"><span><UiText en="Pax" zh="人数" /></span><b>{data.pax||"—"}</b></div>
       <div className="dash-card"><span><UiText en="Sales Owner" zh="销售负责人" /></span><b>{data.sales_owner_name||"—"}</b></div>
       <div className="dash-card"><span><UiText en="Operation" zh="运营负责人" /></span><b>{data.operation_assignee_name||"—"}</b></div>
