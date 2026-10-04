@@ -4477,9 +4477,6 @@ button,
   .operation-trip-ios .itinerary-meta-grid{
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
-  .inquiry-flights-ios .inquiry-flight-remarks{
-    grid-column:1/-1;
-  }
 }
 @media(max-width:700px){
   .ios-form-card{
@@ -4488,9 +4485,6 @@ button,
   .inquiry-flights-ios .itinerary-meta-grid,
   .operation-trip-ios .itinerary-meta-grid{
     grid-template-columns:1fr;
-  }
-  .inquiry-flights-ios .inquiry-flight-remarks{
-    grid-column:auto;
   }
 }
 
@@ -13176,8 +13170,7 @@ td,
   flex-wrap:wrap!important;
   max-width:100%;
 }
-.new-inquiry-template .customer-request-copy-actions .btn,
-.new-inquiry-template .inquiry-flights-ios>.panel-head>.btn{
+.new-inquiry-template .customer-request-copy-actions .btn{
   min-height:34px!important;
   height:34px!important;
   padding:0 10px!important;
@@ -13190,8 +13183,7 @@ td,
   font-weight:650!important;
   white-space:nowrap!important;
 }
-.new-inquiry-template .customer-request-copy-actions .btn:hover,
-.new-inquiry-template .inquiry-flights-ios>.panel-head>.btn:hover{
+.new-inquiry-template .customer-request-copy-actions .btn:hover{
   background:var(--color-bg-soft,#f6f8fa)!important;
   color:var(--color-text-primary,var(--navy2))!important;
 }
@@ -13318,62 +13310,6 @@ td,
   gap:7px!important;
   font-size:10px!important;
   white-space:nowrap!important;
-}
-
-/* Suggested flights */
-.new-inquiry-template .inquiry-flights-ios{
-  min-height:0!important;
-}
-.new-inquiry-template .inquiry-flights-ios>.panel-head{
-  margin-bottom:10px!important;
-}
-.new-inquiry-template .inquiry-flight-list{
-  gap:0!important;
-  min-height:0!important;
-}
-.new-inquiry-template .inquiry-flight-card{
-  margin:0!important;
-  padding:14px 0!important;
-  border:0!important;
-  border-top:1px solid var(--color-border-default,var(--line))!important;
-  border-radius:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-}
-.new-inquiry-template .inquiry-flight-card:first-child{
-  border-top:0!important;
-  padding-top:0!important;
-}
-.new-inquiry-template .inquiry-flight-card-head{
-  margin-bottom:12px!important;
-}
-.new-inquiry-template .inquiry-flight-card-head strong{
-  font-size:11px!important;
-  font-weight:680!important;
-}
-.new-inquiry-template .inquiry-flight-card-head .btn.danger{
-  min-height:30px!important;
-  height:30px!important;
-  padding:0 8px!important;
-  border-radius:8px!important;
-  background:transparent!important;
-  border-color:transparent!important;
-  color:var(--color-danger-text,#a34848)!important;
-  box-shadow:none!important;
-}
-.new-inquiry-template .inquiry-flight-card-head .btn.danger:hover{
-  background:#fff3f2!important;
-}
-.new-inquiry-template .inquiry-flight-list>.empty{
-  margin:0!important;
-  padding:6px 0 2px!important;
-  min-height:0!important;
-  border:0!important;
-  background:transparent!important;
-  color:var(--color-text-tertiary,var(--muted))!important;
-  text-align:left!important;
-  font-size:10.5px!important;
-  line-height:1.45!important;
 }
 
 /* Travel requirements */
