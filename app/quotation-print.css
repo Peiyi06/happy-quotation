@@ -73,3 +73,16 @@
 @media screen{
   .quotation-print-document{display:none!important}
 }
+
+@media print{
+  .print-child-detail-stack{display:grid;gap:4mm}
+  .print-child-detail{break-inside:avoid;page-break-inside:avoid}
+  .print-child-detail-head{display:flex;justify-content:space-between;align-items:flex-end;gap:6mm;margin-bottom:1.8mm}
+  .print-child-detail-head>div{display:grid;gap:.5mm}
+  .print-child-detail-head span{color:#1b3446;font-size:9pt;font-weight:750}
+  .print-child-detail-head small{color:#7b8992;font-size:6.8pt}
+  .print-child-detail-head>strong{color:#153f60;font-size:12pt;font-weight:800}
+  .print-child-cost-table .print-tr{grid-template-columns:1.25fr .68fr .95fr .78fr .72fr .62fr .52fr .78fr}
+  .print-child-totals{display:flex;justify-content:flex-end;gap:6mm;margin-top:1.8mm;padding-top:1.8mm;border-top:.6px solid #cbd5db;color:#6f7f89;font-size:7.2pt}
+  .print-child-totals strong{margin-left:1.2mm;color:#173d59;font-size:8.4pt}
+}
