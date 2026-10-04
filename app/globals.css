@@ -18655,3 +18655,105 @@ td,
 .quotation-editor-shell .summary-card.strong{
   grid-template-rows:44px auto;
 }
+
+
+/* FOUNDATION FIX: Customer Quotation unified label/value alignment */
+.quotation-editor-shell .quote-panel{
+  align-items:stretch!important;
+}
+
+.quotation-editor-shell .quote-panel>.field,
+.quotation-editor-shell .quote-panel>.metric{
+  min-width:0;
+  display:grid!important;
+  grid-template-rows:38px 72px;
+  gap:8px!important;
+  align-items:stretch;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+.quotation-editor-shell .quote-panel>.field>span,
+.quotation-editor-shell .quote-panel>.metric>span{
+  min-width:0;
+  min-height:38px;
+  margin:0!important;
+  display:flex!important;
+  align-items:flex-end;
+  padding:0 0 2px!important;
+  color:var(--color-text-secondary)!important;
+  font-size:var(--type-body)!important;
+  line-height:1.25!important;
+  font-weight:650!important;
+  letter-spacing:-.005em;
+  white-space:normal;
+}
+
+.quotation-editor-shell .quote-panel>.field>input,
+.quotation-editor-shell .quote-panel>.field>select,
+.quotation-editor-shell .quote-panel>.metric>b{
+  width:100%!important;
+  min-width:0!important;
+  height:72px!important;
+  min-height:72px!important;
+  margin:0!important;
+  padding:0 18px!important;
+  display:flex;
+  align-items:center;
+  box-sizing:border-box;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:12px!important;
+  background:var(--color-bg-soft)!important;
+  color:var(--color-text-primary)!important;
+  box-shadow:none!important;
+  font-size:18px!important;
+  line-height:1.2!important;
+  font-weight:700!important;
+}
+
+.quotation-editor-shell .quote-panel>.field>input,
+.quotation-editor-shell .quote-panel>.field>select{
+  background:var(--color-bg-surface)!important;
+}
+
+.quotation-editor-shell .quote-panel>.metric.strong>b{
+  background:var(--color-brand-primary-soft)!important;
+  border-color:#DCE6EC!important;
+  color:var(--color-brand-primary)!important;
+}
+
+.quotation-editor-shell .quote-panel{
+  scrollbar-width:thin;
+  scrollbar-color:rgba(78,91,101,.42) transparent;
+}
+.quotation-editor-shell .quote-panel::-webkit-scrollbar{
+  height:6px;
+}
+.quotation-editor-shell .quote-panel::-webkit-scrollbar-track{
+  background:transparent;
+}
+.quotation-editor-shell .quote-panel::-webkit-scrollbar-thumb{
+  border-radius:999px;
+  background:rgba(78,91,101,.34);
+}
+
+@media(max-width:760px){
+  .quotation-editor-shell .quote-panel>.field,
+  .quotation-editor-shell .quote-panel>.metric{
+    grid-template-rows:34px 64px;
+  }
+  .quotation-editor-shell .quote-panel>.field>span,
+  .quotation-editor-shell .quote-panel>.metric>span{
+    min-height:34px;
+  }
+  .quotation-editor-shell .quote-panel>.field>input,
+  .quotation-editor-shell .quote-panel>.field>select,
+  .quotation-editor-shell .quote-panel>.metric>b{
+    height:64px!important;
+    min-height:64px!important;
+  }
+}
