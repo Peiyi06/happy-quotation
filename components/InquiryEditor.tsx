@@ -3,7 +3,7 @@
 import { useEffect,useMemo,useRef,useState } from "react";
 import { useRouter } from "next/navigation";
 import InquiryAiIntake from "@/components/InquiryAiIntake";
-import FlightInformation,{flightInformationFromLegacyFlights,flightInformationToLegacyFlights,type FlightInformationValue} from "@/components/FlightInformation";
+import FlightInformation,{emptyFlightInformation,flightInformationFromFlightList,type FlightInformationValue} from "@/components/FlightInformation";
 import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 
 export default function InquiryEditor({initialInquiry,currentStaffName,backHref="/inquiries"}:{initialInquiry?:any;currentStaffName:string;backHref?:string}){
@@ -29,7 +29,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
   const [budget,setBudget]=useState(initialInquiry?.budget||"");
   const [tourType,setTourType]=useState(initialInquiry?.tour_type||"");
   const [flightRequirement,setFlightRequirement]=useState(initialInquiry?.flight_requirement||"");
-  const [flightInformation,setFlightInformation]=useState<FlightInformationValue>(()=>initialInquiry?.inquiry_data?.flightInformation||flightInformationFromLegacyFlights(initialInquiry?.inquiry_data?.suggestedFlights||[]));
+  const [flightInformation,setFlightInformation]=useState<FlightInformationValue>(()=>initialInquiry?.inquiry_data?.flightInformation||emptyFlightInformation());
   const [hotelRequirement,setHotelRequirement]=useState(initialInquiry?.hotel_requirement||"");
   const [mealRequirement,setMealRequirement]=useState(initialInquiry?.meal_requirement||"");
   const [specialRequest,setSpecialRequest]=useState(initialInquiry?.special_request||"");
@@ -189,7 +189,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
         arrivalTime:x.arrivalTime||"",
         remarks:[x.remarks||"",x.arrivalNextDay?"+1 Next Day":""].filter(Boolean).join(" · ")
       }));
-      if(onlyFlights.length) setFlightInformation(flightInformationFromLegacyFlights(onlyFlights));
+      if(onlyFlights.length) setFlightInformation(flightInformationFromFlightList(onlyFlights));
     }
     setMessage(t("AI information applied — remember to Save Inquiry.","AI 资料已套用，请记得保存 Inquiry。"));
   }
@@ -199,10 +199,10 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
     try{
       const payload={
         customer_name:customerName,contact,destination,departure_city:departureCity,
-        travel_start_date:startDate,travel_end_date:endDate,days_count:days,nights_count:null,
+        travel_start_date:startDate,travel_end_date:endDate,days_count:days,
         pax,budget,tour_type:tourType,flight_requirement:flightRequirement,hotel_requirement:hotelRequirement,
         meal_requirement:mealRequirement,special_request:specialRequest,
-        inquiry_data:{...(initialInquiry?.inquiry_data||{}),flightInformation,suggestedFlights:flightInformationToLegacyFlights(flightInformation),travellerComposition:{
+        inquiry_data:{...(initialInquiry?.inquiry_data||{}),flightInformation,travellerComposition:{
           adultCount:adultCount===""?null:Number(adultCount),
           seniorCount:seniorCount===""?null:Number(seniorCount),
           childCount:childCount===""?null:Number(childCount),
