@@ -20,7 +20,6 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
   const [startDate,setStartDate]=useState(initialInquiry?.travel_start_date||"");
   const [endDate,setEndDate]=useState(initialInquiry?.travel_end_date||"");
   const [days,setDays]=useState(Number(initialInquiry?.days_count)||1);
-  const [nights,setNights]=useState(Number(initialInquiry?.nights_count)||0);
   const [pax,setPax]=useState<number|"">(initialInquiry?.pax??"");
   const initialComposition=initialInquiry?.inquiry_data?.travellerComposition||{};
   const [adultCount,setAdultCount]=useState<number|"">(initialComposition.adultCount??"");
@@ -52,7 +51,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
     const s=Date.UTC(sy,sm-1,sd), e=Date.UTC(ey,em-1,ed);
     if(e<s) return;
     const d=Math.floor((e-s)/86400000)+1;
-    setDays(d);setNights(Math.max(0,d-1));
+    setDays(d);
   },[startDate,endDate]);
 
   const compositionTotal=(Number(adultCount)||0)+(Number(seniorCount)||0)+(Number(childCount)||0);
@@ -60,10 +59,10 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
   const compositionMismatch=compositionHasValues&&pax!==""&&compositionTotal!==Number(pax);
 
   const editorSnapshot=useMemo(()=>JSON.stringify({
-    customerName,contact,destination,departureCity,startDate,endDate,days,nights,pax,budget,tourType,
+    customerName,contact,destination,departureCity,startDate,endDate,days,pax,budget,tourType,
     adultCount,seniorCount,childCount,seniorNotes,childAges,childNotes,mobilityNotes,
     flightRequirement,suggestedFlights,hotelRequirement,mealRequirement,specialRequest
-  }),[customerName,contact,destination,departureCity,startDate,endDate,days,nights,pax,budget,tourType,adultCount,seniorCount,childCount,seniorNotes,childAges,childNotes,mobilityNotes,flightRequirement,suggestedFlights,hotelRequirement,mealRequirement,specialRequest]);
+  }),[customerName,contact,destination,departureCity,startDate,endDate,days,pax,budget,tourType,adultCount,seniorCount,childCount,seniorNotes,childAges,childNotes,mobilityNotes,flightRequirement,suggestedFlights,hotelRequirement,mealRequirement,specialRequest]);
 
   useEffect(()=>{
     if(!baselineRef.current){
@@ -219,7 +218,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
     try{
       const payload={
         customer_name:customerName,contact,destination,departure_city:departureCity,
-        travel_start_date:startDate,travel_end_date:endDate,days_count:days,nights_count:nights,
+        travel_start_date:startDate,travel_end_date:endDate,days_count:days,nights_count:null,
         pax,budget,tour_type:tourType,flight_requirement:flightRequirement,hotel_requirement:hotelRequirement,
         meal_requirement:mealRequirement,special_request:specialRequest,
         inquiry_data:{...(initialInquiry?.inquiry_data||{}),suggestedFlights,travellerComposition:{
@@ -262,7 +261,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
         <label className="field"><span>{t("Destination","目的地")}</span><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder={t("Hokkaido / Chongqing","北海道 / 重庆")}/></label>
         <label className="field"><span>{t("Travel Start Date","出发日期")}</span><input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}/></label>
         <label className="field"><span>{t("Travel End Date","返程日期")}</span><input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)}/></label>
-        <label className="field"><span>{t("Duration","行程天数")}</span><input value={startDate&&endDate?(days+" "+t("Days","天")+" · "+nights+" "+t("Nights","晚")):"—"} readOnly className="system-fixed-input"/></label>
+        <label className="field"><span>{t("Duration","行程天数")}</span><input value={startDate&&endDate?(days+" "+t("Days","天")):"—"} readOnly className="system-fixed-input"/></label>
         <label className="field"><span>{t("Pax","人数")}</span><input type="number" min="1" value={pax} onChange={e=>setPax(e.target.value===""?"":Math.max(1,Number(e.target.value)||1))}/></label>
         <label className="field"><span>{t("Budget","预算")}</span><input value={budget} onChange={e=>setBudget(e.target.value)} placeholder="RM 3,500/pax"/></label>
         <label className="field"><span>{t("Tour Type","团型")}</span><input value={tourType} onChange={e=>setTourType(e.target.value)} placeholder={t("Private / Company Trip","私人团 / 公司团")}/></label>
