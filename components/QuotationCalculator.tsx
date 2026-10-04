@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
+import FlightInformation,{type FlightInformationValue} from "@/components/FlightInformation";
 import {
   CalcMode, ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
   childRatio, computeProfit, currencyRate, leaderRowTotal, roundUpTo,
@@ -196,38 +197,12 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     return { code:"", label:"—", state:"pending" };
   }, [pax,language]);
 
-  const inferNextDay = (departure:string, arrival:string) => {
-    if (!/^\d{2}:\d{2}$/.test(departure) || !/^\d{2}:\d{2}$/.test(arrival)) return false;
-    const [dh,dm]=departure.split(":").map(Number);
-    const [ah,am]=arrival.split(":").map(Number);
-    const departureMinutes=dh*60+dm;
-    const arrivalMinutes=ah*60+am;
-    return arrivalMinutes < departureMinutes;
-  };
-
-  useEffect(() => {
-    setOutboundNextDay(inferNextDay(outboundDepartureTime,outboundArrivalTime));
-  }, [outboundDepartureTime,outboundArrivalTime]);
-
-  useEffect(() => {
-    setReturnNextDay(inferNextDay(returnDepartureTime,returnArrivalTime));
-  }, [returnDepartureTime,returnArrivalTime]);
-
   // Sync the fixed ground quote row with the quotation's main currency.
   useEffect(() => {
     setTravelerRows(rows => rows.map((row,index) =>
       index === 0 ? {...row,item:"地接报价",direction:"cost",currency:mainCurrency} : row
     ));
   }, [mainCurrency]);
-
-  useEffect(() => {
-    setOutboundTransitNextDay(inferNextDay(outboundTransitDepartureTime,outboundTransitArrivalTime));
-  }, [outboundTransitDepartureTime,outboundTransitArrivalTime]);
-
-  useEffect(() => {
-    setReturnTransitNextDay(inferNextDay(returnTransitDepartureTime,returnTransitArrivalTime));
-  }, [returnTransitDepartureTime,returnTransitArrivalTime]);
-
 
   useEffect(() => {
     const load = async () => {
@@ -334,6 +309,47 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     const days=Math.floor((end-start)/86400000)+1;
     return {days,label:`${days} ${t("Days","天")}`};
   }, [departureDate,returnDate,language]);
+
+  const flightInformationValue:FlightInformationValue={
+    outbound:{fromAirport:outboundFromAirport,toAirport:outboundToAirport,flightNo:outboundFlightNo,flightDate:outboundFlightDate,departureTime:outboundDepartureTime,arrivalTime:outboundArrivalTime,nextDay:outboundNextDay},
+    outboundTransitOpen,
+    outboundTransit:{fromAirport:outboundTransitFromAirport,toAirport:outboundTransitToAirport,flightNo:outboundTransitFlightNo,flightDate:outboundTransitFlightDate,departureTime:outboundTransitDepartureTime,arrivalTime:outboundTransitArrivalTime,nextDay:outboundTransitNextDay},
+    returning:{fromAirport:returnFromAirport,toAirport:returnToAirport,flightNo:returnFlightNo,flightDate:returnFlightDate,departureTime:returnDepartureTime,arrivalTime:returnArrivalTime,nextDay:returnNextDay},
+    returnTransitOpen,
+    returnTransit:{fromAirport:returnTransitFromAirport,toAirport:returnTransitToAirport,flightNo:returnTransitFlightNo,flightDate:returnTransitFlightDate,departureTime:returnTransitDepartureTime,arrivalTime:returnTransitArrivalTime,nextDay:returnTransitNextDay}
+  };
+  const setFlightInformationValue=(next:FlightInformationValue)=>{
+    setOutboundFromAirport(next.outbound.fromAirport);
+    setOutboundToAirport(next.outbound.toAirport);
+    setOutboundFlightNo(next.outbound.flightNo);
+    setOutboundFlightDate(next.outbound.flightDate);
+    setOutboundDepartureTime(next.outbound.departureTime);
+    setOutboundArrivalTime(next.outbound.arrivalTime);
+    setOutboundNextDay(next.outbound.nextDay);
+    setOutboundTransitOpen(next.outboundTransitOpen);
+    setOutboundTransitFromAirport(next.outboundTransit.fromAirport);
+    setOutboundTransitToAirport(next.outboundTransit.toAirport);
+    setOutboundTransitFlightNo(next.outboundTransit.flightNo);
+    setOutboundTransitFlightDate(next.outboundTransit.flightDate);
+    setOutboundTransitDepartureTime(next.outboundTransit.departureTime);
+    setOutboundTransitArrivalTime(next.outboundTransit.arrivalTime);
+    setOutboundTransitNextDay(next.outboundTransit.nextDay);
+    setReturnFromAirport(next.returning.fromAirport);
+    setReturnToAirport(next.returning.toAirport);
+    setReturnFlightNo(next.returning.flightNo);
+    setReturnFlightDate(next.returning.flightDate);
+    setReturnDepartureTime(next.returning.departureTime);
+    setReturnArrivalTime(next.returning.arrivalTime);
+    setReturnNextDay(next.returning.nextDay);
+    setReturnTransitOpen(next.returnTransitOpen);
+    setReturnTransitFromAirport(next.returnTransit.fromAirport);
+    setReturnTransitToAirport(next.returnTransit.toAirport);
+    setReturnTransitFlightNo(next.returnTransit.flightNo);
+    setReturnTransitFlightDate(next.returnTransit.flightDate);
+    setReturnTransitDepartureTime(next.returnTransit.departureTime);
+    setReturnTransitArrivalTime(next.returnTransit.arrivalTime);
+    setReturnTransitNextDay(next.returnTransit.nextDay);
+  };
 
   useEffect(() => {
     if (!hydrated) return;
@@ -761,105 +777,27 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             </div>}
       </div>
 
-      <div className="flight-info-card">
-        <div className="flight-info-head">
-          <div>
-            <span className="page-kicker">{t("FLIGHT INFORMATION","航班信息")}</span>
-            <h3>{t("Flight Information","航班信息")}</h3>
-          </div>
-          {travelDuration.label && <div className="itinerary-pill">
-            <strong>{travelDuration.days} {t("Days","天")}</strong>
-            <span>{t("Travel Duration","行程天数")}</span>
-          </div>}
-        </div>
-
-        <div className="flight-pair-grid">
-          <div className="flight-block">
-            <div className="flight-block-head">
-              <h4>{t("Departure Flight","去程航班")}</h4>
-              <button type="button" className={"btn transit-toggle "+(outboundTransitOpen?"active":"")} onClick={()=>setOutboundTransitOpen(v=>!v)}>
-                {outboundTransitOpen?t("− Transit Flight","− 中转航班"):t("+ Transit Flight","+ 中转航班")}
-              </button>
-            </div>
-            <div className="flight-fields">
-              <Field label={t("From Airport Code","出发机场代码")}><input maxLength={3} value={outboundFromAirport} onChange={e=>setOutboundFromAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="KUL" /></Field>
-              <Field label={t("To Airport Code","抵达机场代码")}><input maxLength={3} value={outboundToAirport} onChange={e=>setOutboundToAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="CSX" /></Field>
-              <Field label={t("Airline / Flight No.","航空公司 / 航班号")}><input value={outboundFlightNo} onChange={e=>setOutboundFlightNo(e.target.value.toUpperCase())} placeholder="CZ1234" /></Field>
-              <Field label={t("Departure Flight Date","去程航班日期")}><input type="date" value={outboundFlightDate} onChange={e=>setOutboundFlightDate(e.target.value)} /></Field>
-              <TimeField label={t("Departure Time","起飞时间")} value={outboundDepartureTime} setValue={setOutboundDepartureTime} />
-              <TimeField label={t("Arrival Time","抵达时间")} value={outboundArrivalTime} setValue={setOutboundArrivalTime} />
-              <div className={"flight-day-status "+(outboundDepartureTime&&outboundArrivalTime?(outboundNextDay?"next":"same"):"pending")}>
-                <span>{outboundDepartureTime&&outboundArrivalTime?(outboundNextDay?t("+1 Next Day","+1 次日"):t("Same Day","同日")):t("Waiting for time","等待时间")}</span>
+      <FlightInformation
+        value={flightInformationValue}
+        onChange={setFlightInformationValue}
+        durationDays={travelDuration.days}
+        footer={
+          <div className="flight-total-price-row">
+            <Field label={t("Flight Total Price","航班总报价")}>
+              <input type="number" min="0" value={flightTotalPrice} onChange={e=>setFlightTotalPrice(e.target.value===""?"":Number(e.target.value))} placeholder="0.00" />
+            </Field>
+            <Field label={t("Currency","币种")}>
+              <select value={flightPriceCurrency} onChange={e=>setFlightPriceCurrency(e.target.value as Currency)}>{currencies.map(cur=><option key={cur} value={cur}>{currencyLabel(cur)}</option>)}</select>
+            </Field>
+            <div className="field">
+              <span>{t("Ticket Type","机票类型")}</span>
+              <div className={"ticket-type-auto "+flightTicketType.state}>
+                <strong>{flightTicketType.label}</strong>
               </div>
             </div>
-
-            {outboundTransitOpen && <div className="transit-flight-panel">
-              <div className="transit-flight-title"><span>{t("TRANSIT","中转")}</span><strong>{t("Departure Transit Flight","去程中转航班")}</strong></div>
-              <div className="flight-fields">
-                <Field label={t("From Airport Code","出发机场代码")}><input maxLength={3} value={outboundTransitFromAirport} onChange={e=>setOutboundTransitFromAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="CAN" /></Field>
-                <Field label={t("To Airport Code","抵达机场代码")}><input maxLength={3} value={outboundTransitToAirport} onChange={e=>setOutboundTransitToAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="CSX" /></Field>
-                <Field label={t("Airline / Flight No.","航空公司 / 航班号")}><input value={outboundTransitFlightNo} onChange={e=>setOutboundTransitFlightNo(e.target.value.toUpperCase())} placeholder="CZ5678" /></Field>
-                <Field label={t("Transit Flight Date","中转航班日期")}><input type="date" value={outboundTransitFlightDate} onChange={e=>setOutboundTransitFlightDate(e.target.value)} /></Field>
-                <TimeField label={t("Departure Time","起飞时间")} value={outboundTransitDepartureTime} setValue={setOutboundTransitDepartureTime} />
-                <TimeField label={t("Arrival Time","抵达时间")} value={outboundTransitArrivalTime} setValue={setOutboundTransitArrivalTime} />
-                <div className={"flight-day-status "+(outboundTransitDepartureTime&&outboundTransitArrivalTime?(outboundTransitNextDay?"next":"same"):"pending")}>
-                  <span>{outboundTransitDepartureTime&&outboundTransitArrivalTime?(outboundTransitNextDay?t("+1 Next Day","+1 次日"):t("Same Day","同日")):t("Waiting for time","等待时间")}</span>
-                </div>
-              </div>
-            </div>}
           </div>
-
-          <div className="flight-block">
-            <div className="flight-block-head">
-              <h4>{t("Return Flight","返程航班")}</h4>
-              <button type="button" className={"btn transit-toggle "+(returnTransitOpen?"active":"")} onClick={()=>setReturnTransitOpen(v=>!v)}>
-                {returnTransitOpen?t("− Transit Flight","− 中转航班"):t("+ Transit Flight","+ 中转航班")}
-              </button>
-            </div>
-            <div className="flight-fields">
-              <Field label={t("From Airport Code","出发机场代码")}><input maxLength={3} value={returnFromAirport} onChange={e=>setReturnFromAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="CSX" /></Field>
-              <Field label={t("To Airport Code","抵达机场代码")}><input maxLength={3} value={returnToAirport} onChange={e=>setReturnToAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="KUL" /></Field>
-              <Field label={t("Airline / Flight No.","航空公司 / 航班号")}><input value={returnFlightNo} onChange={e=>setReturnFlightNo(e.target.value.toUpperCase())} placeholder="CZ1235" /></Field>
-              <Field label={t("Return Flight Date","返程航班日期")}><input type="date" value={returnFlightDate} onChange={e=>setReturnFlightDate(e.target.value)} /></Field>
-              <TimeField label={t("Departure Time","起飞时间")} value={returnDepartureTime} setValue={setReturnDepartureTime} />
-              <TimeField label={t("Arrival Time","抵达时间")} value={returnArrivalTime} setValue={setReturnArrivalTime} />
-              <div className={"flight-day-status "+(returnDepartureTime&&returnArrivalTime?(returnNextDay?"next":"same"):"pending")}>
-                <span>{returnDepartureTime&&returnArrivalTime?(returnNextDay?t("+1 Next Day","+1 次日"):t("Same Day","同日")):t("Waiting for time","等待时间")}</span>
-              </div>
-            </div>
-
-            {returnTransitOpen && <div className="transit-flight-panel">
-              <div className="transit-flight-title"><span>{t("TRANSIT","中转")}</span><strong>{t("Return Transit Flight","返程中转航班")}</strong></div>
-              <div className="flight-fields">
-                <Field label={t("From Airport Code","出发机场代码")}><input maxLength={3} value={returnTransitFromAirport} onChange={e=>setReturnTransitFromAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="CAN" /></Field>
-                <Field label={t("To Airport Code","抵达机场代码")}><input maxLength={3} value={returnTransitToAirport} onChange={e=>setReturnTransitToAirport(e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3))} placeholder="KUL" /></Field>
-                <Field label={t("Airline / Flight No.","航空公司 / 航班号")}><input value={returnTransitFlightNo} onChange={e=>setReturnTransitFlightNo(e.target.value.toUpperCase())} placeholder="CZ5679" /></Field>
-                <Field label={t("Transit Flight Date","中转航班日期")}><input type="date" value={returnTransitFlightDate} onChange={e=>setReturnTransitFlightDate(e.target.value)} /></Field>
-                <TimeField label={t("Departure Time","起飞时间")} value={returnTransitDepartureTime} setValue={setReturnTransitDepartureTime} />
-                <TimeField label={t("Arrival Time","抵达时间")} value={returnTransitArrivalTime} setValue={setReturnTransitArrivalTime} />
-                <div className={"flight-day-status "+(returnTransitDepartureTime&&returnTransitArrivalTime?(returnTransitNextDay?"next":"same"):"pending")}>
-                  <span>{returnTransitDepartureTime&&returnTransitArrivalTime?(returnTransitNextDay?t("+1 Next Day","+1 次日"):t("Same Day","同日")):t("Waiting for time","等待时间")}</span>
-                </div>
-              </div>
-            </div>}
-          </div>
-        </div>
-
-        <div className="flight-total-price-row">
-          <Field label={t("Flight Total Price","航班总报价")}>
-            <input type="number" min="0" value={flightTotalPrice} onChange={e=>setFlightTotalPrice(e.target.value===""?"":Number(e.target.value))} placeholder="0.00" />
-          </Field>
-          <Field label={t("Currency","币种")}>
-            <select value={flightPriceCurrency} onChange={e=>setFlightPriceCurrency(e.target.value as Currency)}>{currencies.map(cur=><option key={cur} value={cur}>{currencyLabel(cur)}</option>)}</select>
-          </Field>
-          <div className="field">
-            <span>{t("Ticket Type","机票类型")}</span>
-            <div className={"ticket-type-auto "+flightTicketType.state}>
-              <strong>{flightTicketType.label}</strong>
-            </div>
-          </div>
-        </div>
-      </div>
+        }
+      />
 
       {saveMessage && <div className="save-message">{saveMessage}</div>}
     </section>}
@@ -1143,41 +1081,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
 function Section({title,children,action}:{title:React.ReactNode;children:React.ReactNode;action?:React.ReactNode}){return <section className="section"><div className="section-head"><h2>{title}</h2>{action}</div>{children}</section>}
 function Field({label,children}:{label:React.ReactNode;children:React.ReactNode}){return <label className="field"><span>{label}</span>{children}</label>}
-function TimeField({label,value,setValue}:{label:React.ReactNode;value:string;setValue:(v:string)=>void}){
-  const normalize=(raw:string)=>{
-    const digits=raw.replace(/\D/g,"").slice(0,4);
-    if(digits.length<=2) return digits;
-    return digits.slice(0,2)+":"+digits.slice(2);
-  };
-  const valid=(v:string)=>{
-    if(!/^\d{2}:\d{2}$/.test(v)) return v;
-    const [h,m]=v.split(":").map(Number);
-    if(h>23||m>59) return "";
-    return v;
-  };
-  const meridiem=(()=>{
-    const hourMatch=value.match(/^(\d{2})/);
-    if(!hourMatch) return "";
-    const h=Number(hourMatch[1]);
-    if(h>23) return "";
-    return h<12?"AM":"PM";
-  })();
-  return <label className="field time-field">
-    <span>{label}</span>
-    <div className="time-input-wrap">
-      <input
-        inputMode="numeric"
-        maxLength={5}
-        placeholder="HH:MM"
-        value={value}
-        onChange={e=>setValue(normalize(e.target.value))}
-        onBlur={e=>setValue(valid(e.target.value))}
-      />
-      {meridiem&&<b className="time-meridiem">{meridiem}</b>}
-    </div>
-  </label>;
-}
-
 function Summary({label,value,strong}:{label:React.ReactNode;value:string;strong?:boolean}){return <div className={`summary-card ${strong?"strong":""}`}><span>{label}</span><b>{value}</b></div>}
 function Metric({label,value,strong}:{label:React.ReactNode;value:string;strong?:boolean}){return <div className={`metric ${strong?"strong":""}`}><span>{label}</span><b>{value}</b></div>}
 function ChildCard({title,t,mode,setMode,manual,setManual,currency,setCurrency}:{title:React.ReactNode;t:(en:string,zh:string)=>string;mode:ChildMode;setMode:(v:ChildMode)=>void;manual:number;setManual:(v:number)=>void;currency:Currency;setCurrency:(v:Currency)=>void}){
