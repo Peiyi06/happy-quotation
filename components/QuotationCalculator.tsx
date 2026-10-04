@@ -869,7 +869,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       {saveMessage && <div className="save-message">{saveMessage}</div>}
     </section>}
 
-    <Section title={t("① Basic Information & Profit Settings","① 基本资料 & 利润设置")}>
+    <Section title={t("Basic Information & Profit Settings","基本资料 & 利润设置")}>
       <div className="form-grid six">
         <Field label={t("Tour Code","团号")}><input value={tourCode} onChange={e=>setTourCode(e.target.value)} /></Field>
         <Field label={t("Business Type","业务类型")}><input value={businessType} onChange={e=>setBusinessType(e.target.value)} /></Field>
@@ -887,7 +887,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </div>
     </Section>
 
-    <Section title={t("② Traveller Cost Input","② 旅客成本输入")} action={<button className="btn no-print" onClick={addTraveler}>{t("+ Add Cost Row","+ 新增成本项目")}</button>}>
+    <Section title={t("Traveller Cost Input","旅客成本输入")} action={<button className="btn no-print" onClick={addTraveler}>{t("+ Add Cost Row","+ 新增成本项目")}</button>}>
       <div className="traveller-cost-list">
         {travelerRows.map((r,index)=>{
           const isGroundQuote=index===0;
@@ -994,7 +994,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         </tr>})}</tbody></table></div>}
       </section>
 
-      <Section title={t("③ Child Cost Settings","③ 儿童成本设置")}>
+      <Section title={t("Child Cost Settings","儿童成本设置")}>
         <div className="child-grid">
           <ChildCard title={t("Child with Bed · Shares with 2 adults + 1 extra bed","小孩加床 · 与2位成人同房 + 1张加床")} t={t} mode={childBedMode} setMode={setChildBedMode} manual={childBedManual} setManual={setChildBedManual} currency={childBedCurrency} setCurrency={setChildBedCurrency} />
           <ChildCard title={t("Child without Bed · Shares with 2 adults, no extra bed","小孩不加床 · 与2位成人同房，不另加床")} t={t} mode={childNoBedMode} setMode={setChildNoBedMode} manual={childNoBedManual} setManual={setChildNoBedManual} currency={childNoBedCurrency} setCurrency={setChildNoBedCurrency} />
@@ -1002,7 +1002,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </Section>
     </div>
 
-    <Section title={t("④ Customer Quotation","④ 对客报价")}>
+    <Section title={t("Customer Quotation","对客报价")}>
       <div className="quote-panel">
         <Field label={t("Traveller Type","旅客类型")}><select value={effectiveSelectedType} onChange={e=>{setSelectedType(e.target.value as TravelerType);setManualQuote("")}}>{travelerTypes.filter(x=>hasLeader || x.includes("不含领队")).map(x=><option key={x} value={x}>{travelerTypeDisplay(x)}</option>)}</select></Field>
         <Metric label={t("Cost","成本")} value={money(selected.cost)} />
