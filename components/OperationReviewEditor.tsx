@@ -1,27 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
+import FlightInformation,{emptyFlightInformation,type FlightInformationValue} from "@/components/FlightInformation";
 
 const has=(obj:any,key:string)=>Object.prototype.hasOwnProperty.call(obj||{},key);
-type InquiryFlight={id:string;from:string;to:string;flightNo:string;date:string;departureTime:string;arrivalTime:string;remarks:string};
-const flightUid=()=>Math.random().toString(36).slice(2,10);
-const emptyFlight=():InquiryFlight=>({id:flightUid(),from:"",to:"",flightNo:"",date:"",departureTime:"",arrivalTime:"",remarks:""});
-
-function FlightSummary({flights,t}:{flights:InquiryFlight[];t:(en:string,zh:string)=>string}){
-  if(!flights.length) return <div className="operation-inline-empty">{t("No suggested flights.","没有推荐航班。")}</div>;
-  return <div className="operation-flight-summary-list">
-    {flights.map((f,index)=><div className="operation-flight-summary" key={f.id||index}>
-      <b>{f.from||"—"} → {f.to||"—"}</b>
-      <span>{f.flightNo||"—"}</span>
-      <span>{f.date||"—"}</span>
-      <span>{f.departureTime||"—"} → {f.arrivalTime||"—"}</span>
-      {f.remarks&&<em>{f.remarks}</em>}
-    </div>)}
-  </div>;
-}
-
 export default function OperationReviewEditor({
   inquiry,
   canEdit,
@@ -36,7 +20,7 @@ export default function OperationReviewEditor({
   const initial=inquiry.operation_review||{};
   const initialSupplier=inquiry.supplier_inquiry||{};
   const salesComposition=inquiry?.inquiry_data?.travellerComposition||{};
-  const salesSuggestedFlights:InquiryFlight[]=Array.isArray(inquiry?.inquiry_data?.suggestedFlights)?inquiry.inquiry_data.suggestedFlights:[];
+  const salesFlightInformation:FlightInformationValue=inquiry?.inquiry_data?.flightInformation||emptyFlightInformation();
 
   const [showFullSales,setShowFullSales]=useState(false);
   const [destination,setDestination]=useState(has(initial,"destination")?initial.destination:(inquiry.destination||""));
@@ -44,7 +28,13 @@ export default function OperationReviewEditor({
   const [startDate,setStartDate]=useState(has(initial,"travelStartDate")?initial.travelStartDate:(inquiry.travel_start_date||""));
   const [endDate,setEndDate]=useState(has(initial,"travelEndDate")?initial.travelEndDate:(inquiry.travel_end_date||""));
   const [days,setDays]=useState(Number(has(initial,"daysCount")?initial.daysCount:inquiry.days_count)||1);
-  const [nights,setNights]=useState(Number(has(initial,"nightsCount")?initial.nightsCount:inquiry.nights_count)||0);
+  useEffect(()=>{
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(startDate)||!/^\d{4}-\d{2}-\d{2}$/.test(endDate)) return;
+    const [sy,sm,sd]=startDate.split("-").map(Number);
+    const [ey,em,ed]=endDate.split("-").map(Number);
+    const start=Date.UTC(sy,sm-1,sd), end=Date.UTC(ey,em-1,ed);
+    if(end>=start) setDays(Math.floor((end-start)/86400000)+1);
+  },[startDate,endDate]);
   const [pax,setPax]=useState<number|"">(has(initial,"pax")?initial.pax:(inquiry.pax??""));
   const [budget,setBudget]=useState(has(initial,"budget")?initial.budget:(inquiry.budget||""));
   const [tourType,setTourType]=useState(has(initial,"tourType")?initial.tourType:(inquiry.tour_type||""));
@@ -56,10 +46,9 @@ export default function OperationReviewEditor({
   const [itineraryReq,setItineraryReq]=useState(initial.itineraryRequirement||"");
   const [operationNotes,setOperationNotes]=useState(initial.operationNotes||"");
 
-  const [overrideFlights,setOverrideFlights]=useState(Boolean(initial.overrideSuggestedFlights));
-  const [editingFlights,setEditingFlights]=useState(false);
-  const [operationFlights,setOperationFlights]=useState<InquiryFlight[]>(
-    Array.isArray(initial.suggestedFlights)&&initial.suggestedFlights.length?initial.suggestedFlights:salesSuggestedFlights
+  const [overrideFlights,setOverrideFlights]=useState(Boolean(initial.overrideFlightInformation));
+  const [operationFlightInformation,setOperationFlightInformation]=useState<FlightInformationValue>(
+    initial.flightInformation||salesFlightInformation
   );
 
   const [quoteDeadline,setQuoteDeadline]=useState(initialSupplier.quoteDeadline||"");
@@ -70,17 +59,14 @@ export default function OperationReviewEditor({
 
   function startEditingFlights(){
     if(!overrideFlights){
+      setOperationFlightInformation(salesFlightInformation);
       setOverrideFlights(true);
-      setOperationFlights(salesSuggestedFlights.length?salesSuggestedFlights.map(f=>({...f,id:f.id||flightUid()})):[emptyFlight()]);
-    }else if(operationFlights.length===0){
-      setOperationFlights([emptyFlight()]);
     }
-    setEditingFlights(true);
   }
 
   function useSalesFlights(){
     setOverrideFlights(false);
-    setEditingFlights(false);
+    setOperationFlightInformation(salesFlightInformation);
   }
 
   async function save(){
@@ -88,12 +74,12 @@ export default function OperationReviewEditor({
     try{
       const review={
         destination,departureCity,travelStartDate:startDate,travelEndDate:endDate,
-        daysCount:days,nightsCount:nights,pax,budget,tourType,
+        daysCount:days,pax,budget,tourType,
         flightRequirement:flight,hotelRequirement:hotel,mealRequirement:meals,
         specialRequest:special,transportRequirement:transport,
         itineraryRequirement:itineraryReq,operationNotes,
-        overrideSuggestedFlights:overrideFlights,
-        suggestedFlights:overrideFlights?operationFlights:salesSuggestedFlights,
+        overrideFlightInformation:overrideFlights,
+        flightInformation:overrideFlights?operationFlightInformation:salesFlightInformation,
         overrideTravellerComposition:false,
         travellerComposition:salesComposition
       };
@@ -115,7 +101,7 @@ export default function OperationReviewEditor({
     }finally{setSaving(false);}
   }
 
-  const activeFlights=overrideFlights?operationFlights:salesSuggestedFlights;
+  const activeFlightInformation=overrideFlights?operationFlightInformation:salesFlightInformation;
 
   return <div className="operation-review-editor operation-review-simplified">
     <section className="panel operation-customer-brief">
@@ -133,7 +119,7 @@ export default function OperationReviewEditor({
         <div><span>{t("Customer","客户")}</span><strong>{inquiry.customer_name||"—"}</strong></div>
         <div><span>{t("Destination","目的地")}</span><strong>{inquiry.destination||"—"}</strong></div>
         <div><span>{t("Travel Date","出发日期")}</span><strong>{inquiry.travel_start_date||"—"}{inquiry.travel_end_date?" → "+inquiry.travel_end_date:""}</strong></div>
-        <div><span>{t("Duration","行程天数")}</span><strong>{inquiry.days_count}D{inquiry.nights_count}N</strong></div>
+        <div><span>{t("Duration","行程天数")}</span><strong>{inquiry.days_count} {t("Days","天")}</strong></div>
         <div><span>{t("Pax","人数")}</span><strong>{inquiry.pax||"—"}</strong></div>
         <div><span>{t("Budget","预算")}</span><strong>{inquiry.budget||"—"}</strong></div>
         <div><span>{t("Tour Type","团型")}</span><strong>{inquiry.tour_type||"—"}</strong></div>
@@ -166,7 +152,7 @@ export default function OperationReviewEditor({
         <div className="operation-subsection-head operation-sales-flights-head">
           <div><h3>{t("Sales Suggested Flights","Sales 推荐航班")}</h3><p>{t("Read-only · Original Sales recommendation","只读 · Sales 原始推荐")}</p></div>
         </div>
-        <FlightSummary flights={salesSuggestedFlights} t={t}/>
+        <FlightInformation value={salesFlightInformation} onChange={()=>{}} durationDays={Number(inquiry.days_count)||0} compact disabled/>
       </div>}
     </section>
 
@@ -185,8 +171,7 @@ export default function OperationReviewEditor({
           <label className="field"><span>{t("Destination","目的地")}</span><input disabled={!canEdit} value={destination} onChange={e=>setDestination(e.target.value)}/></label>
           <label className="field"><span>{t("Travel Start Date","出发日期")}</span><input disabled={!canEdit} type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}/></label>
           <label className="field"><span>{t("Travel End Date","返程日期")}</span><input disabled={!canEdit} type="date" value={endDate} onChange={e=>setEndDate(e.target.value)}/></label>
-          <label className="field"><span>{t("Days","天")}</span><input disabled={!canEdit} type="number" min="1" value={days} onChange={e=>setDays(Math.max(1,Number(e.target.value)||1))}/></label>
-          <label className="field"><span>{t("Nights","晚")}</span><input disabled={!canEdit} type="number" min="0" value={nights} onChange={e=>setNights(Math.max(0,Number(e.target.value)||0))}/></label>
+          <label className="field"><span>{t("Days","天")}</span><input disabled type="number" min="1" value={days} readOnly/></label>
           <label className="field"><span>{t("Pax","人数")}</span><input disabled={!canEdit} type="number" min="1" value={pax} onChange={e=>setPax(e.target.value===""?"":Math.max(1,Number(e.target.value)||1))}/></label>
           <label className="field"><span>{t("Tour Type","团型")}</span><input disabled={!canEdit} value={tourType} onChange={e=>setTourType(e.target.value)}/></label>
           <label className="field"><span>{t("Budget","预算")}</span><input disabled={!canEdit} value={budget} onChange={e=>setBudget(e.target.value)}/></label>
@@ -216,28 +201,13 @@ export default function OperationReviewEditor({
           </div>}
         </div>
 
-        {!editingFlights&&<FlightSummary flights={activeFlights} t={t}/>}
-        {editingFlights&&<div className="inquiry-flight-list operation-flight-editor">
-          {operationFlights.map((f,index)=><div className="inquiry-flight-card" key={f.id}>
-            <div className="inquiry-flight-card-head">
-              <strong>{t("Operation Flight","Operation 航班")} {index+1}</strong>
-              <button disabled={!canEdit} className="danger-link" type="button" onClick={()=>setOperationFlights(prev=>prev.filter(x=>x.id!==f.id))}>{t("Delete","删除")}</button>
-            </div>
-            <div className="itinerary-meta-grid">
-              <label className="field"><span>{t("From","出发")}</span><input disabled={!canEdit} maxLength={3} value={f.from} onChange={e=>setOperationFlights(prev=>prev.map(x=>x.id===f.id?{...x,from:e.target.value.toUpperCase()}:x))}/></label>
-              <label className="field"><span>{t("To","抵达")}</span><input disabled={!canEdit} maxLength={3} value={f.to} onChange={e=>setOperationFlights(prev=>prev.map(x=>x.id===f.id?{...x,to:e.target.value.toUpperCase()}:x))}/></label>
-              <label className="field"><span>{t("Flight No.","航班号")}</span><input disabled={!canEdit} value={f.flightNo} onChange={e=>setOperationFlights(prev=>prev.map(x=>x.id===f.id?{...x,flightNo:e.target.value.toUpperCase()}:x))}/></label>
-              <label className="field"><span>{t("Date","日期")}</span><input disabled={!canEdit} type="date" value={f.date} onChange={e=>setOperationFlights(prev=>prev.map(x=>x.id===f.id?{...x,date:e.target.value}:x))}/></label>
-              <label className="field"><span>{t("Departure","起飞")}</span><input disabled={!canEdit} type="time" value={f.departureTime} onChange={e=>setOperationFlights(prev=>prev.map(x=>x.id===f.id?{...x,departureTime:e.target.value}:x))}/></label>
-              <label className="field"><span>{t("Arrival","抵达")}</span><input disabled={!canEdit} type="time" value={f.arrivalTime} onChange={e=>setOperationFlights(prev=>prev.map(x=>x.id===f.id?{...x,arrivalTime:e.target.value}:x))}/></label>
-              <label className="field inquiry-flight-remarks"><span>{t("Remarks","备注")}</span><input disabled={!canEdit} value={f.remarks} onChange={e=>setOperationFlights(prev=>prev.map(x=>x.id===f.id?{...x,remarks:e.target.value}:x))}/></label>
-            </div>
-          </div>)}
-          <div className="operation-flight-editor-actions">
-            <button className="btn" type="button" onClick={()=>setOperationFlights(prev=>[...prev,emptyFlight()])}>{t("+ Add Flight","+ 新增航班")}</button>
-            <button className="btn" type="button" onClick={()=>setEditingFlights(false)}>{t("Done","完成")}</button>
-          </div>
-        </div>}
+        <FlightInformation
+          value={activeFlightInformation}
+          onChange={setOperationFlightInformation}
+          durationDays={days}
+          compact
+          disabled={!canEdit||!overrideFlights}
+        />
       </div>
 
       <div className="operation-subsection ios-form-subsection operation-requirements-ios">
