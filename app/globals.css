@@ -18940,3 +18940,245 @@ td,
     grid-template-columns:1fr 1fr;
   }
 }
+
+
+/* FOUNDATION: Scenario Cost Matrix fixed context + compact scenarios */
+.quotation-editor-shell .scenario-matrix-wrap{
+  position:relative;
+  overflow-x:auto!important;
+  overflow-y:visible;
+  border:1px solid var(--color-border-default);
+  border-radius:16px;
+  background:#fff;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(78,91,101,.38) transparent;
+}
+.quotation-editor-shell .scenario-matrix-wrap::-webkit-scrollbar{height:6px}
+.quotation-editor-shell .scenario-matrix-wrap::-webkit-scrollbar-track{background:transparent}
+.quotation-editor-shell .scenario-matrix-wrap::-webkit-scrollbar-thumb{
+  border-radius:999px;
+  background:rgba(78,91,101,.32);
+}
+
+.quotation-editor-shell .scenario-cost-matrix,
+.quotation-editor-shell .scenario-cost-matrix.default-scenarios,
+.quotation-editor-shell .scenario-cost-matrix.extended-scenarios{
+  width:max-content!important;
+  min-width:100%!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background:#fff;
+}
+
+.quotation-editor-shell .scenario-cost-matrix.default-scenarios,
+.quotation-editor-shell .scenario-cost-matrix.extended-scenarios{
+  grid-template-columns:330px repeat(var(--scenario-count,4),190px);
+}
+
+.quotation-editor-shell .scenario-matrix-header.scenario-matrix-static,
+.quotation-editor-shell .scenario-matrix-row>.scenario-matrix-static{
+  position:sticky;
+  left:0;
+  z-index:8;
+  background:#fff!important;
+  box-shadow:10px 0 18px -18px rgba(15,39,58,.55);
+}
+
+.quotation-editor-shell .scenario-matrix-header.scenario-matrix-static{
+  z-index:12;
+  min-height:58px;
+  background:#fbfcfd!important;
+  border-right:1px solid var(--color-border-default);
+}
+
+.quotation-editor-shell .scenario-matrix-row>.scenario-matrix-static{
+  border-right:1px solid var(--color-border-default);
+}
+
+.quotation-editor-shell .scenario-matrix-pax-head{
+  position:sticky;
+  top:0;
+  z-index:4;
+  min-height:58px!important;
+  padding:10px 12px 8px!important;
+  background:#fbfcfd!important;
+  border-left:1px solid #eef2f5!important;
+  border-bottom:1px solid var(--color-border-default)!important;
+}
+
+.quotation-editor-shell .scenario-pax-title strong{
+  font-size:17px!important;
+  line-height:1!important;
+  font-weight:750!important;
+}
+.quotation-editor-shell .scenario-pax-title span{
+  font-size:10px!important;
+  font-weight:650!important;
+}
+.quotation-editor-shell .scenario-cell-labels{
+  margin-top:4px!important;
+  display:block!important;
+  color:var(--color-text-tertiary)!important;
+  font-size:9.5px!important;
+}
+
+.quotation-editor-shell .scenario-matrix-row{
+  border-bottom:1px solid #edf1f4!important;
+  background:#fff!important;
+}
+.quotation-editor-shell .scenario-matrix-row:last-child{
+  border-bottom:0!important;
+}
+.quotation-editor-shell .scenario-matrix-row:hover{
+  background:#fcfdfe!important;
+}
+
+.quotation-editor-shell .scenario-row-meta{
+  min-height:92px;
+  padding:12px 10px!important;
+  column-gap:9px!important;
+  grid-template-columns:135px 95px 60px!important;
+  align-items:center;
+}
+.quotation-editor-shell .scenario-row-meta input,
+.quotation-editor-shell .scenario-row-meta select{
+  height:38px!important;
+  min-height:38px!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:9px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+  font-size:12px!important;
+}
+.quotation-editor-shell .scenario-item-field{
+  min-width:0;
+}
+.quotation-editor-shell .scenario-row-actions{
+  margin-top:4px!important;
+  gap:8px!important;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .14s ease;
+}
+.quotation-editor-shell .scenario-row-meta:hover .scenario-row-actions,
+.quotation-editor-shell .scenario-row-actions:focus-within{
+  opacity:1;
+  pointer-events:auto;
+}
+.quotation-editor-shell .scenario-row-actions button{
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  color:var(--color-text-tertiary)!important;
+  font-size:9.5px!important;
+  font-weight:600!important;
+}
+
+.quotation-editor-shell .scenario-cost-cell,
+.quotation-editor-shell .scenario-cost-matrix.default-scenarios .scenario-cost-cell,
+.quotation-editor-shell .scenario-cost-matrix.extended-scenarios .scenario-cost-cell{
+  min-height:92px;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center;
+  gap:8px!important;
+  padding:11px 12px!important;
+  border-left:1px solid #eef2f5!important;
+  background:transparent;
+}
+
+.quotation-editor-shell .scenario-unit-price-input{
+  width:100%!important;
+  min-width:0!important;
+  height:38px!important;
+  min-height:38px!important;
+  padding:0 10px!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:9px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+  font-size:13px!important;
+  font-weight:600!important;
+}
+.quotation-editor-shell .scenario-unit-price-input:focus{
+  border-color:var(--color-info-text)!important;
+  box-shadow:0 0 0 3px var(--color-focus-soft)!important;
+}
+
+.quotation-editor-shell .scenario-qty-control{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:7px!important;
+  min-height:30px;
+}
+.quotation-editor-shell .scenario-qty-control span{
+  color:var(--color-text-tertiary)!important;
+  font-size:9.5px!important;
+  line-height:1!important;
+  font-weight:600!important;
+  white-space:nowrap;
+}
+.quotation-editor-shell .scenario-qty-input{
+  width:50px!important;
+  min-width:50px!important;
+  height:30px!important;
+  min-height:30px!important;
+  padding:0 6px!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:8px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+  text-align:center!important;
+  font-size:11px!important;
+  font-weight:600!important;
+}
+
+.quotation-editor-shell .scenario-section-actions{
+  display:flex;
+  align-items:center;
+  gap:8px!important;
+}
+.quotation-editor-shell .scenario-section-actions .btn{
+  min-height:38px!important;
+  height:38px!important;
+  padding:0 14px!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  color:var(--color-text-primary)!important;
+  box-shadow:none!important;
+  font-size:11px!important;
+  font-weight:650!important;
+}
+.quotation-editor-shell .scenario-section-actions .btn:focus-visible{
+  outline:2px solid var(--color-focus-ring)!important;
+  outline-offset:2px!important;
+  box-shadow:none!important;
+}
+.quotation-editor-shell .scenario-section-actions .btn:hover{
+  background:var(--color-bg-soft)!important;
+}
+
+.quotation-editor-shell .scenario-remove-pax{
+  border:0!important;
+  background:transparent!important;
+  color:var(--color-text-tertiary)!important;
+  box-shadow:none!important;
+}
+
+.quotation-editor-shell .scenario-formula-note{
+  margin-top:10px!important;
+  padding:0 2px!important;
+  color:var(--color-text-tertiary)!important;
+  font-size:10.5px!important;
+}
+
+@media(max-width:900px){
+  .quotation-editor-shell .scenario-matrix-header.scenario-matrix-static,
+  .quotation-editor-shell .scenario-matrix-row>.scenario-matrix-static{
+    position:static;
+    box-shadow:none;
+  }
+}
