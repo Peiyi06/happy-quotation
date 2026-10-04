@@ -16,8 +16,23 @@ export default async function NewItineraryPage({searchParams}:{searchParams:Prom
       if(data?.id){
         const r=data.operation_review||{};
         const pick=(key:string,original:any)=>Object.prototype.hasOwnProperty.call(r,key)?r[key]:original;
-        const salesFlights=Array.isArray(data?.inquiry_data?.suggestedFlights)?data.inquiry_data.suggestedFlights:[];
-        const finalFlights=r?.overrideSuggestedFlights===true&&Array.isArray(r?.suggestedFlights)?r.suggestedFlights:salesFlights;
+        const salesFlightInformation=data?.inquiry_data?.flightInformation||{};
+        const finalFlightInformation=r?.overrideFlightInformation===true&&r?.flightInformation?r.flightInformation:salesFlightInformation;
+        const flightLegs=[
+          finalFlightInformation?.outbound,
+          finalFlightInformation?.outboundTransitOpen?finalFlightInformation?.outboundTransit:null,
+          finalFlightInformation?.returning,
+          finalFlightInformation?.returnTransitOpen?finalFlightInformation?.returnTransit:null
+        ].filter(Boolean);
+        const finalFlights=flightLegs.filter((leg:any)=>leg?.fromAirport||leg?.toAirport||leg?.flightNo||leg?.flightDate||leg?.departureTime||leg?.arrivalTime).map((leg:any)=>({
+          from:leg.fromAirport||"",
+          to:leg.toAirport||"",
+          flightNo:leg.flightNo||"",
+          date:leg.flightDate||"",
+          departureTime:leg.departureTime||"",
+          arrivalTime:leg.arrivalTime||"",
+          remarks:leg.nextDay?"+1 Next Day":""
+        }));
         sourceInquiryNo=data.inquiry_no||"";
         sourceInquirySnapshot={
           inquiryNo:data.inquiry_no||"",
@@ -26,17 +41,16 @@ export default async function NewItineraryPage({searchParams}:{searchParams:Prom
           travelStartDate:pick("travelStartDate",data.travel_start_date)||"",
           travelEndDate:pick("travelEndDate",data.travel_end_date)||"",
           daysCount:Number(pick("daysCount",data.days_count))||1,
-          nightsCount:Number(pick("nightsCount",data.nights_count))||0,
           pax:pick("pax",data.pax)||"",
           tourType:pick("tourType",data.tour_type)||"",
           salesOwner:data.sales_owner_name||"",
           operationAssignee:data.operation_assignee_name||""
         };
         initialItinerary={
-          title:`${sourceInquirySnapshot.destination||"Tour"} ${sourceInquirySnapshot.daysCount}D${sourceInquirySnapshot.nightsCount}N`,
+          title:`${sourceInquirySnapshot.destination||"Tour"} ${sourceInquirySnapshot.daysCount}D`,
           destination:sourceInquirySnapshot.destination,
           days_count:sourceInquirySnapshot.daysCount,
-          nights_count:sourceInquirySnapshot.nightsCount,
+          nights_count:0,
           customer_name:data.customer_name||"",
           status:"draft",
           source_inquiry_id:data.id,
