@@ -821,7 +821,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </div>}
     >
       <div className="scenario-matrix-wrap">
-        <div className={"scenario-cost-matrix"+(pricingScenarios.length<=4?" default-scenarios":" extended-scenarios")} style={{gridTemplateColumns:pricingScenarios.length<=4?`minmax(278px,.92fr) repeat(${pricingScenarios.length},minmax(0,1fr))`:`minmax(300px,1fr) repeat(${pricingScenarios.length},minmax(122px,1fr))`}}>
+        <div className={"scenario-cost-matrix"+(pricingScenarios.length<=4?" default-scenarios":" extended-scenarios")} style={{gridTemplateColumns:pricingScenarios.length<=4?`minmax(278px,.92fr) repeat(${pricingScenarios.length},minmax(0,1fr))`:`278px repeat(${pricingScenarios.length},154px)`}}>
           <div className="scenario-matrix-header scenario-matrix-static">
             <span>{t("Cost Item","成本项目")}</span>
             <span>{t("Method","计算方式")}</span>
