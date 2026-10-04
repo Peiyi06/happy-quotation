@@ -6242,17 +6242,17 @@ td,
 }
 
 /* Quotation customer / trip source model */
-.quotation-editor-shell .quotation-identity-block{
-  max-width:720px;
-  margin-bottom:18px;
-}
+.quotation-editor-shell .quotation-identity-block,
 .quotation-editor-shell .quotation-trip-context{
+  width:100%;
   margin-bottom:18px;
   padding:16px;
   border:1px solid var(--color-border-default);
   border-radius:14px;
   background:var(--color-bg-soft);
+  box-shadow:none;
 }
+.quotation-editor-shell .quotation-identity-head,
 .quotation-editor-shell .quotation-trip-context-head{
   display:flex;
   align-items:flex-start;
@@ -6260,11 +6260,43 @@ td,
   gap:16px;
   margin-bottom:14px;
 }
+.quotation-editor-shell .quotation-identity-head h3,
 .quotation-editor-shell .quotation-trip-context-head h3{
   margin:3px 0 0;
   color:var(--color-text-primary);
   font-size:var(--foundation-type-section);
   line-height:1.2;
+  font-weight:700;
+  letter-spacing:-.01em;
+}
+.quotation-editor-shell .quotation-title-input{
+  width:100%;
+  min-width:0;
+  height:48px;
+  min-height:48px;
+  padding:0 14px;
+  border:1px solid var(--color-border-default);
+  border-radius:12px;
+  background:var(--color-bg-surface);
+  color:var(--color-text-primary);
+  font-size:var(--type-body)!important;
+  line-height:1.2;
+  font-weight:600;
+  box-shadow:none;
+}
+.quotation-editor-shell .quotation-title-input::placeholder{
+  color:var(--color-text-tertiary);
+  font-size:var(--type-body)!important;
+  font-weight:500;
+  opacity:1;
+}
+.quotation-editor-shell .quotation-title-input:hover{
+  border-color:var(--color-border-strong);
+}
+.quotation-editor-shell .quotation-title-input:focus{
+  outline:0;
+  border-color:var(--color-info-text);
+  box-shadow:0 0 0 3px var(--color-focus-soft);
 }
 .quotation-editor-shell .quotation-source-mode{
   display:inline-flex;
@@ -19183,65 +19215,3 @@ td,
   }
 }
 
-
-
-/* FOUNDATION: Quotation Title same hierarchy as Customer & Trip */
-.quotation-editor-shell .quotation-identity-block{
-  width:100%;
-  margin-bottom:18px;
-  padding:16px;
-  border:1px solid var(--color-border-default);
-  border-radius:14px;
-  background:var(--color-bg-soft);
-  box-shadow:none;
-}
-
-.quotation-editor-shell .quotation-identity-head{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:16px;
-  margin-bottom:14px;
-}
-
-.quotation-editor-shell .quotation-identity-head h3{
-  margin:3px 0 0;
-  color:var(--color-text-primary);
-  font-size:var(--foundation-type-section);
-  line-height:1.2;
-  font-weight:700;
-  letter-spacing:-.01em;
-}
-
-.quotation-editor-shell .quotation-title-input{
-  width:100%;
-  min-width:0;
-  height:48px;
-  min-height:48px;
-  padding:0 14px;
-  border:1px solid var(--color-border-default);
-  border-radius:12px;
-  background:var(--color-bg-surface);
-  color:var(--color-text-primary);
-  font-size:var(--type-body)!important;
-  line-height:1.2;
-  font-weight:600;
-  box-shadow:none;
-}
-
-.quotation-editor-shell .quotation-title-input::placeholder{
-  color:var(--color-text-tertiary);
-  font-size:var(--type-body)!important;
-  font-weight:500;
-  opacity:1;
-}
-
-.quotation-editor-shell .quotation-title-input:hover{
-  border-color:var(--color-border-strong);
-}
-
-.quotation-editor-shell .quotation-title-input:focus{
-  outline:0;
-  border-color:var(--color-info-text);
-  box-shadow:0 0 0 3px var(--color-focus-soft);
-}
