@@ -626,6 +626,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const printChildBed=childSetupCost(childBedSetup,Math.max(1,Number(pax)||1),mainCurrency,mainRate);
   const printChildNoBed=childSetupCost(childNoBedSetup,Math.max(1,Number(pax)||1),mainCurrency,mainRate);
 
+  const printTotalPages=pricingMode==="scenario"&&scenarioResults.length>0?5:4;
 
   return <main className={"app-shell "+(workspaceMode?"quotation-editor-shell":"")}>
     <div className="quotation-print-document" aria-hidden="true">
@@ -666,12 +667,36 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             </div>)}
           </div>:<div className="print-empty">{t("No flight information entered.","尚未填写航班资料。")}</div>}
           <div className="print-inline-note">
-            <span>{t("Flight Cost","机票成本")}</span><strong>{flightTotalPrice===""?"—":money(Number(flightTotalPrice)*currencyRate(flightPriceCurrency,mainCurrency,mainRate))}</strong>
+            <span>{t("Flight Total Price","航班总报价")}</span><strong>{flightTotalPrice===""?"—":money(Number(flightTotalPrice)*currencyRate(flightPriceCurrency,mainCurrency,mainRate))}</strong>
             <span>{t("Ticket Type","机票类型")}</span><strong>{flightTicketType.code||"—"}</strong>
           </div>
         </PrintSectionNo>
 
-        <PrintSectionNo no="03" title={terms.quotationPricing}>
+        <PrintSectionNo no="03" title={terms.commercialSettings}>
+          <div className="print-info-grid rules">
+            <PrintInfo label={t("Main Currency","主要币种")} value={currencyLabel(mainCurrency)}/>
+            <PrintInfo label={t("Exchange Rate → RM","汇率 → RM")} value={String(mainRate||"—")}/>
+            <PrintInfo label={t("Profit Method","利润方式")} value={profitModeLabel(profitMode)}/>
+            <PrintInfo label={t("Profit Rate","利润率")} value={pct(Number(profitRate)||0)}/>
+            <PrintInfo label={t("Minimum Profit / Pax","最低毛利 / 人")} value={minProfit===""?"—":money(Number(minProfit))}/>
+            <PrintInfo label={t("Maximum Profit / Pax","最高毛利 / 人")} value={maxProfit===""?"—":money(Number(maxProfit))}/>
+            <PrintInfo label={t("Fixed Profit / Pax","固定利润 / 人")} value={fixedProfit===""?"—":money(Number(fixedProfit))}/>
+            <PrintInfo label={t("Quote Rounding","报价取整")} value={t(`Round up to RM ${roundUnit}`,`向上取整至 RM ${roundUnit}`)}/>
+          </div>
+        </PrintSectionNo>
+        <PrintFooter quotationNo={initialQuotation?.quotation_no||"Draft"} page="1" total={printTotalPages}/>
+      </section>
+
+      <section className="print-page">
+        <div className="print-doc-header compact">
+          <div><span className="print-brand">HAPPY EXPRESS TRAVEL</span><h1>{terms.quotationPricing}</h1></div>
+          <div className="print-doc-meta">
+            <div><span>{t("Quotation No.","报价编号")}</span><strong>{initialQuotation?.quotation_no||t("New Draft","新草稿")}</strong></div>
+            <div><span>{terms.pricingStructure}</span><strong>{pricingMode==="scenario"?t("Scenario Package","多人数组合"):t("Fixed Pax","固定人数")}</strong></div>
+          </div>
+        </div>
+
+        <PrintSectionNo no="04" title={terms.systemPricingMatrix}>
           <div className="print-table print-pricing-table">
             <div className="print-tr print-th"><span>{terms.travellerType}</span><span>{t("Leader","领队")}</span><span>{terms.costPerPax}</span><span>{terms.systemSuggested}</span><span>{terms.finalPrice}</span><span>{terms.profit}</span><span>{terms.margin}</span></div>
             {pricingRows.map(row=>{
@@ -686,7 +711,18 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             })}
           </div>
         </PrintSectionNo>
-        <PrintFooter quotationNo={initialQuotation?.quotation_no||"Draft"} page="1"/>
+
+        <PrintSectionNo no="05" title={t("Final Pricing Decision","最终定价决定")}>
+          <div className="print-final-decision">
+            <div><span>{terms.travellerType}</span><strong>{selectedSummaryLabel}</strong></div>
+            <div><span>{terms.costPerPax}</span><strong>{money(selected.cost)}</strong></div>
+            <div><span>{terms.systemSuggested}</span><strong>{money(selected.rounded)}</strong></div>
+            <div className="primary"><span>{terms.finalCustomerPrice}</span><strong>{money(finalQuote)}</strong><small>{manualQuote!==""?t("Manual Override","人工调整"):t("System Price","系统价格")}</small></div>
+            <div><span>{t("Final Profit","最终利润")}</span><strong>{money(finalProfit)}</strong></div>
+            <div><span>{t("Final Margin","最终毛利率")}</span><strong>{pct(finalMargin)}</strong></div>
+          </div>
+        </PrintSectionNo>
+        <PrintFooter quotationNo={initialQuotation?.quotation_no||"Draft"} page="2" total={printTotalPages}/>
       </section>
 
       <section className="print-page">
@@ -695,9 +731,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           <div className="print-doc-meta"><div><span>{t("Quotation No.","报价编号")}</span><strong>{initialQuotation?.quotation_no||t("New Draft","新草稿")}</strong></div></div>
         </div>
 
-        <PrintSectionNo no="04" title={terms.costBreakdown}>
+        <PrintSectionNo no="06" title={terms.costBreakdown}>
           <div className="print-table print-cost-table">
-            <div className="print-tr print-th"><span>{terms.costItem}</span><span>{t("Type","类型")}</span><span>{terms.calculation}</span><span>{terms.unitPrice}</span><span>{t("Qty","数量")}</span><span>{terms.currency}</span><span>{terms.rate}</span><span>{terms.costPerPax}</span></div>
+            <div className="print-tr print-th"><span>{terms.costItem}</span><span>{t("Type","类型")}</span><span>{terms.calculation}</span><span>{terms.unitPrice}</span><span>{t("Qty / Days","数量 / 天数")}</span><span>{terms.currency}</span><span>{terms.rate}</span><span>{terms.costPerPax}</span></div>
             {printTravelerRows.map(row=><div className="print-tr" key={row.id}>
               <span><strong>{costItemDisplay(row.item)||"—"}</strong>{row.note?<small>{row.note}</small>:null}</span>
               <span>{row.direction==="deduction"?t("Deduction −","扣减 −"):t("Cost +","成本 +")}</span>
@@ -708,9 +744,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           <div className="print-total-line"><span>{t("Traveller Base Cost / Pax","旅客基础成本 / 人")}</span><strong>{money(calculationResult.travelerPerPax)}</strong></div>
         </PrintSectionNo>
 
-        <PrintSectionNo no="05" title={terms.tourLeaderCostSetup}>
+        <PrintSectionNo no="07" title={terms.tourLeaderCostSetup}>
           {hasLeader&&printLeaderRows.length?<><div className="print-table print-leader-table">
-            <div className="print-tr print-th"><span>{terms.costItem}</span><span>{terms.calculation}</span><span>{terms.unitPrice}</span><span>{t("Qty","数量")}</span><span>{terms.currency}</span><span>{t("Total","总额")}</span><span>{t("Allocated / Pax","每人分摊")}</span></div>
+            <div className="print-tr print-th"><span>{terms.costItem}</span><span>{terms.calculation}</span><span>{terms.unitPrice}</span><span>{t("Qty / Days","数量 / 天数")}</span><span>{terms.currency}</span><span>{t("Total","总额")}</span><span>{t("Allocated / Pax","每人分摊")}</span></div>
             {printLeaderRows.map(row=><div className="print-tr" key={row.id}>
               <span><strong>{costItemDisplay(row.item)||"—"}</strong>{row.note?<small>{row.note}</small>:null}</span>
               <span>{calcModeLabel(row.mode||"每人")}</span><span>{Number(row.unitPrice)||0}</span><span>{Number(row.qty)||0}</span><span>{currencyLabel(row.currency)}</span>
@@ -719,16 +755,16 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           </div><div className="print-total-line split"><span>{t("Total Leader Cost","领队总成本")} <strong>{money(calculationResult.leaderTotal)}</strong></span><span>{t("Allocated / Pax","每人分摊")} <strong>{money(calculationResult.leaderPerPax)}</strong></span></div></>
           :<div className="print-empty">{t("No leader cost applied.","没有应用领队成本。")}</div>}
         </PrintSectionNo>
-        <PrintFooter quotationNo={initialQuotation?.quotation_no||"Draft"} page="2"/>
+        <PrintFooter quotationNo={initialQuotation?.quotation_no||"Draft"} page="3" total={printTotalPages}/>
       </section>
 
       <section className="print-page">
         <div className="print-doc-header compact">
-          <div><span className="print-brand">HAPPY EXPRESS TRAVEL</span><h1>{terms.quotationPricing}</h1></div>
+          <div><span className="print-brand">HAPPY EXPRESS TRAVEL</span><h1>{terms.childCostSetup}</h1></div>
           <div className="print-doc-meta"><div><span>{t("Quotation No.","报价编号")}</span><strong>{initialQuotation?.quotation_no||t("New Draft","新草稿")}</strong></div></div>
         </div>
 
-        <PrintSectionNo no="06" title={terms.childCostSetup}>
+        <PrintSectionNo no="08" title={terms.childCostSetup}>
           <div className="print-child-detail-stack">
             {[
               {title:t("Child with Bed","小孩含床"),setup:childBedSetup,summary:printChildBed},
@@ -749,34 +785,22 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
                 </div>
                 <div className="print-table print-child-cost-table">
                   <div className="print-tr print-th">
-                    <span>{terms.costItem}</span>
-                    <span>{t("Type","类型")}</span>
-                    <span>{terms.calculation}</span>
-                    <span>{terms.unitPrice}</span>
-                    <span>{t("Qty / Ratio","数量 / 比例")}</span>
-                    <span>{terms.currency}</span>
-                    <span>{terms.rate}</span>
-                    <span>{terms.costPerPax}</span>
+                    <span>{terms.costItem}</span><span>{t("Type","类型")}</span><span>{terms.calculation}</span><span>{terms.unitPrice}</span>
+                    <span>{t("Qty / Ratio","数量 / 比例")}</span><span>{terms.currency}</span><span>{terms.rate}</span><span>{terms.costPerPax}</span>
                   </div>
                   <div className="print-tr">
                     <span><strong>{t("Ground Package","地接报价")}</strong></span>
                     <span>{child.setup.groundDirection==="deduction"?t("Deduction −","扣减 −"):t("Cost +","成本 +")}</span>
                     <span>{t("Child Ratio","儿童比例")}</span>
                     <span>{Number(child.setup.groundBase)||0}<small>{t("Base after FX","汇率后基础值")} {money(groundBaseRm)}</small></span>
-                    <span>{child.setup.groundRatio}%</span>
-                    <span>{currencyLabel(child.setup.groundCurrency)}</span>
-                    <span>{groundRate||"—"}</span>
+                    <span>{child.setup.groundRatio}%</span><span>{currencyLabel(child.setup.groundCurrency)}</span><span>{groundRate||"—"}</span>
                     <span><strong>{money(groundPerPax)}</strong></span>
                   </div>
                   {childRows.map(row=><div className="print-tr" key={row.id}>
                     <span><strong>{costItemDisplay(row.item)||"—"}</strong>{row.note?<small>{row.note}</small>:null}</span>
                     <span>{row.direction==="deduction"?t("Deduction −","扣减 −"):t("Cost +","成本 +")}</span>
-                    <span>{calcModeLabel(row.mode||"每人")}</span>
-                    <span>{Number(row.unitPrice)||0}</span>
-                    <span>{Number(row.qty)||0}</span>
-                    <span>{currencyLabel(row.currency)}</span>
-                    <span>{row.rate||"—"}</span>
-                    <span><strong>{money(row.perPax)}</strong></span>
+                    <span>{calcModeLabel(row.mode||"每人")}</span><span>{Number(row.unitPrice)||0}</span><span>{Number(row.qty)||0}</span>
+                    <span>{currencyLabel(row.currency)}</span><span>{row.rate||"—"}</span><span><strong>{money(row.perPax)}</strong></span>
                   </div>)}
                 </div>
                 <div className="print-child-totals">
@@ -788,39 +812,22 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             })}
           </div>
         </PrintSectionNo>
+        <PrintFooter quotationNo={initialQuotation?.quotation_no||"Draft"} page="4" total={printTotalPages}/>
+      </section>
 
-        <PrintSectionNo no="07" title={terms.commercialSettings}>
-          <div className="print-info-grid rules">
-            <PrintInfo label={t("Pricing Method","定价方式")} value={profitModeLabel(profitMode)}/>
-            <PrintInfo label={t("Profit Rate","利润率")} value={pct(Number(profitRate)||0)}/>
-            <PrintInfo label={t("Minimum Profit","最低利润")} value={minProfit===""?"—":money(Number(minProfit))}/>
-            <PrintInfo label={t("Maximum Profit","最高利润")} value={maxProfit===""?"—":money(Number(maxProfit))}/>
-            <PrintInfo label={t("Fixed Profit","固定利润")} value={fixedProfit===""?"—":money(Number(fixedProfit))}/>
-            <PrintInfo label={t("Rounding Rule","取整规则")} value={t(`Round up to RM ${roundUnit}`,`向上取整至 RM ${roundUnit}`)}/>
-            <PrintInfo label={t("Main Currency","主要币种")} value={currencyLabel(mainCurrency)}/>
-            <PrintInfo label={t("Main Exchange Rate","主要汇率")} value={String(mainRate||"—")}/>
-          </div>
-        </PrintSectionNo>
-
-        <PrintSectionNo no="08" title={terms.quotationPricing}>
-          <div className="print-final-decision">
-            <div><span>{terms.travellerType}</span><strong>{selectedSummaryLabel}</strong></div>
-            <div><span>{terms.costPerPax}</span><strong>{money(selected.cost)}</strong></div>
-            <div><span>{terms.systemSuggested}</span><strong>{money(selected.rounded)}</strong></div>
-            <div className="primary"><span>{t("Final Customer Price","最终对客售价")}</span><strong>{money(finalQuote)}</strong><small>{manualQuote!==""?t("Manual Override","人工调整"):t("System Price","系统价格")}</small></div>
-            <div><span>{t("Final Profit","最终利润")}</span><strong>{money(finalProfit)}</strong></div>
-            <div><span>{t("Final Margin","最终毛利率")}</span><strong>{pct(finalMargin)}</strong></div>
-          </div>
-        </PrintSectionNo>
-
-        {pricingMode==="scenario"&&scenarioResults.length>0&&<PrintSectionNo no="09" title={t("Pax Scenario Comparison","人数情境比较")}>
+      {pricingMode==="scenario"&&scenarioResults.length>0&&<section className="print-page">
+        <div className="print-doc-header compact">
+          <div><span className="print-brand">HAPPY EXPRESS TRAVEL</span><h1>{t("Pax Scenario Comparison","人数情境比较")}</h1></div>
+          <div className="print-doc-meta"><div><span>{t("Quotation No.","报价编号")}</span><strong>{initialQuotation?.quotation_no||t("New Draft","新草稿")}</strong></div></div>
+        </div>
+        <PrintSectionNo no="09" title={t("Pax Scenario Comparison","人数情境比较")}>
           <div className="print-table print-scenario-table">
-            <div className="print-tr print-th"><span>{t("Pax","人数")}</span><span>{terms.costPerPax}</span><span>{t("Suggested","建议售价")}</span><span>{t("Final","最终售价")}</span><span>{terms.profit}</span><span>{terms.margin}</span></div>
+            <div className="print-tr print-th"><span>{t("Pax","人数")}</span><span>{terms.costPerPax}</span><span>{terms.systemSuggested}</span><span>{terms.finalPrice}</span><span>{terms.profit}</span><span>{terms.margin}</span></div>
             {scenarioResults.map(row=><div className="print-tr" key={row.id}><span>{row.pax}</span><span>{money(row.costPerPax)}</span><span>{money(row.roundedPrice)}</span><span><strong>{money(row.finalPrice)}</strong></span><span>{money(row.finalProfit)}</span><span>{pct(row.finalMargin)}</span></div>)}
           </div>
-        </PrintSectionNo>}
-        <PrintFooter quotationNo={initialQuotation?.quotation_no||"Draft"} page="3"/>
-      </section>
+        </PrintSectionNo>
+        <PrintFooter quotationNo={initialQuotation?.quotation_no||"Draft"} page="5" total={printTotalPages}/>
+      </section>}
     </div>
 
     <header className={"topbar "+(workspaceMode?"quotation-editor-header":"")}>
@@ -1434,8 +1441,8 @@ function PrintSectionNo({no,title,children}:{no:string;title:React.ReactNode;chi
 function PrintInfo({label,value}:{label:React.ReactNode;value:string}){
   return <div className="print-info"><span>{label}</span><strong>{value||"—"}</strong></div>;
 }
-function PrintFooter({quotationNo,page}:{quotationNo:string;page:string}){
-  return <footer className="print-doc-footer"><span>Happy Express Travel · Internal Use Only</span><span>{quotationNo}</span><span>{page} / 3</span></footer>;
+function PrintFooter({quotationNo,page,total}:{quotationNo:string;page:string;total:number}){
+  return <footer className="print-doc-footer"><span>Happy Express Travel · Internal Use Only</span><span>{quotationNo}</span><span>{page} / {total}</span></footer>;
 }
 
 function Section({title,children,action}:{title:React.ReactNode;children:React.ReactNode;action?:React.ReactNode}){return <section className="section"><div className="section-head"><h2>{title}</h2>{action}</div>{children}</section>}
