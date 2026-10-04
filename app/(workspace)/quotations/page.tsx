@@ -36,7 +36,7 @@ export default async function QuotationsPage({ searchParams }:{searchParams:Prom
           <td><Link href={"/quotations/"+x.id}>{x.quotation_no}</Link></td>
           <td>
             <strong><Link href={"/quotations/"+x.id}>{x.title}</Link></strong>
-            <small>{[x.destination,x.tour_group_name||null].filter(Boolean).join(" · ")||<UiText en="Unclassified" zh="未分类" />}</small>
+            <small>{x.destination||<UiText en="Unclassified" zh="未分类" />}</small>
           </td>
           <td>{x.customer_name||"—"}</td>
           <td>{x.pax}</td>
