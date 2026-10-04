@@ -262,8 +262,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
         <label className="field"><span>{t("Destination","目的地")}</span><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder={t("Hokkaido / Chongqing","北海道 / 重庆")}/></label>
         <label className="field"><span>{t("Travel Start Date","出发日期")}</span><input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}/></label>
         <label className="field"><span>{t("Travel End Date","返程日期")}</span><input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)}/></label>
-        <label className="field"><span>{t("Days","天数")}</span><input type="number" min="1" value={days} onChange={e=>setDays(Math.max(1,Number(e.target.value)||1))}/></label>
-        <label className="field"><span>{t("Nights","晚数")}</span><input type="number" min="0" value={nights} onChange={e=>setNights(Math.max(0,Number(e.target.value)||0))}/></label>
+        <label className="field"><span>{t("Duration","行程天数")}</span><input value={startDate&&endDate?(days+" "+t("Days","天")+" · "+nights+" "+t("Nights","晚")):"—"} readOnly className="system-fixed-input"/></label>
         <label className="field"><span>{t("Pax","人数")}</span><input type="number" min="1" value={pax} onChange={e=>setPax(e.target.value===""?"":Math.max(1,Number(e.target.value)||1))}/></label>
         <label className="field"><span>{t("Budget","预算")}</span><input value={budget} onChange={e=>setBudget(e.target.value)} placeholder="RM 3,500/pax"/></label>
         <label className="field"><span>{t("Tour Type","团型")}</span><input value={tourType} onChange={e=>setTourType(e.target.value)} placeholder={t("Private / Company Trip","私人团 / 公司团")}/></label>
