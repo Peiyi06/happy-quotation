@@ -18539,3 +18539,98 @@ td,
     overflow-x:hidden;
   }
 }
+
+
+/* FOUNDATION CLEANUP: Quotation responsive containment */
+.quotation-editor-shell,
+.quotation-editor-shell .quote-meta-panel,
+.quotation-editor-shell .quotation-trip-context,
+.quotation-editor-shell .shared-flight-information,
+.quotation-editor-shell .quotation-pricing-mode-section,
+.quotation-editor-shell .section{
+  min-width:0;
+  max-width:100%;
+}
+
+.quotation-editor-shell .quotation-direct-trip-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+.quotation-editor-shell .quotation-direct-trip-grid>.field,
+.quotation-editor-shell .quotation-direct-trip-grid>.field input,
+.quotation-editor-shell .quotation-direct-trip-grid>.field select{
+  min-width:0;
+  max-width:100%;
+  width:100%;
+  box-sizing:border-box;
+}
+
+.quotation-editor-shell .shared-flight-information,
+.quotation-editor-shell .flight-pair-grid,
+.quotation-editor-shell .flight-block,
+.quotation-editor-shell .flight-fields,
+.quotation-editor-shell .flight-fields>.field,
+.quotation-editor-shell .time-field,
+.quotation-editor-shell .time-input-wrap{
+  min-width:0;
+  max-width:100%;
+}
+.quotation-editor-shell .flight-pair-grid{
+  grid-template-columns:repeat(auto-fit,minmax(360px,1fr));
+}
+.quotation-editor-shell .flight-block{
+  width:100%;
+  overflow:hidden;
+}
+.quotation-editor-shell .flight-fields{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+.quotation-editor-shell .flight-fields input,
+.quotation-editor-shell .flight-fields select,
+.quotation-editor-shell .time-input-wrap input{
+  min-width:0;
+  max-width:100%;
+  width:100%;
+  box-sizing:border-box;
+}
+.quotation-editor-shell .flight-block-head{
+  min-width:0;
+  flex-wrap:wrap;
+}
+
+.quotation-editor-shell .quotation-pricing-mode-section{
+  overflow:visible;
+}
+.quotation-editor-shell .scenario-pricing-mode-head{
+  min-width:0;
+  flex-wrap:wrap;
+  row-gap:12px;
+}
+.quotation-editor-shell .scenario-pricing-mode-head>div:first-child{
+  min-width:0;
+  flex:1 1 260px;
+}
+.quotation-editor-shell .scenario-mode-note{
+  max-width:100%;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  line-height:1.5;
+}
+
+@media(max-width:1180px){
+  .quotation-editor-shell .flight-pair-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:900px){
+  .quotation-editor-shell .quotation-direct-trip-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
+
+@media(max-width:700px){
+  .quotation-editor-shell .quotation-direct-trip-grid,
+  .quotation-editor-shell .flight-fields{
+    grid-template-columns:1fr!important;
+  }
+}
