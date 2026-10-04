@@ -6228,16 +6228,6 @@ td,
 }
 
 /* Quotation customer / trip source model */
-.quotation-editor-shell .quotation-identity-block,
-.quotation-editor-shell .quotation-trip-context{
-  width:100%;
-  margin-bottom:18px;
-  padding:16px;
-  border:1px solid var(--color-border-default);
-  border-radius:14px;
-  background:var(--color-bg-surface);
-  box-shadow:none;
-}
 .quotation-editor-shell .quotation-identity-head,
 .quotation-editor-shell .quotation-trip-context-head{
   display:flex;
@@ -19898,56 +19888,6 @@ td,
   }
   .quotation-editor-shell .cost-setup-content{
     padding:0 16px 16px;
-  }
-}
-
-
-/* FOUNDATION: Flight Information Surface */
-.quotation-editor-shell .flight-section-surface,
-.inquiry-editor .flight-section-surface{
-  min-width:0;
-  padding:20px;
-  border:1px solid var(--color-border-default);
-  border-radius:18px;
-  background:var(--color-bg-surface);
-  box-shadow:none;
-}
-
-.quotation-editor-shell .flight-section-surface .shared-flight-information,
-.inquiry-editor .flight-section-surface .shared-flight-information{
-  margin-top:0;
-  padding-top:0;
-  border-top:0;
-}
-
-.quotation-editor-shell .flight-section-surface .flight-info-head,
-.inquiry-editor .flight-section-surface .flight-info-head{
-  margin-bottom:18px;
-}
-
-.quotation-editor-shell .flight-section-surface .flight-block,
-.inquiry-editor .flight-section-surface .flight-block{
-  background:var(--color-bg-soft);
-  border-color:var(--color-border-default);
-  box-shadow:none;
-}
-
-.quotation-editor-shell .quotation-flight-section{
-  margin-top:18px;
-}
-
-.inquiry-editor .inquiry-flights-ios.flight-section-surface{
-  padding:20px!important;
-  background:var(--color-bg-surface)!important;
-  border-color:var(--color-border-default)!important;
-  box-shadow:none!important;
-}
-
-@media(max-width:700px){
-  .quotation-editor-shell .flight-section-surface,
-  .inquiry-editor .flight-section-surface{
-    padding:16px;
-    border-radius:16px;
   }
 }
 
