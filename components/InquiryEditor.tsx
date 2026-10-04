@@ -39,6 +39,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
   const [saving,setSaving]=useState(false);
   const [message,setMessage]=useState("");
   const [copyMessage,setCopyMessage]=useState("");
+  const [showCopyMenu,setShowCopyMenu]=useState(false);
   const [isDirty,setIsDirty]=useState(false);
   const [pendingHref,setPendingHref]=useState<string|null>(null);
   const [showUnsavedPrompt,setShowUnsavedPrompt]=useState(false);
@@ -116,7 +117,27 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
     }
   }
 
-  function basicRequestText(){
+  function basicRequestText(lang:"zh"|"en"){
+    if(lang==="en"){
+      return [
+        "Hello, to help us plan a suitable itinerary and quotation for you, please provide the following information:",
+        "",
+        "1. Departure city:",
+        "2. Destination:",
+        "3. Travel start date:",
+        "4. Travel end date:",
+        "5. Total pax:",
+        "6. Adult:",
+        "7. Senior:",
+        "8. Child:",
+        "9. Child age(s):",
+        "10. Budget range:",
+        "11. Places you would like to visit / special requests:",
+        "12. Please note any mobility, wheelchair, stroller or care requirements:",
+        "",
+        "Once we receive the details, we will proceed with the planning. Thank you 😊"
+      ].join("\n");
+    }
     return [
       "您好，为了方便我们为您规划合适的旅游行程与报价，请提供以下资料：",
       "",
@@ -137,7 +158,32 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
     ].join("\n");
   }
 
-  function detailedRequestText(){
+  function detailedRequestText(lang:"zh"|"en"){
+    if(lang==="en"){
+      return [
+        "Hello, to help us arrange a more complete itinerary and quotation, please provide the following information:",
+        "",
+        "1. Departure city:",
+        "2. Destination:",
+        "3. Travel start date:",
+        "4. Travel end date:",
+        "5. Total pax:",
+        "6. Adult:",
+        "7. Senior:",
+        "8. Child:",
+        "9. Child age(s):",
+        "10. Budget range:",
+        "11. Hotel requirements (star rating / room type / location):",
+        "12. Meal requirements:",
+        "13. Flight requirements / any preferred flights:",
+        "14. Places you would like to visit / special requests:",
+        "15. Senior details (age / mobility condition):",
+        "16. Child requirements (child meal / child seat / stroller, etc.):",
+        "17. Other mobility or care requirements:",
+        "",
+        "Once we receive the details, we will proceed with the planning and quotation. Thank you 😊"
+      ].join("\n");
+    }
     return [
       "您好，为了方便我们为您安排更完整的旅游行程与报价，请提供以下资料：",
       "",
@@ -249,8 +295,27 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
             inquiryContext={{departureCity,destination,travelStartDate:startDate,travelEndDate:endDate,pax,budget,tourType}}
             onApply={applyAiIntake}
           />
-          <button className="btn" type="button" onClick={()=>void copyText(basicRequestText(),"Basic request")}>{t("Copy Basic Request","复制基础资料模板")}</button>
-          <button className="btn" type="button" onClick={()=>void copyText(detailedRequestText(),"Detailed request")}>{t("Copy Detailed Request","复制详细资料模板")}</button>
+          <div className="customer-request-copy-menu">
+            <button className="btn customer-request-copy-trigger" type="button" aria-expanded={showCopyMenu} onClick={()=>setShowCopyMenu(v=>!v)}>
+              {t("Copy Customer Request","复制客户资料模板")} <span aria-hidden="true">⌄</span>
+            </button>
+            {showCopyMenu&&<div className="customer-request-copy-popover">
+              <div className="customer-request-copy-group">
+                <span>{t("Basic Request","基础版")}</span>
+                <div>
+                  <button type="button" onClick={()=>{setShowCopyMenu(false);void copyText(basicRequestText("zh"),"Basic request");}}>中文</button>
+                  <button type="button" onClick={()=>{setShowCopyMenu(false);void copyText(basicRequestText("en"),"Basic request");}}>English</button>
+                </div>
+              </div>
+              <div className="customer-request-copy-group">
+                <span>{t("Detailed Request","详细版")}</span>
+                <div>
+                  <button type="button" onClick={()=>{setShowCopyMenu(false);void copyText(detailedRequestText("zh"),"Detailed request");}}>中文</button>
+                  <button type="button" onClick={()=>{setShowCopyMenu(false);void copyText(detailedRequestText("en"),"Detailed request");}}>English</button>
+                </div>
+              </div>
+            </div>}
+          </div>
         </div>
       </div>
       {copyMessage&&<div className="copy-feedback">{copyMessage}</div>}
