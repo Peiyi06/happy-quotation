@@ -2,11 +2,43 @@ import QuotationCalculator from "@/components/QuotationCalculator";
 import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
 
 function buildFlightPrefill(inquiry:any){
-  const flights=Array.isArray(inquiry?.operation_review?.overrideSuggestedFlights)
-    ? []
-    : [];
-  const sales=Array.isArray(inquiry?.inquiry_data?.suggestedFlights)?inquiry.inquiry_data.suggestedFlights:[];
   const review=inquiry?.operation_review||{};
+  const shared=inquiry?.inquiry_data?.flightInformation;
+  if(shared&&review.overrideSuggestedFlights!==true){
+    return {
+      outboundFromAirport:shared.outbound?.fromAirport||"",
+      outboundToAirport:shared.outbound?.toAirport||"",
+      outboundFlightNo:shared.outbound?.flightNo||"",
+      outboundFlightDate:shared.outbound?.flightDate||"",
+      outboundDepartureTime:shared.outbound?.departureTime||"",
+      outboundArrivalTime:shared.outbound?.arrivalTime||"",
+      outboundNextDay:Boolean(shared.outbound?.nextDay),
+      outboundTransitOpen:Boolean(shared.outboundTransitOpen),
+      outboundTransitFromAirport:shared.outboundTransit?.fromAirport||"",
+      outboundTransitToAirport:shared.outboundTransit?.toAirport||"",
+      outboundTransitFlightNo:shared.outboundTransit?.flightNo||"",
+      outboundTransitFlightDate:shared.outboundTransit?.flightDate||"",
+      outboundTransitDepartureTime:shared.outboundTransit?.departureTime||"",
+      outboundTransitArrivalTime:shared.outboundTransit?.arrivalTime||"",
+      outboundTransitNextDay:Boolean(shared.outboundTransit?.nextDay),
+      returnFromAirport:shared.returning?.fromAirport||"",
+      returnToAirport:shared.returning?.toAirport||"",
+      returnFlightNo:shared.returning?.flightNo||"",
+      returnFlightDate:shared.returning?.flightDate||"",
+      returnDepartureTime:shared.returning?.departureTime||"",
+      returnArrivalTime:shared.returning?.arrivalTime||"",
+      returnNextDay:Boolean(shared.returning?.nextDay),
+      returnTransitOpen:Boolean(shared.returnTransitOpen),
+      returnTransitFromAirport:shared.returnTransit?.fromAirport||"",
+      returnTransitToAirport:shared.returnTransit?.toAirport||"",
+      returnTransitFlightNo:shared.returnTransit?.flightNo||"",
+      returnTransitFlightDate:shared.returnTransit?.flightDate||"",
+      returnTransitDepartureTime:shared.returnTransit?.departureTime||"",
+      returnTransitArrivalTime:shared.returnTransit?.arrivalTime||"",
+      returnTransitNextDay:Boolean(shared.returnTransit?.nextDay)
+    };
+  }
+  const sales=Array.isArray(inquiry?.inquiry_data?.suggestedFlights)?inquiry.inquiry_data.suggestedFlights:[];
   const finalFlights=review.overrideSuggestedFlights===true&&Array.isArray(review.suggestedFlights)?review.suggestedFlights:sales;
   const start=review.travelStartDate||inquiry.travel_start_date||"";
   const end=review.travelEndDate||inquiry.travel_end_date||"";
