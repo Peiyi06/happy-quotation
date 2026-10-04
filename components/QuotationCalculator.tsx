@@ -12,6 +12,10 @@ import {
   calculateQuotation, isLeaderType, toNoLeaderType, travelerTypes,
   type QuotationCalculationInput, type TravelerType
 } from "@/lib/quotationEngine";
+import {
+  calculateScenarioPricing, makeScenarioRowsFromTravelerRows,
+  type PricingScenario, type ScenarioCostRow, type ScenarioValue
+} from "@/lib/scenarioPricing";
 
 const calcModes: CalcMode[] = ["每人", "每人每天", "整团", "整团每天"];
 const currencies: Currency[] = ["RM", "RMB", "USD", "JPY", "KRW", "THB", "VND", "其他"];
@@ -52,6 +56,13 @@ const defaultTravelerRows: TravelerCostRow[] = [
   { id: uid(), item: "小费", direction:"cost", mode: "每人每天", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" },
   { id: uid(), item: "旅游保险", direction:"cost", mode: "每人", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" },
   { id: uid(), item: "机场接送", direction:"cost", mode: "整团", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" },
+];
+
+const defaultPricingScenarios:PricingScenario[]=[
+  {id:"pax-4",pax:4,manualFinalPrice:""},
+  {id:"pax-6",pax:6,manualFinalPrice:""},
+  {id:"pax-8",pax:8,manualFinalPrice:""},
+  {id:"pax-10",pax:10,manualFinalPrice:""},
 ];
 
 const defaultLeaderRows: LeaderCostRow[] = [
@@ -133,6 +144,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [mainCurrency, setMainCurrency] = useState<Currency>("RMB");
   const [mainRate, setMainRate] = useState(0.62);
   const [travelerRows, setTravelerRows] = useState<TravelerCostRow[]>(defaultTravelerRows);
+  const [pricingMode,setPricingMode]=useState<"single"|"scenario">("single");
+  const [pricingScenarios,setPricingScenarios]=useState<PricingScenario[]>(()=>defaultPricingScenarios.map(s=>({...s})));
+  const [scenarioRows,setScenarioRows]=useState<ScenarioCostRow[]>(()=>makeScenarioRowsFromTravelerRows(defaultTravelerRows,defaultPricingScenarios));
   const [leaderRows, setLeaderRows] = useState<LeaderCostRow[]>(defaultLeaderRows);
   const [leaderOpen, setLeaderOpen] = useState(false);
   const [singleRoomAmount, setSingleRoomAmount] = useState<number | "">("");
@@ -200,6 +214,12 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         };
         setters[k]?.(v);
       });
+      const savedScenarioPricing=source.scenarioPricing;
+      if(savedScenarioPricing&&typeof savedScenarioPricing==="object"){
+        if(savedScenarioPricing.mode==="scenario"||savedScenarioPricing.mode==="single") setPricingMode(savedScenarioPricing.mode);
+        if(Array.isArray(savedScenarioPricing.scenarios)&&savedScenarioPricing.scenarios.length) setPricingScenarios(savedScenarioPricing.scenarios);
+        if(Array.isArray(savedScenarioPricing.rows)&&savedScenarioPricing.rows.length) setScenarioRows(savedScenarioPricing.rows);
+      }
     } catch {}
     setHydrated(true);
   }, [initialQuotation]);
@@ -210,7 +230,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     tourType,op,supplier,pax,mainCurrency,mainRate,
     travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
     childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,
-    selectedType,manualQuote
+    selectedType,manualQuote,pricingMode,pricingScenarios,scenarioRows
   });
 
   const currentCommercialSnapshot=JSON.stringify({
@@ -301,6 +321,15 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   ]);
 
   const calculationResult = useMemo(()=>calculateQuotation(calculationInput),[calculationInput]);
+  const scenarioPricingInput=useMemo(()=>({
+    days:travelDuration.days,mainCurrency,mainRate,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
+    scenarios:pricingScenarios,rows:scenarioRows
+  }),[
+    travelDuration.days,mainCurrency,mainRate,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
+    pricingScenarios,scenarioRows
+  ]);
+  const scenarioResults=useMemo(()=>calculateScenarioPricing(scenarioPricingInput),[scenarioPricingInput]);
+  const primaryScenarioResult=scenarioResults[0]||null;
   const calc = {
     travelerPerPax:calculationResult.travelerPerPax,
     leaderTotal:calculationResult.leaderTotal,
@@ -338,6 +367,38 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   },[hasLeader,selectedType]);
 
   const setTraveler = (id:string, patch:Partial<TravelerCostRow>) => setTravelerRows(rows => rows.map(r => r.id === id ? {...r,...patch}:r));
+  const setScenarioRow=(id:string,patch:Partial<Omit<ScenarioCostRow,"values">>)=>setScenarioRows(rows=>rows.map(r=>r.id===id?{...r,...patch}:r));
+  const setScenarioCell=(rowId:string,scenarioId:string,patch:Partial<ScenarioValue>)=>setScenarioRows(rows=>rows.map(r=>r.id===rowId?{
+    ...r,values:{...r.values,[scenarioId]:{unitPrice:"",qty:1,...(r.values[scenarioId]||{}),...patch}}
+  }:r));
+  const addScenarioRow=()=>setScenarioRows(rows=>[...rows,{
+    id:uid(),item:"",direction:"cost",mode:"每人",currency:"RM",note:"",
+    values:Object.fromEntries(pricingScenarios.map(s=>[s.id,{unitPrice:"",qty:1}]))
+  }]);
+  const duplicateScenarioRow=(id:string)=>setScenarioRows(rows=>{
+    const row=rows.find(r=>r.id===id);
+    return row?[...rows,{...row,id:uid(),item:row.item?`${row.item} Copy`:"",values:Object.fromEntries(Object.entries(row.values).map(([k,v])=>[k,{...v}]))}]:rows;
+  });
+  const removeScenarioRow=(id:string)=>setScenarioRows(rows=>rows.length>1?rows.filter(r=>r.id!==id):rows);
+  const setScenarioManual=(id:string,value:number|"")=>setPricingScenarios(items=>items.map(s=>s.id===id?{...s,manualFinalPrice:value}:s));
+  const addPricingScenario=()=>{
+    const raw=window.prompt(t("Enter pax for the new scenario","请输入新 Scenario 的人数"));
+    if(!raw) return;
+    const next=Math.max(1,Math.round(Number(raw)||0));
+    if(!next||pricingScenarios.some(s=>s.pax===next)) return;
+    const id=`pax-${next}-${uid()}`;
+    setPricingScenarios(items=>[...items,{id,pax:next,manualFinalPrice:""}].sort((a,b)=>a.pax-b.pax));
+    setScenarioRows(rows=>rows.map(row=>({...row,values:{...row.values,[id]:{unitPrice:"",qty:1}}})));
+  };
+  const removePricingScenario=(id:string)=>{
+    if(pricingScenarios.length<=1) return;
+    setPricingScenarios(items=>items.filter(s=>s.id!==id));
+    setScenarioRows(rows=>rows.map(row=>{const values={...row.values};delete values[id];return {...row,values};}));
+  };
+  const enableScenarioPricing=()=>{
+    if(!scenarioRows.length) setScenarioRows(makeScenarioRowsFromTravelerRows(travelerRows,pricingScenarios));
+    setPricingMode("scenario");
+  };
   const addTraveler = () => setTravelerRows(rows => [...rows,{id:uid(),item:"",direction:"cost",mode:"每人",unitPrice:"",qty:1,currency:"RM",childRatioApplicable:false,note:""}]);
   const duplicateTraveler = (id:string) => setTravelerRows(rows => { const r=rows.find(x=>x.id===id); return r ? [...rows,{...r,id:uid(),item:r.item ? `${r.item} Copy` : ""}] : rows; });
   const removeTraveler = (id:string) => setTravelerRows(rows => rows.length > 1 ? rows.filter(r=>r.id!==id):rows);
@@ -350,7 +411,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     const quotationData = {tourType,op:op || currentStaffName,opStaffId:initialQuotation?.quotation_data?.opStaffId || initialQuotation?.owner_id || currentStaffId,supplier,pax,mainCurrency,mainRate,customerContact,departureCity,flightInformation,
       flightTotalPrice,flightPriceCurrency,flightTicketType:flightTicketType.code,
       itineraryDays:travelDuration.days,itineraryLabel:travelDuration.label,
-      travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType:effectiveSelectedType,manualQuote,calculationInput:{...calculationInput,selectedType:effectiveSelectedType},calculationResult,sourceInquiryId:resolvedSourceInquiryId,sourceInquiryNo:resolvedSourceInquiryNo,sourceInquirySnapshot:resolvedSourceInquirySnapshot};
+      travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType:effectiveSelectedType,manualQuote,calculationInput:{...calculationInput,selectedType:effectiveSelectedType},calculationResult,scenarioPricing:{version:1,mode:pricingMode,scenarios:pricingScenarios,rows:scenarioRows,results:scenarioResults},sourceInquiryId:resolvedSourceInquiryId,sourceInquiryNo:resolvedSourceInquiryNo,sourceInquirySnapshot:resolvedSourceInquirySnapshot};
     const payload = {
       source_inquiry_id: resolvedSourceInquiryId || "",
       title: quoteTitle || customerName || destination || "Untitled Quotation",
@@ -360,12 +421,12 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       tour_type: tourType || "",
       customer_name: customerName || "",
       supplier: supplier || "",
-      pax,
+      pax: pricingMode==="scenario" ? (primaryScenarioResult?.pax || pax) : pax,
       status,
-      total_cost: selected.cost,
-      selling_price: finalQuote,
-      profit: finalProfit,
-      margin: finalMargin,
+      total_cost: pricingMode==="scenario" ? (primaryScenarioResult?.costPerPax || 0) : selected.cost,
+      selling_price: pricingMode==="scenario" ? (primaryScenarioResult?.finalPrice || 0) : finalQuote,
+      profit: pricingMode==="scenario" ? (primaryScenarioResult?.finalProfit || 0) : finalProfit,
+      margin: pricingMode==="scenario" ? (primaryScenarioResult?.finalMargin || 0) : finalMargin,
       quotation_data: quotationData,
     };
 
