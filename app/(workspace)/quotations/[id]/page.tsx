@@ -82,38 +82,42 @@ export default async function QuotationDetailPage({
 
   const margin=Number(data.margin||0);
   const qd=data.quotation_data||{};
-  const outboundFromAirport=qd.outboundFromAirport||"";
-  const outboundToAirport=qd.outboundToAirport||"";
-  const outboundFlightNo=qd.outboundFlightNo||"";
-  const outboundFlightDate=qd.outboundFlightDate||"";
-  const outboundDepartureTime=qd.outboundDepartureTime||"";
-  const outboundArrivalTime=qd.outboundArrivalTime||"";
-  const outboundNextDay=Boolean(qd.outboundNextDay);
-  const outboundTransitOpen=Boolean(qd.outboundTransitOpen);
-  const outboundTransitFromAirport=qd.outboundTransitFromAirport||"";
-  const outboundTransitToAirport=qd.outboundTransitToAirport||"";
-  const outboundTransitFlightNo=qd.outboundTransitFlightNo||"";
-  const outboundTransitFlightDate=qd.outboundTransitFlightDate||"";
-  const outboundTransitDepartureTime=qd.outboundTransitDepartureTime||"";
-  const outboundTransitArrivalTime=qd.outboundTransitArrivalTime||"";
-  const outboundTransitNextDay=Boolean(qd.outboundTransitNextDay);
-  const returnFromAirport=qd.returnFromAirport||"";
-  const returnToAirport=qd.returnToAirport||"";
-  const returnFlightNo=qd.returnFlightNo||"";
-  const returnFlightDate=qd.returnFlightDate||"";
-  const returnDepartureTime=qd.returnDepartureTime||"";
-  const returnArrivalTime=qd.returnArrivalTime||"";
-  const returnNextDay=Boolean(qd.returnNextDay);
-  const returnTransitOpen=Boolean(qd.returnTransitOpen);
-  const returnTransitFromAirport=qd.returnTransitFromAirport||"";
-  const returnTransitToAirport=qd.returnTransitToAirport||"";
-  const returnTransitFlightNo=qd.returnTransitFlightNo||"";
-  const returnTransitFlightDate=qd.returnTransitFlightDate||"";
-  const returnTransitDepartureTime=qd.returnTransitDepartureTime||"";
-  const returnTransitArrivalTime=qd.returnTransitArrivalTime||"";
-  const returnTransitNextDay=Boolean(qd.returnTransitNextDay);
+  const fi=qd.flightInformation||{};
+  const outbound=fi.outbound||{};
+  const outboundTransit=fi.outboundTransit||{};
+  const returning=fi.returning||{};
+  const returnTransit=fi.returnTransit||{};
+  const outboundFromAirport=outbound.fromAirport||"";
+  const outboundToAirport=outbound.toAirport||"";
+  const outboundFlightNo=outbound.flightNo||"";
+  const outboundFlightDate=outbound.flightDate||"";
+  const outboundDepartureTime=outbound.departureTime||"";
+  const outboundArrivalTime=outbound.arrivalTime||"";
+  const outboundNextDay=Boolean(outbound.nextDay);
+  const outboundTransitOpen=Boolean(fi.outboundTransitOpen);
+  const outboundTransitFromAirport=outboundTransit.fromAirport||"";
+  const outboundTransitToAirport=outboundTransit.toAirport||"";
+  const outboundTransitFlightNo=outboundTransit.flightNo||"";
+  const outboundTransitFlightDate=outboundTransit.flightDate||"";
+  const outboundTransitDepartureTime=outboundTransit.departureTime||"";
+  const outboundTransitArrivalTime=outboundTransit.arrivalTime||"";
+  const outboundTransitNextDay=Boolean(outboundTransit.nextDay);
+  const returnFromAirport=returning.fromAirport||"";
+  const returnToAirport=returning.toAirport||"";
+  const returnFlightNo=returning.flightNo||"";
+  const returnFlightDate=returning.flightDate||"";
+  const returnDepartureTime=returning.departureTime||"";
+  const returnArrivalTime=returning.arrivalTime||"";
+  const returnNextDay=Boolean(returning.nextDay);
+  const returnTransitOpen=Boolean(fi.returnTransitOpen);
+  const returnTransitFromAirport=returnTransit.fromAirport||"";
+  const returnTransitToAirport=returnTransit.toAirport||"";
+  const returnTransitFlightNo=returnTransit.flightNo||"";
+  const returnTransitFlightDate=returnTransit.flightDate||"";
+  const returnTransitDepartureTime=returnTransit.departureTime||"";
+  const returnTransitArrivalTime=returnTransit.arrivalTime||"";
+  const returnTransitNextDay=Boolean(returnTransit.nextDay);
   const itineraryDays=Number(qd.itineraryDays)||0;
-  const itineraryNights=Number(qd.itineraryNights)||0;
   const itineraryLabel=qd.itineraryLabel||"";
   const flightTotalPrice=qd.flightTotalPrice===""||qd.flightTotalPrice==null?null:Number(qd.flightTotalPrice);
   const flightPriceCurrency=(qd.flightPriceCurrency||"RM") as Currency;
@@ -165,7 +169,7 @@ export default async function QuotationDetailPage({
       <div>
         <span><UiText en="SOURCE INQUIRY" zh="来源询价" /></span>
         <strong>{qd.sourceInquiryNo||<UiText en="Linked Inquiry" zh="关联询价" />}</strong>
-        {qd.sourceInquirySnapshot&&<small>{[qd.sourceInquirySnapshot.destination,qd.sourceInquirySnapshot.daysCount&&qd.sourceInquirySnapshot.nightsCount?`${qd.sourceInquirySnapshot.daysCount}D${qd.sourceInquirySnapshot.nightsCount}N`:"",qd.sourceInquirySnapshot.pax?`${qd.sourceInquirySnapshot.pax} Pax`:""].filter(Boolean).join(" · ")}</small>}
+        {qd.sourceInquirySnapshot&&<small>{[qd.sourceInquirySnapshot.destination,qd.sourceInquirySnapshot.daysCount?`${qd.sourceInquirySnapshot.daysCount} Days`:"",qd.sourceInquirySnapshot.pax?`${qd.sourceInquirySnapshot.pax} Pax`:""].filter(Boolean).join(" · ")}</small>}
       </div>
       <Link className="btn" href={"/inquiries/"+data.source_inquiry_id+"?returnTo="+encodeURIComponent(currentQuoteHref)}><UiText en="Open Inquiry" zh="打开询价" /></Link>
     </section>}
@@ -230,7 +234,7 @@ export default async function QuotationDetailPage({
       <div className="panel-head quote-flight-head">
         <div><h2><UiText en="Flight Information" zh="航班信息" /></h2></div>
         {itineraryLabel && <div className="itinerary-pill">
-          <strong>{itineraryDays}<UiText en="D" zh="天" />{itineraryNights}<UiText en="N" zh="晚" /></strong>
+          <strong>{itineraryDays} <UiText en="Days" zh="天" /></strong>
           <span>{itineraryLabel}</span>
         </div>}
       </div>
@@ -297,8 +301,7 @@ export default async function QuotationDetailPage({
         <Detail label={<UiText en="Customer" zh="客户" />} value={data.customer_name||"—"}/>
         <Detail label={<UiText en="Destination" zh="目的地" />} value={data.destination||"—"}/>
         <Detail label={<UiText en="Departure Date" zh="出发日期" />} value={data.departure_date?new Date(data.departure_date+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
-        <Detail label={<UiText en="Business Type" zh="业务类型" />} value={data.business_type||"—"}/>
-        <Detail label={<UiText en="Tour Code" zh="团号" />} value={data.tour_code||"—"}/>
+        <Detail label={<UiText en="Tour Type" zh="团型" />} value={data.tour_type||qd.tourType||"—"}/>
         <Detail label={<UiText en="Supplier" zh="供应商" />} value={data.supplier||"—"}/>
         <Detail label={<UiText en="Status" zh="状态" />} value={data.status==="under_review"?<UiText en="Under Review" zh="审核中" />:data.status==="revision_required"?<UiText en="Revision Required" zh="需要修改" />:data.status==="ready"?<UiText en="Ready" zh="已就绪" />:data.status==="sent"?<UiText en="Sent" zh="已发送" />:data.status==="revised"?<UiText en="Revised" zh="已修改" />:data.status==="confirmed"?<UiText en="Confirmed" zh="已确认" />:data.status==="lost"?<UiText en="Lost" zh="未成交" />:data.status==="archived"?<UiText en="Archived" zh="已归档" />:<UiText en="Draft" zh="草稿" />}/>
         <Detail label={<UiText en="Updated" zh="更新时间" />} value={data.updated_at?new Date(data.updated_at).toLocaleString("en-MY"):"—"}/>
