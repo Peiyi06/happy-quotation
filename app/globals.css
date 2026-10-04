@@ -726,8 +726,6 @@
 .flight-summary-line{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:11px;color:#425564}
 .flight-summary-line b{color:var(--navy2)}
 .flight-summary-line em{font-style:normal;color:var(--muted)}
-.operation-flight-override{margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fafcfd}
-.operation-flight-override>p{margin:7px 0 12px;font-size:11px;color:var(--muted)}
 .supplier-form-flights{margin-top:18px}
 .supplier-form-flights h2{margin:0 0 9px;color:var(--navy2);font-size:15px}
 .supplier-flight-table{border:1px solid #dfe6eb;border-radius:12px;overflow:hidden}
@@ -1328,14 +1326,7 @@
 .operation-traveller-line{display:flex;gap:10px;flex-wrap:wrap}
 .operation-traveller-line span{display:inline-flex;align-items:center;gap:7px;border:1px solid #dce5ea;background:#f8fbfc;border-radius:999px;padding:7px 10px;color:#6a7f89;font-size:10.5px}
 .operation-traveller-line b{color:var(--navy2);font-size:12px}
-.operation-flight-summary-list{display:grid;gap:8px}
-.operation-flight-summary{display:grid;grid-template-columns:minmax(90px,1.15fr) minmax(70px,.8fr) minmax(95px,.9fr) minmax(120px,1fr);gap:8px 12px;align-items:center;border:1px solid #dce5ea;border-radius:10px;padding:9px 10px;background:#fbfcfd}
-.operation-flight-summary b{font-size:11px;color:var(--navy2)}
-.operation-flight-summary span{font-size:10.5px;color:#607581}
-.operation-flight-summary em{grid-column:1/-1;font-size:9.5px;color:#82929b;font-style:normal}
 .operation-inline-empty{border:1px dashed #d7e0e6;border-radius:10px;padding:12px;color:#81919b;font-size:11px;background:#fbfcfd}
-.operation-flight-editor{margin-top:8px}
-.operation-flight-editor-actions{display:flex;justify-content:flex-end;gap:8px}
 .operation-internal-notes .field textarea{min-height:90px}
 .operation-supplier-grid{display:grid;grid-template-columns:minmax(220px,.8fr) minmax(260px,1.2fr);gap:14px;align-items:end}
 .operation-budget-toggle{min-height:48px;border:1px solid var(--line);border-radius:10px;background:#fbfcfd;padding:0 12px}
@@ -1344,12 +1335,10 @@
 .operation-sales-flights-head{margin-top:2px}
 @media(max-width:1100px){
   .operation-brief-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .operation-flight-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:700px){
   .operation-brief-grid,.operation-brief-requirements,.operation-supplier-grid{grid-template-columns:1fr}
   .operation-subsection-head{flex-direction:column}
-  .operation-flight-summary{grid-template-columns:1fr}
   .operation-review-actions{width:100%}
   .operation-review-actions .btn{flex:1;text-align:center}
   .operation-review-actions .btn.primary{margin-left:0}
@@ -2573,13 +2562,10 @@ button,
 /* Operation review */
 .operation-subsection-head p,
 .operation-traveller-line span,
-.operation-flight-summary span,
-.operation-flight-summary em,
 .operation-inline-empty{
   font-size:var(--type-small)!important;
 }
-.operation-traveller-line b,
-.operation-flight-summary b{
+.operation-traveller-line b{
   font-size:var(--type-label)!important;
 }
 .operation-subsection-actions .btn{
@@ -6847,7 +6833,6 @@ td,
 
 .operation-review-template .operation-brief-grid>div,
 .operation-review-template .operation-brief-requirements>div,
-.operation-review-template .operation-flight-summary,
 .operation-review-template .operation-budget-toggle,
 .operation-review-template .operation-traveller-line span{
   background:var(--color-bg-soft);
@@ -6871,7 +6856,6 @@ td,
 }
 
 .operation-review-template .operation-brief-requirements p,
-.operation-review-template .operation-flight-summary span,
 .operation-review-template .operation-subsection-head p{
   color:var(--color-text-secondary);
   line-height:var(--foundation-line-body);
@@ -6923,7 +6907,6 @@ td,
 /* Secondary controls inherit the locked Action System. */
 .operation-review-template .operation-secondary-btn,
 .operation-review-template .operation-subsection-actions .btn,
-.operation-review-template .operation-flight-editor-actions .btn:not(.primary),
 .operation-review-template .operation-supplier-panel .btn{
   border-color:var(--foundation-action-secondary-border)!important;
   background:var(--foundation-action-secondary-bg)!important;
@@ -6933,7 +6916,6 @@ td,
 
 .operation-review-template .operation-secondary-btn:hover,
 .operation-review-template .operation-subsection-actions .btn:hover,
-.operation-review-template .operation-flight-editor-actions .btn:not(.primary):hover,
 .operation-review-template .operation-supplier-panel .btn:hover{
   border-color:var(--foundation-action-secondary-border-hover)!important;
   background:var(--foundation-action-secondary-bg-hover)!important;
@@ -7039,7 +7021,6 @@ td,
 }
 .operation-review-template .operation-brief-grid>div,
 .operation-review-template .operation-brief-requirements>div,
-.operation-review-template .operation-flight-summary,
 .operation-review-template .operation-budget-toggle,
 .operation-review-template .operation-traveller-line span{
   background:var(--color-bg-soft);
@@ -7058,7 +7039,6 @@ td,
   color:var(--color-text-primary);
 }
 .operation-review-template .operation-brief-requirements p,
-.operation-review-template .operation-flight-summary span,
 .operation-review-template .operation-subsection-head p{
   color:var(--color-text-secondary);
 }
@@ -7100,7 +7080,6 @@ td,
 /* Secondary controls stay secondary; save remains the page primary */
 .operation-review-template .operation-secondary-btn,
 .operation-review-template .operation-subsection-actions .btn,
-.operation-review-template .operation-flight-editor-actions .btn:not(.primary),
 .operation-review-template .operation-supplier-panel .btn{
   background:var(--color-bg-surface)!important;
   border-color:var(--color-border-default)!important;
@@ -7109,7 +7088,6 @@ td,
 }
 .operation-review-template .operation-secondary-btn:hover,
 .operation-review-template .operation-subsection-actions .btn:hover,
-.operation-review-template .operation-flight-editor-actions .btn:not(.primary):hover,
 .operation-review-template .operation-supplier-panel .btn:hover{
   background:var(--color-bg-page)!important;
   border-color:var(--color-border-strong)!important;
@@ -8895,116 +8873,6 @@ td,
 }
 
 /* Tour Groups: management rows instead of a card wall. */
-.tour-groups-head .tour-group-create-trigger:not(.primary){
-  background:var(--color-bg-surface)!important;
-  border-color:var(--color-border-default)!important;
-  color:var(--color-text-primary)!important;
-}
-.tour-group-create-panel{
-  padding:18px 20px;
-  margin-bottom:var(--space-lg);
-  box-shadow:none;
-}
-.tour-group-create-form{
-  display:grid;
-  grid-template-columns:1.25fr 1fr 1fr;
-  gap:14px;
-}
-.tour-group-description-field{
-  grid-column:1/-1;
-}
-.tour-group-create-actions{
-  grid-column:1/-1;
-  display:flex;
-  justify-content:flex-end;
-  gap:8px;
-  padding-top:2px;
-}
-.tour-group-sections{
-  display:grid;
-  gap:16px;
-}
-.tour-group-section{
-  padding:0!important;
-  overflow:hidden;
-  border-radius:var(--radius-md)!important;
-}
-.tour-group-section-head{
-  margin:0!important;
-  padding:14px 16px;
-  border-bottom:1px solid var(--color-border-default);
-}
-.tour-group-section-head h2{
-  font-size:17px!important;
-}
-.tour-group-section-head>span{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-width:28px;
-  height:28px;
-  padding:0 8px;
-  border-radius:999px;
-  background:var(--color-neutral-status-soft);
-  color:var(--color-neutral-status-text);
-  font-size:11px;
-  font-weight:700;
-}
-.tour-group-list{
-  display:grid;
-}
-.tour-group-row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
-  gap:18px;
-  align-items:center;
-  min-height:66px;
-  padding:12px 16px;
-  border-bottom:1px solid var(--color-border-default);
-  background:var(--color-bg-surface);
-}
-.tour-group-row:last-child{
-  border-bottom:0;
-}
-.tour-group-row:hover{
-  background:var(--color-bg-soft);
-}
-.tour-group-row-main{
-  min-width:0;
-  display:grid;
-  gap:3px;
-}
-.tour-group-row-main strong{
-  color:var(--color-text-primary);
-  font-size:14px;
-  font-weight:650;
-}
-.tour-group-row-main span{
-  color:var(--color-text-secondary);
-  font-size:12px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.tour-group-row-meta{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  color:var(--color-text-secondary);
-  font-size:12px;
-  white-space:nowrap;
-}
-.tour-group-row-meta>span{
-  padding:4px 8px;
-  border-radius:999px;
-  background:var(--color-neutral-status-soft);
-  color:var(--color-neutral-status-text);
-}
-.tour-group-row-meta b{
-  color:var(--color-text-secondary);
-  font-size:12px;
-  font-weight:600;
-}
 
 @media(max-width:900px){
   .dashboard-overview-strip{
@@ -9016,10 +8884,7 @@ td,
   .dashboard-overview-metric:nth-child(-n+2){
     border-bottom:1px solid var(--color-border-default);
   }
-  .tour-group-create-form{
-    grid-template-columns:1fr 1fr;
   }
-}
 @media(max-width:760px){
   .workspace-main .workspace-flat-head{
     flex-direction:column;
@@ -9049,21 +8914,8 @@ td,
   .dashboard-overview-metric:last-child{
     border-bottom:0;
   }
-  .tour-group-create-form{
-    grid-template-columns:1fr;
-  }
-  .tour-group-description-field,
-  .tour-group-create-actions{
-    grid-column:auto;
-  }
-  .tour-group-row{
-    grid-template-columns:1fr;
-    gap:8px;
-  }
-  .tour-group-row-meta{
-    justify-content:space-between;
-  }
-}
+    .tour-group-description-field,
+      }
 
 
 /* =========================================================
