@@ -672,27 +672,29 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             </div>}
       </div>
 
-      <FlightInformation
-        value={flightInformation}
-        onChange={setFlightInformation}
-        durationDays={travelDuration.days}
-        footer={
-          <div className="flight-total-price-row">
-            <Field label={t("Flight Total Price","航班总报价")}>
-              <input type="number" min="0" value={flightTotalPrice} onChange={e=>setFlightTotalPrice(e.target.value===""?"":Number(e.target.value))} placeholder="0.00" />
-            </Field>
-            <Field label={t("Currency","币种")}>
-              <select value={flightPriceCurrency} onChange={e=>setFlightPriceCurrency(e.target.value as Currency)}>{currencies.map(cur=><option key={cur} value={cur}>{currencyLabel(cur)}</option>)}</select>
-            </Field>
-            <div className="field">
-              <span>{t("Ticket Type","机票类型")}</span>
-              <div className={"ticket-type-auto "+flightTicketType.state}>
-                <strong>{flightTicketType.label}</strong>
+      <div className="flight-section-surface quotation-flight-section">
+        <FlightInformation
+          value={flightInformation}
+          onChange={setFlightInformation}
+          durationDays={travelDuration.days}
+          footer={
+            <div className="flight-total-price-row">
+              <Field label={t("Flight Total Price","航班总报价")}>
+                <input type="number" min="0" value={flightTotalPrice} onChange={e=>setFlightTotalPrice(e.target.value===""?"":Number(e.target.value))} placeholder="0.00" />
+              </Field>
+              <Field label={t("Currency","币种")}>
+                <select value={flightPriceCurrency} onChange={e=>setFlightPriceCurrency(e.target.value as Currency)}>{currencies.map(cur=><option key={cur} value={cur}>{currencyLabel(cur)}</option>)}</select>
+              </Field>
+              <div className="field">
+                <span>{t("Ticket Type","机票类型")}</span>
+                <div className={"ticket-type-auto "+flightTicketType.state}>
+                  <strong>{flightTicketType.label}</strong>
+                </div>
               </div>
             </div>
-          </div>
-        }
-      />
+          }
+        />
+      </div>
 
       {saveMessage && <div className="save-message">{saveMessage}</div>}
     </section>}
