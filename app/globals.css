@@ -18283,3 +18283,88 @@ td,
     min-width:max-content;
   }
 }
+
+
+/* FOUNDATION REFINEMENT P2: default 4-scenario desktop fit */
+.scenario-cost-matrix.default-scenarios{
+  width:100%;
+  min-width:0;
+}
+.scenario-cost-matrix.default-scenarios .scenario-matrix-header,
+.scenario-cost-matrix.default-scenarios .scenario-matrix-row,
+.scenario-cost-matrix.default-scenarios .scenario-matrix-pax-head,
+.scenario-cost-matrix.default-scenarios .scenario-cost-cell,
+.scenario-cost-matrix.default-scenarios .scenario-row-meta,
+.scenario-cost-matrix.default-scenarios .scenario-item-field{
+  min-width:0;
+}
+.scenario-cost-matrix.default-scenarios .scenario-matrix-static{
+  grid-template-columns:minmax(118px,1.35fr) minmax(100px,1fr) minmax(60px,.58fr);
+  gap:7px;
+}
+.scenario-cost-matrix.default-scenarios .scenario-cost-cell{
+  grid-template-columns:minmax(0,1fr) 10px 38px;
+  gap:4px;
+  padding:7px 8px;
+}
+.scenario-cost-matrix.default-scenarios .scenario-row-meta{
+  padding:7px 8px;
+}
+.scenario-cost-matrix.default-scenarios .scenario-row-meta input,
+.scenario-cost-matrix.default-scenarios .scenario-row-meta select,
+.scenario-cost-matrix.default-scenarios .scenario-cost-cell input{
+  min-width:0;
+  width:100%;
+  height:34px;
+  min-height:34px;
+  border:1px solid #e2e7ee;
+  border-radius:9px;
+  background:#fff;
+  box-shadow:none;
+}
+.scenario-cost-matrix.default-scenarios .scenario-cost-cell input:last-child{
+  font-size:12px;
+  font-weight:600;
+  padding-left:5px;
+  padding-right:5px;
+}
+.scenario-cost-matrix.default-scenarios .scenario-cost-cell span{
+  font-size:11px;
+}
+.scenario-cost-matrix.default-scenarios .scenario-matrix-pax-head{
+  padding:9px 10px;
+  border-left-color:#f1f4f8;
+}
+.scenario-cost-matrix.default-scenarios .scenario-pax-title strong{
+  font-size:17px;
+}
+.scenario-cost-matrix.default-scenarios .scenario-cell-labels{
+  grid-template-columns:1fr 38px;
+  gap:4px;
+}
+.scenario-cost-matrix.default-scenarios .scenario-row-actions{
+  margin-top:3px;
+}
+.scenario-cost-matrix.default-scenarios .scenario-row-actions button{
+  color:#98a2b3;
+}
+.scenario-cost-matrix.default-scenarios .scenario-matrix-row{
+  border-bottom:1px solid #f3f5f8;
+}
+.scenario-cost-matrix.default-scenarios .scenario-cost-cell{
+  border-left:1px solid #f3f5f8;
+}
+.scenario-cost-matrix.default-scenarios .scenario-matrix-header{
+  border-bottom:1px solid #edf1f5;
+}
+.scenario-cost-matrix.default-scenarios .scenario-matrix-pax-head{
+  background:#fbfcfe;
+}
+.scenario-cost-matrix.default-scenarios .scenario-item-field input{
+  font-weight:600;
+}
+@media (min-width:1180px){
+  .scenario-matrix-wrap:has(.scenario-cost-matrix.default-scenarios){
+    overflow-x:hidden;
+  }
+}
