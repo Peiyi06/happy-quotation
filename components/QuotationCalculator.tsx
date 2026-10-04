@@ -6,7 +6,7 @@ import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 import FlightInformation,{emptyFlightInformation,type FlightInformationValue} from "@/components/FlightInformation";
 import {
   CalcMode, ChildCostRow, ChildCostSetup, ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
-  childExtraRowTotal, childSetupCost, currencyRate, leaderRowTotal, travelerRowPerPax, travelerRowTotal
+  childExtraRowPerPax, childSetupCost, currencyRate, leaderRowTotal, travelerRowPerPax, travelerRowTotal
 } from "@/lib/calculations";
 import {
   calculateQuotation, isLeaderType, toNoLeaderType, travelerTypes,
@@ -76,10 +76,11 @@ const createDefaultChildSetup = (): ChildCostSetup => ({
   groundBase:"",
   groundRatio:100,
   groundCurrency:"RMB",
+  groundDirection:"cost",
   otherRows:[
-    {id:uid(),item:"旅游保险",unitPrice:"",qty:1,currency:"RM",note:""},
-    {id:uid(),item:"机场接送",unitPrice:"",qty:1,currency:"RM",note:""},
-    {id:uid(),item:"小费",unitPrice:"",qty:1,currency:"RM",note:""}
+    {id:uid(),item:"旅游保险",direction:"cost",mode:"每人",unitPrice:"",qty:1,currency:"RM",note:""},
+    {id:uid(),item:"机场接送",direction:"cost",mode:"整团",unitPrice:"",qty:1,currency:"RM",note:""},
+    {id:uid(),item:"小费",direction:"cost",mode:"每人每天",unitPrice:"",qty:1,currency:"RM",note:""}
   ]
 });
 
@@ -939,8 +940,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <Section title={t("Child Cost Setup","儿童成本设置")}>
         <p className="child-cost-section-note">{t("Set the child Ground Package base and ratio, then enter any other child costs separately.","填写儿童 Ground Package 折扣前成本与比例，再独立输入保险、车费、小费等其他儿童成本。")}</p>
         <div className="child-grid">
-          <ChildCostCard title={t("Child with Bed","小孩含床")} t={t} setup={childBedSetup} setSetup={setChildBedSetup} mainCurrency={mainCurrency} mainRate={mainRate} displayItem={costItemDisplay} />
-          <ChildCostCard title={t("Child without Bed","小孩不含床")} t={t} setup={childNoBedSetup} setSetup={setChildNoBedSetup} mainCurrency={mainCurrency} mainRate={mainRate} displayItem={costItemDisplay} />
+          <ChildCostCard title={t("Child with Bed","小孩含床")} t={t} setup={childBedSetup} setSetup={setChildBedSetup} pax={Math.max(1,Number(pax)||1)} mainCurrency={mainCurrency} mainRate={mainRate} displayItem={costItemDisplay} calcModeLabel={calcModeLabel} />
+          <ChildCostCard title={t("Child without Bed","小孩不含床")} t={t} setup={childNoBedSetup} setSetup={setChildNoBedSetup} pax={Math.max(1,Number(pax)||1)} mainCurrency={mainCurrency} mainRate={mainRate} displayItem={costItemDisplay} calcModeLabel={calcModeLabel} />
         </div>
       </Section>
     </div>
@@ -1111,63 +1112,112 @@ function Section({title,children,action}:{title:React.ReactNode;children:React.R
 function Field({label,children}:{label:React.ReactNode;children:React.ReactNode}){return <label className="field"><span>{label}</span>{children}</label>}
 function Summary({label,value,strong}:{label:React.ReactNode;value:string;strong?:boolean}){return <div className={`summary-card ${strong?"strong":""}`}><span>{label}</span><b>{value}</b></div>}
 function Metric({label,value,strong}:{label:React.ReactNode;value:string;strong?:boolean}){return <div className={`metric ${strong?"strong":""}`}><span>{label}</span><b>{value}</b></div>}
-function ChildCostCard({title,t,setup,setSetup,mainCurrency,mainRate,displayItem}:{title:React.ReactNode;t:(en:string,zh:string)=>string;setup:ChildCostSetup;setSetup:(v:ChildCostSetup)=>void;mainCurrency:Currency;mainRate:number;displayItem:(v:string)=>string}){
-  const summary=childSetupCost(setup,mainCurrency,mainRate);
-  const updateRow=(id:string,patch:Partial<ChildCostRow>)=>setSetup({...setup,otherRows:setup.otherRows.map(row=>row.id===id?{...row,...patch}:row)});
-  const addRow=()=>setSetup({...setup,otherRows:[...setup.otherRows,{id:uid(),item:"",unitPrice:"",qty:1,currency:"RM",note:""}]});
-  const removeRow=(id:string)=>setSetup({...setup,otherRows:setup.otherRows.filter(row=>row.id!==id)});
+function ChildCostCard({title,t,setup,setSetup,pax,mainCurrency,mainRate,displayItem,calcModeLabel}:{title:React.ReactNode;t:(en:string,zh:string)=>string;setup:ChildCostSetup;setSetup:(v:ChildCostSetup)=>void;pax:number;mainCurrency:Currency;mainRate:number;displayItem:(v:string)=>string;calcModeLabel:(v:CalcMode)=>string}){
+  const normalizedSetup:ChildCostSetup={
+    ...setup,
+    groundDirection:setup.groundDirection||"cost",
+    otherRows:(setup.otherRows||[]).map(row=>({...row,direction:row.direction||"cost",mode:row.mode||"每人"}))
+  };
+  const summary=childSetupCost(normalizedSetup,pax,mainCurrency,mainRate);
+  const updateRow=(id:string,patch:Partial<ChildCostRow>)=>setSetup({...normalizedSetup,otherRows:normalizedSetup.otherRows.map(row=>row.id===id?{...row,...patch}:row)});
+  const addRow=()=>setSetup({...normalizedSetup,otherRows:[...normalizedSetup.otherRows,{id:uid(),item:"",direction:"cost",mode:"每人",unitPrice:"",qty:1,currency:"RM",note:""}]});
+  const removeRow=(id:string)=>setSetup({...normalizedSetup,otherRows:normalizedSetup.otherRows.filter(row=>row.id!==id)});
 
   return <div className="child-cost-card">
     <div className="child-cost-card-head">
-      <h3>{title}</h3>
+      <div>
+        <h3>{title}</h3>
+        <span className="child-cost-pax-note">{t("Uses Customer & Trip pax for group allocation","Per Group 统一按 Customer & Trip 总人数分摊")} · {pax} Pax</span>
+      </div>
       <div className="child-cost-total">
         <span>{t("Child Cost / Pax","儿童成本 / 人")}</span>
         <strong>{money(summary.total)}</strong>
       </div>
     </div>
 
-    <div className="child-ground-grid">
-      <Field label={t("Ground Package Base","Ground Package 基础成本")}>
-        <input type="number" min="0" value={setup.groundBase} onChange={e=>setSetup({...setup,groundBase:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
-      </Field>
-      <Field label={t("Currency","币种")}>
-        <select value={setup.groundCurrency} onChange={e=>setSetup({...setup,groundCurrency:e.target.value as Currency})}>{currencies.map(cur=><option key={cur} value={cur}>{cur==="其他"?t("Other","其他"):cur}</option>)}</select>
-      </Field>
-      <Field label={t("Child Ratio","儿童比例")}>
-        <div className="child-ratio-input"><input type="number" min="0" max="100" value={setup.groundRatio} onChange={e=>setSetup({...setup,groundRatio:Math.max(0,Math.min(100,Number(e.target.value)||0))})}/><span>%</span></div>
-      </Field>
-      <div className="child-ground-result">
-        <span>{t("Child Ground Cost","儿童 Ground Cost")}</span>
-        <strong>{money(summary.ground)}</strong>
+    <div className="child-cost-breakdown-table">
+      <div className="child-cost-breakdown-head" aria-hidden="true">
+        <span>{t("Cost Item","成本项目")}</span>
+        <span>{t("Type","类型")}</span>
+        <span>{t("Calculation","计算方式")}</span>
+        <span>{t("Unit Price","单价")}</span>
+        <span>{t("Qty / Ratio","数量 / 比例")}</span>
+        <span>{t("Currency","币种")}</span>
+        <span>{t("Cost / Pax","每人成本")}</span>
+        <span></span>
       </div>
-    </div>
 
-    <div className="child-extra-head">
-      <div><strong>{t("Other Costs","其他成本")}</strong><span>{t("Enter child-specific insurance, transfer, tips or special costs.","独立填写儿童保险、接送、小费或其他特别成本。")}</span></div>
-      <button type="button" className="btn no-print" onClick={addRow}>{t("+ Add Cost","+ 新增成本")}</button>
-    </div>
-
-    <div className="child-extra-table">
-      <div className="child-extra-table-head" aria-hidden="true">
-        <span>{t("Cost Item","成本项目")}</span><span>{t("Unit Price","单价")}</span><span>{t("Qty","数量")}</span><span>{t("Currency","币种")}</span><span>{t("Cost","成本")}</span><span></span>
+      <div className="child-cost-breakdown-row ground">
+        <div className="child-cost-cell item">
+          <strong>{t("Ground Package","地接报价")}</strong>
+        </div>
+        <div className="child-cost-cell">
+          <select aria-label={t("Type","类型")} value={normalizedSetup.groundDirection||"cost"} onChange={e=>setSetup({...normalizedSetup,groundDirection:e.target.value as "cost"|"deduction"})}>
+            <option value="cost">{t("Cost +","成本 +")}</option>
+            <option value="deduction">{t("Deduction −","扣减 −")}</option>
+          </select>
+        </div>
+        <div className="child-cost-cell">
+          <div className="child-ratio-mode">{t("Child Ratio","儿童比例")}</div>
+        </div>
+        <div className="child-cost-cell">
+          <input aria-label={t("Ground Package Base","Ground Package 基础成本")} type="number" min="0" value={normalizedSetup.groundBase} onChange={e=>setSetup({...normalizedSetup,groundBase:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
+        </div>
+        <div className="child-cost-cell">
+          <div className="child-ratio-input"><input aria-label={t("Child Ratio","儿童比例")} type="number" min="0" max="100" value={normalizedSetup.groundRatio} onChange={e=>setSetup({...normalizedSetup,groundRatio:Math.max(0,Math.min(100,Number(e.target.value)||0))})}/><span>%</span></div>
+        </div>
+        <div className="child-cost-cell child-cost-currency">
+          <select aria-label={t("Currency","币种")} value={normalizedSetup.groundCurrency} onChange={e=>setSetup({...normalizedSetup,groundCurrency:e.target.value as Currency})}>{currencies.map(cur=><option key={cur} value={cur}>{cur==="其他"?t("Other","其他"):cur}</option>)}</select>
+          <small>{t("Rate","汇率")} {currencyRate(normalizedSetup.groundCurrency,mainCurrency,mainRate)||"—"}</small>
+        </div>
+        <div className={"child-cost-result "+(summary.ground<0?"deduction-value":"")}>
+          <strong>{money(summary.ground)}</strong>
+          <small>{t("Base","基础")} {Number(normalizedSetup.groundBase)||0} × {normalizedSetup.groundRatio}%</small>
+        </div>
+        <span></span>
       </div>
-      {setup.otherRows.map(row=>{
-        const rowTotal=childExtraRowTotal(row,mainCurrency,mainRate);
-        return <div className="child-extra-row" key={row.id}>
-          <input aria-label={t("Cost Item","成本项目")} value={displayItem(row.item)} onChange={e=>updateRow(row.id,{item:e.target.value})}/>
-          <input aria-label={t("Unit Price","单价")} type="number" min="0" value={row.unitPrice} onChange={e=>updateRow(row.id,{unitPrice:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
-          <input aria-label={t("Qty","数量")} type="number" min="0" value={row.qty} onChange={e=>updateRow(row.id,{qty:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
-          <select aria-label={t("Currency","币种")} value={row.currency} onChange={e=>updateRow(row.id,{currency:e.target.value as Currency})}>{currencies.map(cur=><option key={cur} value={cur}>{cur==="其他"?t("Other","其他"):cur}</option>)}</select>
-          <strong>{money(rowTotal)}</strong>
+
+      {normalizedSetup.otherRows.map(row=>{
+        const rowPerPax=childExtraRowPerPax(row,pax,mainCurrency,mainRate);
+        const rate=currencyRate(row.currency,mainCurrency,mainRate);
+        return <div className="child-cost-breakdown-row" key={row.id}>
+          <div className="child-cost-cell item">
+            <input aria-label={t("Cost Item","成本项目")} value={displayItem(row.item)} onChange={e=>updateRow(row.id,{item:e.target.value})}/>
+          </div>
+          <div className="child-cost-cell">
+            <select aria-label={t("Type","类型")} value={row.direction||"cost"} onChange={e=>updateRow(row.id,{direction:e.target.value as "cost"|"deduction"})}>
+              <option value="cost">{t("Cost +","成本 +")}</option>
+              <option value="deduction">{t("Deduction −","扣减 −")}</option>
+            </select>
+          </div>
+          <div className="child-cost-cell">
+            <select aria-label={t("Calculation","计算方式")} value={row.mode||"每人"} onChange={e=>updateRow(row.id,{mode:e.target.value as CalcMode})}>{calcModes.map(mode=><option key={mode} value={mode}>{calcModeLabel(mode)}</option>)}</select>
+          </div>
+          <div className="child-cost-cell">
+            <input aria-label={t("Unit Price","单价")} type="number" min="0" value={row.unitPrice} onChange={e=>updateRow(row.id,{unitPrice:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
+          </div>
+          <div className="child-cost-cell">
+            <input aria-label={t("Qty / Days","数量 / 天数")} type="number" min="0" value={row.qty} onChange={e=>updateRow(row.id,{qty:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
+          </div>
+          <div className="child-cost-cell child-cost-currency">
+            <select aria-label={t("Currency","币种")} value={row.currency} onChange={e=>updateRow(row.id,{currency:e.target.value as Currency})}>{currencies.map(cur=><option key={cur} value={cur}>{cur==="其他"?t("Other","其他"):cur}</option>)}</select>
+            <small>{t("Rate","汇率")} {rate||"—"}</small>
+          </div>
+          <div className={"child-cost-result "+(rowPerPax<0?"deduction-value":"")}>
+            <strong>{money(rowPerPax)}</strong>
+          </div>
           <button type="button" className="child-extra-remove no-print" onClick={()=>removeRow(row.id)} aria-label={t("Delete cost","删除成本")}>×</button>
         </div>
       })}
     </div>
 
-    <div className="child-cost-summary-line">
-      <span>{t("Ground","地接")} <strong>{money(summary.ground)}</strong></span>
-      <span>{t("Other Costs","其他成本")} <strong>{money(summary.extras)}</strong></span>
-      <span className="total">{t("Total","总计")} <strong>{money(summary.total)}</strong></span>
+    <div className="child-cost-footer">
+      <button type="button" className="btn no-print" onClick={addRow}>{t("+ Add Cost Row","+ 新增成本项目")}</button>
+      <div className="child-cost-summary-line">
+        <span>{t("Ground","地接")} <strong>{money(summary.ground)}</strong></span>
+        <span>{t("Other Costs","其他成本")} <strong>{money(summary.extras)}</strong></span>
+        <span className="total">{t("Total / Pax","每人总成本")} <strong>{money(summary.total)}</strong></span>
+      </div>
     </div>
   </div>
 }
