@@ -1,96 +1,10 @@
 import QuotationCalculator from "@/components/QuotationCalculator";
 import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
 
-function buildFlightPrefill(inquiry:any){
+function buildFlightInformation(inquiry:any){
   const review=inquiry?.operation_review||{};
-  const shared=inquiry?.inquiry_data?.flightInformation;
-  if(shared&&review.overrideSuggestedFlights!==true){
-    return {
-      outboundFromAirport:shared.outbound?.fromAirport||"",
-      outboundToAirport:shared.outbound?.toAirport||"",
-      outboundFlightNo:shared.outbound?.flightNo||"",
-      outboundFlightDate:shared.outbound?.flightDate||"",
-      outboundDepartureTime:shared.outbound?.departureTime||"",
-      outboundArrivalTime:shared.outbound?.arrivalTime||"",
-      outboundNextDay:Boolean(shared.outbound?.nextDay),
-      outboundTransitOpen:Boolean(shared.outboundTransitOpen),
-      outboundTransitFromAirport:shared.outboundTransit?.fromAirport||"",
-      outboundTransitToAirport:shared.outboundTransit?.toAirport||"",
-      outboundTransitFlightNo:shared.outboundTransit?.flightNo||"",
-      outboundTransitFlightDate:shared.outboundTransit?.flightDate||"",
-      outboundTransitDepartureTime:shared.outboundTransit?.departureTime||"",
-      outboundTransitArrivalTime:shared.outboundTransit?.arrivalTime||"",
-      outboundTransitNextDay:Boolean(shared.outboundTransit?.nextDay),
-      returnFromAirport:shared.returning?.fromAirport||"",
-      returnToAirport:shared.returning?.toAirport||"",
-      returnFlightNo:shared.returning?.flightNo||"",
-      returnFlightDate:shared.returning?.flightDate||"",
-      returnDepartureTime:shared.returning?.departureTime||"",
-      returnArrivalTime:shared.returning?.arrivalTime||"",
-      returnNextDay:Boolean(shared.returning?.nextDay),
-      returnTransitOpen:Boolean(shared.returnTransitOpen),
-      returnTransitFromAirport:shared.returnTransit?.fromAirport||"",
-      returnTransitToAirport:shared.returnTransit?.toAirport||"",
-      returnTransitFlightNo:shared.returnTransit?.flightNo||"",
-      returnTransitFlightDate:shared.returnTransit?.flightDate||"",
-      returnTransitDepartureTime:shared.returnTransit?.departureTime||"",
-      returnTransitArrivalTime:shared.returnTransit?.arrivalTime||"",
-      returnTransitNextDay:Boolean(shared.returnTransit?.nextDay)
-    };
-  }
-  const sales=Array.isArray(inquiry?.inquiry_data?.suggestedFlights)?inquiry.inquiry_data.suggestedFlights:[];
-  const finalFlights=review.overrideSuggestedFlights===true&&Array.isArray(review.suggestedFlights)?review.suggestedFlights:sales;
-  const start=review.travelStartDate||inquiry.travel_start_date||"";
-  const end=review.travelEndDate||inquiry.travel_end_date||"";
-
-  let outbound=finalFlights.filter((f:any)=>f?.date===start).slice(0,2);
-  let returning=finalFlights.filter((f:any)=>f?.date===end).slice(0,2);
-
-  if(!outbound.length&&!returning.length&&finalFlights.length){
-    if(finalFlights.length>=4){
-      outbound=finalFlights.slice(0,2);
-      returning=finalFlights.slice(-2);
-    }else if(finalFlights.length>=2){
-      outbound=[finalFlights[0]];
-      returning=[finalFlights[finalFlights.length-1]];
-    }else{
-      outbound=[finalFlights[0]];
-    }
-  }
-
-  const o1=outbound[0]||{};
-  const o2=outbound[1]||{};
-  const r1=returning[0]||{};
-  const r2=returning[1]||{};
-
-  return {
-    outboundFromAirport:o1.from||"",
-    outboundToAirport:o1.to||"",
-    outboundFlightNo:o1.flightNo||"",
-    outboundFlightDate:o1.date||start,
-    outboundDepartureTime:o1.departureTime||"",
-    outboundArrivalTime:o1.arrivalTime||"",
-    outboundTransitOpen:Boolean(outbound[1]),
-    outboundTransitFromAirport:o2.from||"",
-    outboundTransitToAirport:o2.to||"",
-    outboundTransitFlightNo:o2.flightNo||"",
-    outboundTransitFlightDate:o2.date||"",
-    outboundTransitDepartureTime:o2.departureTime||"",
-    outboundTransitArrivalTime:o2.arrivalTime||"",
-    returnFromAirport:r1.from||"",
-    returnToAirport:r1.to||"",
-    returnFlightNo:r1.flightNo||"",
-    returnFlightDate:r1.date||end,
-    returnDepartureTime:r1.departureTime||"",
-    returnArrivalTime:r1.arrivalTime||"",
-    returnTransitOpen:Boolean(returning[1]),
-    returnTransitFromAirport:r2.from||"",
-    returnTransitToAirport:r2.to||"",
-    returnTransitFlightNo:r2.flightNo||"",
-    returnTransitFlightDate:r2.date||"",
-    returnTransitDepartureTime:r2.departureTime||"",
-    returnTransitArrivalTime:r2.arrivalTime||""
-  };
+  if(review.overrideFlightInformation===true&&review.flightInformation) return review.flightInformation;
+  return inquiry?.inquiry_data?.flightInformation||null;
 }
 
 export default async function NewQuotationPage({searchParams}:{searchParams:Promise<{sourceInquiry?:string}>}){
@@ -110,7 +24,7 @@ export default async function NewQuotationPage({searchParams}:{searchParams:Prom
         const pick=(key:string,original:any)=>Object.prototype.hasOwnProperty.call(r,key)?r[key]:original;
         const composition=data?.inquiry_data?.travellerComposition||{};
         const finalComposition=r?.overrideTravellerComposition===true&&r?.travellerComposition?r.travellerComposition:composition;
-        const flightPrefill=buildFlightPrefill(data);
+        const flightInformation=buildFlightInformation(data);
         sourceInquiryNo=data.inquiry_no||"";
         sourceInquirySnapshot={
           inquiryNo:data.inquiry_no||"",
@@ -141,11 +55,11 @@ export default async function NewQuotationPage({searchParams}:{searchParams:Prom
           departure_date:sourceInquirySnapshot.travelStartDate,
           return_date:sourceInquirySnapshot.travelEndDate,
           customer_name:data.customer_name||"",
-          business_type:sourceInquirySnapshot.tourType,
+          tour_type:sourceInquirySnapshot.tourType,
           pax:Number(sourceInquirySnapshot.pax)||1,
           status:"draft",
           quotation_data:{
-            ...flightPrefill,
+            flightInformation,
             op:data.operation_assignee_name||user?.name||"",
             pax:Number(sourceInquirySnapshot.pax)||1,
             sourceInquiryId:data.id,
