@@ -18408,12 +18408,21 @@ td,
 
 
 /* FOUNDATION REFINEMENT P4: stacked scenario cells */
+.scenario-cost-matrix .scenario-row-meta > *{
+  min-width:0;
+}
+.scenario-cost-matrix .scenario-row-meta select,
+.scenario-cost-matrix .scenario-row-meta input{
+  max-width:100%;
+  box-sizing:border-box;
+}
+
 .scenario-cost-matrix.default-scenarios{
   width:100%;
   min-width:0;
 }
 .scenario-cost-matrix.default-scenarios .scenario-matrix-static{
-  grid-template-columns:145px 100px 65px;
+  grid-template-columns:135px 95px 60px;
   gap:0;
 }
 .scenario-cost-matrix.default-scenarios .scenario-matrix-static > *{
@@ -18488,7 +18497,7 @@ td,
   min-width:max-content;
 }
 .scenario-cost-matrix.extended-scenarios .scenario-matrix-static{
-  grid-template-columns:145px 100px 65px;
+  grid-template-columns:135px 95px 60px;
   gap:0;
 }
 .scenario-cost-matrix.extended-scenarios .scenario-row-meta{
