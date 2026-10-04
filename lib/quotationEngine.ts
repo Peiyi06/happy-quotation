@@ -1,6 +1,6 @@
 import {
-  ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
-  childRatio, computeProfit, currencyRate, leaderRowTotal, roundUpTo, travelerRowPerPax
+  ChildCostSetup, ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
+  childRatio, childSetupCost, computeProfit, currencyRate, leaderRowTotal, roundUpTo, travelerRowPerPax
 } from "@/lib/calculations";
 
 export const travelerTypes=["成人不含领队","成人含领队","小孩含床不含领队","小孩含床含领队","小孩不含床不含领队","小孩不含床含领队"] as const;
@@ -12,6 +12,7 @@ export type QuotationCalculationInput={
   profitMode:ProfitMode;profitRate:number;minProfit:number|"";maxProfit:number|"";fixedProfit:number|"";roundUnit:number;
   childBedMode:ChildMode;childBedManual:number;childBedCurrency:Currency;
   childNoBedMode:ChildMode;childNoBedManual:number;childNoBedCurrency:Currency;
+  childBedSetup?:ChildCostSetup;childNoBedSetup?:ChildCostSetup;
   selectedType:TravelerType;manualQuote:number|"";
   singleRoomAmount:number|"";singleRoomCurrency:Currency;
 };
@@ -44,6 +45,8 @@ export function buildQuotationCalculationInput(source:any):QuotationCalculationI
     fixedProfit:s.fixedProfit===""||s.fixedProfit==null?"":Number(s.fixedProfit),roundUnit:Number(s.roundUnit)||50,
     childBedMode:(s.childBedMode||"手动成本") as ChildMode,childBedManual:Number(s.childBedManual)||0,childBedCurrency:(s.childBedCurrency||"RM") as Currency,
     childNoBedMode:(s.childNoBedMode||"手动成本") as ChildMode,childNoBedManual:Number(s.childNoBedManual)||0,childNoBedCurrency:(s.childNoBedCurrency||"RM") as Currency,
+    childBedSetup:s.childBedSetup&&typeof s.childBedSetup==="object"?s.childBedSetup:undefined,
+    childNoBedSetup:s.childNoBedSetup&&typeof s.childNoBedSetup==="object"?s.childNoBedSetup:undefined,
     selectedType:(s.selectedType||"成人不含领队") as TravelerType,manualQuote:s.manualQuote===""||s.manualQuote==null?"":Number(s.manualQuote),
     singleRoomAmount:s.singleRoomAmount===""||s.singleRoomAmount==null?"":Number(s.singleRoomAmount),singleRoomCurrency:(s.singleRoomCurrency||"RM") as Currency
   };
@@ -58,12 +61,16 @@ export function calculateQuotation(input:QuotationCalculationInput):QuotationCal
   const hasLeader=input.leaderRows.some(row=>(Number(row.unitPrice)||0)>0&&(Number(row.qty)||0)>0);
   const ratioEligible=input.travelerRows.filter(row=>row.childRatioApplicable).reduce((sum,row)=>sum+travelerRowPerPax(row,safePax,input.mainCurrency,input.mainRate),0);
   const ratioExcluded=input.travelerRows.filter(row=>!row.childRatioApplicable).reduce((sum,row)=>sum+travelerRowPerPax(row,safePax,input.mainCurrency,input.mainRate),0);
-  const childCost=(mode:ChildMode,manual:number,currency:Currency)=>{
+  const legacyChildCost=(mode:ChildMode,manual:number,currency:Currency)=>{
     const ratio=childRatio(mode);
     return ratio===null?(Number(manual)||0)*currencyRate(currency,input.mainCurrency,input.mainRate):ratioEligible*ratio+ratioExcluded;
   };
-  const childBedCost=childCost(input.childBedMode,input.childBedManual,input.childBedCurrency);
-  const childNoBedCost=childCost(input.childNoBedMode,input.childNoBedManual,input.childNoBedCurrency);
+  const childBedCost=input.childBedSetup
+    ? childSetupCost(input.childBedSetup,input.mainCurrency,input.mainRate).total
+    : legacyChildCost(input.childBedMode,input.childBedManual,input.childBedCurrency);
+  const childNoBedCost=input.childNoBedSetup
+    ? childSetupCost(input.childNoBedSetup,input.mainCurrency,input.mainRate).total
+    : legacyChildCost(input.childNoBedMode,input.childNoBedManual,input.childNoBedCurrency);
   const selectedType=normalizeSelectedType(input.selectedType,hasLeader);
   const make=(type:TravelerType,cost:number):QuotationPricePoint=>{
     const profit=computeProfit(cost,input.profitMode,input.profitRate,Number(input.minProfit)||0,input.maxProfit,input.fixedProfit);
