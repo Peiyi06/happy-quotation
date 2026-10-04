@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
+import {quotationTerminology} from "@/lib/quotationTerminology";
 import FlightInformation,{emptyFlightInformation,type FlightInformationValue} from "@/components/FlightInformation";
 import {
   CalcMode, ChildCostRow, ChildCostSetup, ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
@@ -88,6 +89,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const router = useRouter();
   const {language}=useWorkspaceLanguage();
   const t=(en:string,zh:string)=>language==="zh"?zh:en;
+  const terms=quotationTerminology(t);
   const calcModeLabel=(value:CalcMode)=>({
     "每人":t("Per Person","每人"),
     "每人每天":t("Per Person / Day","每人每天"),
@@ -641,7 +643,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           </div>
         </div>
 
-        <PrintSectionNo no="01" title={t("Customer & Trip","客户与行程")}>
+        <PrintSectionNo no="01" title={terms.customerTrip}>
           <div className="print-info-grid">
             <PrintInfo label={t("Customer / Company","客户 / 公司")} value={resolvedSourceInquirySnapshot?.customerName||customerName||"—"}/>
             <PrintInfo label={t("Destination","目的地")} value={resolvedSourceInquirySnapshot?.destination||destination||"—"}/>
@@ -654,7 +656,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           </div>
         </PrintSectionNo>
 
-        <PrintSectionNo no="02" title={t("Flight Information","航班信息")}>
+        <PrintSectionNo no="02" title={terms.flightInformation}>
           {printFlights.length?<div className="print-table print-flight-table">
             <div className="print-tr print-th"><span>{t("Sector","航段")}</span><span>{t("Flight","航班")}</span><span>{t("Date","日期")}</span><span>{t("Departure","起飞")}</span><span>{t("Arrival","抵达")}</span></div>
             {printFlights.map((leg,index)=><div className="print-tr" key={index}>
@@ -669,9 +671,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           </div>
         </PrintSectionNo>
 
-        <PrintSectionNo no="03" title={t("Pricing Summary","定价摘要")}>
+        <PrintSectionNo no="03" title={terms.quotationPricing}>
           <div className="print-table print-pricing-table">
-            <div className="print-tr print-th"><span>{t("Traveller Type","旅客类型")}</span><span>{t("Leader","领队")}</span><span>{t("Cost / Pax","每人成本")}</span><span>{t("System Suggested","系统建议价")}</span><span>{t("Final Price","最终售价")}</span><span>{t("Profit","利润")}</span><span>{t("Margin","毛利率")}</span></div>
+            <div className="print-tr print-th"><span>{terms.travellerType}</span><span>{t("Leader","领队")}</span><span>{terms.costPerPax}</span><span>{terms.systemSuggested}</span><span>{terms.finalPrice}</span><span>{terms.profit}</span><span>{terms.margin}</span></div>
             {pricingRows.map(row=>{
               const active=row.type===effectiveSelectedType;
               const final=row.value.final;
@@ -693,9 +695,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           <div className="print-doc-meta"><div><span>{t("Quotation No.","报价编号")}</span><strong>{initialQuotation?.quotation_no||t("New Draft","新草稿")}</strong></div></div>
         </div>
 
-        <PrintSectionNo no="04" title={t("Traveller Cost Calculation","旅客成本计算")}>
+        <PrintSectionNo no="04" title={terms.costBreakdown}>
           <div className="print-table print-cost-table">
-            <div className="print-tr print-th"><span>{t("Cost Item","成本项目")}</span><span>{t("Type","类型")}</span><span>{t("Calculation","计算方式")}</span><span>{t("Unit Price","单价")}</span><span>{t("Qty","数量")}</span><span>{t("Currency","币种")}</span><span>{t("Rate","汇率")}</span><span>{t("Cost / Pax","每人成本")}</span></div>
+            <div className="print-tr print-th"><span>{terms.costItem}</span><span>{t("Type","类型")}</span><span>{terms.calculation}</span><span>{terms.unitPrice}</span><span>{t("Qty","数量")}</span><span>{terms.currency}</span><span>{terms.rate}</span><span>{terms.costPerPax}</span></div>
             {printTravelerRows.map(row=><div className="print-tr" key={row.id}>
               <span><strong>{costItemDisplay(row.item)||"—"}</strong>{row.note?<small>{row.note}</small>:null}</span>
               <span>{row.direction==="deduction"?t("Deduction −","扣减 −"):t("Cost +","成本 +")}</span>
@@ -706,9 +708,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           <div className="print-total-line"><span>{t("Traveller Base Cost / Pax","旅客基础成本 / 人")}</span><strong>{money(calculationResult.travelerPerPax)}</strong></div>
         </PrintSectionNo>
 
-        <PrintSectionNo no="05" title={t("Tour Leader Cost","领队成本")}>
+        <PrintSectionNo no="05" title={terms.tourLeaderCostSetup}>
           {hasLeader&&printLeaderRows.length?<><div className="print-table print-leader-table">
-            <div className="print-tr print-th"><span>{t("Cost Item","成本项目")}</span><span>{t("Calculation","计算方式")}</span><span>{t("Unit Price","单价")}</span><span>{t("Qty","数量")}</span><span>{t("Currency","币种")}</span><span>{t("Total","总额")}</span><span>{t("Allocated / Pax","每人分摊")}</span></div>
+            <div className="print-tr print-th"><span>{terms.costItem}</span><span>{terms.calculation}</span><span>{terms.unitPrice}</span><span>{t("Qty","数量")}</span><span>{terms.currency}</span><span>{t("Total","总额")}</span><span>{t("Allocated / Pax","每人分摊")}</span></div>
             {printLeaderRows.map(row=><div className="print-tr" key={row.id}>
               <span><strong>{costItemDisplay(row.item)||"—"}</strong>{row.note?<small>{row.note}</small>:null}</span>
               <span>{calcModeLabel(row.mode||"每人")}</span><span>{Number(row.unitPrice)||0}</span><span>{Number(row.qty)||0}</span><span>{currencyLabel(row.currency)}</span>
@@ -722,11 +724,11 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
       <section className="print-page">
         <div className="print-doc-header compact">
-          <div><span className="print-brand">HAPPY EXPRESS TRAVEL</span><h1>{t("Pricing Rules & Decision","定价规则与最终决定")}</h1></div>
+          <div><span className="print-brand">HAPPY EXPRESS TRAVEL</span><h1>{terms.quotationPricing}</h1></div>
           <div className="print-doc-meta"><div><span>{t("Quotation No.","报价编号")}</span><strong>{initialQuotation?.quotation_no||t("New Draft","新草稿")}</strong></div></div>
         </div>
 
-        <PrintSectionNo no="06" title={t("Child Cost Setup","儿童成本设置")}>
+        <PrintSectionNo no="06" title={terms.childCostSetup}>
           <div className="print-child-detail-stack">
             {[
               {title:t("Child with Bed","小孩含床"),setup:childBedSetup,summary:printChildBed},
@@ -747,14 +749,14 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
                 </div>
                 <div className="print-table print-child-cost-table">
                   <div className="print-tr print-th">
-                    <span>{t("Cost Item","成本项目")}</span>
+                    <span>{terms.costItem}</span>
                     <span>{t("Type","类型")}</span>
-                    <span>{t("Calculation","计算方式")}</span>
-                    <span>{t("Unit Price","单价")}</span>
+                    <span>{terms.calculation}</span>
+                    <span>{terms.unitPrice}</span>
                     <span>{t("Qty / Ratio","数量 / 比例")}</span>
-                    <span>{t("Currency","币种")}</span>
-                    <span>{t("Rate","汇率")}</span>
-                    <span>{t("Cost / Pax","每人成本")}</span>
+                    <span>{terms.currency}</span>
+                    <span>{terms.rate}</span>
+                    <span>{terms.costPerPax}</span>
                   </div>
                   <div className="print-tr">
                     <span><strong>{t("Ground Package","地接报价")}</strong></span>
@@ -787,7 +789,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           </div>
         </PrintSectionNo>
 
-        <PrintSectionNo no="07" title={t("Pricing Rules","定价规则")}>
+        <PrintSectionNo no="07" title={terms.commercialSettings}>
           <div className="print-info-grid rules">
             <PrintInfo label={t("Pricing Method","定价方式")} value={profitModeLabel(profitMode)}/>
             <PrintInfo label={t("Profit Rate","利润率")} value={pct(Number(profitRate)||0)}/>
@@ -800,11 +802,11 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           </div>
         </PrintSectionNo>
 
-        <PrintSectionNo no="08" title={t("Final Pricing Decision","最终定价决定")}>
+        <PrintSectionNo no="08" title={terms.quotationPricing}>
           <div className="print-final-decision">
-            <div><span>{t("Traveller Type","旅客类型")}</span><strong>{selectedSummaryLabel}</strong></div>
-            <div><span>{t("Cost / Pax","每人成本")}</span><strong>{money(selected.cost)}</strong></div>
-            <div><span>{t("System Suggested","系统建议价")}</span><strong>{money(selected.rounded)}</strong></div>
+            <div><span>{terms.travellerType}</span><strong>{selectedSummaryLabel}</strong></div>
+            <div><span>{terms.costPerPax}</span><strong>{money(selected.cost)}</strong></div>
+            <div><span>{terms.systemSuggested}</span><strong>{money(selected.rounded)}</strong></div>
             <div className="primary"><span>{t("Final Customer Price","最终对客售价")}</span><strong>{money(finalQuote)}</strong><small>{manualQuote!==""?t("Manual Override","人工调整"):t("System Price","系统价格")}</small></div>
             <div><span>{t("Final Profit","最终利润")}</span><strong>{money(finalProfit)}</strong></div>
             <div><span>{t("Final Margin","最终毛利率")}</span><strong>{pct(finalMargin)}</strong></div>
@@ -813,7 +815,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
         {pricingMode==="scenario"&&scenarioResults.length>0&&<PrintSectionNo no="09" title={t("Pax Scenario Comparison","人数情境比较")}>
           <div className="print-table print-scenario-table">
-            <div className="print-tr print-th"><span>{t("Pax","人数")}</span><span>{t("Cost / Pax","每人成本")}</span><span>{t("Suggested","建议售价")}</span><span>{t("Final","最终售价")}</span><span>{t("Profit","利润")}</span><span>{t("Margin","毛利率")}</span></div>
+            <div className="print-tr print-th"><span>{t("Pax","人数")}</span><span>{terms.costPerPax}</span><span>{t("Suggested","建议售价")}</span><span>{t("Final","最终售价")}</span><span>{terms.profit}</span><span>{terms.margin}</span></div>
             {scenarioResults.map(row=><div className="print-tr" key={row.id}><span>{row.pax}</span><span>{money(row.costPerPax)}</span><span>{money(row.roundedPrice)}</span><span><strong>{money(row.finalPrice)}</strong></span><span>{money(row.finalProfit)}</span><span>{pct(row.finalMargin)}</span></div>)}
           </div>
         </PrintSectionNo>}
@@ -874,7 +876,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <div className="quotation-trip-context">
         <div className="quotation-trip-context-head">
           <div>
-            <h2>{t("Customer & Trip","客户与行程")}</h2>
+            <h2>{terms.customerTrip}</h2>
           </div>
           <span className={"quotation-source-mode "+(resolvedSourceInquiryId?"linked":"direct")}>
             {resolvedSourceInquiryId?t("Linked Inquiry","来自 Inquiry"):t("Direct Quotation","直接报价")}
@@ -914,7 +916,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
               <Field label={t("Flight Total Price","航班总报价")}>
                 <input type="number" min="0" value={flightTotalPrice} onChange={e=>setFlightTotalPrice(e.target.value===""?"":Number(e.target.value))} placeholder="0.00" />
               </Field>
-              <Field label={t("Currency","币种")}>
+              <Field label={terms.currency}>
                 <select value={flightPriceCurrency} onChange={e=>setFlightPriceCurrency(e.target.value as Currency)}>{currencies.map(cur=><option key={cur} value={cur}>{currencyLabel(cur)}</option>)}</select>
               </Field>
               <div className="field">
@@ -931,7 +933,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       {saveMessage && <div className="save-message">{saveMessage}</div>}
     </section>}
 
-    <Section title={t("Commercial Settings","商业设置")}>
+    <Section title={terms.commercialSettings}>
       <div className="form-grid six quotation-commercial-core">
         <Field label={t("Supplier","供应商")}><input value={supplier} onChange={e=>setSupplier(e.target.value)} /></Field>
         <Field label={t("Main Currency","主要币种")}><select value={mainCurrency} onChange={e=>setMainCurrency(e.target.value as Currency)}>{currencies.map(c=><option key={c} value={c}>{c==="其他"?t("Other","其他"):c}</option>)}</select></Field>
@@ -953,7 +955,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     <section className="section quotation-pricing-mode-section">
       <div className="section-head scenario-pricing-mode-head">
         <div>
-          <h2>{t("Pricing Structure","报价结构")}</h2>
+          <h2>{terms.pricingStructure}</h2>
         </div>
         <div className="scenario-mode-switch no-print">
           <button type="button" className={pricingMode==="single"?"active":""} onClick={()=>setPricingMode("single")}>
@@ -972,16 +974,16 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     </section>
 
     {pricingMode==="single" ? <>
-    <Section title={t("Cost Breakdown","成本明细")} action={<button className="btn no-print" onClick={addTraveler}>{t("+ Add Cost Row","+ 新增成本项目")}</button>}>
+    <Section title={terms.costBreakdown} action={<button className="btn no-print" onClick={addTraveler}>{t("+ Add Cost Row","+ 新增成本项目")}</button>}>
       <div className="traveller-cost-table">
         <div className="traveller-cost-table-head" aria-hidden="true">
-          <span>{t("Cost Item","成本项目")}</span>
+          <span>{terms.costItem}</span>
           <span>{t("Type","类型")}</span>
-          <span>{t("Calculation","计算方式")}</span>
-          <span>{t("Unit Price","单价")}</span>
+          <span>{terms.calculation}</span>
+          <span>{terms.unitPrice}</span>
           <span>{t("Qty / Days","数量 / 天数")}</span>
-          <span>{t("Currency","币种")}</span>
-          <span>{t("Cost / Pax","每人成本")}</span>
+          <span>{terms.currency}</span>
+          <span>{terms.costPerPax}</span>
           <span></span>
         </div>
 
@@ -993,7 +995,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             return <div className="traveller-cost-row" key={r.id}>
               <div className="traveller-cost-row-main">
                 <div className="traveller-cost-cell item">
-                  <input aria-label={t("Cost Item","成本项目")} value={costItemDisplay(r.item)} onChange={e=>setTraveler(r.id,{item:e.target.value})}/>
+                  <input aria-label={terms.costItem} value={costItemDisplay(r.item)} onChange={e=>setTraveler(r.id,{item:e.target.value})}/>
                   {r.note&&<small className="traveller-cost-note-preview">↳ {r.note}</small>}
                 </div>
 
@@ -1005,11 +1007,11 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
                 </div>
 
                 <div className="traveller-cost-cell">
-                  <select aria-label={t("Calculation","计算方式")} value={r.mode} onChange={e=>setTraveler(r.id,{mode:e.target.value as CalcMode})}>{calcModes.map(x=><option key={x} value={x}>{calcModeLabel(x)}</option>)}</select>
+                  <select aria-label={terms.calculation} value={r.mode} onChange={e=>setTraveler(r.id,{mode:e.target.value as CalcMode})}>{calcModes.map(x=><option key={x} value={x}>{calcModeLabel(x)}</option>)}</select>
                 </div>
 
                 <div className="traveller-cost-cell">
-                  <input aria-label={t("Unit Price","单价")} type="number" min="0" value={r.unitPrice} onChange={e=>setTraveler(r.id,{unitPrice:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
+                  <input aria-label={terms.unitPrice} type="number" min="0" value={r.unitPrice} onChange={e=>setTraveler(r.id,{unitPrice:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
                 </div>
 
                 <div className="traveller-cost-cell">
@@ -1017,8 +1019,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
                 </div>
 
                 <div className="traveller-cost-cell traveller-cost-currency">
-                  <select aria-label={t("Currency","币种")} value={r.currency} onChange={e=>setTraveler(r.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c} value={c}>{currencyLabel(c)}</option>)}</select>
-                  <small>{t("Rate","汇率")} {rate || "—"}</small>
+                  <select aria-label={terms.currency} value={r.currency} onChange={e=>setTraveler(r.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c} value={c}>{currencyLabel(c)}</option>)}</select>
+                  <small>{terms.rate} {rate || "—"}</small>
                 </div>
 
                 <div className={"traveller-cost-result "+(pp<0?"deduction-value":"")}>
@@ -1053,9 +1055,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <div className="scenario-matrix-wrap">
         <div className={"scenario-cost-matrix"+(pricingScenarios.length<=4?" default-scenarios":" extended-scenarios")} style={{gridTemplateColumns:pricingScenarios.length<=4?`330px repeat(${pricingScenarios.length},minmax(0,1fr))`:`330px repeat(${pricingScenarios.length},176px)`}}>
           <div className="scenario-matrix-header scenario-matrix-static">
-            <span>{t("Cost Item","成本项目")}</span>
+            <span>{terms.costItem}</span>
             <span>{t("Method","计算方式")}</span>
-            <span>{t("Currency","币种")}</span>
+            <span>{terms.currency}</span>
           </div>
           {pricingScenarios.map(s=><div className="scenario-matrix-header scenario-matrix-pax-head" key={s.id}>
             <div className="scenario-pax-title">
@@ -1064,7 +1066,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             </div>
             <button type="button" className="scenario-remove-pax no-print" onClick={()=>removePricingScenario(s.id)} disabled={pricingScenarios.length<=1}>×</button>
             <div className="scenario-cell-labels">
-              <span>{t("Unit Price","单价")}</span>
+              <span>{terms.unitPrice}</span>
             </div>
           </div>)}
 
@@ -1123,8 +1125,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             <span className="scenario-result-days">{travelDuration.days||"—"} {t("Days","天")}</span>
           </div>
           <div className="scenario-result-metrics">
-            <Metric label={t("Cost / Pax","每人成本")} value={money(result.costPerPax)} />
-            <Metric label={t("System Suggested","系统建议价")} value={money(result.suggestedPrice)} />
+            <Metric label={terms.costPerPax} value={money(result.costPerPax)} />
+            <Metric label={terms.systemSuggested} value={money(result.suggestedPrice)} />
           </div>
           <Field label={t("Manual Final Price","手动最终报价")}>
             <input type="number" min="0" value={pricingScenarios.find(s=>s.id===result.id)?.manualFinalPrice??""}
@@ -1136,8 +1138,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             <strong>{money(result.finalPrice)}</strong>
           </div>
           <div className="scenario-result-foot">
-            <span>{t("Profit","利润")} <strong>{money(result.finalProfit)}</strong></span>
-            <span>{t("Margin","毛利率")} <strong>{pct(result.finalMargin)}</strong></span>
+            <span>{terms.profit} <strong>{money(result.finalProfit)}</strong></span>
+            <span>{terms.margin} <strong>{pct(result.finalMargin)}</strong></span>
           </div>
         </article>)}
       </div>
@@ -1148,14 +1150,14 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <div className="section-head"><h2>{t("Single Room","单人房")}</h2></div>
       <div className="single-room-grid">
         <Field label={t("Manual Amount","手动填写数额")}><input type="number" min="0" value={singleRoomAmount} onChange={e=>setSingleRoomAmount(e.target.value===""?"":Number(e.target.value))} placeholder="0.00" /></Field>
-        <Field label={t("Currency","币种")}><select value={singleRoomCurrency} onChange={e=>setSingleRoomCurrency(e.target.value as Currency)}>{currencies.map(cur=><option key={cur} value={cur}>{currencyLabel(cur)}</option>)}</select></Field>
+        <Field label={terms.currency}><select value={singleRoomCurrency} onChange={e=>setSingleRoomCurrency(e.target.value as Currency)}>{currencies.map(cur=><option key={cur} value={cur}>{currencyLabel(cur)}</option>)}</select></Field>
       </div>
     </section>
 
     <div className="two-col">
       <section className={"section cost-setup-collapsible "+(leaderOpen?"open":"collapsed")}>
         <button type="button" className="cost-setup-toggle" onClick={()=>setLeaderOpen(v=>!v)} aria-expanded={leaderOpen}>
-          <span>{t("Tour Leader Cost Setup","领队成本设置")}</span>
+          <span>{terms.tourLeaderCostSetup}</span>
           <span className="cost-setup-chevron" aria-hidden="true">⌄</span>
         </button>
         {leaderOpen&&<div className="cost-setup-content">
@@ -1164,13 +1166,13 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           </div>
         <div className="traveller-cost-table leader-cost-table">
           <div className="traveller-cost-table-head" aria-hidden="true">
-            <span>{t("Cost Item","成本项目")}</span>
+            <span>{terms.costItem}</span>
             <span>{t("Type","类型")}</span>
-            <span>{t("Calculation","计算方式")}</span>
-            <span>{t("Unit Price","单价")}</span>
+            <span>{terms.calculation}</span>
+            <span>{terms.unitPrice}</span>
             <span>{t("Qty / Days","数量 / 天数")}</span>
-            <span>{t("Currency","币种")}</span>
-            <span>{t("Cost / Pax","每人成本")}</span>
+            <span>{terms.currency}</span>
+            <span>{terms.costPerPax}</span>
             <span></span>
           </div>
           <div className="traveller-cost-table-body">
@@ -1184,7 +1186,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
               return <div className="traveller-cost-row" key={r.id}>
                 <div className="traveller-cost-row-main">
                   <div className="traveller-cost-cell item">
-                    <input aria-label={t("Cost Item","成本项目")} value={costItemDisplay(r.item)} onChange={e=>setLeader(r.id,{item:e.target.value})}/>
+                    <input aria-label={terms.costItem} value={costItemDisplay(r.item)} onChange={e=>setLeader(r.id,{item:e.target.value})}/>
                     {r.note&&<small className="traveller-cost-note-preview">↳ {r.note}</small>}
                   </div>
                   <div className="traveller-cost-cell">
@@ -1194,17 +1196,17 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
                     </select>
                   </div>
                   <div className="traveller-cost-cell">
-                    <select aria-label={t("Calculation","计算方式")} value={normalizedMode} onChange={e=>setLeader(r.id,{mode:e.target.value as CalcMode})}>{calcModes.map(mode=><option key={mode} value={mode}>{calcModeLabel(mode)}</option>)}</select>
+                    <select aria-label={terms.calculation} value={normalizedMode} onChange={e=>setLeader(r.id,{mode:e.target.value as CalcMode})}>{calcModes.map(mode=><option key={mode} value={mode}>{calcModeLabel(mode)}</option>)}</select>
                   </div>
                   <div className="traveller-cost-cell">
-                    <input aria-label={t("Unit Price","单价")} type="number" min="0" value={r.unitPrice} onChange={e=>setLeader(r.id,{unitPrice:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
+                    <input aria-label={terms.unitPrice} type="number" min="0" value={r.unitPrice} onChange={e=>setLeader(r.id,{unitPrice:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
                   </div>
                   <div className="traveller-cost-cell">
                     <input aria-label={t("Qty / Days","数量 / 天数")} type="number" min="0" value={r.qty} onChange={e=>setLeader(r.id,{qty:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
                   </div>
                   <div className="traveller-cost-cell traveller-cost-currency">
-                    <select aria-label={t("Currency","币种")} value={r.currency} onChange={e=>setLeader(r.id,{currency:e.target.value as Currency})}>{currencies.map(cur=><option key={cur} value={cur}>{currencyLabel(cur)}</option>)}</select>
-                    <small>{t("Rate","汇率")} {rate||"—"}</small>
+                    <select aria-label={terms.currency} value={r.currency} onChange={e=>setLeader(r.id,{currency:e.target.value as Currency})}>{currencies.map(cur=><option key={cur} value={cur}>{currencyLabel(cur)}</option>)}</select>
+                    <small>{terms.rate} {rate||"—"}</small>
                   </div>
                   <div className={"traveller-cost-result "+(perPax<0?"deduction-value":"")}>
                     <strong>{money(perPax)}</strong>
@@ -1227,7 +1229,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
       <section className={"section cost-setup-collapsible "+(childOpen?"open":"collapsed")}>
         <button type="button" className="cost-setup-toggle" onClick={()=>setChildOpen(v=>!v)} aria-expanded={childOpen}>
-          <span>{t("Child Cost Setup","儿童成本设置")}</span>
+          <span>{terms.childCostSetup}</span>
           <span className="cost-setup-chevron" aria-hidden="true">⌄</span>
         </button>
         {childOpen&&<div className="cost-setup-content">
@@ -1239,7 +1241,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </section>
     </div>
 
-    <Section title={t("Quotation Pricing","报价定价")}>
+    <Section title={terms.quotationPricing}>
       <div className="pricing-foundation">
         <div className="pricing-foundation-head">
           <div>
@@ -1254,13 +1256,13 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
         <div className="pricing-matrix-table" role="table" aria-label={t("Quotation Pricing Matrix","报价定价矩阵")}>
           <div className="pricing-matrix-header" role="row">
-            <span>{t("Traveller Type","旅客类型")}</span>
+            <span>{terms.travellerType}</span>
             <span>{t("Leader","领队")}</span>
             <span>{t("Cost","成本")}</span>
-            <span>{t("System Suggested","系统建议价")}</span>
-            <span>{t("Final Price","最终售价")}</span>
-            <span>{t("Profit","利润")}</span>
-            <span>{t("Margin","毛利率")}</span>
+            <span>{terms.systemSuggested}</span>
+            <span>{terms.finalPrice}</span>
+            <span>{terms.profit}</span>
+            <span>{terms.margin}</span>
           </div>
 
           {pricingRows.map(row=>{
@@ -1306,11 +1308,11 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
           <div className="pricing-decision-grid">
             <div className="pricing-decision-metric">
-              <span>{t("Cost / Pax","每人成本")}</span>
+              <span>{terms.costPerPax}</span>
               <strong>{money(selected.cost)}</strong>
             </div>
             <div className="pricing-decision-metric">
-              <span>{t("System Suggested","系统建议价")}</span>
+              <span>{terms.systemSuggested}</span>
               <strong>{money(selected.rounded)}</strong>
             </div>
 
@@ -1332,7 +1334,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             <div className="pricing-final-result">
               <span>{t("Final Result","最终结果")}</span>
               <strong>{money(finalQuote)}</strong>
-              <small>{t("Profit","利润")} {money(finalProfit)} · {t("Margin","毛利率")} {pct(finalMargin)}</small>
+              <small>{terms.profit} {money(finalProfit)} · {terms.margin} {pct(finalMargin)}</small>
             </div>
           </div>
 
@@ -1464,13 +1466,13 @@ function ChildCostCard({title,t,setup,setSetup,pax,mainCurrency,mainRate,display
 
     <div className="child-cost-breakdown-table">
       <div className="child-cost-breakdown-head" aria-hidden="true">
-        <span>{t("Cost Item","成本项目")}</span>
+        <span>{terms.costItem}</span>
         <span>{t("Type","类型")}</span>
-        <span>{t("Calculation","计算方式")}</span>
-        <span>{t("Unit Price","单价")}</span>
+        <span>{terms.calculation}</span>
+        <span>{terms.unitPrice}</span>
         <span>{t("Qty / Ratio","数量 / 比例")}</span>
-        <span>{t("Currency","币种")}</span>
-        <span>{t("Cost / Pax","每人成本")}</span>
+        <span>{terms.currency}</span>
+        <span>{terms.costPerPax}</span>
         <span></span>
       </div>
 
@@ -1494,8 +1496,8 @@ function ChildCostCard({title,t,setup,setSetup,pax,mainCurrency,mainRate,display
           <div className="child-ratio-input"><input aria-label={t("Child Ratio","儿童比例")} type="number" min="0" max="100" value={normalizedSetup.groundRatio} onChange={e=>setSetup({...normalizedSetup,groundRatio:Math.max(0,Math.min(100,Number(e.target.value)||0))})}/><span>%</span></div>
         </div>
         <div className="child-cost-cell child-cost-currency">
-          <select aria-label={t("Currency","币种")} value={normalizedSetup.groundCurrency} onChange={e=>setSetup({...normalizedSetup,groundCurrency:e.target.value as Currency})}>{currencies.map(cur=><option key={cur} value={cur}>{cur==="其他"?t("Other","其他"):cur}</option>)}</select>
-          <small>{t("Rate","汇率")} {currencyRate(normalizedSetup.groundCurrency,mainCurrency,mainRate)||"—"}</small>
+          <select aria-label={terms.currency} value={normalizedSetup.groundCurrency} onChange={e=>setSetup({...normalizedSetup,groundCurrency:e.target.value as Currency})}>{currencies.map(cur=><option key={cur} value={cur}>{cur==="其他"?t("Other","其他"):cur}</option>)}</select>
+          <small>{terms.rate} {currencyRate(normalizedSetup.groundCurrency,mainCurrency,mainRate)||"—"}</small>
         </div>
         <div className={"child-cost-result "+(summary.ground<0?"deduction-value":"")}>
           <strong>{money(summary.ground)}</strong>
@@ -1509,7 +1511,7 @@ function ChildCostCard({title,t,setup,setSetup,pax,mainCurrency,mainRate,display
         const rate=currencyRate(row.currency,mainCurrency,mainRate);
         return <div className="child-cost-breakdown-row" key={row.id}>
           <div className="child-cost-cell item">
-            <input aria-label={t("Cost Item","成本项目")} value={displayItem(row.item)} onChange={e=>updateRow(row.id,{item:e.target.value})}/>
+            <input aria-label={terms.costItem} value={displayItem(row.item)} onChange={e=>updateRow(row.id,{item:e.target.value})}/>
           </div>
           <div className="child-cost-cell">
             <select aria-label={t("Type","类型")} value={row.direction||"cost"} onChange={e=>updateRow(row.id,{direction:e.target.value as "cost"|"deduction"})}>
@@ -1518,17 +1520,17 @@ function ChildCostCard({title,t,setup,setSetup,pax,mainCurrency,mainRate,display
             </select>
           </div>
           <div className="child-cost-cell">
-            <select aria-label={t("Calculation","计算方式")} value={row.mode||"每人"} onChange={e=>updateRow(row.id,{mode:e.target.value as CalcMode})}>{calcModes.map(mode=><option key={mode} value={mode}>{calcModeLabel(mode)}</option>)}</select>
+            <select aria-label={terms.calculation} value={row.mode||"每人"} onChange={e=>updateRow(row.id,{mode:e.target.value as CalcMode})}>{calcModes.map(mode=><option key={mode} value={mode}>{calcModeLabel(mode)}</option>)}</select>
           </div>
           <div className="child-cost-cell">
-            <input aria-label={t("Unit Price","单价")} type="number" min="0" value={row.unitPrice} onChange={e=>updateRow(row.id,{unitPrice:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
+            <input aria-label={terms.unitPrice} type="number" min="0" value={row.unitPrice} onChange={e=>updateRow(row.id,{unitPrice:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
           </div>
           <div className="child-cost-cell">
             <input aria-label={t("Qty / Days","数量 / 天数")} type="number" min="0" value={row.qty} onChange={e=>updateRow(row.id,{qty:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
           </div>
           <div className="child-cost-cell child-cost-currency">
-            <select aria-label={t("Currency","币种")} value={row.currency} onChange={e=>updateRow(row.id,{currency:e.target.value as Currency})}>{currencies.map(cur=><option key={cur} value={cur}>{cur==="其他"?t("Other","其他"):cur}</option>)}</select>
-            <small>{t("Rate","汇率")} {rate||"—"}</small>
+            <select aria-label={terms.currency} value={row.currency} onChange={e=>updateRow(row.id,{currency:e.target.value as Currency})}>{currencies.map(cur=><option key={cur} value={cur}>{cur==="其他"?t("Other","其他"):cur}</option>)}</select>
+            <small>{terms.rate} {rate||"—"}</small>
           </div>
           <div className={"child-cost-result "+(rowPerPax<0?"deduction-value":"")}>
             <strong>{money(rowPerPax)}</strong>
