@@ -102,13 +102,15 @@ export default function FlightInformation({
   onChange,
   durationDays=0,
   footer,
-  compact=false
+  compact=false,
+  disabled=false
 }:{
   value:FlightInformationValue;
   onChange:(value:FlightInformationValue)=>void;
   durationDays?:number;
   footer?:React.ReactNode;
   compact?:boolean;
+  disabled?:boolean;
 }){
   const {language}=useWorkspaceLanguage();
   const t=(en:string,zh:string)=>language==="zh"?zh:en;
@@ -157,7 +159,7 @@ export default function FlightInformation({
     return <label className="field time-field">
       <span>{label}</span>
       <div className="time-input-wrap">
-        <input inputMode="numeric" maxLength={5} placeholder="HH:MM" value={raw}
+        <input disabled={disabled} inputMode="numeric" maxLength={5} placeholder="HH:MM" value={raw}
           onChange={e=>setLeg(legKey,{[field]:normalize(e.target.value)})}
           onBlur={e=>setLeg(legKey,{[field]:valid(e.target.value)})}/>
         {meridiem&&<b className="time-meridiem">{meridiem}</b>}
@@ -170,13 +172,13 @@ export default function FlightInformation({
     return <div className={transit?"transit-flight-panel":""}>
       {transit&&<div className="transit-flight-title"><span>{t("TRANSIT","中转")}</span><strong>{legKey==="outboundTransit"?t("Departure Transit Flight","去程中转航班"):t("Return Transit Flight","返程中转航班")}</strong></div>}
       <div className="flight-fields">
-        <label className="field"><span>{t("From Airport Code","出发机场代码")}</span><input maxLength={3} value={leg.fromAirport} onChange={e=>setLeg(legKey,{fromAirport:e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3)})} placeholder={legKey.startsWith("return")?"CSX":"KUL"}/></label>
-        <label className="field"><span>{t("To Airport Code","抵达机场代码")}</span><input maxLength={3} value={leg.toAirport} onChange={e=>setLeg(legKey,{toAirport:e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3)})} placeholder={legKey.startsWith("return")?"KUL":"CSX"}/></label>
-        <label className="field"><span>{t("Airline / Flight No.","航空公司 / 航班号")}</span><input value={leg.flightNo} onChange={e=>setLeg(legKey,{flightNo:e.target.value.toUpperCase()})} placeholder="MH52"/></label>
-        <label className="field"><span>{transit?t("Transit Flight Date","中转航班日期"):legKey==="returning"?t("Return Flight Date","返程航班日期"):t("Departure Flight Date","去程航班日期")}</span><input type="date" value={leg.flightDate} onChange={e=>setLeg(legKey,{flightDate:e.target.value})}/></label>
+        <label className="field"><span>{t("From Airport Code","出发机场代码")}</span><input disabled={disabled} maxLength={3} value={leg.fromAirport} onChange={e=>setLeg(legKey,{fromAirport:e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3)})} placeholder={legKey.startsWith("return")?"CSX":"KUL"}/></label>
+        <label className="field"><span>{t("To Airport Code","抵达机场代码")}</span><input disabled={disabled} maxLength={3} value={leg.toAirport} onChange={e=>setLeg(legKey,{toAirport:e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,3)})} placeholder={legKey.startsWith("return")?"KUL":"CSX"}/></label>
+        <label className="field"><span>{t("Airline / Flight No.","航空公司 / 航班号")}</span><input disabled={disabled} value={leg.flightNo} onChange={e=>setLeg(legKey,{flightNo:e.target.value.toUpperCase()})} placeholder="MH52"/></label>
+        <label className="field"><span>{transit?t("Transit Flight Date","中转航班日期"):legKey==="returning"?t("Return Flight Date","返程航班日期"):t("Departure Flight Date","去程航班日期")}</span><input disabled={disabled} type="date" value={leg.flightDate} onChange={e=>setLeg(legKey,{flightDate:e.target.value})}/></label>
         {renderTime(t("Departure Time","起飞时间"),legKey,"departureTime")}
         {renderTime(t("Arrival Time","抵达时间"),legKey,"arrivalTime")}
-        <button type="button" className={"flight-day-status "+(leg.departureTime&&leg.arrivalTime?(leg.nextDay?"next":"same"):"pending")} onClick={()=>setLeg(legKey,{nextDay:!leg.nextDay})} title={t("Click to override the day status","点击可手动切换日期状态")}>
+        <button type="button" disabled={disabled} className={"flight-day-status "+(leg.departureTime&&leg.arrivalTime?(leg.nextDay?"next":"same"):"pending")} onClick={()=>setLeg(legKey,{nextDay:!leg.nextDay})} title={t("Click to override the day status","点击可手动切换日期状态")}>
           <span>{leg.departureTime&&leg.arrivalTime?(leg.nextDay?t("+1 Next Day","+1 次日"):t("Same Day","同日")):t("Day Status","日期状态")}</span>
         </button>
       </div>
@@ -195,7 +197,7 @@ export default function FlightInformation({
       <div className="flight-block">
         <div className="flight-block-head">
           <h4>{t("Departure Flight","去程航班")}</h4>
-          <button type="button" className={"btn transit-toggle "+(value.outboundTransitOpen?"active":"")} onClick={()=>onChange({...value,outboundTransitOpen:!value.outboundTransitOpen})}>
+          <button disabled={disabled} type="button" className={"btn transit-toggle "+(value.outboundTransitOpen?"active":"")} onClick={()=>onChange({...value,outboundTransitOpen:!value.outboundTransitOpen})}>
             {value.outboundTransitOpen?t("− Transit Flight","− 中转航班"):t("+ Transit Flight","+ 中转航班")}
           </button>
         </div>
@@ -205,7 +207,7 @@ export default function FlightInformation({
       <div className="flight-block">
         <div className="flight-block-head">
           <h4>{t("Return Flight","返程航班")}</h4>
-          <button type="button" className={"btn transit-toggle "+(value.returnTransitOpen?"active":"")} onClick={()=>onChange({...value,returnTransitOpen:!value.returnTransitOpen})}>
+          <button disabled={disabled} type="button" className={"btn transit-toggle "+(value.returnTransitOpen?"active":"")} onClick={()=>onChange({...value,returnTransitOpen:!value.returnTransitOpen})}>
             {value.returnTransitOpen?t("− Transit Flight","− 中转航班"):t("+ Transit Flight","+ 中转航班")}
           </button>
         </div>
