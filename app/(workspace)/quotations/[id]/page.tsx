@@ -4,57 +4,10 @@ import QuotationDetailMoreActions from "@/components/QuotationDetailMoreActions"
 import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
 import QuotationReviewActions from "@/components/QuotationReviewActions";
 import {UiText} from "@/components/WorkspaceLanguage";
-import {
-  ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
-  childRatio, computeProfit, currencyRate, leaderRowTotal, travelerRowPerPax, roundUpTo
-} from "@/lib/calculations";
+import {Currency} from "@/lib/calculations";
+import {buildQuotationCalculationInput,calculateQuotation} from "@/lib/quotationEngine";
 
 const money=(n:number)=>new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR",minimumFractionDigits:2}).format(n||0).replace("MYR","RM");
-
-function buildMatrix(q:any){
-  const s=q?.quotation_data||{};
-  const pax=Math.max(1,Number(s.pax||q?.pax)||1);
-  const mainCurrency=(s.mainCurrency||"RMB") as Currency;
-  const mainRate=Number(s.mainRate)||0;
-  const travelerRows=(Array.isArray(s.travelerRows)?s.travelerRows:[]) as TravelerCostRow[];
-  const leaderRows=(Array.isArray(s.leaderRows)?s.leaderRows:[]) as LeaderCostRow[];
-  const profitMode=(s.profitMode||"按成本加价率") as ProfitMode;
-  const profitRate=Number(s.profitRate)||0;
-  const minProfit=Number(s.minProfit)||0;
-  const maxProfit=s.maxProfit===""||s.maxProfit==null?"":Number(s.maxProfit);
-  const fixedProfit=s.fixedProfit===""||s.fixedProfit==null?"":Number(s.fixedProfit);
-
-  const travelerPerPax=travelerRows.reduce((sum,row)=>sum+travelerRowPerPax(row,pax,mainCurrency,mainRate),0);
-  const leaderTotal=leaderRows.reduce((sum,row)=>sum+leaderRowTotal(row,mainCurrency,mainRate),0);
-  const leaderPerPax=leaderTotal/pax;
-  const hasLeader=Boolean(s.hasLeader ?? leaderRows.some((r:any)=>(Number(r.unitPrice)||0)>0 && (Number(r.qty)||0)>0));
-
-  const ratioEligible=travelerRows.filter(r=>r.childRatioApplicable).reduce((sum,row)=>sum+travelerRowPerPax(row,pax,mainCurrency,mainRate),0);
-  const ratioExcluded=travelerRows.filter(r=>!r.childRatioApplicable).reduce((sum,row)=>sum+travelerRowPerPax(row,pax,mainCurrency,mainRate),0);
-
-  const childCost=(mode:ChildMode,manual:number,currency:Currency)=>{
-    const ratio=childRatio(mode);
-    if(ratio===null) return (Number(manual)||0)*currencyRate(currency,mainCurrency,mainRate);
-    return ratioEligible*ratio+ratioExcluded;
-  };
-
-  const childBed=childCost((s.childBedMode||"手动成本") as ChildMode,Number(s.childBedManual)||0,(s.childBedCurrency||"RM") as Currency);
-  const childNoBed=childCost((s.childNoBedMode||"手动成本") as ChildMode,Number(s.childNoBedManual)||0,(s.childNoBedCurrency||"RM") as Currency);
-
-  const make=(cost:number)=>{
-    const profit=computeProfit(cost,profitMode,profitRate,minProfit,maxProfit,fixedProfit);
-    return {cost,profit,selling:cost+profit};
-  };
-
-  return {
-    hasLeader,
-    rows:[
-      ["成人（双人一房）",make(travelerPerPax),make(travelerPerPax+leaderPerPax)],
-      ["小孩加床",make(childBed),make(childBed+leaderPerPax)],
-      ["小孩不加床",make(childNoBed),make(childNoBed+leaderPerPax)]
-    ] as const
-  };
-}
 
 export default async function QuotationDetailPage({
   params,
@@ -123,28 +76,12 @@ export default async function QuotationDetailPage({
   const flightPriceCurrency=(qd.flightPriceCurrency||"RM") as Currency;
   const flightPax=Number(qd.pax||data.pax)||0;
   const flightTicketType=flightPax>=1&&flightPax<=9?"fit":flightPax>=10&&flightPax<=200?"git":flightPax>200?"review":"none";
-  const singleRoomAmount=qd.singleRoomAmount===""||qd.singleRoomAmount==null?null:Number(qd.singleRoomAmount);
-  const singleRoomCurrency=(qd.singleRoomCurrency||"RM") as Currency;
-  const mainCurrency=(qd.mainCurrency||"RMB") as Currency;
-  const mainRate=Number(qd.mainRate)||0;
-  const singleRoomSupplement=singleRoomAmount==null?null:singleRoomAmount*currencyRate(singleRoomCurrency,mainCurrency,mainRate);
-  const matrixData=buildMatrix(data);
-  const matrix=matrixData.rows;
-  const hasLeader=matrixData.hasLeader;
-  const roundUnit=Number(qd.roundUnit)||50;
-  const selectedType=qd.selectedType||"成人不含领队";
-  const manualQuote=qd.manualQuote;
-  const adultNoLeaderSuggested=matrix[0][1].selling;
-  const adultLeaderSuggested=matrix[0][2].selling;
-  const savedFinalQuote=Number(data.selling_price)||0;
-  const adultSellingPrice=hasLeader
-    ? (selectedType==="成人含领队" && manualQuote!=="" && manualQuote!=null
-        ? savedFinalQuote
-        : roundUpTo(adultLeaderSuggested,roundUnit))
-    : (selectedType==="成人不含领队" && manualQuote!=="" && manualQuote!=null
-        ? savedFinalQuote
-        : roundUpTo(adultNoLeaderSuggested,roundUnit));
-  const singleRoomSellingPrice=singleRoomSupplement==null?null:adultSellingPrice+singleRoomSupplement;
+  const calculationResult=qd.calculationResult||calculateQuotation(buildQuotationCalculationInput(data));
+  const matrix=calculationResult.matrix;
+  const hasLeader=Boolean(calculationResult.hasLeader);
+  const adultSellingPrice=Number(calculationResult.adultSellingPrice)||0;
+  const singleRoomSupplement=calculationResult.singleRoomSupplement==null?null:Number(calculationResult.singleRoomSupplement);
+  const singleRoomSellingPrice=calculationResult.singleRoomSellingPrice==null?null:Number(calculationResult.singleRoomSellingPrice);
   const rawReturnTo=String(sp.returnTo||"");
   const returnTo=rawReturnTo.startsWith("/")&&!rawReturnTo.startsWith("//")?rawReturnTo:"/quotations";
   const currentQuoteHref="/quotations/"+id+"?returnTo="+encodeURIComponent(returnTo);
@@ -178,7 +115,7 @@ export default async function QuotationDetailPage({
       <div className="quote-result-hero">
         <span><UiText en="Adult Price · Twin Sharing" zh="成人价格 · 双人一房" />{hasLeader?<UiText en=" · Includes Tour Leader" zh=" · 含领队" />:null}</span>
         <strong>{money(adultSellingPrice)}</strong>
-        <small>{hasLeader?<><UiText en="Includes tour leader allocation " zh="已含领队分摊 " />{money(Number(qd.leaderPerPax)||matrix[0][2].cost-matrix[0][1].cost)}</>:<UiText en="Adult price is based on twin sharing" zh="成人默认双人一房" />}</small>
+        <small>{hasLeader?<><UiText en="Includes tour leader allocation " zh="已含领队分摊 " />{money(Number(calculationResult.leaderPerPax)||0)}</>:<UiText en="Adult price is based on twin sharing" zh="成人默认双人一房" />}</small>
       </div>
       <div className="quote-result-hero">
         <span><UiText en="Single Room Price" zh="单人房价格" />{hasLeader?<UiText en=" · Includes Tour Leader" zh=" · 含领队" />:null}</span>
@@ -210,21 +147,21 @@ export default async function QuotationDetailPage({
           {hasLeader&&<span><UiText en="Incl. Leader" zh="含领队" /></span>}
         </div>
 
-        {matrix.map(([label,a,b])=><div className="quotation-matrix-row" key={label}>
+        {matrix.map((row:any)=><div className="quotation-matrix-row" key={row.key}>
           <div className="quotation-matrix-traveller">
-            <strong>{label==="成人（双人一房）"?<UiText en="Adult · Twin Sharing" zh="成人（双人一房）" />:label==="小孩加床"?<UiText en="Child with Bed" zh="小孩加床" />:<UiText en="Child without Bed" zh="小孩不加床" />}</strong>
+            <strong>{row.key==="adult"?<UiText en="Adult · Twin Sharing" zh="成人（双人一房）" />:row.key==="childBed"?<UiText en="Child with Bed" zh="小孩加床" />:<UiText en="Child without Bed" zh="小孩不加床" />}</strong>
           </div>
 
           <div className="quotation-matrix-plan">
-            <div className="quotation-matrix-metric"><span><UiText en="Cost" zh="成本" /></span><strong>{money(a.cost)}</strong></div>
-            <div className="quotation-matrix-metric"><span><UiText en="Profit" zh="利润" /></span><strong>{money(a.profit)}</strong></div>
-            <div className="quotation-matrix-metric suggested"><span><UiText en="Suggested" zh="建议售价" /></span><strong>{money(a.selling)}</strong></div>
+            <div className="quotation-matrix-metric"><span><UiText en="Cost" zh="成本" /></span><strong>{money(row.noLeader.cost)}</strong></div>
+            <div className="quotation-matrix-metric"><span><UiText en="Profit" zh="利润" /></span><strong>{money(row.noLeader.profit)}</strong></div>
+            <div className="quotation-matrix-metric suggested"><span><UiText en="Suggested" zh="建议售价" /></span><strong>{money(row.noLeader.selling)}</strong></div>
           </div>
 
           {hasLeader&&<div className="quotation-matrix-plan">
-            <div className="quotation-matrix-metric"><span><UiText en="Cost" zh="成本" /></span><strong>{money(b.cost)}</strong></div>
-            <div className="quotation-matrix-metric"><span><UiText en="Profit" zh="利润" /></span><strong>{money(b.profit)}</strong></div>
-            <div className="quotation-matrix-metric suggested"><span><UiText en="Suggested" zh="建议售价" /></span><strong>{money(b.selling)}</strong></div>
+            <div className="quotation-matrix-metric"><span><UiText en="Cost" zh="成本" /></span><strong>{money(row.withLeader.cost)}</strong></div>
+            <div className="quotation-matrix-metric"><span><UiText en="Profit" zh="利润" /></span><strong>{money(row.withLeader.profit)}</strong></div>
+            <div className="quotation-matrix-metric suggested"><span><UiText en="Suggested" zh="建议售价" /></span><strong>{money(row.withLeader.selling)}</strong></div>
           </div>}
         </div>)}
       </div>
