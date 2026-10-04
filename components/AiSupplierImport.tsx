@@ -20,6 +20,26 @@ type AdjustmentProposal={reply:string;changeSummary:string[];revisedDraft:Omit<I
 
 const uid=()=>Math.random().toString(36).slice(2,10);
 
+const inquiryFlightList=(flightInformation:any)=>{
+  if(!flightInformation) return [];
+  const legs=[
+    flightInformation.outbound,
+    flightInformation.outboundTransitOpen?flightInformation.outboundTransit:null,
+    flightInformation.returning,
+    flightInformation.returnTransitOpen?flightInformation.returnTransit:null
+  ].filter(Boolean);
+  return legs.filter((leg:any)=>leg?.fromAirport||leg?.toAirport||leg?.flightNo||leg?.flightDate||leg?.departureTime||leg?.arrivalTime).map((leg:any)=>({
+    from:leg.fromAirport||"",
+    to:leg.toAirport||"",
+    flightNo:leg.flightNo||"",
+    date:leg.flightDate||"",
+    departureTime:leg.departureTime||"",
+    arrivalTime:leg.arrivalTime||"",
+    remarks:leg.nextDay?"+1 Next Day":""
+  }));
+};
+
+
 export default function AiSupplierImport(){
   const router=useRouter();
   const {language}=useWorkspaceLanguage();
@@ -127,7 +147,7 @@ export default function AiSupplierImport(){
         travelEndDate:parsed.travelEndDate||linked.travelEndDate||"",
         pax:parsed.pax??linked.pax??null,
         tourType:parsed.tourType||linked.tourType||"",
-        suggestedFlights:(parsed.suggestedFlights||[]).length?parsed.suggestedFlights:(Array.isArray(linked.suggestedFlights)?linked.suggestedFlights:[])
+        suggestedFlights:(parsed.suggestedFlights||[]).length?parsed.suggestedFlights:inquiryFlightList(linked.flightInformation)
       });
       setModel(data.model||"");
     }finally{setAnalyzing(false);}
@@ -219,7 +239,7 @@ export default function AiSupplierImport(){
           travelEndDate:result.travelEndDate||inquiryContext?.travelEndDate||"",
           pax:result.pax??inquiryContext?.pax??"",
           tourType:result.tourType||inquiryContext?.tourType||"",
-          suggestedFlights:suggestedFlights.length?suggestedFlights:(Array.isArray(inquiryContext?.suggestedFlights)?inquiryContext.suggestedFlights.map((f:any)=>({id:uid(),...f})):[]),
+          suggestedFlights:suggestedFlights.length?suggestedFlights:inquiryFlightList(inquiryContext?.flightInformation).map((f:any)=>({id:uid(),...f})),
           days,hotels,includedItems,notIncludedItems,reminders,
           sourceInquiryId:inquiryContext?.id||"",
           sourceInquiryNo:inquiryContext?.inquiryNo||"",
@@ -239,7 +259,7 @@ export default function AiSupplierImport(){
       <div>
         <span>{t("SOURCE INQUIRY","来源询价")}</span>
         <strong>{inquiryContext.inquiryNo||t("Linked Inquiry","关联询价")}</strong>
-        <small>{[inquiryContext.destination,inquiryContext.daysCount&&inquiryContext.nightsCount?`${inquiryContext.daysCount}D${inquiryContext.nightsCount}N`:"",inquiryContext.pax?`${inquiryContext.pax} Pax`:""].filter(Boolean).join(" · ")}</small>
+        <small>{[inquiryContext.destination,inquiryContext.daysCount?`${inquiryContext.daysCount} Days`:"",inquiryContext.pax?`${inquiryContext.pax} Pax`:""].filter(Boolean).join(" · ")}</small>
       </div>
       <button className="btn" type="button" onClick={()=>router.push("/inquiries/"+inquiryContext.id)}>{t("Open Inquiry","打开询价")}</button>
     </section>}
