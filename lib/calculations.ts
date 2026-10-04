@@ -8,6 +8,8 @@ export type CostDirection = "cost" | "deduction";
 export interface ChildCostRow {
   id: string;
   item: string;
+  direction?: CostDirection;
+  mode: CalcMode;
   unitPrice: number | "";
   qty: number | "";
   currency: Currency;
@@ -18,6 +20,7 @@ export interface ChildCostSetup {
   groundBase: number | "";
   groundRatio: number;
   groundCurrency: Currency;
+  groundDirection?: CostDirection;
   otherRows: ChildCostRow[];
 }
 
@@ -92,17 +95,28 @@ export const roundUpTo = (value: number, unit: number) => {
 };
 
 
-export const childExtraRowTotal = (row: ChildCostRow, mainCurrency: Currency, mainRate: number) => {
+export const childExtraRowTotal = (row: ChildCostRow, pax: number, mainCurrency: Currency, mainRate: number) => {
   const unit = Number(row.unitPrice) || 0;
   const qty = Number(row.qty) || 0;
   const rate = currencyRate(row.currency, mainCurrency, mainRate);
-  return unit && qty && rate ? unit * qty * rate : 0;
+  if (!unit || !qty || !rate || pax <= 0) return 0;
+  const sign = row.direction === "deduction" ? -1 : 1;
+  const base = unit * qty * rate * sign;
+  const mode = row.mode || "每人";
+  return mode === "每人" || mode === "每人每天" ? base * pax : base;
 };
 
-export const childSetupCost = (setup: ChildCostSetup, mainCurrency: Currency, mainRate: number) => {
+export const childExtraRowPerPax = (row: ChildCostRow, pax: number, mainCurrency: Currency, mainRate: number) => {
+  if (pax <= 0) return 0;
+  return childExtraRowTotal(row,pax,mainCurrency,mainRate) / pax;
+};
+
+export const childSetupCost = (setup: ChildCostSetup, pax: number, mainCurrency: Currency, mainRate: number) => {
+  const safePax = Math.max(1,Number(pax)||1);
   const base = Number(setup.groundBase) || 0;
   const ratio = Math.max(0, Number(setup.groundRatio) || 0) / 100;
-  const ground = base * ratio * currencyRate(setup.groundCurrency, mainCurrency, mainRate);
-  const extras = (setup.otherRows || []).reduce((sum,row)=>sum+childExtraRowTotal(row,mainCurrency,mainRate),0);
+  const sign = setup.groundDirection === "deduction" ? -1 : 1;
+  const ground = base * ratio * currencyRate(setup.groundCurrency, mainCurrency, mainRate) * sign;
+  const extras = (setup.otherRows || []).reduce((sum,row)=>sum+childExtraRowPerPax(row,safePax,mainCurrency,mainRate),0);
   return { ground, extras, total: ground + extras };
 };
