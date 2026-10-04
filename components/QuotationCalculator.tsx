@@ -119,7 +119,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const resolvedSourceInquiryId=sourceInquiryId||initialQuotation?.source_inquiry_id||initialQuotation?.quotation_data?.sourceInquiryId||"";
   const resolvedSourceInquiryNo=sourceInquiryNo||initialQuotation?.quotation_data?.sourceInquiryNo||"";
   const resolvedSourceInquirySnapshot=sourceInquirySnapshot||initialQuotation?.quotation_data?.sourceInquirySnapshot||null;
-  const [quoteTitle, setQuoteTitle] = useState("New Tour Quotation");
+  const [quoteTitle, setQuoteTitle] = useState("");
   const [destination, setDestination] = useState("");
   const [departureDate, setDepartureDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
@@ -521,7 +521,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const resetAll = () => {
     if (!confirm(t("Reset this quotation? Unsaved changes will be cleared.","确认重置当前报价？未保存的修改会被清空。"))) return;
 
-    setQuoteTitle("New Tour Quotation");
+    setQuoteTitle("");
     setDestination("");
     setDepartureDate("");
     setReturnDate("");
@@ -629,7 +629,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
     {workspaceMode && <section className="quote-meta-panel">
       <div className="quotation-identity-block">
-        <Field label={t("Quotation Title","报价标题")}><input value={quoteTitle} onChange={e=>setQuoteTitle(e.target.value)} placeholder={t("e.g. Hokkaido Winter 7D5N · HT Group","例如：北海道冬季 7D5N · HT Group")} /></Field>
+        <div className="quotation-identity-head"><h3>{t("Quotation Title","报价标题")}</h3></div>
+        <input className="quotation-title-input" value={quoteTitle} onChange={e=>setQuoteTitle(e.target.value)} placeholder={t("Create a quotation title","请输入报价标题")} />
       </div>
 
       <div className="quotation-trip-context">
