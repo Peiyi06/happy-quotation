@@ -17412,9 +17412,10 @@ td,
 
 /* =========================================================
    FOUNDATION TYPOGRAPHY SYSTEM — LOCKED
-   Page 34 / Section 20 / Body 14 / Meta 12 / Micro 11
-   Button 12 / Sidebar Item 14
-   Typography hierarchy, weight, line-height and tracking
+   L1 Page 34 / L2 Section 20 / L3 Subsection 15
+   Body 14 / Meta 12 / Micro 11 / Button 12 / Sidebar Item 14
+   L1 = Deep Navy / L2 = Primary Black / L3 = Dark Neutral
+   Typography hierarchy, weight, line-height, tracking and color
    should use these shared tokens by default.
    Special display figures may intentionally exceed this scale.
    Any structural typography change requires an explicit
@@ -17455,59 +17456,38 @@ td,
   --foundation-track-meta:0;
 }
 
-/* Page titles */
-.dashboard-page-head h1,
-.inquiry-library-template .inquiry-library-title-block h1,
-.product-library-page .product-page-head h1,
-.quotation-editor-shell .quotation-editor-title h1,
-.quotation-editor-shell .page-head h1{
+/* Level 1 — Page title */
+.workspace-main h1{
+  color:var(--foundation-title-level-1-color)!important;
   font-size:var(--foundation-type-page)!important;
   line-height:var(--foundation-line-page)!important;
   font-weight:var(--foundation-weight-page)!important;
   letter-spacing:var(--foundation-track-page)!important;
 }
 
+/* Dashboard hero is the intentional inverse Level 1 variant. */
+.workspace-main .dashboard-page-head h1{
+  color:#fff!important;
+}
+
 /* Page supporting copy */
 .dashboard-page-head p,
-.inquiry-library-template .inquiry-library-title-block p,
-.product-library-page .product-page-head p,
-.quotation-editor-shell .quotation-editor-title p,
-.quotation-editor-shell .page-head p{
+.workspace-main .page-head p,
+.workspace-main .workspace-flat-head p,
+.workspace-main .inquiry-library-title-block p,
+.workspace-main .itinerary-library-title-block p,
+.workspace-main .operation-workspace-title-block p,
+.workspace-main .operation-review-title-block p,
+.workspace-main .quotation-editor-title p,
+.product-library-page .product-page-head p{
   font-size:var(--foundation-type-body)!important;
   line-height:var(--foundation-line-body)!important;
   font-weight:var(--foundation-weight-body)!important;
   letter-spacing:var(--foundation-track-body)!important;
 }
 
-/* Section hierarchy */
-.dashboard-recent-panel .panel-head h2,
-.product-library-page .product-create-panel>.panel-head h2,
-.quotation-editor-shell .section h2,
-.quotation-editor-shell .panel-head h2,
-.quotation-editor-shell .quotation-workflow-compact-head h2{
-  font-size:var(--foundation-type-section)!important;
-  line-height:var(--foundation-line-section)!important;
-  font-weight:var(--foundation-weight-section)!important;
-  letter-spacing:var(--foundation-track-section)!important;
-}
-
-/* QUOTATION TYPOGRAPHY HIERARCHY — FOUNDATION PREVIEW
-   L1 Page = Deep Navy
-   L2 Section = Primary Black
-   L3 Subsection/Card = Dark Neutral
-*/
-.quotation-editor-shell .quotation-editor-title h1,
-.quotation-editor-shell .page-head h1{
-  color:var(--foundation-title-level-1-color)!important;
-}
-
-.quotation-editor-shell .section h2,
-.quotation-editor-shell .panel-head h2,
-.quotation-editor-shell .quotation-workflow-compact-head h2,
-.quotation-editor-shell .quotation-identity-head h3,
-.quotation-editor-shell .quotation-trip-context-head h3,
-.quotation-editor-shell .flight-info-head h3,
-.quotation-editor-shell .cost-setup-toggle>span:first-child{
+/* Level 2 — primary section title */
+.workspace-main h2{
   color:var(--foundation-title-level-2-color)!important;
   font-size:var(--foundation-type-section)!important;
   line-height:var(--foundation-line-section)!important;
@@ -17515,13 +17495,53 @@ td,
   letter-spacing:var(--foundation-track-section)!important;
 }
 
-.quotation-editor-shell .child-cost-card-head h3,
-.quotation-editor-shell .flight-block h4{
+/* Semantic Level 2 titles that use h3 / custom controls in existing markup. */
+.workspace-main .quotation-identity-head h3,
+.workspace-main .quotation-trip-context-head h3,
+.workspace-main .flight-info-head h3,
+.workspace-main .cost-setup-toggle>span:first-child{
+  color:var(--foundation-title-level-2-color)!important;
+  font-size:var(--foundation-type-section)!important;
+  line-height:var(--foundation-line-section)!important;
+  font-weight:var(--foundation-weight-section)!important;
+  letter-spacing:var(--foundation-track-section)!important;
+}
+
+/* Level 3 — subsection / card title */
+.workspace-main h3,
+.workspace-main h4{
   color:var(--foundation-title-level-3-color)!important;
   font-size:var(--foundation-type-subsection)!important;
   line-height:var(--foundation-line-subsection)!important;
   font-weight:var(--foundation-weight-subsection)!important;
   letter-spacing:var(--foundation-track-subsection)!important;
+}
+
+/* Re-promote known semantic Level 2 h3 headings after the generic L3 rule. */
+.workspace-main .quotation-identity-head h3,
+.workspace-main .quotation-trip-context-head h3,
+.workspace-main .flight-info-head h3{
+  color:var(--foundation-title-level-2-color)!important;
+  font-size:var(--foundation-type-section)!important;
+  line-height:var(--foundation-line-section)!important;
+  font-weight:var(--foundation-weight-section)!important;
+  letter-spacing:var(--foundation-track-section)!important;
+}
+
+/* Print / supplier documents keep their dedicated document typography system. */
+.workspace-main .supplier-form h1,
+.workspace-main .supplier-form h2,
+.workspace-main .supplier-form h3,
+.workspace-main .supplier-form h4,
+.workspace-main .supplier-pro h1,
+.workspace-main .supplier-pro h2,
+.workspace-main .supplier-pro h3,
+.workspace-main .supplier-pro h4{
+  color:revert!important;
+  font-size:revert!important;
+  line-height:revert!important;
+  font-weight:revert!important;
+  letter-spacing:revert!important;
 }
 
 /* Core body */
