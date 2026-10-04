@@ -835,11 +835,10 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             <button type="button" className="scenario-remove-pax no-print" onClick={()=>removePricingScenario(s.id)} disabled={pricingScenarios.length<=1}>×</button>
             <div className="scenario-cell-labels">
               <span>{t("Unit Price","单价")}</span>
-              <span>{t("Qty","数量")}</span>
             </div>
           </div>)}
 
-          {scenarioRows.map((row,index)=><div className="scenario-matrix-row" key={row.id} style={{gridTemplateColumns:pricingScenarios.length<=4?`minmax(278px,.92fr) repeat(${pricingScenarios.length},minmax(0,1fr))`:`278px repeat(${pricingScenarios.length},154px)`}}>
+          {scenarioRows.map((row,index)=><div className="scenario-matrix-row" key={row.id} style={{gridTemplateColumns:pricingScenarios.length<=4?`330px repeat(${pricingScenarios.length},minmax(0,1fr))`:`330px repeat(${pricingScenarios.length},176px)`}}>
             <div className="scenario-matrix-static scenario-row-meta">
               <div className="scenario-item-field">
                 <input value={costItemDisplay(row.item)} onChange={e=>setScenarioRow(row.id,{item:e.target.value})} placeholder={t("Cost item","成本项目")} />
@@ -859,18 +858,22 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
               const value=row.values[s.id]||{unitPrice:"",qty:1};
               return <div className="scenario-cost-cell" key={s.id}>
                 <input
+                  className="scenario-unit-price-input"
                   aria-label={t(`${row.item||"Cost"} unit price for ${s.pax} pax`,`${row.item||"成本"} ${s.pax}人单价`)}
                   type="number" min="0" value={value.unitPrice}
                   onChange={e=>setScenarioCell(row.id,s.id,{unitPrice:e.target.value===""?"":Math.max(0,Number(e.target.value))})}
                   placeholder="0.00"
                 />
-                <span>×</span>
-                <input
-                  aria-label={t(`${row.item||"Cost"} quantity for ${s.pax} pax`,`${row.item||"成本"} ${s.pax}人数量`)}
-                  type="number" min="0" value={value.qty}
-                  onChange={e=>setScenarioCell(row.id,s.id,{qty:e.target.value===""?"":Math.max(0,Number(e.target.value))})}
-                  placeholder="1"
-                />
+                <div className="scenario-qty-control">
+                  <span>{t("Qty","数量")}</span>
+                  <input
+                    className="scenario-qty-input"
+                    aria-label={t(`${row.item||"Cost"} quantity for ${s.pax} pax`,`${row.item||"成本"} ${s.pax}人数量`)}
+                    type="number" min="0" value={value.qty}
+                    onChange={e=>setScenarioCell(row.id,s.id,{qty:e.target.value===""?"":Math.max(0,Number(e.target.value))})}
+                    placeholder="1"
+                  />
+                </div>
               </div>;
             })}
           </div>)}
