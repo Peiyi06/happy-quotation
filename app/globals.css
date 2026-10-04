@@ -6841,16 +6841,14 @@ td,
 }
 
 .operation-review-template .operation-brief-grid span,
-.operation-review-template .operation-brief-requirements span,
-.operation-review-template .operation-flight-summary em{
+.operation-review-template .operation-brief-requirements span{
   color:var(--color-text-tertiary);
   font-size:var(--foundation-type-meta);
 }
 
 .operation-review-template .operation-brief-grid strong,
 .operation-review-template .operation-subsection-head h3,
-.operation-review-template .operation-traveller-line b,
-.operation-review-template .operation-flight-summary b{
+.operation-review-template .operation-traveller-line b{
   color:var(--color-text-primary);
   font-weight:var(--foundation-weight-strong);
 }
@@ -7028,14 +7026,12 @@ td,
   border-radius:var(--radius-sm);
 }
 .operation-review-template .operation-brief-grid span,
-.operation-review-template .operation-brief-requirements span,
-.operation-review-template .operation-flight-summary em{
+.operation-review-template .operation-brief-requirements span{
   color:var(--color-text-tertiary);
 }
 .operation-review-template .operation-brief-grid strong,
 .operation-review-template .operation-subsection-head h3,
-.operation-review-template .operation-traveller-line b,
-.operation-review-template .operation-flight-summary b{
+.operation-review-template .operation-traveller-line b{
   color:var(--color-text-primary);
 }
 .operation-review-template .operation-brief-requirements p,
