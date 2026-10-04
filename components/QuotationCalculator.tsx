@@ -636,14 +636,14 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
     {workspaceMode && <section className="quote-meta-panel">
       <div className="quotation-identity-block">
-        <div className="quotation-identity-head"><h3>{t("Quotation Title","报价标题")}</h3></div>
+        <div className="quotation-identity-head"><h2>{t("Quotation Title","报价标题")}</h2></div>
         <input className="quotation-title-input" value={quoteTitle} onChange={e=>setQuoteTitle(e.target.value)} placeholder={t("Create a quotation title","请输入报价标题")} />
       </div>
 
       <div className="quotation-trip-context">
         <div className="quotation-trip-context-head">
           <div>
-            <h3>{t("Customer & Trip","客户与行程")}</h3>
+            <h2>{t("Customer & Trip","客户与行程")}</h2>
           </div>
           <span className={"quotation-source-mode "+(resolvedSourceInquiryId?"linked":"direct")}>
             {resolvedSourceInquiryId?t("Linked Inquiry","来自 Inquiry"):t("Direct Quotation","直接报价")}
