@@ -584,11 +584,14 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
   };
 
-  const matrix = [
-    ["成人（双人一房）", calc.adultNoLeader, calc.adultLeader],
-    ["小孩加床", calc.childBedNoLeader, calc.childBedLeader],
-    ["小孩不加床", calc.childNoBedNoLeader, calc.childNoBedLeader],
-  ] as const;
+  const pricingRows:{type:TravelerType;label:string;mode:string;value:typeof calc.adultNoLeader}[]=[
+    {type:"成人不含领队",label:t("Adult · Twin Sharing","成人（双人一房）"),mode:t("Excl. Leader","不含领队"),value:calc.adultNoLeader},
+    ...(hasLeader?[{type:"成人含领队" as TravelerType,label:t("Adult · Twin Sharing","成人（双人一房）"),mode:t("Incl. Leader","含领队"),value:calc.adultLeader}]:[]),
+    {type:"小孩含床不含领队",label:t("Child with Bed","小孩加床"),mode:t("Excl. Leader","不含领队"),value:calc.childBedNoLeader},
+    ...(hasLeader?[{type:"小孩含床含领队" as TravelerType,label:t("Child with Bed","小孩加床"),mode:t("Incl. Leader","含领队"),value:calc.childBedLeader}]:[]),
+    {type:"小孩不含床不含领队",label:t("Child without Bed","小孩不加床"),mode:t("Excl. Leader","不含领队"),value:calc.childNoBedNoLeader},
+    ...(hasLeader?[{type:"小孩不含床含领队" as TravelerType,label:t("Child without Bed","小孩不加床"),mode:t("Incl. Leader","含领队"),value:calc.childNoBedLeader}]:[])
+  ];
 
   return <main className={"app-shell "+(workspaceMode?"quotation-editor-shell":"")}>
     <header className={"topbar "+(workspaceMode?"quotation-editor-header":"")}>
@@ -1009,81 +1012,105 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </section>
     </div>
 
-    <Section title={t("Customer Quotation","对客报价")}>
-      <div className="customer-quotation-simple">
-        <div className="customer-quotation-selector">
-          <Field label={t("Traveller Type","旅客类型")}><select value={effectiveSelectedType} onChange={e=>{setSelectedType(e.target.value as TravelerType);setManualQuote("")}}>{travelerTypes.filter(x=>hasLeader || x.includes("不含领队")).map(x=><option key={x} value={x}>{travelerTypeDisplay(x)}</option>)}</select></Field>
+    <Section title={t("Quotation Pricing","报价定价")}>
+      <div className="pricing-foundation">
+        <div className="pricing-foundation-head">
+          <div>
+            <span className="pricing-foundation-kicker">{t("SYSTEM PRICING MATRIX","系统定价矩阵")}</span>
+            <p>{t("Review system pricing, then set the final customer price from one source of truth.","先审核系统定价，再从同一个定价来源确认最终对客售价。")}</p>
+          </div>
+          <div className="pricing-foundation-rule">
+            <span>{t("Rounding Rule","取整规则")}</span>
+            <strong>{t(`Nearest RM ${roundUnit}`,`RM ${roundUnit} 取整`)}</strong>
+          </div>
         </div>
 
-        <div className="customer-quotation-summary">
-          <div className="customer-quotation-summary-top">
-            <div className="customer-quotation-supporting">
-              <span>{t("Cost","成本")}</span>
+        <div className="pricing-matrix-table" role="table" aria-label={t("Quotation Pricing Matrix","报价定价矩阵")}>
+          <div className="pricing-matrix-header" role="row">
+            <span>{t("Traveller Type","旅客类型")}</span>
+            <span>{t("Leader","领队")}</span>
+            <span>{t("Cost","成本")}</span>
+            <span>{t("System Suggested","系统建议价")}</span>
+            <span>{t("Final Price","最终售价")}</span>
+            <span>{t("Profit","利润")}</span>
+            <span>{t("Margin","毛利率")}</span>
+          </div>
+
+          {pricingRows.map(row=>{
+            const active=row.type===effectiveSelectedType;
+            const rowFinal=row.value.final;
+            const rowProfit=rowFinal-row.value.cost;
+            const overridden=active&&manualQuote!=="";
+            return <button
+              type="button"
+              role="row"
+              key={row.type}
+              className={"pricing-matrix-row "+(active?"active ":"")+(overridden?"overridden":"")}
+              onClick={()=>{setSelectedType(row.type);setManualQuote("")}}
+            >
+              <span className="pricing-matrix-traveller" role="cell">
+                <i aria-hidden="true"></i>
+                <strong>{row.label}</strong>
+              </span>
+              <span className="pricing-matrix-mode" role="cell">{row.mode}</span>
+              <span role="cell">{money(row.value.cost)}</span>
+              <span role="cell">{money(row.value.rounded)}</span>
+              <span className="pricing-matrix-final" role="cell">
+                <strong>{money(rowFinal)}</strong>
+                {overridden&&<small>{t("Override","人工调整")}</small>}
+              </span>
+              <span role="cell">{money(rowProfit)}</span>
+              <span role="cell">{pct(row.value.margin)}</span>
+            </button>
+          })}
+        </div>
+
+        <div className="pricing-decision">
+          <div className="pricing-decision-head">
+            <div>
+              <span>{t("SELECTED TRAVELLER TYPE","已选择旅客类型")}</span>
+              <h3>{selectedTravelerLabel}</h3>
+              <p>{selectedIncludesLeader?t("Leader cost included","已包含领队成本"):t("Leader cost excluded","不包含领队成本")}</p>
+            </div>
+            <div className={"pricing-decision-state "+(manualQuote!==""?"manual":"system")}>
+              <span>{manualQuote!==""?t("Manual Override","人工调整"):t("System Price","系统价格")}</span>
+            </div>
+          </div>
+
+          <div className="pricing-decision-grid">
+            <div className="pricing-decision-metric">
+              <span>{t("Cost / Pax","每人成本")}</span>
               <strong>{money(selected.cost)}</strong>
             </div>
-            <div className="customer-quotation-supporting">
+            <div className="pricing-decision-metric">
               <span>{t("System Suggested","系统建议价")}</span>
-              <strong>{money(selected.suggested)}</strong>
+              <strong>{money(selected.rounded)}</strong>
+            </div>
+
+            <label className="pricing-final-input">
+              <span>{t("Final Customer Price / Pax","最终对客售价 / 人")}</span>
+              <div>
+                <b>RM</b>
+                <input
+                  type="number"
+                  min="0"
+                  value={manualQuote}
+                  onChange={e=>setManualQuote(e.target.value===""?"":Math.max(0,Number(e.target.value)))}
+                  placeholder={selected.rounded.toFixed(2)}
+                />
+              </div>
+              <small>{manualQuote===""?t("Using system suggested price","目前采用系统建议价"):t(`Adjusted ${money(Number(manualQuote)-selected.rounded)} from system price`,`较系统建议价调整 ${money(Number(manualQuote)-selected.rounded)}`)}</small>
+            </label>
+
+            <div className="pricing-final-result">
+              <span>{t("Final Result","最终结果")}</span>
+              <strong>{money(finalQuote)}</strong>
+              <small>{t("Profit","利润")} {money(finalProfit)} · {t("Margin","毛利率")} {pct(finalMargin)}</small>
             </div>
           </div>
 
-          <div className="customer-quotation-manual">
-            <Field label={t("Manual Final Quote","手动最终报价")}><input type="number" value={manualQuote} onChange={e=>setManualQuote(e.target.value===""?"":Number(e.target.value))} placeholder={t(`Auto round ${roundUnit}`,`自动取整 ${roundUnit}`)} /></Field>
-          </div>
-
-          <div className="customer-quotation-final">
-            <span>{t("Final Quote","最终报价")}</span>
-            <strong>{money(finalQuote)}</strong>
-            <small>{t("Profit","利润")} {money(finalProfit)} · {t("Margin","毛利率")} {pct(finalMargin)}</small>
-          </div>
+          {manualQuote!==""&&<button type="button" className="pricing-reset no-print" onClick={()=>setManualQuote("")}>{t("Use System Suggested","恢复系统建议价")}</button>}
         </div>
-      </div>
-    </Section>
-
-    <Section title={t("Final Quotation Matrix","最终报价矩阵")}>
-      <div className={"quotation-matrix-compare foundation-comparison-matrix quotation-editor-matrix quotation-matrix-cards"+(hasLeader?" has-leader":"")}>
-        {matrix.map(([label,a,b])=><div className="quotation-matrix-row" key={label}>
-          <div className="quotation-matrix-traveller">
-            <span>{t("Traveller Type","旅客类型")}</span>
-            <strong>{label==="成人（双人一房）"?t("Adult · Twin Sharing","成人（双人一房）"):label==="小孩加床"?t("Child with Bed","小孩加床"):t("Child without Bed","小孩不加床")}</strong>
-          </div>
-
-          <div className="quotation-matrix-plan">
-            <div className="quotation-matrix-plan-head">
-              <span>{t("Leader Mode","领队模式")}</span>
-              <strong>{t("Excl. Leader","不含领队")}</strong>
-            </div>
-            <div className="quotation-matrix-plan-metrics">
-              <div className="quotation-matrix-metric" data-comparison-metric data-comparison-role="supporting">
-                <span>{t("Cost","成本")}</span><strong>{money(a.cost)}</strong>
-              </div>
-              <div className="quotation-matrix-metric" data-comparison-metric data-comparison-role="supporting">
-                <span>{t("Profit","利润")}</span><strong>{money(a.profit)}</strong>
-              </div>
-              <div className="quotation-matrix-metric suggested" data-comparison-metric data-comparison-role="recommended">
-                <span>{t("Suggested","建议售价")}</span><strong>{money(a.suggested)}</strong>
-              </div>
-            </div>
-          </div>
-
-          {hasLeader&&<div className="quotation-matrix-plan">
-            <div className="quotation-matrix-plan-head">
-              <span>{t("Leader Mode","领队模式")}</span>
-              <strong>{t("Incl. Leader","含领队")}</strong>
-            </div>
-            <div className="quotation-matrix-plan-metrics">
-              <div className="quotation-matrix-metric" data-comparison-metric data-comparison-role="supporting">
-                <span>{t("Cost","成本")}</span><strong>{money(b.cost)}</strong>
-              </div>
-              <div className="quotation-matrix-metric" data-comparison-metric data-comparison-role="supporting">
-                <span>{t("Profit","利润")}</span><strong>{money(b.profit)}</strong>
-              </div>
-              <div className="quotation-matrix-metric suggested" data-comparison-metric data-comparison-role="recommended">
-                <span>{t("Suggested","建议售价")}</span><strong>{money(b.suggested)}</strong>
-              </div>
-            </div>
-          </div>}
-        </div>)}
       </div>
     </Section>
     </>}
