@@ -368,9 +368,15 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
   const setTraveler = (id:string, patch:Partial<TravelerCostRow>) => setTravelerRows(rows => rows.map(r => r.id === id ? {...r,...patch}:r));
   const setScenarioRow=(id:string,patch:Partial<Omit<ScenarioCostRow,"values">>)=>setScenarioRows(rows=>rows.map(r=>r.id===id?{...r,...patch}:r));
-  const setScenarioCell=(rowId:string,scenarioId:string,patch:Partial<ScenarioValue>)=>setScenarioRows(rows=>rows.map(r=>r.id===rowId?{
-    ...r,values:{...r.values,[scenarioId]:{unitPrice:"",qty:1,...(r.values[scenarioId]||{}),...patch}}
-  }:r));
+  const setScenarioCell=(rowId:string,scenarioId:string,patch:Partial<ScenarioValue>)=>setScenarioRows(rows=>rows.map(r=>{
+    if(r.id!==rowId) return r;
+    const current=r.values[scenarioId]||{unitPrice:"",qty:1};
+    const next:ScenarioValue={
+      unitPrice:patch.unitPrice===undefined?current.unitPrice:patch.unitPrice,
+      qty:patch.qty===undefined?current.qty:patch.qty
+    };
+    return {...r,values:{...r.values,[scenarioId]:next}};
+  }));
   const addScenarioRow=()=>setScenarioRows(rows=>[...rows,{
     id:uid(),item:"",direction:"cost",mode:"每人",currency:"RM",note:"",
     values:Object.fromEntries(pricingScenarios.map(s=>[s.id,{unitPrice:"",qty:1}]))
@@ -387,7 +393,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     const next=Math.max(1,Math.round(Number(raw)||0));
     if(!next||pricingScenarios.some(s=>s.pax===next)) return;
     const id=`pax-${next}-${uid()}`;
-    setPricingScenarios(items=>[...items,{id,pax:next,manualFinalPrice:""}].sort((a,b)=>a.pax-b.pax));
+    setPricingScenarios(items=>[...items,{id,pax:next,manualFinalPrice:"" as const}].sort((a,b)=>a.pax-b.pax));
     setScenarioRows(rows=>rows.map(row=>({...row,values:{...row.values,[id]:{unitPrice:"",qty:1}}})));
   };
   const removePricingScenario=(id:string)=>{
@@ -815,7 +821,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </div>}
     >
       <div className="scenario-matrix-wrap">
-        <div className="scenario-cost-matrix" style={{"--scenario-count":String(pricingScenarios.length)} as React.CSSProperties}>
+        <div className="scenario-cost-matrix">
           <div className="scenario-matrix-header scenario-matrix-static">
             <span>{t("Cost Item","成本项目")}</span>
             <span>{t("Method","计算方式")}</span>
