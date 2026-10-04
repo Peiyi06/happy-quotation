@@ -106,7 +106,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
   async function copyText(text:string,label:string){
     try{
       await navigator.clipboard.writeText(text);
-      setCopyMessage(t(label+" copied ✓",label==="Basic request"?"基础资料模板已复制 ✓":"详细资料模板已复制 ✓"));
+      setCopyMessage(t("Request template copied ✓","资料收集模板已复制 ✓"));
       window.setTimeout(()=>setCopyMessage(""),1800);
     }catch{
       setCopyMessage(t("Unable to copy. Please copy manually.","无法复制，请手动复制。"));
@@ -114,101 +114,42 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
     }
   }
 
-  function basicRequestText(lang:"zh"|"en"){
+  function requestTemplateText(lang:"zh"|"en"){
     if(lang==="en"){
       return [
-        "Hello, to help us plan a suitable itinerary and quotation for you, please provide the following information:",
+        "Hello, to help us prepare a suitable itinerary and quotation, please provide the following information:",
         "",
-        "1. Departure city:",
-        "2. Destination:",
-        "3. Travel start date:",
-        "4. Travel end date:",
-        "5. Total pax:",
-        "6. Adult:",
-        "7. Senior:",
-        "8. Child:",
-        "9. Child age(s):",
-        "10. Budget range:",
-        "11. Tour type (Private / Company / Series, if known):",
-        "12. Flight preference (airline / timing / baggage, if any):",
-        "13. Places you would like to visit / special requests:",
-        "14. Please note any mobility, wheelchair, stroller or care requirements:",
+        "1. Guest’s Current City:",
+        "2. Preferred Departure Airport:",
+        "3. Travel Destination:",
+        "4. Estimated Trip Duration:",
+        "5. Departure Date / Return Date:",
+        "6. Total Number of Travellers:",
+        "7. Number of Adults / Seniors / Children:",
+        "8. Child Age(s), if any:",
+        "9. Budget Range:",
+        "10. Tour Type (Private / Company / Other, if known):",
+        "11. Places / Activities You Would Like to Include or Any Special Requests:",
         "",
-        "Once we receive the details, we will proceed with the planning. Thank you 😊"
+        "Once we receive the details, we will proceed with the itinerary planning and quotation. Thank you 😊"
       ].join("\n");
     }
     return [
       "您好，为了方便我们为您规划合适的旅游行程与报价，请提供以下资料：",
       "",
-      "1. 出发城市：",
-      "2. 旅游目的地：",
-      "3. 出发日期：",
-      "4. 回程日期：",
-      "5. 总人数：",
-      "6. 成人：",
-      "7. 老人：",
-      "8. 小孩：",
-      "9. 小孩年龄：",
-      "10. 预算范围：",
-      "11. 团型（私人团 / 公司团 / 系列团，如已确定）：",
-      "12. 航班偏好（航空公司 / 时间 / 行李需求，如有）：",
-      "13. 想去的景点 / 特别要求：",
-      "14. 如有老人行动不便、轮椅需求、婴儿车等，请注明：",
+      "1. 客人所在城市：",
+      "2. 想从哪个机场出发：",
+      "3. 旅游目的地：",
+      "4. 预计旅游天数：",
+      "5. 出发日期 / 回程日期：",
+      "6. 总人数：",
+      "7. 成人 / 老人 / 小孩人数：",
+      "8. 小孩年龄（如有）：",
+      "9. 预算范围：",
+      "10. 团型（私人团 / 公司团 / 其他，如已确定）：",
+      "11. 想去的景点 / 活动 / 特别要求：",
       "",
-      "收到资料后，我们会根据您的需求进一步规划，谢谢 😊"
-    ].join("\n");
-  }
-
-  function detailedRequestText(lang:"zh"|"en"){
-    if(lang==="en"){
-      return [
-        "Hello, to help us arrange a more complete itinerary and quotation, please provide the following information:",
-        "",
-        "1. Departure city:",
-        "2. Destination:",
-        "3. Travel start date:",
-        "4. Travel end date:",
-        "5. Total pax:",
-        "6. Adult:",
-        "7. Senior:",
-        "8. Child:",
-        "9. Child age(s):",
-        "10. Budget range:",
-        "11. Tour type (Private / Company / Series, if known):",
-        "12. Hotel requirements (star rating / room type / location):",
-        "13. Meal requirements:",
-        "14. Flight preference or confirmed flight (airline / flight no. / date / timing / baggage, if available):",
-        "15. Places you would like to visit / special requests:",
-        "16. Senior details (age / mobility condition):",
-        "17. Child requirements (child meal / child seat / stroller, etc.):",
-        "18. Other mobility or care requirements:",
-        "",
-        "Once we receive the details, we will proceed with the planning and quotation. Thank you 😊"
-      ].join("\n");
-    }
-    return [
-      "您好，为了方便我们为您安排更完整的旅游行程与报价，请提供以下资料：",
-      "",
-      "1. 出发城市：",
-      "2. 旅游目的地：",
-      "3. 出发日期：",
-      "4. 回程日期：",
-      "5. 总人数：",
-      "6. 成人：",
-      "7. 老人：",
-      "8. 小孩：",
-      "9. 小孩年龄：",
-      "10. 预算范围：",
-      "11. 团型（私人团 / 公司团 / 系列团，如已确定）：",
-      "12. 酒店要求（星级 / 房型 / 地点）：",
-      "13. 餐食要求：",
-      "14. 航班偏好或已确认航班（航空公司 / 航班号 / 日期 / 时间 / 行李，如有）：",
-      "15. 想去的景点 / 特别要求：",
-      "16. 老人情况（年龄 / 行动情况）：",
-      "17. 小孩特别需求（儿童餐 / 儿童座椅 / 婴儿车等）：",
-      "18. 其他行动或照顾需求：",
-      "",
-      "收到以上资料后，我们会根据您的需求进一步规划与报价，谢谢 😊"
+      "收到资料后，我们会根据您的需求进一步规划行程与报价，谢谢 😊"
     ].join("\n");
   }
 
@@ -294,19 +235,9 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
               {t("Request Template","资料收集模板")} <span className="customer-request-copy-chevron" aria-hidden="true"></span>
             </button>
             {showCopyMenu&&<div className="customer-request-copy-popover">
-              <div className="customer-request-copy-group">
-                <span>{t("Basic Request","基础版")}</span>
-                <div>
-                  <button type="button" onClick={()=>{setShowCopyMenu(false);void copyText(basicRequestText("zh"),"Basic request");}}>中文</button>
-                  <button type="button" onClick={()=>{setShowCopyMenu(false);void copyText(basicRequestText("en"),"Basic request");}}>English</button>
-                </div>
-              </div>
-              <div className="customer-request-copy-group">
-                <span>{t("Detailed Request","详细版")}</span>
-                <div>
-                  <button type="button" onClick={()=>{setShowCopyMenu(false);void copyText(detailedRequestText("zh"),"Detailed request");}}>中文</button>
-                  <button type="button" onClick={()=>{setShowCopyMenu(false);void copyText(detailedRequestText("en"),"Detailed request");}}>English</button>
-                </div>
+              <div className="customer-request-copy-group customer-request-copy-language-group">
+                <button type="button" onClick={()=>{setShowCopyMenu(false);void copyText(requestTemplateText("zh"),"Request template");}}>中文</button>
+                <button type="button" onClick={()=>{setShowCopyMenu(false);void copyText(requestTemplateText("en"),"Request template");}}>English</button>
               </div>
             </div>}
           </div>
