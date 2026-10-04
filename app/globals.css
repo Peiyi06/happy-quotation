@@ -19628,3 +19628,114 @@ td,
   }
 }
 
+
+
+/* FOUNDATION: Collapsible Cost Setup Sections */
+.quotation-editor-shell .cost-setup-collapsible{
+  padding:0!important;
+  overflow:hidden;
+  border:1px solid var(--color-border-default);
+  border-radius:var(--radius-lg);
+  background:var(--color-bg-surface);
+  box-shadow:none;
+}
+
+.quotation-editor-shell .cost-setup-toggle{
+  width:100%;
+  min-height:68px;
+  padding:0 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  border:0;
+  background:transparent;
+  color:var(--color-text-primary);
+  text-align:left;
+  cursor:pointer;
+  transition:background .16s ease;
+}
+
+.quotation-editor-shell .cost-setup-toggle:hover{
+  background:#fbfcfd;
+}
+
+.quotation-editor-shell .cost-setup-toggle:focus-visible{
+  outline:2px solid var(--color-info-text);
+  outline-offset:-2px;
+}
+
+.quotation-editor-shell .cost-setup-toggle>span:first-child{
+  color:var(--color-brand-primary);
+  font-size:20px;
+  line-height:1.2;
+  font-weight:750;
+}
+
+.quotation-editor-shell .cost-setup-chevron{
+  width:30px;
+  height:30px;
+  flex:0 0 30px;
+  display:grid;
+  place-items:center;
+  border-radius:999px;
+  color:var(--color-text-secondary);
+  font-size:20px;
+  line-height:1;
+  transform:rotate(0deg);
+  transition:transform .18s ease,background .16s ease,color .16s ease;
+}
+
+.quotation-editor-shell .cost-setup-toggle:hover .cost-setup-chevron{
+  background:var(--color-bg-soft);
+  color:var(--color-brand-primary);
+}
+
+.quotation-editor-shell .cost-setup-collapsible.open .cost-setup-chevron{
+  transform:rotate(180deg);
+}
+
+.quotation-editor-shell .cost-setup-content{
+  padding:0 22px 22px;
+  border-top:1px solid var(--color-border-default);
+  animation:costSetupReveal .18s ease both;
+}
+
+.quotation-editor-shell .cost-setup-actions{
+  display:flex;
+  justify-content:flex-end;
+  padding:14px 0 12px;
+}
+
+.quotation-editor-shell .cost-setup-actions .btn{
+  min-height:38px!important;
+  height:38px!important;
+  padding:0 14px!important;
+  font-size:11px!important;
+}
+
+.quotation-editor-shell .cost-setup-content .child-grid{
+  padding-top:16px;
+}
+
+.quotation-editor-shell .cost-setup-actions + .leader-cost-table{
+  margin-top:0;
+}
+
+@keyframes costSetupReveal{
+  from{opacity:0;transform:translateY(-4px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@media(max-width:700px){
+  .quotation-editor-shell .cost-setup-toggle{
+    min-height:60px;
+    padding:0 16px;
+  }
+  .quotation-editor-shell .cost-setup-toggle>span:first-child{
+    font-size:18px;
+  }
+  .quotation-editor-shell .cost-setup-content{
+    padding:0 16px 16px;
+  }
+}
