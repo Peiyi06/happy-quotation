@@ -290,7 +290,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
       </div>
     </section>
 
-    <section className="panel ios-form-card inquiry-flights-ios">
+    <section className="panel ios-form-card inquiry-flights-ios flight-section-surface">
       <FlightInformation
         value={flightInformation}
         onChange={setFlightInformation}
