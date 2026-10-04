@@ -18375,9 +18375,6 @@ td,
   width:max-content;
   min-width:max-content;
 }
-.scenario-cost-matrix.extended-scenarios .scenario-matrix-row{
-  width:max-content;
-}
 .scenario-cost-matrix.extended-scenarios .scenario-matrix-static{
   grid-template-columns:118px 100px 60px;
   gap:7px;
