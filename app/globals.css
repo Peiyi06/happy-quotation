@@ -17616,6 +17616,57 @@ td,
   letter-spacing:0!important;
 }
 
+/* TYPOGRAPHY AUDIT — HIGH-SPECIFICITY LEGACY NORMALIZATION */
+.workspace-main .page-head:not(.page-hero-header):not(.page-compact-header) h1:not(.supplier-form-page *),
+.workspace-main .page-compact-header h1,
+.workspace-main .new-inquiry-template .new-inquiry-title-block h1,
+.workspace-main .edit-inquiry-template .edit-inquiry-title-block h1,
+.workspace-main .inquiry-detail-template .inquiry-detail-title-block h1,
+.workspace-main .quotation-detail-template .quotation-detail-title-block h1,
+.workspace-main .operation-review-template .operation-review-title-block h1,
+.workspace-main .itinerary-detail-template .itinerary-detail-title-block h1,
+.workspace-main .itinerary-editor .itinerary-editor-title-block h1{
+  color:var(--foundation-title-level-1-color)!important;
+  font-size:var(--foundation-type-page)!important;
+  line-height:var(--foundation-line-page)!important;
+  font-weight:var(--foundation-weight-page)!important;
+  letter-spacing:var(--foundation-track-page)!important;
+}
+
+.workspace-main .new-inquiry-template .inquiry-editor>.panel>.panel-head h2,
+.workspace-main .edit-inquiry-template .inquiry-editor>.panel>.panel-head h2,
+.workspace-main .new-inquiry-template .new-inquiry-workflow-panel .inquiry-workflow-panel-head h2,
+.workspace-main .inquiry-detail-template .inquiry-workflow-panel-head h2,
+.workspace-main .quotation-editor-shell .quotation-editor-workflow .quotation-workflow-compact-head h2{
+  color:var(--foundation-title-level-2-color)!important;
+  font-size:var(--foundation-type-section)!important;
+  line-height:var(--foundation-line-section)!important;
+  font-weight:var(--foundation-weight-section)!important;
+  letter-spacing:var(--foundation-track-section)!important;
+}
+
+/* Overlay/dialog typography follows the same hierarchy even outside workspace-main. */
+.quotation-type-modal .quotation-type-head h2,
+.workspace-module-modal h2,
+.ai-intake-modal .ai-intake-head h2,
+.unsaved-modal h3,
+.unsaved-dialog h3{
+  color:var(--foundation-title-level-2-color)!important;
+  font-size:var(--foundation-type-section)!important;
+  line-height:var(--foundation-line-section)!important;
+  font-weight:var(--foundation-weight-section)!important;
+  letter-spacing:var(--foundation-track-section)!important;
+}
+
+.quotation-type-modal .quotation-type-primary-card h3,
+.ai-intake-modal .ai-intake-foundation-section>.panel-head h3{
+  color:var(--foundation-title-level-3-color)!important;
+  font-size:var(--foundation-type-subsection)!important;
+  line-height:var(--foundation-line-subsection)!important;
+  font-weight:var(--foundation-weight-subsection)!important;
+  letter-spacing:var(--foundation-track-subsection)!important;
+}
+
 /* Core body */
 .inquiry-library-template .inquiry-table td,
 .dashboard-recent-table td,
