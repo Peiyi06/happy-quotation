@@ -145,6 +145,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [flightTotalPrice, setFlightTotalPrice] = useState<number | "">("");
   const [flightPriceCurrency, setFlightPriceCurrency] = useState<Currency>("RM");
   const [customerName, setCustomerName] = useState("");
+  const [customerContact, setCustomerContact] = useState("");
+  const [departureCity, setDepartureCity] = useState("");
   const [status, setStatus] = useState<QuoteStatus>("draft");
   const [tourGroupId, setTourGroupId] = useState("");
   const [tourGroups, setTourGroups] = useState<any[]>([]);
@@ -246,6 +248,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         setDepartureDate(initialQuotation.departure_date || "");
         setReturnDate(initialQuotation.return_date || "");
         setCustomerName(initialQuotation.customer_name || "");
+        setCustomerContact(initialQuotation.quotation_data?.customerContact || "");
+        setDepartureCity(initialQuotation.quotation_data?.departureCity || initialQuotation.quotation_data?.sourceInquirySnapshot?.departureCity || "");
         setStatus(initialQuotation.status || "draft");
         setTourGroupId(initialQuotation.tour_group_id || "");
         setTourCode(initialQuotation.tour_code || "");
@@ -255,7 +259,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       }
       Object.entries(source).forEach(([k, v]) => {
         const setters: Record<string, (x: any) => void> = {
-          tourCode:setTourCode,businessType:setBusinessType,op:setOp,supplier:setSupplier,pax:setPax,mainCurrency:setMainCurrency,mainRate:setMainRate,
+          tourCode:setTourCode,businessType:setBusinessType,op:setOp,supplier:setSupplier,pax:setPax,mainCurrency:setMainCurrency,mainRate:setMainRate,customerContact:setCustomerContact,departureCity:setDepartureCity,
           outboundFromAirport:setOutboundFromAirport,outboundToAirport:setOutboundToAirport,outboundFlightNo:setOutboundFlightNo,outboundFlightDate:setOutboundFlightDate,outboundDepartureTime:setOutboundDepartureTime,outboundArrivalTime:setOutboundArrivalTime,outboundNextDay:setOutboundNextDay,
           outboundTransitOpen:setOutboundTransitOpen,outboundTransitFromAirport:setOutboundTransitFromAirport,outboundTransitToAirport:setOutboundTransitToAirport,outboundTransitFlightNo:setOutboundTransitFlightNo,outboundTransitFlightDate:setOutboundTransitFlightDate,outboundTransitDepartureTime:setOutboundTransitDepartureTime,outboundTransitArrivalTime:setOutboundTransitArrivalTime,outboundTransitNextDay:setOutboundTransitNextDay,
           returnFromAirport:setReturnFromAirport,returnToAirport:setReturnToAirport,returnFlightNo:setReturnFlightNo,returnFlightDate:setReturnFlightDate,returnDepartureTime:setReturnDepartureTime,returnArrivalTime:setReturnArrivalTime,returnNextDay:setReturnNextDay,
@@ -290,7 +294,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType,manualQuote]);
 
   const currentSnapshot = JSON.stringify({
-    quoteTitle,destination,departureDate,returnDate,customerName,status,tourGroupId,
+    quoteTitle,destination,departureDate,returnDate,customerName,customerContact,departureCity,status,tourGroupId,
     outboundFromAirport,outboundToAirport,outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
     outboundTransitOpen,outboundTransitFromAirport,outboundTransitToAirport,outboundTransitFlightNo,outboundTransitFlightDate,outboundTransitDepartureTime,outboundTransitArrivalTime,outboundTransitNextDay,
     returnFromAirport,returnToAirport,returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
@@ -505,7 +509,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setSaving(true);
     setSaveMessage("");
 
-    const quotationData = {tourCode,businessType,op:op || currentStaffName,opStaffId:initialQuotation?.quotation_data?.opStaffId || initialQuotation?.owner_id || currentStaffId,supplier,pax,mainCurrency,mainRate,
+    const quotationData = {tourCode,businessType,op:op || currentStaffName,opStaffId:initialQuotation?.quotation_data?.opStaffId || initialQuotation?.owner_id || currentStaffId,supplier,pax,mainCurrency,mainRate,customerContact,departureCity,
       outboundFromAirport,outboundToAirport,outboundFlightNo,outboundFlightDate,outboundDepartureTime,outboundArrivalTime,outboundNextDay,
       outboundTransitOpen,outboundTransitFromAirport,outboundTransitToAirport,outboundTransitFlightNo,outboundTransitFlightDate,outboundTransitDepartureTime,outboundTransitArrivalTime,outboundTransitNextDay,
       returnFromAirport,returnToAirport,returnFlightNo,returnFlightDate,returnDepartureTime,returnArrivalTime,returnNextDay,
@@ -517,7 +521,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       source_inquiry_id: resolvedSourceInquiryId || "",
       tour_group_id: tourGroupId || "",
       tour_code: tourCode,
-      title: quoteTitle || tourCode || "Untitled Quotation",
+      title: quoteTitle || customerName || destination || "Untitled Quotation",
       destination: destination || "",
       departure_date: departureDate || "",
       return_date: returnDate || "",
@@ -655,6 +659,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setFlightTotalPrice("");
     setFlightPriceCurrency("RM");
     setCustomerName("");
+    setCustomerContact("");
+    setDepartureCity("");
     setStatus("draft");
     setTourGroupId("");
 
@@ -756,14 +762,41 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     </section>
 
     {workspaceMode && <section className="quote-meta-panel">
-      <div className="quote-meta-grid">
-        <Field label={t("Quotation Title","报价标题")}><input value={quoteTitle} onChange={e=>setQuoteTitle(e.target.value)} placeholder={t("e.g. Jiangxi 8D7N · HT Group","例如：江西 8D7N · HT Group")} /></Field>
-        <Field label={t("Destination","目的地")}><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder="China / Japan / Thailand" /></Field>
-        <Field label={t("Departure Date","出发日期")}><input type="text" value={formatDisplayDate(departureDate)} readOnly placeholder="—" /></Field>
-        <Field label={t("Return Date (Arrival)","返程日期（抵达）")}><input type="text" value={formatDisplayDate(returnDate)} readOnly placeholder="—" /></Field>
-        <Field label={t("Customer","客户")}><input value={customerName} onChange={e=>setCustomerName(e.target.value)} placeholder={t("Customer / Company","客户 / 公司")} /></Field>
-        <Field label={t("Tour Group","团组")}><select value={tourGroupId} onChange={e=>setTourGroupId(e.target.value)}><option value="">{t("Unclassified","未分类")}</option>{tourGroups.map((g:any)=><option key={g.id} value={g.id}>{g.name}</option>)}</select></Field>
-        <Field label={t("Status","状态")}><div className={"quote-status-readonly status-"+displayStatus}>{displayStatus==="under_review"?t("Under Review","审核中"):displayStatus==="revision_required"?t("Revision Required","需要修改"):displayStatus==="ready"?t("Ready","已就绪"):displayStatus==="sent"?t("Sent","已发送"):displayStatus==="revised"?t("Revised","已修改"):displayStatus==="confirmed"?t("Confirmed","已确认"):displayStatus==="lost"?t("Lost","未成交"):displayStatus==="archived"?t("Archived","已归档"):t("Draft","草稿")}</div></Field>
+      <div className="quotation-identity-block">
+        <Field label={t("Quotation Title","报价标题")}><input value={quoteTitle} onChange={e=>setQuoteTitle(e.target.value)} placeholder={t("e.g. Hokkaido Winter 7D5N · HT Group","例如：北海道冬季 7D5N · HT Group")} /></Field>
+      </div>
+
+      <div className="quotation-trip-context">
+        <div className="quotation-trip-context-head">
+          <div>
+            <span className="page-kicker">{t("CUSTOMER & TRIP","客户与行程")}</span>
+            <h3>{t("Customer & Trip Information","客户与行程资料")}</h3>
+          </div>
+          <span className={"quotation-source-mode "+(resolvedSourceInquiryId?"linked":"direct")}>
+            {resolvedSourceInquiryId?t("Linked Inquiry","来自 Inquiry"):t("Direct Quotation","直接报价")}
+          </span>
+        </div>
+
+        {resolvedSourceInquiryId
+          ?<div className="quotation-trip-readonly-grid">
+              <div><span>{t("Customer / Company","客户 / 公司")}</span><strong>{resolvedSourceInquirySnapshot?.customerName||customerName||"—"}</strong></div>
+              <div><span>{t("Contact","联系方式")}</span><strong>{resolvedSourceInquirySnapshot?.contact||customerContact||"—"}</strong></div>
+              <div><span>{t("Departure City","出发城市")}</span><strong>{resolvedSourceInquirySnapshot?.departureCity||departureCity||"—"}</strong></div>
+              <div><span>{t("Destination","目的地")}</span><strong>{resolvedSourceInquirySnapshot?.destination||destination||"—"}</strong></div>
+              <div><span>{t("Travel Dates","旅游日期")}</span><strong>{[resolvedSourceInquirySnapshot?.travelStartDate||departureDate,resolvedSourceInquirySnapshot?.travelEndDate||returnDate].filter(Boolean).map(formatDisplayDate).join(" → ")||"—"}</strong></div>
+              <div><span>{t("Pax","人数")}</span><strong>{resolvedSourceInquirySnapshot?.pax||pax||"—"}</strong></div>
+              <div><span>{t("Tour Type","团型")}</span><strong>{resolvedSourceInquirySnapshot?.tourType||businessType||"—"}</strong></div>
+            </div>
+          :<div className="quote-meta-grid quotation-direct-trip-grid">
+              <Field label={t("Customer / Company","客户 / 公司")}><input value={customerName} onChange={e=>setCustomerName(e.target.value)} placeholder={t("Optional for product quotation","产品报价可留空")} /></Field>
+              <Field label={t("Contact","联系方式")}><input value={customerContact} onChange={e=>setCustomerContact(e.target.value)} placeholder={t("Optional","可留空")} /></Field>
+              <Field label={t("Departure City","出发城市")}><input value={departureCity} onChange={e=>setDepartureCity(e.target.value)} placeholder={t("Optional","可留空")} /></Field>
+              <Field label={t("Destination","目的地")}><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder="China / Japan / Thailand" /></Field>
+              <Field label={t("Travel Start Date","出发日期")}><input type="date" value={departureDate} onChange={e=>setDepartureDate(e.target.value)} /></Field>
+              <Field label={t("Travel End Date","返程日期")}><input type="date" value={returnDate} onChange={e=>setReturnDate(e.target.value)} /></Field>
+              <Field label={t("Pax","人数")}><input type="number" min="1" value={pax} onChange={e=>setPax(Number(e.target.value)||1)} /></Field>
+              <Field label={t("Tour Type","团型")}><input value={businessType} onChange={e=>setBusinessType(e.target.value)} placeholder={t("Private / Corporate / Series","私人团 / 企业团 / 系列产品")} /></Field>
+            </div>}
       </div>
 
       <div className="flight-info-card">
@@ -869,22 +902,23 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       {saveMessage && <div className="save-message">{saveMessage}</div>}
     </section>}
 
-    <Section title={t("Basic Information & Profit Settings","基本资料 & 利润设置")}>
-      <div className="form-grid six">
-        <Field label={t("Tour Code","团号")}><input value={tourCode} onChange={e=>setTourCode(e.target.value)} /></Field>
-        <Field label={t("Business Type","业务类型")}><input value={businessType} onChange={e=>setBusinessType(e.target.value)} /></Field>
-        <Field label="OP"><input value={op || currentStaffName} readOnly /></Field>
+    <Section title={t("Commercial Settings","商业设置")}>
+      <div className="form-grid six quotation-commercial-core">
         <Field label={t("Supplier","供应商")}><input value={supplier} onChange={e=>setSupplier(e.target.value)} /></Field>
-        <Field label={t("Pax","人数")}><input type="number" min="1" value={pax} onChange={e=>setPax(Number(e.target.value)||1)} /></Field>
         <Field label={t("Main Currency","主要币种")}><select value={mainCurrency} onChange={e=>setMainCurrency(e.target.value as Currency)}>{currencies.map(c=><option key={c} value={c}>{c==="其他"?t("Other","其他"):c}</option>)}</select></Field>
-        <Field label={t("Main Exchange Rate → RM","主要汇率 → RM")}><input type="number" step="0.0001" value={mainRate} onChange={e=>setMainRate(Number(e.target.value)||0)} /></Field>
+        <Field label={t("Exchange Rate → RM","汇率 → RM")}><input type="number" step="0.0001" value={mainRate} onChange={e=>setMainRate(Number(e.target.value)||0)} /></Field>
         <Field label={t("Profit Method","利润方式")}><select value={profitMode} onChange={e=>setProfitMode(e.target.value as ProfitMode)}>{profitModes.map(x=><option key={x} value={x}>{profitModeLabel(x)}</option>)}</select></Field>
         <Field label={t("Profit Rate","利润率")}><input type="number" step="0.01" value={profitRate} onChange={e=>setProfitRate(Number(e.target.value)||0)} /></Field>
-        <Field label={t("Minimum Profit / Pax","最低毛利 / 人")}><input type="number" value={minProfit} onChange={e=>setMinProfit(e.target.value===""?"":Number(e.target.value))} placeholder={t("Optional","可留空")} /></Field>
-        <Field label={t("Maximum Profit / Pax","最高毛利 / 人")}><input type="number" value={maxProfit} onChange={e=>setMaxProfit(e.target.value===""?"":Number(e.target.value))} placeholder={t("Optional","可留空")} /></Field>
-        <Field label={t("Fixed Profit / Pax","固定利润 / 人")}><input type="number" value={fixedProfit} onChange={e=>setFixedProfit(e.target.value===""?"":Number(e.target.value))} placeholder={t("Fixed amount mode","固定金额模式")} /></Field>
-        <Field label={t("Quote Rounding","报价取整")}><input type="number" min="1" value={roundUnit} onChange={e=>setRoundUnit(Number(e.target.value)||1)} /></Field>
       </div>
+      <details className="quotation-advanced-profit">
+        <summary>{t("Advanced Profit Settings","高级利润设置")}</summary>
+        <div className="form-grid four">
+          <Field label={t("Minimum Profit / Pax","最低毛利 / 人")}><input type="number" value={minProfit} onChange={e=>setMinProfit(e.target.value===""?"":Number(e.target.value))} placeholder={t("Optional","可留空")} /></Field>
+          <Field label={t("Maximum Profit / Pax","最高毛利 / 人")}><input type="number" value={maxProfit} onChange={e=>setMaxProfit(e.target.value===""?"":Number(e.target.value))} placeholder={t("Optional","可留空")} /></Field>
+          <Field label={t("Fixed Profit / Pax","固定利润 / 人")}><input type="number" value={fixedProfit} onChange={e=>setFixedProfit(e.target.value===""?"":Number(e.target.value))} placeholder={t("Fixed amount mode","固定金额模式")} /></Field>
+          <Field label={t("Quote Rounding","报价取整")}><input type="number" min="1" value={roundUnit} onChange={e=>setRoundUnit(Number(e.target.value)||1)} /></Field>
+        </div>
+      </details>
     </Section>
 
     <Section title={t("Traveller Cost Input","旅客成本输入")} action={<button className="btn no-print" onClick={addTraveler}>{t("+ Add Cost Row","+ 新增成本项目")}</button>}>
