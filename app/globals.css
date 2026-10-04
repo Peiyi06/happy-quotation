@@ -18368,3 +18368,43 @@ td,
     overflow-x:hidden;
   }
 }
+
+
+/* FOUNDATION REFINEMENT P3: stable extended scenarios */
+.scenario-cost-matrix.extended-scenarios{
+  width:max-content;
+  min-width:max-content;
+}
+.scenario-cost-matrix.extended-scenarios .scenario-matrix-row{
+  width:max-content;
+}
+.scenario-cost-matrix.extended-scenarios .scenario-matrix-static{
+  grid-template-columns:118px 100px 60px;
+  gap:7px;
+}
+.scenario-cost-matrix.extended-scenarios .scenario-cost-cell{
+  grid-template-columns:minmax(88px,1fr) 10px 40px;
+  gap:5px;
+  padding:7px 8px;
+}
+.scenario-cost-matrix.extended-scenarios .scenario-row-meta{
+  padding:7px 8px;
+}
+.scenario-cost-matrix.extended-scenarios .scenario-row-meta input,
+.scenario-cost-matrix.extended-scenarios .scenario-row-meta select,
+.scenario-cost-matrix.extended-scenarios .scenario-cost-cell input{
+  min-width:0;
+  height:34px;
+  min-height:34px;
+}
+.scenario-cost-matrix.extended-scenarios .scenario-matrix-pax-head{
+  padding:9px 10px;
+}
+.scenario-cost-matrix.extended-scenarios .scenario-cell-labels{
+  grid-template-columns:1fr 40px;
+  gap:5px;
+}
+.scenario-matrix-wrap:has(.scenario-cost-matrix.extended-scenarios){
+  overflow-x:auto;
+  scrollbar-gutter:stable;
+}
