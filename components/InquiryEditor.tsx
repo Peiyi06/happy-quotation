@@ -3,11 +3,8 @@
 import { useEffect,useMemo,useRef,useState } from "react";
 import { useRouter } from "next/navigation";
 import InquiryAiIntake from "@/components/InquiryAiIntake";
+import FlightInformation,{flightInformationFromLegacyFlights,flightInformationToLegacyFlights,type FlightInformationValue} from "@/components/FlightInformation";
 import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
-
-type InquiryFlight={id:string;from:string;to:string;flightNo:string;date:string;departureTime:string;arrivalTime:string;remarks:string};
-const flightUid=()=>Math.random().toString(36).slice(2,10);
-const emptyFlight=():InquiryFlight=>({id:flightUid(),from:"",to:"",flightNo:"",date:"",departureTime:"",arrivalTime:"",remarks:""});
 
 export default function InquiryEditor({initialInquiry,currentStaffName,backHref="/inquiries"}:{initialInquiry?:any;currentStaffName:string;backHref?:string}){
   const router=useRouter();
@@ -32,7 +29,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
   const [budget,setBudget]=useState(initialInquiry?.budget||"");
   const [tourType,setTourType]=useState(initialInquiry?.tour_type||"");
   const [flightRequirement,setFlightRequirement]=useState(initialInquiry?.flight_requirement||"");
-  const [suggestedFlights,setSuggestedFlights]=useState<InquiryFlight[]>(Array.isArray(initialInquiry?.inquiry_data?.suggestedFlights)?initialInquiry.inquiry_data.suggestedFlights:[]);
+  const [flightInformation,setFlightInformation]=useState<FlightInformationValue>(()=>initialInquiry?.inquiry_data?.flightInformation||flightInformationFromLegacyFlights(initialInquiry?.inquiry_data?.suggestedFlights||[]));
   const [hotelRequirement,setHotelRequirement]=useState(initialInquiry?.hotel_requirement||"");
   const [mealRequirement,setMealRequirement]=useState(initialInquiry?.meal_requirement||"");
   const [specialRequest,setSpecialRequest]=useState(initialInquiry?.special_request||"");
@@ -62,8 +59,8 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
   const editorSnapshot=useMemo(()=>JSON.stringify({
     customerName,contact,destination,departureCity,startDate,endDate,days,pax,budget,tourType,
     adultCount,seniorCount,childCount,seniorNotes,childAges,childNotes,mobilityNotes,
-    flightRequirement,suggestedFlights,hotelRequirement,mealRequirement,specialRequest
-  }),[customerName,contact,destination,departureCity,startDate,endDate,days,pax,budget,tourType,adultCount,seniorCount,childCount,seniorNotes,childAges,childNotes,mobilityNotes,flightRequirement,suggestedFlights,hotelRequirement,mealRequirement,specialRequest]);
+    flightRequirement,flightInformation,hotelRequirement,mealRequirement,specialRequest
+  }),[customerName,contact,destination,departureCity,startDate,endDate,days,pax,budget,tourType,adultCount,seniorCount,childCount,seniorNotes,childAges,childNotes,mobilityNotes,flightRequirement,flightInformation,hotelRequirement,mealRequirement,specialRequest]);
 
   useEffect(()=>{
     if(!baselineRef.current){
@@ -237,24 +234,15 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
     }
     if(Array.isArray(payload.flights)){
       const onlyFlights=payload.flights.filter((x:any)=>x.segmentType==="flight").map((x:any)=>({
-        id:flightUid(),
         from:x.from||"",
         to:x.to||"",
         flightNo:x.flightNo||"",
         date:x.date||"",
         departureTime:x.departureTime||"",
         arrivalTime:x.arrivalTime||"",
-        remarks:[
-          x.departureTerminal?"Departure Terminal: "+x.departureTerminal:"",
-          x.arrivalTerminal?"Arrival Terminal: "+x.arrivalTerminal:"",
-          x.cabin?"Cabin: "+x.cabin:"",
-          x.baggage?"Baggage: "+x.baggage:"",
-          x.operatingCarrier?"Operated by: "+x.operatingCarrier:"",
-          x.duration?"Duration: "+x.duration:"",
-          x.remarks||""
-        ].filter(Boolean).join(" · ")
+        remarks:[x.remarks||"",x.arrivalNextDay?"+1 Next Day":""].filter(Boolean).join(" · ")
       }));
-      if(onlyFlights.length) setSuggestedFlights(onlyFlights);
+      if(onlyFlights.length) setFlightInformation(flightInformationFromLegacyFlights(onlyFlights));
     }
     setMessage(t("AI information applied — remember to Save Inquiry.","AI 资料已套用，请记得保存 Inquiry。"));
   }
@@ -267,7 +255,7 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
         travel_start_date:startDate,travel_end_date:endDate,days_count:days,nights_count:null,
         pax,budget,tour_type:tourType,flight_requirement:flightRequirement,hotel_requirement:hotelRequirement,
         meal_requirement:mealRequirement,special_request:specialRequest,
-        inquiry_data:{...(initialInquiry?.inquiry_data||{}),suggestedFlights,travellerComposition:{
+        inquiry_data:{...(initialInquiry?.inquiry_data||{}),flightInformation,suggestedFlights:flightInformationToLegacyFlights(flightInformation),travellerComposition:{
           adultCount:adultCount===""?null:Number(adultCount),
           seniorCount:seniorCount===""?null:Number(seniorCount),
           childCount:childCount===""?null:Number(childCount),
@@ -366,28 +354,12 @@ export default function InquiryEditor({initialInquiry,currentStaffName,backHref=
     </section>
 
     <section className="panel ios-form-card inquiry-flights-ios">
-      <div className="panel-head">
-        <div>
-          <h2>{t("Suggested Flights","推荐航班")}</h2>
-          <p className="panel-subtext">{t("Sales can enter suggested flights first. Operation may keep them or propose alternatives without overwriting the original version.","Sales 可先填写推荐航班。Operation 后续可以沿用或提出替代航班，不会覆盖原始版本。")}</p>
-        </div>
-        <button className="btn" type="button" onClick={()=>setSuggestedFlights(prev=>[...prev,emptyFlight()])}>{t("+ Add Flight","+ 新增航班")}</button>
-      </div>
-      <div className="inquiry-flight-list">
-        {suggestedFlights.length===0&&<div className="empty">{t("Optional · Leave blank if there are no suggested flights yet.","选填 · 如暂时没有推荐航班，可以留空。")}</div>}
-        {suggestedFlights.map((flight,index)=><div className="inquiry-flight-card" key={flight.id}>
-          <div className="inquiry-flight-card-head"><strong>{t("Flight","航班")} {index+1}</strong><button className="btn danger" type="button" onClick={()=>setSuggestedFlights(prev=>prev.filter(x=>x.id!==flight.id))}>{t("Delete","删除")}</button></div>
-          <div className="itinerary-meta-grid">
-            <label className="field"><span>{t("From","出发")}</span><input maxLength={3} value={flight.from} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,from:e.target.value.toUpperCase()}:x))} placeholder="KUL"/></label>
-            <label className="field"><span>{t("To","抵达")}</span><input maxLength={3} value={flight.to} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,to:e.target.value.toUpperCase()}:x))} placeholder="CTS"/></label>
-            <label className="field"><span>{t("Flight No.","航班号")}</span><input value={flight.flightNo} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,flightNo:e.target.value.toUpperCase()}:x))} placeholder="MH 52"/></label>
-            <label className="field"><span>{t("Date","日期")}</span><input type="date" value={flight.date} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,date:e.target.value}:x))}/></label>
-            <label className="field"><span>{t("Departure Time","起飞时间")}</span><input type="time" value={flight.departureTime} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,departureTime:e.target.value}:x))}/></label>
-            <label className="field"><span>{t("Arrival Time","抵达时间")}</span><input type="time" value={flight.arrivalTime} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,arrivalTime:e.target.value}:x))}/></label>
-            <label className="field inquiry-flight-remarks"><span>{t("Remarks","备注")}</span><input value={flight.remarks} onChange={e=>setSuggestedFlights(prev=>prev.map(x=>x.id===flight.id?{...x,remarks:e.target.value}:x))} placeholder="+1 / transit / baggage..."/></label>
-          </div>
-        </div>)}
-      </div>
+      <FlightInformation
+        value={flightInformation}
+        onChange={setFlightInformation}
+        durationDays={startDate&&endDate?days:0}
+        compact
+      />
     </section>
 
     <section className="panel ios-form-card inquiry-requirements-ios">
