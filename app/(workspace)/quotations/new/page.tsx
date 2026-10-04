@@ -89,7 +89,6 @@ export default async function NewQuotationPage({searchParams}:{searchParams:Prom
           travelStartDate:pick("travelStartDate",data.travel_start_date)||"",
           travelEndDate:pick("travelEndDate",data.travel_end_date)||"",
           daysCount:pick("daysCount",data.days_count)||null,
-          nightsCount:pick("nightsCount",data.nights_count)||null,
           pax:pick("pax",data.pax)||null,
           tourType:pick("tourType",data.tour_type)||"",
           travellerComposition:finalComposition,
