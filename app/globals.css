@@ -17517,6 +17517,111 @@ td,
   letter-spacing:var(--foundation-track-section)!important;
 }
 
+/* SYSTEM TYPOGRAPHY AUDIT — CANONICAL ENFORCEMENT
+   These selectors neutralize legacy page-local heading overrides while
+   keeping the hierarchy owned by the Foundation above. */
+
+/* L1 — page/detail/editor titles */
+.workspace-main .page-head h1:not(.supplier-form-page *),
+.workspace-main .workspace-flat-head h1,
+.workspace-main .inquiry-library-title-block h1,
+.workspace-main .new-inquiry-title-block h1,
+.workspace-main .edit-inquiry-title-block h1,
+.workspace-main .inquiry-detail-title-block h1,
+.workspace-main .quotation-library-title-block h1,
+.workspace-main .quotation-editor-header h1,
+.workspace-main .quotation-detail-title-block h1,
+.workspace-main .operation-workspace-title-block h1,
+.workspace-main .operation-review-title-block h1,
+.workspace-main .itinerary-library-title-block h1,
+.workspace-main .itinerary-editor-title-block h1,
+.workspace-main .itinerary-detail-title-block h1,
+.workspace-main .product-page-head h1,
+.workspace-main .travel-library-page-head h1,
+.workspace-main .ai-lab-workbench-head h1{
+  color:var(--foundation-title-level-1-color)!important;
+  font-size:var(--foundation-type-page)!important;
+  line-height:var(--foundation-line-page)!important;
+  font-weight:var(--foundation-weight-page)!important;
+  letter-spacing:var(--foundation-track-page)!important;
+}
+
+/* Dashboard retains its approved inverse hero treatment. */
+.workspace-main .dashboard-page-head h1{
+  color:#fff!important;
+  font-size:var(--foundation-type-page)!important;
+  line-height:var(--foundation-line-page)!important;
+  font-weight:var(--foundation-weight-page)!important;
+  letter-spacing:var(--foundation-track-page)!important;
+}
+
+/* L2 — primary sections, panels and workflow containers */
+.workspace-main .panel-head h2:not(.supplier-form-page *),
+.workspace-main .section-head h2,
+.workspace-main .section h2,
+.workspace-main .inquiry-workflow-panel-head h2,
+.workspace-main .ai-foundation-section>.panel-head h2,
+.workspace-main .operation-queue-title h2,
+.workspace-main .operation-unassigned h2,
+.workspace-main .travel-library-document-media>.panel-head h2,
+.workspace-main .travel-library-inspector>.panel-head h2,
+.workspace-main .travel-library-sources-toggle>.panel-head h2,
+.workspace-main .ai-intake-head h2,
+.workspace-main .quotation-type-head h2,
+.workspace-main .quotation-workflow-compact-head h2{
+  color:var(--foundation-title-level-2-color)!important;
+  font-size:var(--foundation-type-section)!important;
+  line-height:var(--foundation-line-section)!important;
+  font-weight:var(--foundation-weight-section)!important;
+  letter-spacing:var(--foundation-track-section)!important;
+}
+
+/* Existing semantic L2 headings implemented with h3/custom controls. */
+.workspace-main .quotation-identity-head h3,
+.workspace-main .quotation-trip-context-head h3,
+.workspace-main .flight-info-head h3,
+.workspace-main .cost-setup-toggle>span:first-child,
+.workspace-main .unsaved-dialog h3,
+.workspace-main .unsaved-modal h3{
+  color:var(--foundation-title-level-2-color)!important;
+  font-size:var(--foundation-type-section)!important;
+  line-height:var(--foundation-line-section)!important;
+  font-weight:var(--foundation-weight-section)!important;
+  letter-spacing:var(--foundation-track-section)!important;
+}
+
+/* L3 — subsection/card titles */
+.workspace-main .operation-subsection-head h3,
+.workspace-main .quote-flight-card h3,
+.workspace-main .inquiry-version-card-head h3,
+.workspace-main .ai-intake-foundation-section>.panel-head h3,
+.workspace-main .travel-library-review-grid h3,
+.workspace-main .travel-library-photo-match-head h3,
+.workspace-main .travel-library-inspector-place-head h3,
+.workspace-main .itinerary-detail-day-content h3,
+.workspace-main .itinerary-hotel-detail-head h3,
+.workspace-main .itinerary-package-detail-card h3,
+.workspace-main .itinerary-reminder-detail-card h3,
+.workspace-main .ai-import-day-preview h3,
+.workspace-main .child-cost-card-head h3,
+.workspace-main .flight-block h4,
+.workspace-main .itinerary-detail-attractions h4{
+  color:var(--foundation-title-level-3-color)!important;
+  font-size:var(--foundation-type-subsection)!important;
+  line-height:var(--foundation-line-subsection)!important;
+  font-weight:var(--foundation-weight-subsection)!important;
+  letter-spacing:var(--foundation-track-subsection)!important;
+}
+
+/* Workflow step names are functional labels, not subsection headings. */
+.workspace-main .simple-workflow-title h3{
+  color:var(--foundation-title-level-3-color)!important;
+  font-size:var(--foundation-type-body)!important;
+  line-height:1.25!important;
+  font-weight:var(--foundation-weight-strong)!important;
+  letter-spacing:0!important;
+}
+
 /* Core body */
 .inquiry-library-template .inquiry-table td,
 .dashboard-recent-table td,
