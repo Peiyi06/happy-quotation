@@ -168,14 +168,14 @@ export default function FlightInformation({
   return <div className={"flight-info-card shared-flight-information"+(compact?" compact":"")}>
     <div className="flight-info-head">
       <div>
-        <h3>{t("Flight Information","航班信息")}</h3>
+        <h2>{t("Flight Information","航班信息")}</h2>
       </div>
       {durationDays>0&&<div className="itinerary-pill"><strong>{durationDays} {t("Days","天")}</strong><span>{t("Travel Duration","行程天数")}</span></div>}
     </div>
     <div className="flight-pair-grid">
       <div className="flight-block">
         <div className="flight-block-head">
-          <h4>{t("Departure Flight","去程航班")}</h4>
+          <h3>{t("Departure Flight","去程航班")}</h3>
           <button disabled={disabled} type="button" className={"btn transit-toggle "+(value.outboundTransitOpen?"active":"")} onClick={()=>onChange({...value,outboundTransitOpen:!value.outboundTransitOpen})}>
             {value.outboundTransitOpen?t("− Transit Flight","− 中转航班"):t("+ Transit Flight","+ 中转航班")}
           </button>
@@ -185,7 +185,7 @@ export default function FlightInformation({
       </div>
       <div className="flight-block">
         <div className="flight-block-head">
-          <h4>{t("Return Flight","返程航班")}</h4>
+          <h3>{t("Return Flight","返程航班")}</h3>
           <button disabled={disabled} type="button" className={"btn transit-toggle "+(value.returnTransitOpen?"active":"")} onClick={()=>onChange({...value,returnTransitOpen:!value.returnTransitOpen})}>
             {value.returnTransitOpen?t("− Transit Flight","− 中转航班"):t("+ Transit Flight","+ 中转航班")}
           </button>
