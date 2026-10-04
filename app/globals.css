@@ -19185,52 +19185,63 @@ td,
 
 
 
-/* FOUNDATION FIX: Quotation Title peer section sizing */
+/* FOUNDATION: Quotation Title same hierarchy as Customer & Trip */
 .quotation-editor-shell .quotation-identity-block{
-  width:100%!important;
-  max-width:none!important;
-  margin-bottom:18px!important;
-  padding:16px!important;
-  border:1px solid var(--color-border-default)!important;
-  border-radius:14px!important;
-  background:var(--color-bg-soft)!important;
-  box-shadow:none!important;
+  width:100%;
+  margin-bottom:18px;
+  padding:16px;
+  border:1px solid var(--color-border-default);
+  border-radius:14px;
+  background:var(--color-bg-soft);
+  box-shadow:none;
 }
 
-.quotation-editor-shell .quotation-identity-block .field{
+.quotation-editor-shell .quotation-identity-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:14px;
+}
+
+.quotation-editor-shell .quotation-identity-head h3{
+  margin:3px 0 0;
+  color:var(--color-text-primary);
+  font-size:var(--foundation-type-section);
+  line-height:1.2;
+  font-weight:700;
+  letter-spacing:-.01em;
+}
+
+.quotation-editor-shell .quotation-title-input{
   width:100%;
   min-width:0;
-  gap:8px;
+  height:48px;
+  min-height:48px;
+  padding:0 14px;
+  border:1px solid var(--color-border-default);
+  border-radius:12px;
+  background:var(--color-bg-surface);
+  color:var(--color-text-primary);
+  font-size:var(--type-body)!important;
+  line-height:1.2;
+  font-weight:600;
+  box-shadow:none;
 }
 
-.quotation-editor-shell .quotation-identity-block .field>span{
-  color:var(--color-text-secondary)!important;
-  font-size:var(--foundation-type-meta)!important;
-  line-height:1.25!important;
-  font-weight:650!important;
+.quotation-editor-shell .quotation-title-input::placeholder{
+  color:var(--color-text-tertiary);
+  font-size:var(--type-body)!important;
+  font-weight:500;
+  opacity:1;
 }
 
-.quotation-editor-shell .quotation-identity-block .field>input{
-  width:100%!important;
-  min-width:0!important;
-  height:48px!important;
-  min-height:48px!important;
-  padding:0 14px!important;
-  border:1px solid var(--color-border-default)!important;
-  border-radius:12px!important;
-  background:var(--color-bg-surface)!important;
-  color:var(--color-text-primary)!important;
-  font-size:var(--foundation-type-body)!important;
-  font-weight:600!important;
-  box-shadow:none!important;
+.quotation-editor-shell .quotation-title-input:hover{
+  border-color:var(--color-border-strong);
 }
 
-.quotation-editor-shell .quotation-identity-block .field>input:hover{
-  border-color:var(--color-border-strong)!important;
-}
-
-.quotation-editor-shell .quotation-identity-block .field>input:focus{
-  outline:0!important;
-  border-color:var(--color-info-text)!important;
-  box-shadow:0 0 0 3px var(--color-focus-soft)!important;
+.quotation-editor-shell .quotation-title-input:focus{
+  outline:0;
+  border-color:var(--color-info-text);
+  box-shadow:0 0 0 3px var(--color-focus-soft);
 }
