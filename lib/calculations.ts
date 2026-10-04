@@ -39,6 +39,8 @@ export interface TravelerCostRow {
 export interface LeaderCostRow {
   id: string;
   item: string;
+  direction?: CostDirection;
+  mode?: CalcMode;
   unitPrice: number | "";
   qty: number | "";
   currency: Currency;
@@ -70,7 +72,14 @@ export const leaderRowTotal = (row: LeaderCostRow, mainCurrency: Currency, mainR
   const unit = Number(row.unitPrice) || 0;
   const qty = Number(row.qty) || 0;
   const rate = currencyRate(row.currency, mainCurrency, mainRate);
-  return unit && qty && rate ? unit * qty * rate : 0;
+  if (!unit || !qty || !rate) return 0;
+  const sign = row.direction === "deduction" ? -1 : 1;
+  return unit * qty * rate * sign;
+};
+
+export const leaderRowPerPax = (row: LeaderCostRow, pax: number, mainCurrency: Currency, mainRate: number) => {
+  const safePax = Math.max(1,Number(pax)||1);
+  return leaderRowTotal(row,mainCurrency,mainRate) / safePax;
 };
 
 export const childRatio = (mode: ChildMode) => mode === "手动成本" ? null : Number(mode.replace("%", "")) / 100;
