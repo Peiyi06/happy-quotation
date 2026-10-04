@@ -18757,3 +18757,186 @@ td,
     min-height:64px!important;
   }
 }
+
+
+/* FOUNDATION: Simplified Customer Quotation */
+.quotation-editor-shell .customer-quotation-simple{
+  display:grid;
+  grid-template-columns:minmax(260px,.78fr) minmax(0,1.42fr);
+  gap:18px;
+  align-items:stretch;
+}
+
+.quotation-editor-shell .customer-quotation-selector{
+  display:flex;
+  align-items:flex-start;
+  padding:18px;
+  border:1px solid var(--color-border-default);
+  border-radius:16px;
+  background:var(--color-bg-soft);
+}
+
+.quotation-editor-shell .customer-quotation-selector .field{
+  width:100%;
+  gap:8px;
+}
+
+.quotation-editor-shell .customer-quotation-selector .field>span,
+.quotation-editor-shell .customer-quotation-manual .field>span{
+  margin:0!important;
+  color:var(--color-text-secondary)!important;
+  font-size:11px!important;
+  line-height:1.25!important;
+  font-weight:650!important;
+}
+
+.quotation-editor-shell .customer-quotation-selector select{
+  width:100%!important;
+  min-width:0!important;
+  height:48px!important;
+  min-height:48px!important;
+  padding:0 14px!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:12px!important;
+  background:var(--color-bg-surface)!important;
+  color:var(--color-text-primary)!important;
+  font-size:14px!important;
+  font-weight:650!important;
+  box-shadow:none!important;
+}
+
+.quotation-editor-shell .customer-quotation-summary{
+  min-width:0;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(220px,.88fr);
+  grid-template-areas:
+    "top final"
+    "manual final";
+  gap:14px 18px;
+  padding:18px;
+  border:1px solid var(--color-border-default);
+  border-radius:16px;
+  background:var(--color-bg-surface);
+}
+
+.quotation-editor-shell .customer-quotation-summary-top{
+  grid-area:top;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+
+.quotation-editor-shell .customer-quotation-supporting{
+  min-width:0;
+  padding:2px 0 10px;
+  border-bottom:1px solid var(--color-border-default);
+}
+
+.quotation-editor-shell .customer-quotation-supporting span{
+  display:block;
+  margin-bottom:4px;
+  color:var(--color-text-tertiary);
+  font-size:10px;
+  line-height:1.25;
+  font-weight:600;
+}
+
+.quotation-editor-shell .customer-quotation-supporting strong{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:var(--color-text-primary);
+  font-size:16px;
+  line-height:1.25;
+  font-weight:700;
+}
+
+.quotation-editor-shell .customer-quotation-manual{
+  grid-area:manual;
+}
+
+.quotation-editor-shell .customer-quotation-manual .field{
+  gap:7px;
+}
+
+.quotation-editor-shell .customer-quotation-manual input{
+  width:100%!important;
+  min-width:0!important;
+  height:48px!important;
+  min-height:48px!important;
+  padding:0 14px!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:12px!important;
+  background:var(--color-bg-soft)!important;
+  color:var(--color-text-primary)!important;
+  font-size:15px!important;
+  font-weight:650!important;
+  box-shadow:none!important;
+}
+
+.quotation-editor-shell .customer-quotation-manual input:focus{
+  background:#fff!important;
+  border-color:var(--color-info-text)!important;
+  box-shadow:0 0 0 3px var(--color-focus-soft)!important;
+}
+
+.quotation-editor-shell .customer-quotation-final{
+  grid-area:final;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:18px 20px;
+  border-radius:14px;
+  background:var(--color-brand-primary-soft);
+}
+
+.quotation-editor-shell .customer-quotation-final>span{
+  color:var(--color-text-secondary);
+  font-size:10.5px;
+  line-height:1.2;
+  font-weight:650;
+}
+
+.quotation-editor-shell .customer-quotation-final>strong{
+  margin-top:5px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:var(--color-brand-primary);
+  font-size:26px;
+  line-height:1.12;
+  font-weight:760;
+  letter-spacing:-.02em;
+}
+
+.quotation-editor-shell .customer-quotation-final>small{
+  margin-top:8px;
+  color:var(--color-text-secondary);
+  font-size:10.5px;
+  line-height:1.35;
+  font-weight:600;
+}
+
+@media(max-width:980px){
+  .quotation-editor-shell .customer-quotation-simple{
+    grid-template-columns:1fr;
+  }
+  .quotation-editor-shell .customer-quotation-selector{
+    padding:16px;
+  }
+}
+
+@media(max-width:700px){
+  .quotation-editor-shell .customer-quotation-summary{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "top"
+      "manual"
+      "final";
+  }
+  .quotation-editor-shell .customer-quotation-summary-top{
+    grid-template-columns:1fr 1fr;
+  }
+}
