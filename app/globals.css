@@ -19317,13 +19317,6 @@ td,
 
 
 /* FOUNDATION: Child Cost Breakdown */
-.quotation-editor-shell .child-cost-section-note{
-  margin:-4px 0 14px;
-  color:var(--color-text-secondary);
-  font-size:11px;
-  line-height:1.5;
-}
-
 .quotation-editor-shell .child-grid{
   display:grid;
   grid-template-columns:1fr;
@@ -19362,13 +19355,6 @@ td,
   font-size:var(--foundation-type-section);
   line-height:1.2;
   font-weight:700;
-}
-
-.quotation-editor-shell .child-cost-pax-note{
-  color:var(--color-text-tertiary);
-  font-size:9.5px;
-  line-height:1.25;
-  font-weight:550;
 }
 
 .quotation-editor-shell .child-cost-total{
