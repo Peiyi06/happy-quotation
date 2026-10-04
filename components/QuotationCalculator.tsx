@@ -593,7 +593,186 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     ...(hasLeader?[{type:"小孩不含床含领队" as TravelerType,label:t("Child without Bed","小孩不加床"),mode:t("Incl. Leader","含领队"),value:calc.childNoBedLeader}]:[])
   ];
 
+  const printFlights=[
+    {label:t("Departure","去程"),...flightInformation.outbound},
+    ...(flightInformation.outboundTransitOpen?[{label:t("Departure Transit","去程中转"),...flightInformation.outboundTransit}]:[]),
+    {label:t("Return","返程"),...flightInformation.returning},
+    ...(flightInformation.returnTransitOpen?[{label:t("Return Transit","返程中转"),...flightInformation.returnTransit}]:[])
+  ].filter(leg=>leg.fromAirport||leg.toAirport||leg.flightNo||leg.flightDate||leg.departureTime||leg.arrivalTime);
+
+  const printStatus=displayStatus==="under_review"?t("Under Review","审核中")
+    :displayStatus==="revision_required"?t("Revision Required","需要修改")
+    :displayStatus==="ready"?t("Ready","已就绪")
+    :displayStatus==="sent"?t("Sent","已发送")
+    :displayStatus==="revised"?t("Revised","已修改")
+    :displayStatus==="confirmed"?t("Confirmed","已确认")
+    :displayStatus==="lost"?t("Lost","未成交")
+    :displayStatus==="archived"?t("Archived","已归档")
+    :t("Draft","草稿");
+
+  const printTravelerRows=travelerRows.map(row=>{
+    const perPax=travelerRowPerPax(row,Math.max(1,Number(pax)||1),mainCurrency,mainRate);
+    const rate=currencyRate(row.currency,mainCurrency,mainRate);
+    return {...row,perPax,rate};
+  });
+  const printLeaderRows=leaderRows.map(row=>{
+    const total=leaderRowTotal(row,mainCurrency,mainRate);
+    const perPax=leaderRowPerPax(row,Math.max(1,Number(pax)||1),mainCurrency,mainRate);
+    const rate=currencyRate(row.currency,mainCurrency,mainRate);
+    return {...row,total,perPax,rate};
+  }).filter(row=>(Number(row.unitPrice)||0)!==0||(Number(row.qty)||0)!==0);
+  const printChildBed=childSetupCost(childBedSetup,Math.max(1,Number(pax)||1),mainCurrency,mainRate);
+  const printChildNoBed=childSetupCost(childNoBedSetup,Math.max(1,Number(pax)||1),mainCurrency,mainRate);
+
+
   return <main className={"app-shell "+(workspaceMode?"quotation-editor-shell":"")}>
+    <div className="quotation-print-document" aria-hidden="true">
+      <section className="print-page">
+        <div className="print-doc-header">
+          <div>
+            <span className="print-brand">HAPPY EXPRESS TRAVEL</span>
+            <h1>{t("Internal Quotation Calculation","内部报价计算单")}</h1>
+            <p>{quoteTitle||destination||t("Outbound Quotation","出境游报价")}</p>
+          </div>
+          <div className="print-doc-meta">
+            <div><span>{t("Quotation No.","报价编号")}</span><strong>{initialQuotation?.quotation_no||t("New Draft","新草稿")}</strong></div>
+            <div><span>{t("Status","状态")}</span><strong>{printStatus}</strong></div>
+            <div><span>{t("Prepared By","制表人")}</span><strong>{op||currentStaffName||"—"}</strong></div>
+          </div>
+        </div>
+
+        <PrintSectionNo no="01" title={t("Customer & Trip","客户与行程")}>
+          <div className="print-info-grid">
+            <PrintInfo label={t("Customer / Company","客户 / 公司")} value={resolvedSourceInquirySnapshot?.customerName||customerName||"—"}/>
+            <PrintInfo label={t("Destination","目的地")} value={resolvedSourceInquirySnapshot?.destination||destination||"—"}/>
+            <PrintInfo label={t("Tour Type","团型")} value={resolvedSourceInquirySnapshot?.tourType||tourType||"—"}/>
+            <PrintInfo label={t("Pax","人数")} value={String(resolvedSourceInquirySnapshot?.pax||pax||"—")}/>
+            <PrintInfo label={t("Departure City","出发城市")} value={resolvedSourceInquirySnapshot?.departureCity||departureCity||"—"}/>
+            <PrintInfo label={t("Travel Dates","旅游日期")} value={[resolvedSourceInquirySnapshot?.travelStartDate||departureDate,resolvedSourceInquirySnapshot?.travelEndDate||returnDate].filter(Boolean).map(formatDisplayDate).join(" → ")||"—"}/>
+            <PrintInfo label={t("Duration","行程天数")} value={travelDuration.label||"—"}/>
+            <PrintInfo label={t("Supplier","供应商")} value={supplier||"—"}/>
+          </div>
+        </PrintSectionNo>
+
+        <PrintSectionNo no="02" title={t("Flight Information","航班信息")}>
+          {printFlights.length?<div className="print-table print-flight-table">
+            <div className="print-tr print-th"><span>{t("Sector","航段")}</span><span>{t("Flight","航班")}</span><span>{t("Date","日期")}</span><span>{t("Departure","起飞")}</span><span>{t("Arrival","抵达")}</span></div>
+            {printFlights.map((leg,index)=><div className="print-tr" key={index}>
+              <span><small>{leg.label}</small><strong>{[leg.fromAirport,leg.toAirport].filter(Boolean).join(" → ")||"—"}</strong></span>
+              <span>{leg.flightNo||"—"}</span><span>{formatDisplayDate(leg.flightDate)||leg.flightDate||"—"}</span>
+              <span>{leg.departureTime||"—"}</span><span>{leg.arrivalTime||"—"}{leg.nextDay?" +1":""}</span>
+            </div>)}
+          </div>:<div className="print-empty">{t("No flight information entered.","尚未填写航班资料。")}</div>}
+          <div className="print-inline-note">
+            <span>{t("Flight Cost","机票成本")}</span><strong>{flightTotalPrice===""?"—":money(Number(flightTotalPrice)*currencyRate(flightPriceCurrency,mainCurrency,mainRate))}</strong>
+            <span>{t("Ticket Type","机票类型")}</span><strong>{flightTicketType.code||"—"}</strong>
+          </div>
+        </PrintSectionNo>
+
+        <PrintSectionNo no="03" title={t("Pricing Summary","定价摘要")}>
+          <div className="print-table print-pricing-table">
+            <div className="print-tr print-th"><span>{t("Traveller Type","旅客类型")}</span><span>{t("Leader","领队")}</span><span>{t("Cost / Pax","每人成本")}</span><span>{t("System Suggested","系统建议价")}</span><span>{t("Final Price","最终售价")}</span><span>{t("Profit","利润")}</span><span>{t("Margin","毛利率")}</span></div>
+            {pricingRows.map(row=>{
+              const active=row.type===effectiveSelectedType;
+              const final=row.value.final;
+              const profit=final-row.value.cost;
+              return <div className={"print-tr "+(active?"print-selected":"")} key={row.type}>
+                <span><strong>{row.label}</strong>{active&&manualQuote!==""?<small>{t("Manual Override","人工调整")}</small>:null}</span>
+                <span>{row.mode}</span><span>{money(row.value.cost)}</span><span>{money(row.value.rounded)}</span>
+                <span><strong>{money(final)}</strong></span><span>{money(profit)}</span><span>{pct(row.value.margin)}</span>
+              </div>
+            })}
+          </div>
+        </PrintSectionNo>
+        <PrintFooter quotationNo={initialQuotation?.quotation_no||"Draft"} page="1"/>
+      </section>
+
+      <section className="print-page">
+        <div className="print-doc-header compact">
+          <div><span className="print-brand">HAPPY EXPRESS TRAVEL</span><h1>{t("Cost Calculation Detail","成本计算明细")}</h1></div>
+          <div className="print-doc-meta"><div><span>{t("Quotation No.","报价编号")}</span><strong>{initialQuotation?.quotation_no||t("New Draft","新草稿")}</strong></div></div>
+        </div>
+
+        <PrintSectionNo no="04" title={t("Traveller Cost Calculation","旅客成本计算")}>
+          <div className="print-table print-cost-table">
+            <div className="print-tr print-th"><span>{t("Cost Item","成本项目")}</span><span>{t("Type","类型")}</span><span>{t("Calculation","计算方式")}</span><span>{t("Unit Price","单价")}</span><span>{t("Qty","数量")}</span><span>{t("Currency","币种")}</span><span>{t("Rate","汇率")}</span><span>{t("Cost / Pax","每人成本")}</span></div>
+            {printTravelerRows.map(row=><div className="print-tr" key={row.id}>
+              <span><strong>{costItemDisplay(row.item)||"—"}</strong>{row.note?<small>{row.note}</small>:null}</span>
+              <span>{row.direction==="deduction"?t("Deduction −","扣减 −"):t("Cost +","成本 +")}</span>
+              <span>{calcModeLabel(row.mode)}</span><span>{Number(row.unitPrice)||0}</span><span>{Number(row.qty)||0}</span>
+              <span>{currencyLabel(row.currency)}</span><span>{row.rate||"—"}</span><span><strong>{money(row.perPax)}</strong></span>
+            </div>)}
+          </div>
+          <div className="print-total-line"><span>{t("Traveller Base Cost / Pax","旅客基础成本 / 人")}</span><strong>{money(calculationResult.travelerPerPax)}</strong></div>
+        </PrintSectionNo>
+
+        <PrintSectionNo no="05" title={t("Tour Leader Cost","领队成本")}>
+          {hasLeader&&printLeaderRows.length?<><div className="print-table print-leader-table">
+            <div className="print-tr print-th"><span>{t("Cost Item","成本项目")}</span><span>{t("Calculation","计算方式")}</span><span>{t("Unit Price","单价")}</span><span>{t("Qty","数量")}</span><span>{t("Currency","币种")}</span><span>{t("Total","总额")}</span><span>{t("Allocated / Pax","每人分摊")}</span></div>
+            {printLeaderRows.map(row=><div className="print-tr" key={row.id}>
+              <span><strong>{costItemDisplay(row.item)||"—"}</strong>{row.note?<small>{row.note}</small>:null}</span>
+              <span>{calcModeLabel(row.mode||"每人")}</span><span>{Number(row.unitPrice)||0}</span><span>{Number(row.qty)||0}</span><span>{currencyLabel(row.currency)}</span>
+              <span>{money(row.total)}</span><span><strong>{money(row.perPax)}</strong></span>
+            </div>)}
+          </div><div className="print-total-line split"><span>{t("Total Leader Cost","领队总成本")} <strong>{money(calculationResult.leaderTotal)}</strong></span><span>{t("Allocated / Pax","每人分摊")} <strong>{money(calculationResult.leaderPerPax)}</strong></span></div></>
+          :<div className="print-empty">{t("No leader cost applied.","没有应用领队成本。")}</div>}
+        </PrintSectionNo>
+        <PrintFooter quotationNo={initialQuotation?.quotation_no||"Draft"} page="2"/>
+      </section>
+
+      <section className="print-page">
+        <div className="print-doc-header compact">
+          <div><span className="print-brand">HAPPY EXPRESS TRAVEL</span><h1>{t("Pricing Rules & Decision","定价规则与最终决定")}</h1></div>
+          <div className="print-doc-meta"><div><span>{t("Quotation No.","报价编号")}</span><strong>{initialQuotation?.quotation_no||t("New Draft","新草稿")}</strong></div></div>
+        </div>
+
+        <PrintSectionNo no="06" title={t("Child Cost Setup","儿童成本设置")}>
+          <div className="print-child-grid">
+            <div className="print-child-card">
+              <span>{t("Child with Bed","小孩含床")}</span><strong>{money(printChildBed.total)}</strong>
+              <small>{t("Ground Package","地接报价")} {childBedSetup.groundRatio}% · {t("Other Items","其他项目")} {childBedSetup.otherRows?.length||0}</small>
+            </div>
+            <div className="print-child-card">
+              <span>{t("Child without Bed","小孩不含床")}</span><strong>{money(printChildNoBed.total)}</strong>
+              <small>{t("Ground Package","地接报价")} {childNoBedSetup.groundRatio}% · {t("Other Items","其他项目")} {childNoBedSetup.otherRows?.length||0}</small>
+            </div>
+          </div>
+        </PrintSectionNo>
+
+        <PrintSectionNo no="07" title={t("Pricing Rules","定价规则")}>
+          <div className="print-info-grid rules">
+            <PrintInfo label={t("Pricing Method","定价方式")} value={profitModeLabel(profitMode)}/>
+            <PrintInfo label={t("Profit Rate","利润率")} value={pct(Number(profitRate)||0)}/>
+            <PrintInfo label={t("Minimum Profit","最低利润")} value={minProfit===""?"—":money(Number(minProfit))}/>
+            <PrintInfo label={t("Maximum Profit","最高利润")} value={maxProfit===""?"—":money(Number(maxProfit))}/>
+            <PrintInfo label={t("Fixed Profit","固定利润")} value={fixedProfit===""?"—":money(Number(fixedProfit))}/>
+            <PrintInfo label={t("Rounding Rule","取整规则")} value={t(`Round up to RM ${roundUnit}`,`向上取整至 RM ${roundUnit}`)}/>
+            <PrintInfo label={t("Main Currency","主要币种")} value={currencyLabel(mainCurrency)}/>
+            <PrintInfo label={t("Main Exchange Rate","主要汇率")} value={String(mainRate||"—")}/>
+          </div>
+        </PrintSectionNo>
+
+        <PrintSectionNo no="08" title={t("Final Pricing Decision","最终定价决定")}>
+          <div className="print-final-decision">
+            <div><span>{t("Traveller Type","旅客类型")}</span><strong>{selectedSummaryLabel}</strong></div>
+            <div><span>{t("Cost / Pax","每人成本")}</span><strong>{money(selected.cost)}</strong></div>
+            <div><span>{t("System Suggested","系统建议价")}</span><strong>{money(selected.rounded)}</strong></div>
+            <div className="primary"><span>{t("Final Customer Price","最终对客售价")}</span><strong>{money(finalQuote)}</strong><small>{manualQuote!==""?t("Manual Override","人工调整"):t("System Price","系统价格")}</small></div>
+            <div><span>{t("Final Profit","最终利润")}</span><strong>{money(finalProfit)}</strong></div>
+            <div><span>{t("Final Margin","最终毛利率")}</span><strong>{pct(finalMargin)}</strong></div>
+          </div>
+        </PrintSectionNo>
+
+        {pricingMode==="scenario"&&scenarioResults.length>0&&<PrintSectionNo no="09" title={t("Pax Scenario Comparison","人数情境比较")}>
+          <div className="print-table print-scenario-table">
+            <div className="print-tr print-th"><span>{t("Pax","人数")}</span><span>{t("Cost / Pax","每人成本")}</span><span>{t("Suggested","建议售价")}</span><span>{t("Final","最终售价")}</span><span>{t("Profit","利润")}</span><span>{t("Margin","毛利率")}</span></div>
+            {scenarioResults.map(row=><div className="print-tr" key={row.id}><span>{row.pax}</span><span>{money(row.costPerPax)}</span><span>{money(row.roundedPrice)}</span><span><strong>{money(row.finalPrice)}</strong></span><span>{money(row.finalProfit)}</span><span>{pct(row.finalMargin)}</span></div>)}
+          </div>
+        </PrintSectionNo>}
+        <PrintFooter quotationNo={initialQuotation?.quotation_no||"Draft"} page="3"/>
+      </section>
+    </div>
+
     <header className={"topbar "+(workspaceMode?"quotation-editor-header":"")}>
       <div className="quotation-editor-title-block">
         {!workspaceMode&&<div className="eyebrow">HAPPY EXPRESS TRAVEL</div>}
@@ -1196,6 +1375,17 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
     {!workspaceMode&&<footer>{t("Data is automatically saved in this browser's Local Storage.","数据会自动保存在此浏览器 Local Storage。")} {t("For non-primary currencies without an exchange rate, the rate displays — to prevent silent miscalculation.","其他非主要币种若未设为主要币种，汇率会显示 —，避免静默误算。")}</footer>}
   </main>
+}
+
+
+function PrintSectionNo({no,title,children}:{no:string;title:React.ReactNode;children:React.ReactNode}){
+  return <section className="print-doc-section"><div className="print-section-title"><span>{no}</span><h2>{title}</h2></div>{children}</section>;
+}
+function PrintInfo({label,value}:{label:React.ReactNode;value:string}){
+  return <div className="print-info"><span>{label}</span><strong>{value||"—"}</strong></div>;
+}
+function PrintFooter({quotationNo,page}:{quotationNo:string;page:string}){
+  return <footer className="print-doc-footer"><span>Happy Express Travel · Internal Use Only</span><span>{quotationNo}</span><span>{page} / 3</span></footer>;
 }
 
 function Section({title,children,action}:{title:React.ReactNode;children:React.ReactNode;action?:React.ReactNode}){return <section className="section"><div className="section-head"><h2>{title}</h2>{action}</div>{children}</section>}
