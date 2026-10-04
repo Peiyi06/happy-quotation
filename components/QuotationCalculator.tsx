@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 import FlightInformation,{emptyFlightInformation,type FlightInformationValue} from "@/components/FlightInformation";
 import {
-  CalcMode, ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
-  currencyRate, leaderRowTotal, travelerRowPerPax, travelerRowTotal
+  CalcMode, ChildCostRow, ChildCostSetup, ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
+  childExtraRowTotal, childSetupCost, currencyRate, leaderRowTotal, travelerRowPerPax, travelerRowTotal
 } from "@/lib/calculations";
 import {
   calculateQuotation, isLeaderType, toNoLeaderType, travelerTypes,
@@ -19,7 +19,6 @@ import {
 
 const calcModes: CalcMode[] = ["每人", "每人每天", "整团", "整团每天"];
 const currencies: Currency[] = ["RM", "RMB", "USD", "JPY", "KRW", "THB", "VND", "其他"];
-const childModes: ChildMode[] = ["50%","60%","65%","70%","75%","80%","85%","90%","95%","100%","手动成本"];
 const profitModes: ProfitMode[] = ["固定金额", "按成本加价率", "按售价毛利率"];
 type QuoteStatus = "draft"|"under_review"|"revision_required"|"ready"|"sent"|"revised"|"confirmed"|"lost"|"archived";
 type CalculatorProps = { workspaceMode?: boolean; quotationId?: string; initialQuotation?: any; currentStaffId?: string; currentStaffName?: string; sourceInquiryId?: string; sourceInquiryNo?: string; sourceInquirySnapshot?: any };
@@ -72,6 +71,17 @@ const defaultLeaderRows: LeaderCostRow[] = [
   { id: uid(), item: "Bonus", unitPrice: 0, qty: 1, currency: "RM", note: "" },
   { id: uid(), item: "其他", unitPrice: 0, qty: 1, currency: "RM", note: "" },
 ];
+
+const createDefaultChildSetup = (): ChildCostSetup => ({
+  groundBase:"",
+  groundRatio:100,
+  groundCurrency:"RMB",
+  otherRows:[
+    {id:uid(),item:"旅游保险",unitPrice:"",qty:1,currency:"RM",note:""},
+    {id:uid(),item:"机场接送",unitPrice:"",qty:1,currency:"RM",note:""},
+    {id:uid(),item:"小费",unitPrice:"",qty:1,currency:"RM",note:""}
+  ]
+});
 
 export default function QuotationCalculator({workspaceMode=false,quotationId,initialQuotation,currentStaffId="",currentStaffName="",sourceInquiryId="",sourceInquiryNo="",sourceInquirySnapshot}:CalculatorProps) {
   const router = useRouter();
@@ -165,6 +175,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [childNoBedMode, setChildNoBedMode] = useState<ChildMode>("手动成本");
   const [childNoBedManual, setChildNoBedManual] = useState(0);
   const [childNoBedCurrency, setChildNoBedCurrency] = useState<Currency>("RM");
+  const [childBedSetup, setChildBedSetup] = useState<ChildCostSetup>(()=>createDefaultChildSetup());
+  const [childNoBedSetup, setChildNoBedSetup] = useState<ChildCostSetup>(()=>createDefaultChildSetup());
 
   const [selectedType, setSelectedType] = useState<TravelerType>("成人不含领队");
   const [manualQuote, setManualQuote] = useState<number | "">("");
@@ -203,6 +215,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           profitMode:setProfitMode,profitRate:setProfitRate,minProfit:setMinProfit,maxProfit:setMaxProfit,fixedProfit:setFixedProfit,roundUnit:setRoundUnit,
           childBedMode:setChildBedMode,childBedManual:setChildBedManual,childBedCurrency:setChildBedCurrency,
           childNoBedMode:setChildNoBedMode,childNoBedManual:setChildNoBedManual,childNoBedCurrency:setChildNoBedCurrency,
+          childBedSetup:setChildBedSetup,childNoBedSetup:setChildNoBedSetup,
           selectedType:setSelectedType,manualQuote:setManualQuote
         };
         setters[k]?.(v);
@@ -222,7 +235,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     flightInformation,flightTotalPrice,flightPriceCurrency,
     tourType,op,supplier,pax,mainCurrency,mainRate,
     travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
-    childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,
+    childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,childBedSetup,childNoBedSetup,
     selectedType,manualQuote,pricingMode,pricingScenarios,scenarioRows
   });
 
@@ -231,7 +244,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     travelerRows,leaderRows,singleRoomAmount,singleRoomCurrency,
     profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
     childBedMode,childBedManual,childBedCurrency,
-    childNoBedMode,childNoBedManual,childNoBedCurrency,
+    childNoBedMode,childNoBedManual,childNoBedCurrency,childBedSetup,childNoBedSetup,
     selectedType,manualQuote,pricingMode,pricingScenarios,scenarioRows
   });
   const commercialDirty = Boolean(
@@ -303,13 +316,13 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     mainCurrency,mainRate,travelerRows,leaderRows,
     profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
     childBedMode,childBedManual,childBedCurrency,
-    childNoBedMode,childNoBedManual,childNoBedCurrency,
+    childNoBedMode,childNoBedManual,childNoBedCurrency,childBedSetup,childNoBedSetup,
     selectedType,manualQuote,singleRoomAmount,singleRoomCurrency
   }),[
     pax,travelDuration.days,mainCurrency,mainRate,travelerRows,leaderRows,
     profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
     childBedMode,childBedManual,childBedCurrency,
-    childNoBedMode,childNoBedManual,childNoBedCurrency,
+    childNoBedMode,childNoBedManual,childNoBedCurrency,childBedSetup,childNoBedSetup,
     selectedType,manualQuote,singleRoomAmount,singleRoomCurrency
   ]);
 
@@ -410,7 +423,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     const quotationData = {tourType,op:op || currentStaffName,opStaffId:initialQuotation?.quotation_data?.opStaffId || initialQuotation?.owner_id || currentStaffId,supplier,pax,mainCurrency,mainRate,customerContact,departureCity,flightInformation,
       flightTotalPrice,flightPriceCurrency,flightTicketType:flightTicketType.code,
       itineraryDays:travelDuration.days,itineraryLabel:travelDuration.label,
-      travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType:effectiveSelectedType,manualQuote,calculationInput:{...calculationInput,selectedType:effectiveSelectedType},calculationResult,scenarioPricing:{version:1,mode:pricingMode,scenarios:pricingScenarios,rows:scenarioRows,results:scenarioResults},sourceInquiryId:resolvedSourceInquiryId,sourceInquiryNo:resolvedSourceInquiryNo,sourceInquirySnapshot:resolvedSourceInquirySnapshot};
+      travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,childBedSetup,childNoBedSetup,selectedType:effectiveSelectedType,manualQuote,calculationInput:{...calculationInput,selectedType:effectiveSelectedType},calculationResult,scenarioPricing:{version:1,mode:pricingMode,scenarios:pricingScenarios,rows:scenarioRows,results:scenarioResults},sourceInquiryId:resolvedSourceInquiryId,sourceInquiryNo:resolvedSourceInquiryNo,sourceInquirySnapshot:resolvedSourceInquirySnapshot};
     const payload = {
       source_inquiry_id: resolvedSourceInquiryId || "",
       title: quoteTitle || customerName || destination || "Untitled Quotation",
@@ -563,6 +576,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setChildNoBedMode("手动成本");
     setChildNoBedManual(0);
     setChildNoBedCurrency("RM");
+    setChildBedSetup(createDefaultChildSetup());
+    setChildNoBedSetup(createDefaultChildSetup());
 
     setSelectedType("成人不含领队");
     setManualQuote("");
@@ -921,10 +936,11 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         </tr>})}</tbody></table></div>}
       </section>
 
-      <Section title={t("Child Cost Settings","儿童成本设置")}>
+      <Section title={t("Child Cost Setup","儿童成本设置")}>
+        <p className="child-cost-section-note">{t("Set the child Ground Package base and ratio, then enter any other child costs separately.","填写儿童 Ground Package 折扣前成本与比例，再独立输入保险、车费、小费等其他儿童成本。")}</p>
         <div className="child-grid">
-          <ChildCard title={t("Child with Bed · Shares with 2 adults + 1 extra bed","小孩加床 · 与2位成人同房 + 1张加床")} t={t} mode={childBedMode} setMode={setChildBedMode} manual={childBedManual} setManual={setChildBedManual} currency={childBedCurrency} setCurrency={setChildBedCurrency} />
-          <ChildCard title={t("Child without Bed · Shares with 2 adults, no extra bed","小孩不加床 · 与2位成人同房，不另加床")} t={t} mode={childNoBedMode} setMode={setChildNoBedMode} manual={childNoBedManual} setManual={setChildNoBedManual} currency={childNoBedCurrency} setCurrency={setChildNoBedCurrency} />
+          <ChildCostCard title={t("Child with Bed","小孩含床")} t={t} setup={childBedSetup} setSetup={setChildBedSetup} mainCurrency={mainCurrency} mainRate={mainRate} displayItem={costItemDisplay} />
+          <ChildCostCard title={t("Child without Bed","小孩不含床")} t={t} setup={childNoBedSetup} setSetup={setChildNoBedSetup} mainCurrency={mainCurrency} mainRate={mainRate} displayItem={costItemDisplay} />
         </div>
       </Section>
     </div>
@@ -1095,6 +1111,63 @@ function Section({title,children,action}:{title:React.ReactNode;children:React.R
 function Field({label,children}:{label:React.ReactNode;children:React.ReactNode}){return <label className="field"><span>{label}</span>{children}</label>}
 function Summary({label,value,strong}:{label:React.ReactNode;value:string;strong?:boolean}){return <div className={`summary-card ${strong?"strong":""}`}><span>{label}</span><b>{value}</b></div>}
 function Metric({label,value,strong}:{label:React.ReactNode;value:string;strong?:boolean}){return <div className={`metric ${strong?"strong":""}`}><span>{label}</span><b>{value}</b></div>}
-function ChildCard({title,t,mode,setMode,manual,setManual,currency,setCurrency}:{title:React.ReactNode;t:(en:string,zh:string)=>string;mode:ChildMode;setMode:(v:ChildMode)=>void;manual:number;setManual:(v:number)=>void;currency:Currency;setCurrency:(v:Currency)=>void}){
-  return <div className="child-card"><h3>{title}</h3><Field label={t("Calculation Mode","计算模式")}><select value={mode} onChange={e=>setMode(e.target.value as ChildMode)}>{childModes.map(x=><option key={x} value={x}>{x==="手动成本"?t("Manual Cost","手动成本"):x}</option>)}</select></Field>{mode==="手动成本"&&<><Field label={t("Manual Cost / Pax","手动成本 / 人")}><input type="number" value={manual} onChange={e=>setManual(Number(e.target.value)||0)}/></Field><Field label={t("Currency","币种")}><select value={currency} onChange={e=>setCurrency(e.target.value as Currency)}>{currencies.map(c=><option key={c} value={c}>{c==="其他"?t("Other","其他"):c}</option>)}</select></Field></>}</div>
+function ChildCostCard({title,t,setup,setSetup,mainCurrency,mainRate,displayItem}:{title:React.ReactNode;t:(en:string,zh:string)=>string;setup:ChildCostSetup;setSetup:(v:ChildCostSetup)=>void;mainCurrency:Currency;mainRate:number;displayItem:(v:string)=>string}){
+  const summary=childSetupCost(setup,mainCurrency,mainRate);
+  const updateRow=(id:string,patch:Partial<ChildCostRow>)=>setSetup({...setup,otherRows:setup.otherRows.map(row=>row.id===id?{...row,...patch}:row)});
+  const addRow=()=>setSetup({...setup,otherRows:[...setup.otherRows,{id:uid(),item:"",unitPrice:"",qty:1,currency:"RM",note:""}]});
+  const removeRow=(id:string)=>setSetup({...setup,otherRows:setup.otherRows.filter(row=>row.id!==id)});
+
+  return <div className="child-cost-card">
+    <div className="child-cost-card-head">
+      <h3>{title}</h3>
+      <div className="child-cost-total">
+        <span>{t("Child Cost / Pax","儿童成本 / 人")}</span>
+        <strong>{money(summary.total)}</strong>
+      </div>
+    </div>
+
+    <div className="child-ground-grid">
+      <Field label={t("Ground Package Base","Ground Package 基础成本")}>
+        <input type="number" min="0" value={setup.groundBase} onChange={e=>setSetup({...setup,groundBase:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
+      </Field>
+      <Field label={t("Currency","币种")}>
+        <select value={setup.groundCurrency} onChange={e=>setSetup({...setup,groundCurrency:e.target.value as Currency})}>{currencies.map(cur=><option key={cur} value={cur}>{cur==="其他"?t("Other","其他"):cur}</option>)}</select>
+      </Field>
+      <Field label={t("Child Ratio","儿童比例")}>
+        <div className="child-ratio-input"><input type="number" min="0" max="100" value={setup.groundRatio} onChange={e=>setSetup({...setup,groundRatio:Math.max(0,Math.min(100,Number(e.target.value)||0))})}/><span>%</span></div>
+      </Field>
+      <div className="child-ground-result">
+        <span>{t("Child Ground Cost","儿童 Ground Cost")}</span>
+        <strong>{money(summary.ground)}</strong>
+      </div>
+    </div>
+
+    <div className="child-extra-head">
+      <div><strong>{t("Other Costs","其他成本")}</strong><span>{t("Enter child-specific insurance, transfer, tips or special costs.","独立填写儿童保险、接送、小费或其他特别成本。")}</span></div>
+      <button type="button" className="btn no-print" onClick={addRow}>{t("+ Add Cost","+ 新增成本")}</button>
+    </div>
+
+    <div className="child-extra-table">
+      <div className="child-extra-table-head" aria-hidden="true">
+        <span>{t("Cost Item","成本项目")}</span><span>{t("Unit Price","单价")}</span><span>{t("Qty","数量")}</span><span>{t("Currency","币种")}</span><span>{t("Cost","成本")}</span><span></span>
+      </div>
+      {setup.otherRows.map(row=>{
+        const rowTotal=childExtraRowTotal(row,mainCurrency,mainRate);
+        return <div className="child-extra-row" key={row.id}>
+          <input aria-label={t("Cost Item","成本项目")} value={displayItem(row.item)} onChange={e=>updateRow(row.id,{item:e.target.value})}/>
+          <input aria-label={t("Unit Price","单价")} type="number" min="0" value={row.unitPrice} onChange={e=>updateRow(row.id,{unitPrice:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
+          <input aria-label={t("Qty","数量")} type="number" min="0" value={row.qty} onChange={e=>updateRow(row.id,{qty:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
+          <select aria-label={t("Currency","币种")} value={row.currency} onChange={e=>updateRow(row.id,{currency:e.target.value as Currency})}>{currencies.map(cur=><option key={cur} value={cur}>{cur==="其他"?t("Other","其他"):cur}</option>)}</select>
+          <strong>{money(rowTotal)}</strong>
+          <button type="button" className="child-extra-remove no-print" onClick={()=>removeRow(row.id)} aria-label={t("Delete cost","删除成本")}>×</button>
+        </div>
+      })}
+    </div>
+
+    <div className="child-cost-summary-line">
+      <span>{t("Ground","地接")} <strong>{money(summary.ground)}</strong></span>
+      <span>{t("Other Costs","其他成本")} <strong>{money(summary.extras)}</strong></span>
+      <span className="total">{t("Total","总计")} <strong>{money(summary.total)}</strong></span>
+    </div>
+  </div>
 }
