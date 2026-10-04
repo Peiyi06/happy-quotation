@@ -5797,7 +5797,6 @@ body{
 .panel-head h2,
 .section h2,
 .section-head h2,
-.child-card h3,
 .detail-item strong,
 .operation-toolbar strong{
   color:var(--color-brand-primary);
@@ -5826,7 +5825,6 @@ body{
 .section{
   border-radius:var(--radius-lg);
 }
-.child-card,
 .detail-item,
 .quote-flight-card,
 .flight-block,
