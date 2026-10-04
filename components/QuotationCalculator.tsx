@@ -821,19 +821,25 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </div>}
     >
       <div className="scenario-matrix-wrap">
-        <div className="scenario-cost-matrix" style={{gridTemplateColumns:`minmax(390px,1.45fr) repeat(${pricingScenarios.length},minmax(155px,1fr))`}}>
+        <div className="scenario-cost-matrix" style={{gridTemplateColumns:`minmax(330px,1.2fr) repeat(${pricingScenarios.length},minmax(132px,1fr))`}}>
           <div className="scenario-matrix-header scenario-matrix-static">
             <span>{t("Cost Item","成本项目")}</span>
             <span>{t("Method","计算方式")}</span>
             <span>{t("Currency","币种")}</span>
           </div>
           {pricingScenarios.map(s=><div className="scenario-matrix-header scenario-matrix-pax-head" key={s.id}>
-            <strong>{s.pax} Pax</strong>
+            <div className="scenario-pax-title">
+              <strong>{s.pax}</strong>
+              <span>Pax</span>
+            </div>
             <button type="button" className="scenario-remove-pax no-print" onClick={()=>removePricingScenario(s.id)} disabled={pricingScenarios.length<=1}>×</button>
-            <small>{t("Unit Price · Qty","单价 · 数量")}</small>
+            <div className="scenario-cell-labels">
+              <span>{t("Unit Price","单价")}</span>
+              <span>{t("Qty","数量")}</span>
+            </div>
           </div>)}
 
-          {scenarioRows.map((row,index)=><div className="scenario-matrix-row" key={row.id} style={{gridTemplateColumns:`minmax(390px,1.45fr) repeat(${pricingScenarios.length},minmax(155px,1fr))`}}>
+          {scenarioRows.map((row,index)=><div className="scenario-matrix-row" key={row.id} style={{gridTemplateColumns:`minmax(330px,1.2fr) repeat(${pricingScenarios.length},minmax(132px,1fr))`}}>
             <div className="scenario-matrix-static scenario-row-meta">
               <div className="scenario-item-field">
                 <input value={costItemDisplay(row.item)} onChange={e=>setScenarioRow(row.id,{item:e.target.value})} placeholder={t("Cost item","成本项目")} />
