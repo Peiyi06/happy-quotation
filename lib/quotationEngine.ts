@@ -66,10 +66,10 @@ export function calculateQuotation(input:QuotationCalculationInput):QuotationCal
     return ratio===null?(Number(manual)||0)*currencyRate(currency,input.mainCurrency,input.mainRate):ratioEligible*ratio+ratioExcluded;
   };
   const childBedCost=input.childBedSetup
-    ? childSetupCost(input.childBedSetup,input.mainCurrency,input.mainRate).total
+    ? childSetupCost(input.childBedSetup,safePax,input.mainCurrency,input.mainRate).total
     : legacyChildCost(input.childBedMode,input.childBedManual,input.childBedCurrency);
   const childNoBedCost=input.childNoBedSetup
-    ? childSetupCost(input.childNoBedSetup,input.mainCurrency,input.mainRate).total
+    ? childSetupCost(input.childNoBedSetup,safePax,input.mainCurrency,input.mainRate).total
     : legacyChildCost(input.childNoBedMode,input.childNoBedManual,input.childNoBedCurrency);
   const selectedType=normalizeSelectedType(input.selectedType,hasLeader);
   const make=(type:TravelerType,cost:number):QuotationPricePoint=>{
