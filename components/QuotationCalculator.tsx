@@ -938,7 +938,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </section>
 
       <Section title={t("Child Cost Setup","儿童成本设置")}>
-        <p className="child-cost-section-note">{t("Set the child Ground Package base and ratio, then enter any other child costs separately.","填写儿童 Ground Package 折扣前成本与比例，再独立输入保险、车费、小费等其他儿童成本。")}</p>
         <div className="child-grid">
           <ChildCostCard title={t("Child with Bed","小孩含床")} t={t} setup={childBedSetup} setSetup={setChildBedSetup} pax={Math.max(1,Number(pax)||1)} mainCurrency={mainCurrency} mainRate={mainRate} displayItem={costItemDisplay} calcModeLabel={calcModeLabel} />
           <ChildCostCard title={t("Child without Bed","小孩不含床")} t={t} setup={childNoBedSetup} setSetup={setChildNoBedSetup} pax={Math.max(1,Number(pax)||1)} mainCurrency={mainCurrency} mainRate={mainRate} displayItem={costItemDisplay} calcModeLabel={calcModeLabel} />
@@ -1127,7 +1126,6 @@ function ChildCostCard({title,t,setup,setSetup,pax,mainCurrency,mainRate,display
     <div className="child-cost-card-head">
       <div>
         <h3>{title}</h3>
-        <span className="child-cost-pax-note">{t("Uses Customer & Trip pax for group allocation","Per Group 统一按 Customer & Trip 总人数分摊")} · {pax} Pax</span>
       </div>
       <div className="child-cost-total">
         <span>{t("Child Cost / Pax","儿童成本 / 人")}</span>
