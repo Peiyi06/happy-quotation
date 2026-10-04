@@ -18413,7 +18413,7 @@ td,
   min-width:0;
 }
 .scenario-cost-matrix.default-scenarios .scenario-matrix-static{
-  grid-template-columns:150px 110px 70px;
+  grid-template-columns:145px 100px 65px;
   gap:0;
 }
 .scenario-cost-matrix.default-scenarios .scenario-matrix-static > *{
@@ -18488,7 +18488,7 @@ td,
   min-width:max-content;
 }
 .scenario-cost-matrix.extended-scenarios .scenario-matrix-static{
-  grid-template-columns:150px 110px 70px;
+  grid-template-columns:145px 100px 65px;
   gap:0;
 }
 .scenario-cost-matrix.extended-scenarios .scenario-row-meta{
