@@ -18634,3 +18634,24 @@ td,
     grid-template-columns:1fr!important;
   }
 }
+
+
+/* FOUNDATION FIX: quotation summary baseline alignment */
+.quotation-editor-shell .summary-card{
+  display:grid;
+  grid-template-rows:44px auto;
+  align-content:start;
+}
+.quotation-editor-shell .summary-card span{
+  display:flex;
+  align-items:flex-start;
+  margin-bottom:0;
+  line-height:1.35;
+}
+.quotation-editor-shell .summary-card b{
+  align-self:start;
+  line-height:1.15;
+}
+.quotation-editor-shell .summary-card.strong{
+  grid-template-rows:44px auto;
+}
