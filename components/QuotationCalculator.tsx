@@ -1450,6 +1450,7 @@ function Field({label,children}:{label:React.ReactNode;children:React.ReactNode}
 function Summary({label,value,strong}:{label:React.ReactNode;value:string;strong?:boolean}){return <div className={`summary-card ${strong?"strong":""}`}><span>{label}</span><b>{value}</b></div>}
 function Metric({label,value,strong}:{label:React.ReactNode;value:string;strong?:boolean}){return <div className={`metric ${strong?"strong":""}`}><span>{label}</span><b>{value}</b></div>}
 function ChildCostCard({title,t,setup,setSetup,pax,mainCurrency,mainRate,displayItem,calcModeLabel}:{title:React.ReactNode;t:(en:string,zh:string)=>string;setup:ChildCostSetup;setSetup:(v:ChildCostSetup)=>void;pax:number;mainCurrency:Currency;mainRate:number;displayItem:(v:string)=>string;calcModeLabel:(v:CalcMode)=>string}){
+  const terms=quotationTerminology(t);
   const normalizedSetup:ChildCostSetup={
     ...setup,
     groundDirection:setup.groundDirection||"cost",
