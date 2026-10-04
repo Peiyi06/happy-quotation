@@ -6,7 +6,7 @@ import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 import FlightInformation,{emptyFlightInformation,type FlightInformationValue} from "@/components/FlightInformation";
 import {
   CalcMode, ChildCostRow, ChildCostSetup, ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
-  childExtraRowPerPax, childSetupCost, currencyRate, leaderRowTotal, travelerRowPerPax, travelerRowTotal
+  childExtraRowPerPax, childSetupCost, currencyRate, leaderRowPerPax, leaderRowTotal, travelerRowPerPax, travelerRowTotal
 } from "@/lib/calculations";
 import {
   calculateQuotation, isLeaderType, toNoLeaderType, travelerTypes,
@@ -65,11 +65,11 @@ const defaultPricingScenarios:PricingScenario[]=[
 ];
 
 const defaultLeaderRows: LeaderCostRow[] = [
-  { id: uid(), item: "机票", unitPrice: 0, qty: 1, currency: "RM", note: "" },
-  { id: uid(), item: "单房", unitPrice: 0, qty: 1, currency: "RM", note: "" },
-  { id: uid(), item: "工钱", unitPrice: 0, qty: 1, currency: "RM", note: "" },
-  { id: uid(), item: "Bonus", unitPrice: 0, qty: 1, currency: "RM", note: "" },
-  { id: uid(), item: "其他", unitPrice: 0, qty: 1, currency: "RM", note: "" },
+  { id: uid(), item: "机票", direction:"cost", mode:"每人", unitPrice: 0, qty: 1, currency: "RM", note: "" },
+  { id: uid(), item: "单房", direction:"cost", mode:"每人", unitPrice: 0, qty: 1, currency: "RM", note: "" },
+  { id: uid(), item: "工钱", direction:"cost", mode:"每人每天", unitPrice: 0, qty: 1, currency: "RM", note: "" },
+  { id: uid(), item: "Bonus", direction:"cost", mode:"每人", unitPrice: 0, qty: 1, currency: "RM", note: "" },
+  { id: uid(), item: "其他", direction:"cost", mode:"每人", unitPrice: 0, qty: 1, currency: "RM", note: "" },
 ];
 
 const createDefaultChildSetup = (): ChildCostSetup => ({
@@ -416,6 +416,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const duplicateTraveler = (id:string) => setTravelerRows(rows => { const r=rows.find(x=>x.id===id); return r ? [...rows,{...r,id:uid(),item:r.item ? `${r.item} Copy` : ""}] : rows; });
   const removeTraveler = (id:string) => setTravelerRows(rows => rows.length > 1 ? rows.filter(r=>r.id!==id):rows);
   const setLeader = (id:string, patch:Partial<LeaderCostRow>) => setLeaderRows(rows => rows.map(r => r.id===id?{...r,...patch}:r));
+  const addLeader = () => setLeaderRows(rows=>[...rows,{id:uid(),item:"",direction:"cost",mode:"每人",unitPrice:"",qty:1,currency:"RM",note:""}]);
+  const duplicateLeader = (id:string) => setLeaderRows(rows=>{const row=rows.find(r=>r.id===id);return row?[...rows,{...row,id:uid(),item:row.item?row.item+" Copy":""}]:rows;});
+  const removeLeader = (id:string) => setLeaderRows(rows=>rows.length>1?rows.filter(r=>r.id!==id):rows);
 
   const saveQuotation = async (): Promise<boolean> => {
     setSaving(true);
@@ -553,13 +556,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       { id: uid(), item: "机场接送", direction:"cost", mode: "整团", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" }
     ]);
 
-    setLeaderRows([
-      { id: uid(), item: "机票", unitPrice: 0, qty: 1, currency: "RM", note: "" },
-      { id: uid(), item: "单房", unitPrice: 0, qty: 1, currency: "RM", note: "" },
-      { id: uid(), item: "工钱", unitPrice: 0, qty: 1, currency: "RM", note: "" },
-      { id: uid(), item: "Bonus", unitPrice: 0, qty: 1, currency: "RM", note: "" },
-      { id: uid(), item: "其他", unitPrice: 0, qty: 1, currency: "RM", note: "" }
-    ]);
+    setLeaderRows(defaultLeaderRows.map(row=>({...row,id:uid()})));
     setLeaderOpen(false);
     setSingleRoomAmount("");
     setSingleRoomCurrency("RM");
@@ -926,15 +923,69 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           <button className={"btn leader-toggle-btn "+(leaderOpen?"active":"")} onClick={()=>setLeaderOpen(v=>!v)}>
             {t("Tour Leader","领队陪同")}
           </button>
+          {leaderOpen&&<button type="button" className="btn no-print" onClick={addLeader}>{t("+ Add Cost Row","+ 新增成本项目")}</button>}
         </div>
-        {leaderOpen && <div className="table-wrap"><table><thead><tr><th>{t("Item","项目")}</th><th>{t("Unit Price","单价")}</th><th>{t("Qty / Days","数量 / 天数")}</th><th>{t("Currency","币种")}</th><th>{t("Total Cost","总成本")}</th><th>{t("Per-Pax Allocation","每人分摊")}</th><th>{t("Remarks","备注")}</th></tr></thead>
-        <tbody>{leaderRows.map(r=>{const total=leaderRowTotal(r,mainCurrency,mainRate);return <tr key={r.id}>
-          <td><input value={costItemDisplay(r.item)} onChange={e=>setLeader(r.id,{item:e.target.value})}/></td>
-          <td><input type="number" value={r.unitPrice} onChange={e=>setLeader(r.id,{unitPrice:e.target.value===""?"":Number(e.target.value)})}/></td>
-          <td><input type="number" value={r.qty} onChange={e=>setLeader(r.id,{qty:e.target.value===""?"":Number(e.target.value)})}/></td>
-          <td><select value={r.currency} onChange={e=>setLeader(r.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c} value={c}>{currencyLabel(c)}</option>)}</select></td>
-          <td>{money(total)}</td><td>{money(total/Math.max(1,pax))}</td><td><input value={r.note} onChange={e=>setLeader(r.id,{note:e.target.value})}/></td>
-        </tr>})}</tbody></table></div>}
+        {leaderOpen&&<div className="traveller-cost-table leader-cost-table">
+          <div className="traveller-cost-table-head" aria-hidden="true">
+            <span>{t("Cost Item","成本项目")}</span>
+            <span>{t("Type","类型")}</span>
+            <span>{t("Calculation","计算方式")}</span>
+            <span>{t("Unit Price","单价")}</span>
+            <span>{t("Qty / Days","数量 / 天数")}</span>
+            <span>{t("Currency","币种")}</span>
+            <span>{t("Cost / Pax","每人成本")}</span>
+            <span></span>
+          </div>
+          <div className="traveller-cost-table-body">
+            {leaderRows.map(r=>{
+              const normalizedDirection=(r.direction||"cost") as "cost"|"deduction";
+              const normalizedMode=(r.mode||"每人") as CalcMode;
+              const normalizedRow={...r,direction:normalizedDirection,mode:normalizedMode};
+              const total=leaderRowTotal(normalizedRow,mainCurrency,mainRate);
+              const perPax=leaderRowPerPax(normalizedRow,Math.max(1,Number(pax)||1),mainCurrency,mainRate);
+              const rate=currencyRate(r.currency,mainCurrency,mainRate);
+              return <div className="traveller-cost-row" key={r.id}>
+                <div className="traveller-cost-row-main">
+                  <div className="traveller-cost-cell item">
+                    <input aria-label={t("Cost Item","成本项目")} value={costItemDisplay(r.item)} onChange={e=>setLeader(r.id,{item:e.target.value})}/>
+                    {r.note&&<small className="traveller-cost-note-preview">↳ {r.note}</small>}
+                  </div>
+                  <div className="traveller-cost-cell">
+                    <select aria-label={t("Type","类型")} value={normalizedDirection} onChange={e=>setLeader(r.id,{direction:e.target.value as "cost"|"deduction"})}>
+                      <option value="cost">{t("Cost +","成本 +")}</option>
+                      <option value="deduction">{t("Deduction −","扣减 −")}</option>
+                    </select>
+                  </div>
+                  <div className="traveller-cost-cell">
+                    <select aria-label={t("Calculation","计算方式")} value={normalizedMode} onChange={e=>setLeader(r.id,{mode:e.target.value as CalcMode})}>{calcModes.map(mode=><option key={mode} value={mode}>{calcModeLabel(mode)}</option>)}</select>
+                  </div>
+                  <div className="traveller-cost-cell">
+                    <input aria-label={t("Unit Price","单价")} type="number" min="0" value={r.unitPrice} onChange={e=>setLeader(r.id,{unitPrice:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
+                  </div>
+                  <div className="traveller-cost-cell">
+                    <input aria-label={t("Qty / Days","数量 / 天数")} type="number" min="0" value={r.qty} onChange={e=>setLeader(r.id,{qty:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
+                  </div>
+                  <div className="traveller-cost-cell traveller-cost-currency">
+                    <select aria-label={t("Currency","币种")} value={r.currency} onChange={e=>setLeader(r.id,{currency:e.target.value as Currency})}>{currencies.map(cur=><option key={cur} value={cur}>{currencyLabel(cur)}</option>)}</select>
+                    <small>{t("Rate","汇率")} {rate||"—"}</small>
+                  </div>
+                  <div className={"traveller-cost-result "+(perPax<0?"deduction-value":"")}>
+                    <strong>{money(perPax)}</strong>
+                    <small>{t("Leader Total","领队总成本")} {money(total)}</small>
+                  </div>
+                  <details className="traveller-cost-more no-print">
+                    <summary aria-label={t("More actions","更多操作")}>•••</summary>
+                    <div className="traveller-cost-more-menu">
+                      <label><span>{t("Remarks","备注")}</span><input value={r.note} onChange={e=>setLeader(r.id,{note:e.target.value})} placeholder={t("Add remark","添加备注")}/></label>
+                      <button type="button" onClick={()=>duplicateLeader(r.id)}>{t("Duplicate","复制")}</button>
+                      <button type="button" className="danger-link" onClick={()=>removeLeader(r.id)}>{t("Delete","删除")}</button>
+                    </div>
+                  </details>
+                </div>
+              </div>
+            })}
+          </div>
+        </div>}
       </section>
 
       <Section title={t("Child Cost Setup","儿童成本设置")}>
