@@ -52,7 +52,7 @@ const formatDisplayDate = (date:string) => {
 };
 
 const defaultTravelerRows: TravelerCostRow[] = [
-  { id: uid(), item: "地接报价", direction:"cost", mode: "每人", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: true, note: "" },
+  { id: uid(), item: "地接报价", direction:"cost", mode: "每人", unitPrice: "", qty: 1, currency: "RMB", childRatioApplicable: true, note: "" },
   { id: uid(), item: "小费", direction:"cost", mode: "每人每天", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" },
   { id: uid(), item: "旅游保险", direction:"cost", mode: "每人", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" },
   { id: uid(), item: "机场接送", direction:"cost", mode: "整团", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" },
@@ -177,13 +177,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     if (count > 200) return { code:"REVIEW", label:t("Manual Review","需人工确认"), state:"review" };
     return { code:"", label:"—", state:"pending" };
   }, [pax,language]);
-
-  // Sync the fixed ground quote row with the quotation's main currency.
-  useEffect(() => {
-    setTravelerRows(rows => rows.map((row,index) =>
-      index === 0 ? {...row,item:"地接报价",direction:"cost",currency:mainCurrency} : row
-    ));
-  }, [mainCurrency]);
 
   useEffect(() => {
     try {
@@ -540,7 +533,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     setMainRate(0.62);
 
     setTravelerRows([
-      { id: uid(), item: "地接报价", direction:"cost", mode: "每人", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: true, note: "" },
+      { id: uid(), item: "地接报价", direction:"cost", mode: "每人", unitPrice: "", qty: 1, currency: "RMB", childRatioApplicable: true, note: "" },
       { id: uid(), item: "小费", direction:"cost", mode: "每人每天", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" },
       { id: uid(), item: "旅游保险", direction:"cost", mode: "每人", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" },
       { id: uid(), item: "机场接送", direction:"cost", mode: "整团", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" }
@@ -741,29 +734,26 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           <span>{t("Qty / Days","数量 / 天数")}</span>
           <span>{t("Currency","币种")}</span>
           <span>{t("Cost / Pax","每人成本")}</span>
+          <span></span>
         </div>
 
         <div className="traveller-cost-table-body">
-          {travelerRows.map((r,index)=>{
-            const isGroundQuote=index===0;
+          {travelerRows.map(r=>{
             const rate=currencyRate(r.currency,mainCurrency,mainRate);
             const total=travelerRowTotal(r,pax,mainCurrency,mainRate);
             const pp=travelerRowPerPax(r,pax,mainCurrency,mainRate);
-            return <div className={"traveller-cost-row"+(isGroundQuote?" fixed":"")} key={r.id}>
+            return <div className="traveller-cost-row" key={r.id}>
               <div className="traveller-cost-row-main">
                 <div className="traveller-cost-cell item">
-                  {isGroundQuote
-                    ? <input aria-label={t("Cost Item","成本项目")} value={t("Ground Package","地接报价")} readOnly className="system-fixed-input" />
-                    : <input aria-label={t("Cost Item","成本项目")} value={costItemDisplay(r.item)} onChange={e=>setTraveler(r.id,{item:e.target.value})}/>}
+                  <input aria-label={t("Cost Item","成本项目")} value={costItemDisplay(r.item)} onChange={e=>setTraveler(r.id,{item:e.target.value})}/>
+                  {r.note&&<small className="traveller-cost-note-preview">↳ {r.note}</small>}
                 </div>
 
                 <div className="traveller-cost-cell">
-                  {isGroundQuote
-                    ? <select aria-label={t("Type","类型")} value="cost" disabled className="system-fixed-input"><option value="cost">{t("Cost +","成本 +")}</option></select>
-                    : <select aria-label={t("Type","类型")} value={r.direction||"cost"} onChange={e=>setTraveler(r.id,{direction:e.target.value as "cost"|"deduction"})}>
-                        <option value="cost">{t("Cost +","成本 +")}</option>
-                        <option value="deduction">{t("Deduction −","扣减 −")}</option>
-                      </select>}
+                  <select aria-label={t("Type","类型")} value={r.direction||"cost"} onChange={e=>setTraveler(r.id,{direction:e.target.value as "cost"|"deduction"})}>
+                    <option value="cost">{t("Cost +","成本 +")}</option>
+                    <option value="deduction">{t("Deduction −","扣减 −")}</option>
+                  </select>
                 </div>
 
                 <div className="traveller-cost-cell">
@@ -778,36 +768,27 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
                   <input aria-label={t("Qty / Days","数量 / 天数")} type="number" value={r.qty} onChange={e=>setTraveler(r.id,{qty:e.target.value===""?"":Number(e.target.value)})}/>
                 </div>
 
-                <div className="traveller-cost-cell">
-                  {isGroundQuote
-                    ? <select aria-label={t("Currency","币种")} value={mainCurrency} disabled className="system-fixed-input">{currencies.map(c=><option key={c} value={c}>{currencyLabel(c)}</option>)}</select>
-                    : <select aria-label={t("Currency","币种")} value={r.currency} onChange={e=>setTraveler(r.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c} value={c}>{currencyLabel(c)}</option>)}</select>}
+                <div className="traveller-cost-cell traveller-cost-currency">
+                  <select aria-label={t("Currency","币种")} value={r.currency} onChange={e=>setTraveler(r.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c} value={c}>{currencyLabel(c)}</option>)}</select>
+                  <small>{t("Rate","汇率")} {rate || "—"}</small>
                 </div>
 
                 <div className={"traveller-cost-result "+(pp<0?"deduction-value":"")}>
-                  <span>{t("Cost / Pax","每人成本")}</span>
                   <strong>{money(pp)}</strong>
-                </div>
-              </div>
-
-              <div className="traveller-cost-row-meta">
-                <div className="traveller-cost-meta-group">
-                  <label className="traveller-cost-remark">
-                    <span>{t("Remarks","备注")}</span>
-                    <input value={r.note} onChange={e=>setTraveler(r.id,{note:e.target.value})} placeholder={t("Add remark","添加备注")}/>
-                  </label>
+                  <small>{t("Total","总计")} {money(total)}</small>
                 </div>
 
-                <div className="traveller-cost-readonly">
-                  <span>{t("Rate","汇率")} <strong className={rate===0?"warn":""}>{rate || "—"}</strong></span>
-                  <span>{t("Total Cost","总成本")} <strong className={total<0?"deduction-value":""}>{money(total)}</strong></span>
-                </div>
-
-                <div className="traveller-cost-actions no-print">
-                  {isGroundQuote
-                    ? <span className="fixed-row-label">{t("Fixed","固定")}</span>
-                    : <><button type="button" onClick={()=>duplicateTraveler(r.id)}>{t("Duplicate","复制")}</button><button type="button" onClick={()=>removeTraveler(r.id)}>{t("Delete","删除")}</button></>}
-                </div>
+                <details className="traveller-cost-more no-print">
+                  <summary aria-label={t("More actions","更多操作")}>•••</summary>
+                  <div className="traveller-cost-more-menu">
+                    <label>
+                      <span>{t("Remarks","备注")}</span>
+                      <input value={r.note} onChange={e=>setTraveler(r.id,{note:e.target.value})} placeholder={t("Add remark","添加备注")}/>
+                    </label>
+                    <button type="button" onClick={()=>duplicateTraveler(r.id)}>{t("Duplicate","复制")}</button>
+                    <button type="button" className="danger-link" onClick={()=>removeTraveler(r.id)}>{t("Delete","删除")}</button>
+                  </div>
+                </details>
               </div>
             </div>
           })}
