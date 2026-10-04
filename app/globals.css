@@ -17457,7 +17457,7 @@ td,
 }
 
 /* Level 1 — Page title */
-.workspace-main h1{
+.workspace-main h1:not(.supplier-form-page *){
   color:var(--foundation-title-level-1-color)!important;
   font-size:var(--foundation-type-page)!important;
   line-height:var(--foundation-line-page)!important;
@@ -17487,7 +17487,7 @@ td,
 }
 
 /* Level 2 — primary section title */
-.workspace-main h2{
+.workspace-main h2:not(.supplier-form-page *){
   color:var(--foundation-title-level-2-color)!important;
   font-size:var(--foundation-type-section)!important;
   line-height:var(--foundation-line-section)!important;
@@ -17508,8 +17508,8 @@ td,
 }
 
 /* Level 3 — subsection / card title */
-.workspace-main h3,
-.workspace-main h4{
+.workspace-main h3:not(.supplier-form-page *),
+.workspace-main h4:not(.supplier-form-page *){
   color:var(--foundation-title-level-3-color)!important;
   font-size:var(--foundation-type-subsection)!important;
   line-height:var(--foundation-line-subsection)!important;
@@ -17526,22 +17526,6 @@ td,
   line-height:var(--foundation-line-section)!important;
   font-weight:var(--foundation-weight-section)!important;
   letter-spacing:var(--foundation-track-section)!important;
-}
-
-/* Print / supplier documents keep their dedicated document typography system. */
-.workspace-main .supplier-form h1,
-.workspace-main .supplier-form h2,
-.workspace-main .supplier-form h3,
-.workspace-main .supplier-form h4,
-.workspace-main .supplier-pro h1,
-.workspace-main .supplier-pro h2,
-.workspace-main .supplier-pro h3,
-.workspace-main .supplier-pro h4{
-  color:revert!important;
-  font-size:revert!important;
-  line-height:revert!important;
-  font-weight:revert!important;
-  letter-spacing:revert!important;
 }
 
 /* Core body */
