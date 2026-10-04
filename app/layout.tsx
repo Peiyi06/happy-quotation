@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./quotation-pricing.css";
+import "./quotation-print.css";
 
 export const metadata: Metadata = {
   title: "Happy Express Quotation Calculator",
