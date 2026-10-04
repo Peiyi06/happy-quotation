@@ -16,7 +16,7 @@ export type QuotationCalculationInput={
   singleRoomAmount:number|"";singleRoomCurrency:Currency;
 };
 
-export type QuotationPricePoint={cost:number;profit:number;selling:number;rounded:number;final:number;margin:number};
+export type QuotationPricePoint={cost:number;profit:number;selling:number;suggested:number;rounded:number;final:number;margin:number};
 export type QuotationCalculationResult={
   version:1;hasLeader:boolean;travelerPerPax:number;leaderTotal:number;leaderPerPax:number;
   ratioEligible:number;ratioExcluded:number;childBedCost:number;childNoBedCost:number;
@@ -70,7 +70,7 @@ export function calculateQuotation(input:QuotationCalculationInput):QuotationCal
     const selling=cost+profit,rounded=roundUpTo(selling,input.roundUnit);
     const final=type===selectedType&&input.manualQuote!==""?Number(input.manualQuote):rounded;
     const finalProfit=final-cost;
-    return {cost,profit,selling,rounded,final,margin:final?finalProfit/final:0};
+    return {cost,profit,selling,suggested:selling,rounded,final,margin:final?finalProfit/final:0};
   };
   const variants={
     "成人不含领队":make("成人不含领队",travelerPerPax),"成人含领队":make("成人含领队",travelerPerPax+leaderPerPax),
