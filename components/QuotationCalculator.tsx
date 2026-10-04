@@ -727,15 +727,63 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         </div>
 
         <PrintSectionNo no="06" title={t("Child Cost Setup","儿童成本设置")}>
-          <div className="print-child-grid">
-            <div className="print-child-card">
-              <span>{t("Child with Bed","小孩含床")}</span><strong>{money(printChildBed.total)}</strong>
-              <small>{t("Ground Package","地接报价")} {childBedSetup.groundRatio}% · {t("Other Items","其他项目")} {childBedSetup.otherRows?.length||0}</small>
-            </div>
-            <div className="print-child-card">
-              <span>{t("Child without Bed","小孩不含床")}</span><strong>{money(printChildNoBed.total)}</strong>
-              <small>{t("Ground Package","地接报价")} {childNoBedSetup.groundRatio}% · {t("Other Items","其他项目")} {childNoBedSetup.otherRows?.length||0}</small>
-            </div>
+          <div className="print-child-detail-stack">
+            {[
+              {title:t("Child with Bed","小孩含床"),setup:childBedSetup,summary:printChildBed},
+              {title:t("Child without Bed","小孩不含床"),setup:childNoBedSetup,summary:printChildNoBed}
+            ].map((child,index)=>{
+              const groundRate=currencyRate(child.setup.groundCurrency,mainCurrency,mainRate);
+              const groundBaseRm=(Number(child.setup.groundBase)||0)*groundRate;
+              const groundPerPax=child.summary.ground;
+              const childRows=(child.setup.otherRows||[]).map(row=>({
+                ...row,
+                rate:currencyRate(row.currency,mainCurrency,mainRate),
+                perPax:childExtraRowPerPax(row,Math.max(1,Number(pax)||1),mainCurrency,mainRate)
+              }));
+              return <div className="print-child-detail" key={index}>
+                <div className="print-child-detail-head">
+                  <div><span>{child.title}</span><small>{t("Detailed cost breakdown","成本明细")}</small></div>
+                  <strong>{money(child.summary.total)}</strong>
+                </div>
+                <div className="print-table print-child-cost-table">
+                  <div className="print-tr print-th">
+                    <span>{t("Cost Item","成本项目")}</span>
+                    <span>{t("Type","类型")}</span>
+                    <span>{t("Calculation","计算方式")}</span>
+                    <span>{t("Unit Price","单价")}</span>
+                    <span>{t("Qty / Ratio","数量 / 比例")}</span>
+                    <span>{t("Currency","币种")}</span>
+                    <span>{t("Rate","汇率")}</span>
+                    <span>{t("Cost / Pax","每人成本")}</span>
+                  </div>
+                  <div className="print-tr">
+                    <span><strong>{t("Ground Package","地接报价")}</strong></span>
+                    <span>{child.setup.groundDirection==="deduction"?t("Deduction −","扣减 −"):t("Cost +","成本 +")}</span>
+                    <span>{t("Child Ratio","儿童比例")}</span>
+                    <span>{Number(child.setup.groundBase)||0}<small>{t("Base after FX","汇率后基础值")} {money(groundBaseRm)}</small></span>
+                    <span>{child.setup.groundRatio}%</span>
+                    <span>{currencyLabel(child.setup.groundCurrency)}</span>
+                    <span>{groundRate||"—"}</span>
+                    <span><strong>{money(groundPerPax)}</strong></span>
+                  </div>
+                  {childRows.map(row=><div className="print-tr" key={row.id}>
+                    <span><strong>{costItemDisplay(row.item)||"—"}</strong>{row.note?<small>{row.note}</small>:null}</span>
+                    <span>{row.direction==="deduction"?t("Deduction −","扣减 −"):t("Cost +","成本 +")}</span>
+                    <span>{calcModeLabel(row.mode||"每人")}</span>
+                    <span>{Number(row.unitPrice)||0}</span>
+                    <span>{Number(row.qty)||0}</span>
+                    <span>{currencyLabel(row.currency)}</span>
+                    <span>{row.rate||"—"}</span>
+                    <span><strong>{money(row.perPax)}</strong></span>
+                  </div>)}
+                </div>
+                <div className="print-child-totals">
+                  <span>{t("Ground","地接")} <strong>{money(child.summary.ground)}</strong></span>
+                  <span>{t("Other Items","其他项目")} <strong>{money(child.summary.extras)}</strong></span>
+                  <span>{t("Child Cost / Pax","儿童成本 / 人")} <strong>{money(child.summary.total)}</strong></span>
+                </div>
+              </div>
+            })}
           </div>
         </PrintSectionNo>
 
