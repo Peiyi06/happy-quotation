@@ -13,8 +13,8 @@ export async function GET(request:Request){
 
   const r=data.operation_review||{};
   const pick=(key:string,original:any)=>Object.prototype.hasOwnProperty.call(r,key)?r[key]:original;
-  const salesFlights=Array.isArray(data?.inquiry_data?.suggestedFlights)?data.inquiry_data.suggestedFlights:[];
-  const finalFlights=r?.overrideSuggestedFlights===true&&Array.isArray(r?.suggestedFlights)?r.suggestedFlights:salesFlights;
+  const salesFlightInformation=data?.inquiry_data?.flightInformation||null;
+  const finalFlightInformation=r?.overrideFlightInformation===true&&r?.flightInformation?r.flightInformation:salesFlightInformation;
 
   return NextResponse.json({ok:true,context:{
     id:data.id,
@@ -25,10 +25,9 @@ export async function GET(request:Request){
     travelStartDate:pick("travelStartDate",data.travel_start_date)||"",
     travelEndDate:pick("travelEndDate",data.travel_end_date)||"",
     daysCount:Number(pick("daysCount",data.days_count))||1,
-    nightsCount:Number(pick("nightsCount",data.nights_count))||0,
     pax:pick("pax",data.pax)||"",
     tourType:pick("tourType",data.tour_type)||"",
-    suggestedFlights:finalFlights,
+    flightInformation:finalFlightInformation,
     flightRequirement:pick("flightRequirement",data.flight_requirement)||"",
     hotelRequirement:pick("hotelRequirement",data.hotel_requirement)||"",
     mealRequirement:pick("mealRequirement",data.meal_requirement)||"",
