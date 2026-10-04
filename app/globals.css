@@ -5364,7 +5364,7 @@ button,
 
 .workspace-main .panel-head h2,
 .workspace-main .section h2,
-.workspace-main .flight-info-head h3,
+.workspace-main .flight-info-head h2,
 .workspace-main .quote-flight-card h3,
 .workspace-main .inquiry-version-card h3,
 .quotation-type-head h2{
@@ -6245,8 +6245,8 @@ td,
   gap:16px;
   margin-bottom:14px;
 }
-.quotation-editor-shell .quotation-identity-head h3,
-.quotation-editor-shell .quotation-trip-context-head h3{
+.quotation-editor-shell .quotation-identity-head h2,
+.quotation-editor-shell .quotation-trip-context-head h2{
   margin:3px 0 0;
   color:var(--color-text-primary);
   font-size:var(--foundation-type-section);
@@ -17505,10 +17505,7 @@ td,
   letter-spacing:var(--foundation-track-subsection)!important;
 }
 
-/* Semantic Level 2 titles that use h3 / custom controls in existing markup. */
-.workspace-main .quotation-identity-head h3,
-.workspace-main .quotation-trip-context-head h3,
-.workspace-main .flight-info-head h3,
+/* Semantic Level 2 custom controls in existing markup. */
 .workspace-main .cost-setup-toggle>span:first-child{
   color:var(--foundation-title-level-2-color)!important;
   font-size:var(--foundation-type-section)!important;
@@ -17576,10 +17573,7 @@ td,
   letter-spacing:var(--foundation-track-section)!important;
 }
 
-/* Existing semantic L2 headings implemented with h3/custom controls. */
-.workspace-main .quotation-identity-head h3,
-.workspace-main .quotation-trip-context-head h3,
-.workspace-main .flight-info-head h3,
+/* Existing semantic L2 headings implemented with custom controls / dialog h3. */
 .workspace-main .cost-setup-toggle>span:first-child,
 .workspace-main .unsaved-dialog h3,
 .workspace-main .unsaved-modal h3{
@@ -17604,7 +17598,7 @@ td,
 .workspace-main .itinerary-reminder-detail-card h3,
 .workspace-main .ai-import-day-preview h3,
 .workspace-main .child-cost-card-head h3,
-.workspace-main .flight-block h4,
+.workspace-main .flight-block h3,
 .workspace-main .itinerary-detail-attractions h4{
   color:var(--foundation-title-level-3-color)!important;
   font-size:var(--foundation-type-subsection)!important;
