@@ -168,7 +168,6 @@ export default function FlightInformation({
   return <div className={"flight-info-card shared-flight-information"+(compact?" compact":"")}>
     <div className="flight-info-head">
       <div>
-        <span className="page-kicker">{t("FLIGHT INFORMATION","航班信息")}</span>
         <h3>{t("Flight Information","航班信息")}</h3>
       </div>
       {durationDays>0&&<div className="itinerary-pill"><strong>{durationDays} {t("Days","天")}</strong><span>{t("Travel Duration","行程天数")}</span></div>}
