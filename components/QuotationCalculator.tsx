@@ -946,14 +946,33 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     </div>
 
     <Section title={t("Customer Quotation","对客报价")}>
-      <div className="quote-panel">
-        <Field label={t("Traveller Type","旅客类型")}><select value={effectiveSelectedType} onChange={e=>{setSelectedType(e.target.value as TravelerType);setManualQuote("")}}>{travelerTypes.filter(x=>hasLeader || x.includes("不含领队")).map(x=><option key={x} value={x}>{travelerTypeDisplay(x)}</option>)}</select></Field>
-        <Metric label={t("Cost","成本")} value={money(selected.cost)} />
-        <Metric label={t("System Suggested Price","系统建议价")} value={money(selected.suggested)} />
-        <Field label={t("Manual Final Quote","手动最终报价")}><input type="number" value={manualQuote} onChange={e=>setManualQuote(e.target.value===""?"":Number(e.target.value))} placeholder={t(`Auto round ${roundUnit}`,`自动取整 ${roundUnit}`)} /></Field>
-        <Metric label={t("Final Quote","最终报价")} value={money(finalQuote)} strong />
-        <Metric label={t("Final Profit","最终毛利")} value={money(finalProfit)} />
-        <Metric label={t("Margin","毛利率")} value={pct(finalMargin)} />
+      <div className="customer-quotation-simple">
+        <div className="customer-quotation-selector">
+          <Field label={t("Traveller Type","旅客类型")}><select value={effectiveSelectedType} onChange={e=>{setSelectedType(e.target.value as TravelerType);setManualQuote("")}}>{travelerTypes.filter(x=>hasLeader || x.includes("不含领队")).map(x=><option key={x} value={x}>{travelerTypeDisplay(x)}</option>)}</select></Field>
+        </div>
+
+        <div className="customer-quotation-summary">
+          <div className="customer-quotation-summary-top">
+            <div className="customer-quotation-supporting">
+              <span>{t("Cost","成本")}</span>
+              <strong>{money(selected.cost)}</strong>
+            </div>
+            <div className="customer-quotation-supporting">
+              <span>{t("System Suggested","系统建议价")}</span>
+              <strong>{money(selected.suggested)}</strong>
+            </div>
+          </div>
+
+          <div className="customer-quotation-manual">
+            <Field label={t("Manual Final Quote","手动最终报价")}><input type="number" value={manualQuote} onChange={e=>setManualQuote(e.target.value===""?"":Number(e.target.value))} placeholder={t(`Auto round ${roundUnit}`,`自动取整 ${roundUnit}`)} /></Field>
+          </div>
+
+          <div className="customer-quotation-final">
+            <span>{t("Final Quote","最终报价")}</span>
+            <strong>{money(finalQuote)}</strong>
+            <small>{t("Profit","利润")} {money(finalProfit)} · {t("Margin","毛利率")} {pct(finalMargin)}</small>
+          </div>
+        </div>
       </div>
     </Section>
 
