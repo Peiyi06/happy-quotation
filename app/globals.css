@@ -19643,7 +19643,7 @@ td,
 .quotation-editor-shell .cost-setup-toggle{
   width:100%;
   min-height:68px;
-  padding:0 22px;
+  padding:0 30px;
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -19667,9 +19667,10 @@ td,
 
 .quotation-editor-shell .cost-setup-toggle>span:first-child{
   color:var(--color-brand-primary);
-  font-size:20px;
-  line-height:1.2;
-  font-weight:750;
+  font-size:var(--foundation-type-section);
+  line-height:var(--foundation-line-section);
+  font-weight:var(--foundation-weight-section);
+  letter-spacing:var(--foundation-track-section);
 }
 
 .quotation-editor-shell .cost-setup-chevron{
