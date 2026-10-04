@@ -286,10 +286,10 @@
 
 .flight-info-card{margin-top:18px;padding-top:20px;border-top:1px solid var(--line)}
 .flight-info-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:16px}
-.flight-info-head h3{margin:2px 0 0;font-size:20px;color:var(--navy2)}
+.flight-info-head h2{margin:2px 0 0;font-size:20px;color:var(--navy2)}
 .flight-pair-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .flight-block{background:#f8fbfd;border:1px solid var(--line);border-radius:14px;padding:16px}
-.flight-block h4{margin:0 0 14px;color:var(--navy2);font-size:15px}
+.flight-block h3{margin:0 0 14px;color:var(--navy2);font-size:15px}
 .flight-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .next-day-toggle{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--navy2);padding-top:26px}
 .next-day-toggle input{width:18px;height:18px}
@@ -312,7 +312,7 @@
 .flight-day-status:focus-visible{outline:2px solid var(--color-brand-primary);outline-offset:2px}
 .inquiry-flights-ios .shared-flight-information.compact{margin-top:0;padding-top:0;border-top:0}
 .inquiry-flights-ios .shared-flight-information .flight-info-head{margin-bottom:14px}
-.inquiry-flights-ios .shared-flight-information .flight-info-head h3{font-size:15px}
+.inquiry-flights-ios .shared-flight-information .flight-info-head h2{font-size:15px}
 .inquiry-flights-ios .shared-flight-information .flight-block{box-shadow:none}
 
 
