@@ -146,7 +146,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [travelerRows, setTravelerRows] = useState<TravelerCostRow[]>(defaultTravelerRows);
   const [pricingMode,setPricingMode]=useState<"single"|"scenario">("single");
   const [pricingScenarios,setPricingScenarios]=useState<PricingScenario[]>(()=>defaultPricingScenarios.map(s=>({...s})));
-  const [scenarioRows,setScenarioRows]=useState<ScenarioCostRow[]>(()=>makeScenarioRowsFromTravelerRows(defaultTravelerRows,defaultPricingScenarios));
+  const [scenarioRows,setScenarioRows]=useState<ScenarioCostRow[]>([]);
   const [leaderRows, setLeaderRows] = useState<LeaderCostRow[]>(defaultLeaderRows);
   const [leaderOpen, setLeaderOpen] = useState(false);
   const [singleRoomAmount, setSingleRoomAmount] = useState<number | "">("");
