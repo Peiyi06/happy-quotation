@@ -35,6 +35,9 @@ export default async function QuotationDetailPage({
 
   const margin=Number(data.margin||0);
   const qd=data.quotation_data||{};
+  const scenarioPricing=qd.scenarioPricing||null;
+  const isScenarioPricing=scenarioPricing?.mode==="scenario";
+  const savedScenarioResults=Array.isArray(scenarioPricing?.results)?scenarioPricing.results:[];
   const fi=qd.flightInformation||{};
   const outbound=fi.outbound||{};
   const outboundTransit=fi.outboundTransit||{};
@@ -111,6 +114,36 @@ export default async function QuotationDetailPage({
       <Link className="btn" href={"/inquiries/"+data.source_inquiry_id+"?returnTo="+encodeURIComponent(currentQuoteHref)}><UiText en="Open Inquiry" zh="打开询价" /></Link>
     </section>}
 
+    {isScenarioPricing ? <>
+      <section className="panel scenario-detail-panel">
+        <div className="panel-head">
+          <div>
+            <span className="page-kicker"><UiText en="SCENARIO PRICING" zh="人数报价" /></span>
+            <h2><UiText en="Package Price Matrix" zh="配套人数价格矩阵" /></h2>
+          </div>
+        </div>
+        <div className="scenario-result-grid scenario-detail-grid">
+          {savedScenarioResults.map((result:any)=><article className="scenario-result-card" key={result.id||result.pax}>
+            <div className="scenario-result-head">
+              <div><span><UiText en="SCENARIO" zh="人数方案" /></span><strong>{result.pax} Pax</strong></div>
+              <span className="scenario-result-days">{itineraryDays||"—"} <UiText en="Days" zh="天" /></span>
+            </div>
+            <div className="scenario-result-metrics">
+              <div className="metric"><span><UiText en="Cost / Pax" zh="每人成本" /></span><strong>{money(Number(result.costPerPax)||0)}</strong></div>
+              <div className="metric"><span><UiText en="System Suggested" zh="系统建议价" /></span><strong>{money(Number(result.suggestedPrice)||0)}</strong></div>
+            </div>
+            <div className="scenario-result-final">
+              <span><UiText en="Final Price / Pax" zh="最终报价 / 人" /></span>
+              <strong>{money(Number(result.finalPrice)||0)}</strong>
+            </div>
+            <div className="scenario-result-foot">
+              <span><UiText en="Profit" zh="利润" /> <strong>{money(Number(result.finalProfit)||0)}</strong></span>
+              <span><UiText en="Margin" zh="毛利率" /> <strong>{((Number(result.finalMargin)||0)*100).toFixed(1)}%</strong></span>
+            </div>
+          </article>)}
+        </div>
+      </section>
+    </> : <>
     <section className="final-price-grid">
       <div className="quote-result-hero">
         <span><UiText en="Adult Price · Twin Sharing" zh="成人价格 · 双人一房" />{hasLeader?<UiText en=" · Includes Tour Leader" zh=" · 含领队" />:null}</span>
@@ -166,6 +199,7 @@ export default async function QuotationDetailPage({
         </div>)}
       </div>
     </section>
+    </>}
 
     <section className="panel quote-flight-panel">
       <div className="panel-head quote-flight-head">
