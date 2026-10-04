@@ -971,7 +971,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
                   </div>
                   <div className={"traveller-cost-result "+(perPax<0?"deduction-value":"")}>
                     <strong>{money(perPax)}</strong>
-                    <small>{t("Leader Total","领队总成本")} {money(total)}</small>
+                    <small>{t("Total","总计")} {money(total)}</small>
                   </div>
                   <details className="traveller-cost-more no-print">
                     <summary aria-label={t("More actions","更多操作")}>•••</summary>
