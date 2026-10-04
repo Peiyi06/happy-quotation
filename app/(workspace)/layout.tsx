@@ -25,7 +25,6 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
           {user.role === "manager" && <WorkspaceSidebarLink href="/operation"><UiText en="Operation" zh="运营" /></WorkspaceSidebarLink>}
           <WorkspaceSidebarLink href="/products"><UiText en="Product" zh="产品" /></WorkspaceSidebarLink>
           <NewQuotationMenu compact />
-          <WorkspaceSidebarLink href="/tour-groups"><UiText en="Tour Group" zh="旅游团" /></WorkspaceSidebarLink>
 
           <WorkspaceModuleMenu
             label={{en:"Itinerary",zh:"行程"}}
