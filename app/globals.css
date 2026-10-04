@@ -12940,17 +12940,25 @@ td,
 
 
 /* =========================================================
-   NEW INQUIRY — FOUNDATION FORM WORKSPACE
-   Scoped to New Inquiry only; Edit Inquiry remains untouched.
+   NEW INQUIRY — FOUNDATION LOCK
+   Header = navigation / utility.
+   Sections = flat form workspace.
+   Workflow = next-step action only.
    ========================================================= */
-
 .new-inquiry-template{
+  width:100%;
+  max-width:1480px;
+  margin:0 auto;
   display:grid;
   gap:18px;
 }
 
+/* Header */
 .new-inquiry-template .new-inquiry-head{
+  display:flex!important;
   align-items:flex-start!important;
+  justify-content:space-between!important;
+  gap:18px!important;
   margin:0!important;
   padding:4px 0 20px!important;
   border:0!important;
@@ -12961,12 +12969,10 @@ td,
   box-shadow:none!important;
   overflow:visible!important;
 }
-
 .new-inquiry-template .new-inquiry-title-block{
   display:grid;
   gap:6px;
 }
-
 .new-inquiry-template .new-inquiry-title-block h1{
   margin:0!important;
   color:var(--color-brand-primary,var(--navy))!important;
@@ -12975,7 +12981,6 @@ td,
   font-weight:700!important;
   letter-spacing:-.025em!important;
 }
-
 .new-inquiry-template .new-inquiry-title-block p{
   margin:0!important;
   max-width:760px!important;
@@ -12983,14 +12988,40 @@ td,
   font-size:13px!important;
   line-height:1.5!important;
 }
+.new-inquiry-template .new-inquiry-head-actions{
+  flex:0 0 auto!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+}
+.new-inquiry-template .new-inquiry-back-action{
+  min-height:36px!important;
+  height:36px!important;
+  padding:0 12px!important;
+  border:1px solid var(--color-border-default,var(--line))!important;
+  border-radius:9px!important;
+  background:#fff!important;
+  color:var(--color-text-secondary,var(--navy2))!important;
+  box-shadow:none!important;
+  font-size:10.5px!important;
+  font-weight:650!important;
+  text-decoration:none!important;
+}
+.new-inquiry-template .new-inquiry-back-action:hover{
+  background:var(--color-bg-soft,#f6f8fa)!important;
+  color:var(--color-text-primary,var(--navy2))!important;
+  border-color:#c4d0d9!important;
+}
 
 /* Editor rhythm */
 .new-inquiry-template .inquiry-editor{
+  width:100%;
+  min-width:0;
   display:grid!important;
   gap:0!important;
 }
-
 .new-inquiry-template .inquiry-editor>.panel{
+  width:100%;
+  min-width:0;
   margin:0!important;
   padding:22px 0!important;
   border:0!important;
@@ -12999,15 +13030,12 @@ td,
   background:transparent!important;
   box-shadow:none!important;
 }
-
 .new-inquiry-template .inquiry-editor>.panel:first-child{
   padding-top:6px!important;
 }
-
 .new-inquiry-template .inquiry-editor>.panel:last-of-type{
   border-bottom:0!important;
 }
-
 .new-inquiry-template .inquiry-editor>.panel>.panel-head{
   align-items:flex-start!important;
   gap:18px!important;
@@ -13015,7 +13043,6 @@ td,
   padding:0!important;
   border:0!important;
 }
-
 .new-inquiry-template .inquiry-editor>.panel>.panel-head h2{
   margin:0 0 4px!important;
   color:var(--color-text-primary,var(--navy2))!important;
@@ -13024,7 +13051,6 @@ td,
   font-weight:680!important;
   letter-spacing:-.01em!important;
 }
-
 .new-inquiry-template .inquiry-editor>.panel>.panel-head .panel-subtext{
   margin:0!important;
   max-width:720px!important;
@@ -13033,15 +13059,15 @@ td,
   line-height:1.5!important;
 }
 
-/* Top utilities: secondary, compact, grouped */
+/* Header utilities */
 .new-inquiry-template .customer-request-copy-actions{
   display:flex!important;
   align-items:center!important;
   justify-content:flex-end!important;
   gap:8px!important;
   flex-wrap:wrap!important;
+  max-width:100%;
 }
-
 .new-inquiry-template .customer-request-copy-actions .btn,
 .new-inquiry-template .inquiry-flights-ios>.panel-head>.btn{
   min-height:34px!important;
@@ -13054,30 +13080,27 @@ td,
   box-shadow:none!important;
   font-size:10px!important;
   font-weight:650!important;
+  white-space:nowrap!important;
 }
-
 .new-inquiry-template .customer-request-copy-actions .btn:hover,
 .new-inquiry-template .inquiry-flights-ios>.panel-head>.btn:hover{
   background:var(--color-bg-soft,#f6f8fa)!important;
   color:var(--color-text-primary,var(--navy2))!important;
 }
 
-/* Form grid: quiet system fields, no oversized inputs */
+/* Form controls */
 .new-inquiry-template .itinerary-meta-grid{
   gap:12px 14px!important;
 }
-
 .new-inquiry-template .field{
   gap:6px!important;
 }
-
 .new-inquiry-template .field>span{
   color:var(--color-text-secondary,var(--muted))!important;
   font-size:9.5px!important;
   line-height:1.2!important;
   font-weight:650!important;
 }
-
 .new-inquiry-template .field input,
 .new-inquiry-template .field select,
 .new-inquiry-template .field textarea{
@@ -13089,25 +13112,21 @@ td,
   font-size:11.5px!important;
   transition:border-color .14s ease,box-shadow .14s ease,background .14s ease!important;
 }
-
 .new-inquiry-template .field input{
   min-height:40px!important;
   height:40px!important;
   padding:0 11px!important;
 }
-
 .new-inquiry-template .field textarea{
   min-height:92px!important;
   padding:10px 11px!important;
   line-height:1.45!important;
   resize:vertical!important;
 }
-
 .new-inquiry-template .field input:hover,
 .new-inquiry-template .field textarea:hover{
   border-color:#bccbd5!important;
 }
-
 .new-inquiry-template .field input:focus,
 .new-inquiry-template .field textarea:focus,
 .new-inquiry-template .field select:focus{
@@ -13116,41 +13135,94 @@ td,
   box-shadow:0 0 0 3px rgba(62,108,142,.09)!important;
 }
 
+/* Customer request grid */
+.new-inquiry-template .inquiry-editor>.panel:first-child .itinerary-meta-grid{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:12px 14px!important;
+}
 .new-inquiry-template .system-fixed-input{
-  background:#f6f8fa!important;
-  color:var(--color-text-secondary,#647581)!important;
+  height:38px!important;
+  min-height:38px!important;
+  background:#f4f6f8!important;
+  border-color:#e0e6ea!important;
+  color:#425564!important;
+  font-weight:650!important;
 }
 
-/* Traveller composition: grouped details instead of nested cards */
-.new-inquiry-template .traveller-composition-notes{
+/* Traveller composition */
+.new-inquiry-template .inquiry-editor>.panel:nth-of-type(2)>.itinerary-meta-grid{
+  grid-template-columns:repeat(3,minmax(140px,220px))!important;
+  justify-content:start!important;
   gap:12px!important;
+}
+.new-inquiry-template .inquiry-editor>.panel:nth-of-type(2)>.itinerary-meta-grid .field input{
+  max-width:220px!important;
+}
+.new-inquiry-template .traveller-composition-notes{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:12px 14px!important;
   margin-top:14px!important;
 }
-
+.new-inquiry-template .traveller-composition-notes textarea{
+  min-height:72px!important;
+  height:72px!important;
+}
 .new-inquiry-template .traveller-composition-check{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:18px!important;
+  width:max-content!important;
+  max-width:100%!important;
+  min-width:0!important;
   margin-top:14px!important;
-  padding:10px 12px!important;
+  padding:9px 12px!important;
   border:1px solid var(--color-border-default,var(--line))!important;
   border-radius:10px!important;
   background:var(--color-bg-soft,#f7f9fa)!important;
   box-shadow:none!important;
 }
-
 .new-inquiry-template .traveller-composition-check.ok{
   background:#f5f9f6!important;
   border-color:#d9e7dd!important;
 }
-
 .new-inquiry-template .traveller-composition-check.warning{
   background:#fff9ef!important;
   border-color:#eadbbd!important;
 }
-
-/* Flights: list rows, not floating cards */
-.new-inquiry-template .inquiry-flight-list{
-  gap:0!important;
+.new-inquiry-template .traveller-composition-total{
+  display:flex!important;
+  align-items:baseline!important;
+  gap:8px!important;
+}
+.new-inquiry-template .traveller-composition-total span{
+  margin:0!important;
+  font-size:9.5px!important;
+}
+.new-inquiry-template .traveller-composition-total strong{
+  font-size:17px!important;
+  line-height:1!important;
+}
+.new-inquiry-template .traveller-composition-match{
+  display:flex!important;
+  align-items:center!important;
+  gap:7px!important;
+  font-size:10px!important;
+  white-space:nowrap!important;
 }
 
+/* Suggested flights */
+.new-inquiry-template .inquiry-flights-ios{
+  min-height:0!important;
+}
+.new-inquiry-template .inquiry-flights-ios>.panel-head{
+  margin-bottom:10px!important;
+}
+.new-inquiry-template .inquiry-flight-list{
+  gap:0!important;
+  min-height:0!important;
+}
 .new-inquiry-template .inquiry-flight-card{
   margin:0!important;
   padding:14px 0!important;
@@ -13160,21 +13232,17 @@ td,
   background:transparent!important;
   box-shadow:none!important;
 }
-
 .new-inquiry-template .inquiry-flight-card:first-child{
   border-top:0!important;
   padding-top:0!important;
 }
-
 .new-inquiry-template .inquiry-flight-card-head{
   margin-bottom:12px!important;
 }
-
 .new-inquiry-template .inquiry-flight-card-head strong{
   font-size:11px!important;
   font-weight:680!important;
 }
-
 .new-inquiry-template .inquiry-flight-card-head .btn.danger{
   min-height:30px!important;
   height:30px!important;
@@ -13185,90 +13253,108 @@ td,
   color:var(--color-danger-text,#a34848)!important;
   box-shadow:none!important;
 }
-
 .new-inquiry-template .inquiry-flight-card-head .btn.danger:hover{
   background:#fff3f2!important;
 }
-
-/* Requirements: same quiet grouped-field treatment */
-.new-inquiry-template .inquiry-requirement-grid{
-  gap:12px!important;
-}
-
-/* Empty state */
 .new-inquiry-template .inquiry-flight-list>.empty{
-  padding:18px 0!important;
+  margin:0!important;
+  padding:6px 0 2px!important;
+  min-height:0!important;
   border:0!important;
   background:transparent!important;
   color:var(--color-text-tertiary,var(--muted))!important;
   text-align:left!important;
   font-size:10.5px!important;
+  line-height:1.45!important;
 }
 
-/* Workflow: final submission strip, lighter than content */
+/* Travel requirements */
+.new-inquiry-template .inquiry-requirement-grid{
+  gap:12px!important;
+}
+.new-inquiry-template .inquiry-requirements-ios .inquiry-requirement-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:12px 14px!important;
+}
+.new-inquiry-template .inquiry-requirements-ios textarea{
+  min-height:74px!important;
+  height:74px!important;
+}
+
+/* Workflow */
 .new-inquiry-template .new-inquiry-workflow-panel{
   margin-top:8px!important;
-  padding:20px 0 0!important;
+  padding:18px 0 0!important;
   border:0!important;
   border-radius:0!important;
   background:transparent!important;
   box-shadow:none!important;
 }
-
 .new-inquiry-template .new-inquiry-workflow-panel .inquiry-workflow-panel-head{
   margin-bottom:12px!important;
 }
-
 .new-inquiry-template .new-inquiry-workflow-panel .page-kicker{
   display:none!important;
 }
-
 .new-inquiry-template .new-inquiry-workflow-panel .inquiry-workflow-panel-head h2{
   margin:0!important;
   font-size:15px!important;
   font-weight:680!important;
   color:var(--color-text-primary,var(--navy2))!important;
 }
-
 .new-inquiry-template .new-inquiry-workflow-grid{
   grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr)!important;
   gap:8px!important;
 }
-
 .new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-card{
-  min-height:92px!important;
-  padding:13px!important;
-  border-radius:12px!important;
+  min-height:74px!important;
+  padding:11px 12px!important;
+  border-radius:11px!important;
   box-shadow:none!important;
+  display:flex!important;
+  flex-direction:column!important;
 }
-
 .new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-card.current{
   border-color:#b8cedc!important;
   background:#f8fbfd!important;
 }
-
 .new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-card.upcoming{
   background:#f7f8f9!important;
 }
-
-.new-inquiry-template .new-inquiry-workflow-actions{
-  margin-top:14px!important;
-  padding-top:14px!important;
-  border-top:1px solid var(--color-border-default,var(--line))!important;
-  align-items:center!important;
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-card-head{
+  min-height:24px!important;
 }
-
-.new-inquiry-template .new-inquiry-workflow-actions .btn{
-  min-height:38px!important;
-  height:38px!important;
-  border-radius:10px!important;
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-index{
+  width:26px!important;
+  height:26px!important;
+  font-size:9.5px!important;
+}
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-state{
+  min-height:22px!important;
+  padding:0 8px!important;
+  font-size:9px!important;
+}
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-title strong{
+  font-size:12px!important;
+}
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-actions{
+  margin-top:auto!important;
+  padding-top:12px!important;
+}
+.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-actions .btn.primary{
+  min-height:36px!important;
+  height:36px!important;
+  padding:0 12px!important;
+  border-radius:9px!important;
   box-shadow:none!important;
-  font-size:10.5px!important;
+  font-size:10px!important;
+  font-weight:680!important;
+  white-space:nowrap!important;
 }
 
-.new-inquiry-template .new-inquiry-workflow-actions .btn.primary{
-  min-width:230px!important;
-  padding:0 14px!important;
+/* Legacy footer actions are retired; navigation belongs in the header. */
+.new-inquiry-template .new-inquiry-workflow-actions{
+  display:none!important;
 }
 
 /* Feedback */
@@ -13277,92 +13363,6 @@ td,
   border-radius:9px!important;
   box-shadow:none!important;
   font-size:10.5px!important;
-}
-
-@media(max-width:900px){
-  .new-inquiry-template .inquiry-editor>.panel>.panel-head{
-    flex-direction:column!important;
-  }
-
-  .new-inquiry-template .customer-request-copy-actions{
-    justify-content:flex-start!important;
-  }
-}
-
-@media(max-width:760px){
-  .new-inquiry-template .new-inquiry-title-block h1{
-    font-size:30px!important;
-  }
-
-  .new-inquiry-template .new-inquiry-head{
-    padding-bottom:16px!important;
-  }
-
-  .new-inquiry-template .inquiry-editor>.panel{
-    padding:18px 0!important;
-  }
-
-  .new-inquiry-template .new-inquiry-workflow-grid{
-    grid-template-columns:1fr!important;
-  }
-
-  .new-inquiry-template .new-inquiry-workflow-actions{
-    flex-direction:column-reverse!important;
-  }
-
-  .new-inquiry-template .new-inquiry-workflow-actions .btn,
-  .new-inquiry-template .new-inquiry-workflow-actions .btn.primary{
-    width:100%!important;
-    min-width:0!important;
-  }
-}
-
-
-/* =========================================================
-   NEW INQUIRY — LAYOUT & DENSITY CLEANUP
-   Second-pass refinement scoped only to New Inquiry.
-   ========================================================= */
-
-/* 1. Keep the form at a deliberate reading width and avoid right-edge clipping. */
-.new-inquiry-template{
-  width:100%;
-  max-width:1480px;
-  margin:0 auto;
-}
-
-.new-inquiry-template .inquiry-editor{
-  width:100%;
-  min-width:0;
-}
-
-.new-inquiry-template .inquiry-editor>.panel{
-  width:100%;
-  min-width:0;
-}
-
-/* Customer Request grid: adaptive instead of forcing overly wide columns. */
-.new-inquiry-template .inquiry-editor>.panel:first-child .itinerary-meta-grid{
-  display:grid!important;
-  grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  gap:12px 14px!important;
-}
-
-.new-inquiry-template .customer-request-copy-actions{
-  max-width:100%;
-}
-
-.new-inquiry-template .customer-request-copy-actions .btn{
-  white-space:nowrap!important;
-}
-
-/* System metadata should feel informational, not like large editable fields. */
-.new-inquiry-template .system-fixed-input{
-  height:38px!important;
-  min-height:38px!important;
-  background:#f4f6f8!important;
-  border-color:#e0e6ea!important;
-  color:#425564!important;
-  font-weight:650!important;
 }
 
 @media(max-width:1320px){
@@ -13377,255 +13377,55 @@ td,
   }
 }
 
-/* 2. Traveller composition: compact numeric fields, calmer notes. */
-.new-inquiry-template .inquiry-editor>.panel:nth-of-type(2)>.itinerary-meta-grid{
-  grid-template-columns:repeat(3,minmax(140px,220px))!important;
-  justify-content:start!important;
-  gap:12px!important;
-}
-
-.new-inquiry-template .inquiry-editor>.panel:nth-of-type(2)>.itinerary-meta-grid .field input{
-  max-width:220px!important;
-}
-
-.new-inquiry-template .traveller-composition-notes{
-  grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  gap:12px 14px!important;
-}
-
-.new-inquiry-template .traveller-composition-notes textarea{
-  min-height:72px!important;
-  height:72px!important;
-}
-
-/* 3. Composition total: compact summary instead of a full-width alert banner. */
-.new-inquiry-template .traveller-composition-check{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:flex-start!important;
-  gap:18px!important;
-  width:max-content!important;
-  max-width:100%!important;
-  min-width:0!important;
-  padding:9px 12px!important;
-}
-
-.new-inquiry-template .traveller-composition-total{
-  display:flex!important;
-  align-items:baseline!important;
-  gap:8px!important;
-}
-
-.new-inquiry-template .traveller-composition-total span{
-  margin:0!important;
-  font-size:9.5px!important;
-}
-
-.new-inquiry-template .traveller-composition-total strong{
-  font-size:17px!important;
-  line-height:1!important;
-}
-
-.new-inquiry-template .traveller-composition-match{
-  display:flex!important;
-  align-items:center!important;
-  gap:7px!important;
-  font-size:10px!important;
-  white-space:nowrap!important;
-}
-
-/* 4. Suggested Flights: collapse the empty-state vertical gap. */
-.new-inquiry-template .inquiry-flights-ios{
-  min-height:0!important;
-}
-
-.new-inquiry-template .inquiry-flights-ios>.panel-head{
-  margin-bottom:10px!important;
-}
-
-.new-inquiry-template .inquiry-flight-list{
-  min-height:0!important;
-}
-
-.new-inquiry-template .inquiry-flight-list>.empty{
-  margin:0!important;
-  padding:6px 0 2px!important;
-  min-height:0!important;
-  line-height:1.45!important;
-}
-
-/* 5. Travel Requirements: supportive, not dominant. */
-.new-inquiry-template .inquiry-requirements-ios .inquiry-requirement-grid{
-  grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  gap:12px 14px!important;
-}
-
-.new-inquiry-template .inquiry-requirements-ios textarea{
-  min-height:74px!important;
-  height:74px!important;
-}
-
-/* 6. Next Step: compact confirmation strip. */
-.new-inquiry-template .new-inquiry-workflow-panel{
-  padding-top:18px!important;
-}
-
-.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-card{
-  min-height:74px!important;
-  padding:11px 12px!important;
-  border-radius:11px!important;
-}
-
-.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-card-head{
-  min-height:24px!important;
-}
-
-.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-index{
-  width:26px!important;
-  height:26px!important;
-  font-size:9.5px!important;
-}
-
-.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-state{
-  min-height:22px!important;
-  padding:0 8px!important;
-  font-size:9px!important;
-}
-
-.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-title strong{
-  font-size:12px!important;
-}
-
-.new-inquiry-template .new-inquiry-workflow-actions{
-  margin-top:12px!important;
-  padding-top:12px!important;
-}
-
-.new-inquiry-template .new-inquiry-workflow-actions .btn.primary{
-  min-width:0!important;
-  padding:0 16px!important;
+@media(max-width:900px){
+  .new-inquiry-template .inquiry-editor>.panel>.panel-head{
+    flex-direction:column!important;
+  }
+  .new-inquiry-template .customer-request-copy-actions{
+    justify-content:flex-start!important;
+  }
 }
 
 @media(max-width:760px){
+  .new-inquiry-template .new-inquiry-title-block h1{
+    font-size:30px!important;
+  }
+  .new-inquiry-template .new-inquiry-head{
+    flex-direction:column!important;
+    padding-bottom:16px!important;
+  }
+  .new-inquiry-template .new-inquiry-head-actions{
+    width:100%!important;
+    justify-content:flex-start!important;
+  }
+  .new-inquiry-template .inquiry-editor>.panel{
+    padding:18px 0!important;
+  }
   .new-inquiry-template .inquiry-editor>.panel:nth-of-type(2)>.itinerary-meta-grid{
     grid-template-columns:1fr!important;
   }
-
   .new-inquiry-template .inquiry-editor>.panel:nth-of-type(2)>.itinerary-meta-grid .field input{
     max-width:none!important;
   }
-
   .new-inquiry-template .traveller-composition-notes,
   .new-inquiry-template .inquiry-requirements-ios .inquiry-requirement-grid{
     grid-template-columns:1fr!important;
   }
-
   .new-inquiry-template .traveller-composition-check{
     width:100%!important;
     align-items:flex-start!important;
     flex-direction:column!important;
     gap:7px!important;
   }
-
   .new-inquiry-template .traveller-composition-match{
     white-space:normal!important;
   }
-}
-
-
-/* =========================================================
-   NEW INQUIRY — WORKFLOW ACTION ALIGNMENT
-   Put the next-step CTA inside the next workflow card.
-   ========================================================= */
-.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-card{
-  display:flex!important;
-  flex-direction:column!important;
-}
-
-.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-actions{
-  margin-top:auto!important;
-  padding-top:12px!important;
-}
-
-.new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-actions .btn.primary{
-  min-height:36px!important;
-  height:36px!important;
-  padding:0 12px!important;
-  border-radius:9px!important;
-  box-shadow:none!important;
-  font-size:10px!important;
-  font-weight:680!important;
-  white-space:nowrap!important;
-}
-
-.new-inquiry-template .new-inquiry-workflow-actions{
-  justify-content:flex-start!important;
-  border-top:0!important;
-  padding-top:10px!important;
-}
-
-.new-inquiry-template .new-inquiry-workflow-actions .btn{
-  min-width:0!important;
-}
-
-@media(max-width:760px){
+  .new-inquiry-template .new-inquiry-workflow-grid{
+    grid-template-columns:1fr!important;
+  }
   .new-inquiry-template .new-inquiry-workflow-grid .simple-workflow-actions .btn.primary{
     width:100%!important;
     white-space:normal!important;
-  }
-}
-
-
-/* =========================================================
-   FOUNDATION NAVIGATION RULE — NEW INQUIRY
-   Back/exit belongs in the header; the bottom is workflow only.
-   ========================================================= */
-.new-inquiry-template .new-inquiry-head{
-  display:flex!important;
-  align-items:flex-start!important;
-  justify-content:space-between!important;
-  gap:18px!important;
-}
-
-.new-inquiry-template .new-inquiry-head-actions{
-  flex:0 0 auto!important;
-  align-items:center!important;
-  justify-content:flex-end!important;
-}
-
-.new-inquiry-template .new-inquiry-back-action{
-  min-height:36px!important;
-  height:36px!important;
-  padding:0 12px!important;
-  border:1px solid var(--color-border-default,var(--line))!important;
-  border-radius:9px!important;
-  background:#fff!important;
-  color:var(--color-text-secondary,var(--navy2))!important;
-  box-shadow:none!important;
-  font-size:10.5px!important;
-  font-weight:650!important;
-  text-decoration:none!important;
-}
-
-.new-inquiry-template .new-inquiry-back-action:hover{
-  background:var(--color-bg-soft,#f6f8fa)!important;
-  color:var(--color-text-primary,var(--navy2))!important;
-  border-color:#c4d0d9!important;
-}
-
-/* Bottom must terminate with workflow content only. */
-.new-inquiry-template .new-inquiry-workflow-actions{
-  display:none!important;
-}
-
-@media(max-width:760px){
-  .new-inquiry-template .new-inquiry-head{
-    flex-direction:column!important;
-  }
-
-  .new-inquiry-template .new-inquiry-head-actions{
-    width:100%!important;
-    justify-content:flex-start!important;
   }
 }
 
