@@ -43,7 +43,7 @@ export default async function DashboardPage() {
             <Link href={"/quotations/"+q.id+"?returnTo="+encodeURIComponent("/dashboard")}>{q.quotation_no}</Link>
             <small>{q.title||"—"}</small>
           </td>
-          <td>{q.business_type||"—"}</td>
+          <td>{q.tour_type||"—"}</td>
           <td>{q.pax}</td>
           <td><span className={"status status-"+q.status}>{q.status==="confirmed"?<UiText en="Confirmed" zh="已确认" />:q.status==="ready"?<UiText en="Ready" zh="已就绪" />:q.status==="under_review"?<UiText en="Under Review" zh="审核中" />:q.status==="revision_required"?<UiText en="Revision Required" zh="需要修改" />:q.status==="draft"?<UiText en="Draft" zh="草稿" />:q.status}</span></td>
           <td>{money(Number(q.selling_price))}</td>
