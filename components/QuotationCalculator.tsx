@@ -634,7 +634,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       <Summary label={`${t("Final Quote","最终报价")} / ${selectedSummaryLabel}`} value={money(finalQuote)} strong />
     </section>
 
-    {workspaceMode && <section className="quote-meta-panel">
+    {workspaceMode && <section className="quote-meta-panel quotation-information-stack">
+      <div className="quotation-context-section">
       <div className="quotation-identity-block">
         <div className="quotation-identity-head"><h2>{t("Quotation Title","报价标题")}</h2></div>
         <input className="quotation-title-input" value={quoteTitle} onChange={e=>setQuoteTitle(e.target.value)} placeholder={t("Create a quotation title","请输入报价标题")} />
@@ -670,6 +671,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
               <Field label={t("Pax","人数")}><input type="number" min="1" value={pax} onChange={e=>setPax(Number(e.target.value)||1)} /></Field>
               <Field label={t("Tour Type","团型")}><input value={tourType} onChange={e=>setTourType(e.target.value)} placeholder={t("Private / Corporate / Series","私人团 / 企业团 / 系列产品")} /></Field>
             </div>}
+      </div>
       </div>
 
       <div className="flight-section-surface quotation-flight-section">
