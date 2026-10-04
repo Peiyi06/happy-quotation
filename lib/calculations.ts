@@ -5,6 +5,22 @@ export type ChildMode = "50%" | "60%" | "65%" | "70%" | "75%" | "80%" | "85%" | 
 
 export type CostDirection = "cost" | "deduction";
 
+export interface ChildCostRow {
+  id: string;
+  item: string;
+  unitPrice: number | "";
+  qty: number | "";
+  currency: Currency;
+  note: string;
+}
+
+export interface ChildCostSetup {
+  groundBase: number | "";
+  groundRatio: number;
+  groundCurrency: Currency;
+  otherRows: ChildCostRow[];
+}
+
 export interface TravelerCostRow {
   id: string;
   item: string;
@@ -73,4 +89,20 @@ export const computeProfit = (cost: number, mode: ProfitMode, rate: number, minP
 export const roundUpTo = (value: number, unit: number) => {
   if (!unit || unit <= 0) return value;
   return Math.ceil(value / unit) * unit;
+};
+
+
+export const childExtraRowTotal = (row: ChildCostRow, mainCurrency: Currency, mainRate: number) => {
+  const unit = Number(row.unitPrice) || 0;
+  const qty = Number(row.qty) || 0;
+  const rate = currencyRate(row.currency, mainCurrency, mainRate);
+  return unit && qty && rate ? unit * qty * rate : 0;
+};
+
+export const childSetupCost = (setup: ChildCostSetup, mainCurrency: Currency, mainRate: number) => {
+  const base = Number(setup.groundBase) || 0;
+  const ratio = Math.max(0, Number(setup.groundRatio) || 0) / 100;
+  const ground = base * ratio * currencyRate(setup.groundCurrency, mainCurrency, mainRate);
+  const extras = (setup.otherRows || []).reduce((sum,row)=>sum+childExtraRowTotal(row,mainCurrency,mainRate),0);
+  return { ground, extras, total: ground + extras };
 };
