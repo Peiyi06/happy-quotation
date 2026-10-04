@@ -19495,3 +19495,237 @@ td,
     justify-content:flex-start;
   }
 }
+
+
+/* FOUNDATION: Fixed Pax Cost Breakdown single-line rows */
+.quotation-editor-shell .traveller-cost-table-head,
+.quotation-editor-shell .traveller-cost-row-main{
+  grid-template-columns:minmax(190px,1.45fr) minmax(105px,.72fr) minmax(145px,1fr) minmax(115px,.78fr) minmax(100px,.68fr) minmax(110px,.72fr) minmax(135px,.85fr) 34px!important;
+}
+
+.quotation-editor-shell .traveller-cost-row-main{
+  min-height:62px!important;
+  padding:10px 12px!important;
+}
+
+.quotation-editor-shell .traveller-cost-cell,
+.quotation-editor-shell .traveller-cost-result{
+  padding:0 7px!important;
+}
+
+.quotation-editor-shell .traveller-cost-cell input,
+.quotation-editor-shell .traveller-cost-cell select{
+  height:36px!important;
+  min-height:36px!important;
+  border-color:transparent!important;
+  background:transparent!important;
+  border-radius:8px!important;
+  transition:background .14s ease,border-color .14s ease,box-shadow .14s ease!important;
+}
+
+.quotation-editor-shell .traveller-cost-row:hover .traveller-cost-cell input,
+.quotation-editor-shell .traveller-cost-row:hover .traveller-cost-cell select{
+  background:#fff!important;
+  border-color:var(--color-border-default)!important;
+}
+
+.quotation-editor-shell .traveller-cost-cell input:focus,
+.quotation-editor-shell .traveller-cost-cell select:focus{
+  background:#fff!important;
+  border-color:var(--color-info-text)!important;
+  box-shadow:0 0 0 3px var(--color-focus-soft)!important;
+}
+
+.quotation-editor-shell .traveller-cost-cell.item{
+  display:grid;
+  align-content:center;
+  gap:3px;
+}
+
+.quotation-editor-shell .traveller-cost-note-preview{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  padding:0 4px;
+  color:var(--color-text-tertiary);
+  font-size:9px;
+  line-height:1.2;
+  font-weight:500;
+}
+
+.quotation-editor-shell .traveller-cost-currency{
+  display:grid;
+  align-content:center;
+  gap:2px;
+}
+
+.quotation-editor-shell .traveller-cost-currency small{
+  padding:0 4px;
+  color:var(--color-text-tertiary);
+  font-size:9px;
+  line-height:1.15;
+  font-weight:550;
+}
+
+.quotation-editor-shell .traveller-cost-result{
+  display:grid!important;
+  align-content:center;
+  gap:3px!important;
+}
+
+.quotation-editor-shell .traveller-cost-result strong{
+  color:var(--color-brand-primary)!important;
+  font-size:14.5px!important;
+  line-height:1.2!important;
+  font-weight:750!important;
+}
+
+.quotation-editor-shell .traveller-cost-result small{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:var(--color-text-tertiary);
+  font-size:9px;
+  line-height:1.15;
+  font-weight:550;
+}
+
+.quotation-editor-shell .traveller-cost-row-meta{
+  display:none!important;
+}
+
+.quotation-editor-shell .traveller-cost-more{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.quotation-editor-shell .traveller-cost-more summary{
+  list-style:none;
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:var(--color-text-tertiary);
+  font-size:13px;
+  line-height:1;
+  font-weight:700;
+  cursor:pointer;
+  user-select:none;
+}
+
+.quotation-editor-shell .traveller-cost-more summary::-webkit-details-marker{
+  display:none;
+}
+
+.quotation-editor-shell .traveller-cost-more summary:hover,
+.quotation-editor-shell .traveller-cost-more[open] summary{
+  background:var(--color-bg-soft);
+  color:var(--color-text-primary);
+}
+
+.quotation-editor-shell .traveller-cost-more-menu{
+  position:absolute;
+  right:0;
+  top:34px;
+  z-index:30;
+  width:240px;
+  padding:10px;
+  display:grid;
+  gap:7px;
+  border:1px solid var(--color-border-default);
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 12px 28px rgba(20,44,61,.12);
+}
+
+.quotation-editor-shell .traveller-cost-more-menu label{
+  display:grid;
+  gap:5px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--color-border-default);
+}
+
+.quotation-editor-shell .traveller-cost-more-menu label span{
+  color:var(--color-text-secondary);
+  font-size:9.5px;
+  font-weight:650;
+}
+
+.quotation-editor-shell .traveller-cost-more-menu input{
+  width:100%;
+  height:34px;
+  min-height:34px;
+  padding:0 9px;
+  border:1px solid var(--color-border-default);
+  border-radius:8px;
+  background:#fff;
+  color:var(--color-text-primary);
+  font-size:11px;
+  box-shadow:none;
+}
+
+.quotation-editor-shell .traveller-cost-more-menu button{
+  width:100%;
+  min-height:30px;
+  padding:0 8px;
+  border:0;
+  border-radius:7px;
+  background:transparent;
+  color:var(--color-text-secondary);
+  text-align:left;
+  font-size:10.5px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.quotation-editor-shell .traveller-cost-more-menu button:hover{
+  background:var(--color-bg-soft);
+  color:var(--color-text-primary);
+}
+
+.quotation-editor-shell .traveller-cost-more-menu .danger-link{
+  color:var(--color-danger-text)!important;
+}
+
+.quotation-editor-shell .traveller-cost-row.fixed{
+  background:#fff!important;
+}
+
+.quotation-editor-shell .fixed-row-label{
+  display:none!important;
+}
+
+@media(max-width:1180px){
+  .quotation-editor-shell .traveller-cost-table-head,
+  .quotation-editor-shell .traveller-cost-row-main{
+    min-width:1020px!important;
+  }
+}
+
+@media(max-width:700px){
+  .quotation-editor-shell .traveller-cost-row-main{
+    min-width:0!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px;
+  }
+  .quotation-editor-shell .traveller-cost-cell.item{
+    grid-column:1/-1;
+  }
+  .quotation-editor-shell .traveller-cost-result{
+    grid-column:1/-1;
+    padding-top:4px!important;
+  }
+  .quotation-editor-shell .traveller-cost-more{
+    position:absolute;
+    right:12px;
+    top:12px;
+  }
+  .quotation-editor-shell .traveller-cost-row{
+    position:relative;
+  }
+}
