@@ -320,6 +320,13 @@
 .flight-day-status.next{background:#fff3cd;color:#7a5c0b;border-color:#edd48b}
 .flight-day-status.same{background:#eef7f1;color:#2d6b45;border-color:#cbe3d3}
 .flight-day-status.pending{background:#f4f6f8;color:var(--muted)}
+.flight-day-status{font-family:inherit;cursor:pointer;width:100%}
+.flight-day-status:focus-visible{outline:2px solid var(--color-brand-primary);outline-offset:2px}
+.inquiry-flights-ios .shared-flight-information.compact{margin-top:0;padding-top:0;border-top:0}
+.inquiry-flights-ios .shared-flight-information .flight-info-head{margin-bottom:14px}
+.inquiry-flights-ios .shared-flight-information .flight-info-head h3{font-size:15px}
+.inquiry-flights-ios .shared-flight-information .flight-block{box-shadow:none}
+
 
 .single-room-section{padding-top:22px;padding-bottom:22px}
 .single-room-section .section-head{margin-bottom:14px}
