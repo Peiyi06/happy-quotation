@@ -6,16 +6,17 @@ import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 import FlightInformation,{emptyFlightInformation,type FlightInformationValue} from "@/components/FlightInformation";
 import {
   CalcMode, ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
-  childRatio, computeProfit, currencyRate, leaderRowTotal, roundUpTo,
-  travelerRowPerPax, travelerRowTotal
+  currencyRate, leaderRowTotal, travelerRowPerPax, travelerRowTotal
 } from "@/lib/calculations";
+import {
+  calculateQuotation, isLeaderType, toNoLeaderType, travelerTypes,
+  type QuotationCalculationInput, type TravelerType
+} from "@/lib/quotationEngine";
 
 const calcModes: CalcMode[] = ["每人", "每人每天", "整团", "整团每天"];
 const currencies: Currency[] = ["RM", "RMB", "USD", "JPY", "KRW", "THB", "VND", "其他"];
 const childModes: ChildMode[] = ["50%","60%","65%","70%","75%","80%","85%","90%","95%","100%","手动成本"];
 const profitModes: ProfitMode[] = ["固定金额", "按成本加价率", "按售价毛利率"];
-const travelerTypes = ["成人不含领队","成人含领队","小孩含床不含领队","小孩含床含领队","小孩不含床不含领队","小孩不含床含领队"] as const;
-type TravelerType = typeof travelerTypes[number];
 type QuoteStatus = "draft"|"under_review"|"revision_required"|"ready"|"sent"|"revised"|"confirmed"|"lost"|"archived";
 type CalculatorProps = { workspaceMode?: boolean; quotationId?: string; initialQuotation?: any; currentStaffId?: string; currentStaffName?: string; sourceInquiryId?: string; sourceInquiryNo?: string; sourceInquirySnapshot?: any };
 
@@ -212,15 +213,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     selectedType,manualQuote
   });
 
-  const currentCommercialSnapshot = JSON.stringify({
-    supplier,pax,mainCurrency,mainRate,
-    flightTotalPrice,flightPriceCurrency,
-    travelerRows,leaderRows,
-    singleRoomAmount,singleRoomCurrency,
-    profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
-    childBedMode,childBedManual,childBedCurrency,
-    childNoBedMode,childNoBedManual,childNoBedCurrency,
-    selectedType,manualQuote
+  const currentCommercialSnapshot=JSON.stringify({
+    supplier,flightTotalPrice,flightPriceCurrency,calculationInput
   });
   const commercialDirty = Boolean(
     hydrated &&
@@ -285,87 +279,58 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     };
   }, [isDirty,pendingHref]);
 
-  const calc = useMemo(() => {
-    const safePax = Math.max(1, Number(pax) || 1);
-    const travelerPerPax = travelerRows.reduce((s,r) => s + travelerRowPerPax(r,safePax,mainCurrency,mainRate), 0);
-    const leaderTotal = leaderRows.reduce((s,r) => s + leaderRowTotal(r,mainCurrency,mainRate), 0);
-    const leaderPerPax = leaderTotal / safePax;
+  const calculationInput = useMemo<QuotationCalculationInput>(()=>({
+    pax:Math.max(1,Number(pax)||1),
+    days:travelDuration.days,
+    mainCurrency,mainRate,travelerRows,leaderRows,
+    profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
+    childBedMode,childBedManual,childBedCurrency,
+    childNoBedMode,childNoBedManual,childNoBedCurrency,
+    selectedType,manualQuote,singleRoomAmount,singleRoomCurrency
+  }),[
+    pax,travelDuration.days,mainCurrency,mainRate,travelerRows,leaderRows,
+    profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
+    childBedMode,childBedManual,childBedCurrency,
+    childNoBedMode,childNoBedManual,childNoBedCurrency,
+    selectedType,manualQuote,singleRoomAmount,singleRoomCurrency
+  ]);
 
-    const ratioEligible = travelerRows.filter(r => r.childRatioApplicable).reduce((s,r)=>s+travelerRowPerPax(r,safePax,mainCurrency,mainRate),0);
-    const ratioExcluded = travelerRows.filter(r => !r.childRatioApplicable).reduce((s,r)=>s+travelerRowPerPax(r,safePax,mainCurrency,mainRate),0);
+  const calculationResult = useMemo(()=>calculateQuotation(calculationInput),[calculationInput]);
+  const calc = {
+    travelerPerPax:calculationResult.travelerPerPax,
+    leaderTotal:calculationResult.leaderTotal,
+    leaderPerPax:calculationResult.leaderPerPax,
+    adultNoLeader:calculationResult.variants["成人不含领队"],
+    adultLeader:calculationResult.variants["成人含领队"],
+    childBedNoLeader:calculationResult.variants["小孩含床不含领队"],
+    childBedLeader:calculationResult.variants["小孩含床含领队"],
+    childNoBedNoLeader:calculationResult.variants["小孩不含床不含领队"],
+    childNoBedLeader:calculationResult.variants["小孩不含床含领队"]
+  };
+  const hasLeader=calculationResult.hasLeader;
+  const effectiveSelectedType=calculationResult.selectedType;
+  const selected=calculationResult.selected;
+  const selectedIncludesLeader=isLeaderType(effectiveSelectedType);
+  const selectedTravelerLabel=travelerBaseDisplay(effectiveSelectedType);
+  const selectedTravelerCost=({
+    "成人不含领队":calc.adultNoLeader.cost,
+    "成人含领队":calc.adultNoLeader.cost,
+    "小孩含床不含领队":calc.childBedNoLeader.cost,
+    "小孩含床含领队":calc.childBedNoLeader.cost,
+    "小孩不含床不含领队":calc.childNoBedNoLeader.cost,
+    "小孩不含床含领队":calc.childNoBedNoLeader.cost
+  } as Record<TravelerType,number>)[effectiveSelectedType];
+  const selectedSummaryLabel=`${selectedTravelerLabel} · ${selectedIncludesLeader?t("Incl. Leader","含领队"):t("Excl. Leader","不含领队")}`;
+  const finalQuote=calculationResult.finalQuote;
+  const finalProfit=calculationResult.finalProfit;
+  const finalMargin=calculationResult.finalMargin;
 
-    const childCost = (mode: ChildMode, manual: number, curr: Currency) => {
-      const ratio = childRatio(mode);
-      if (ratio === null) return (Number(manual)||0) * currencyRate(curr,mainCurrency,mainRate);
-      return ratioEligible * ratio + ratioExcluded;
-    };
-
-    const childBed = childCost(childBedMode, childBedManual, childBedCurrency);
-    const childNoBed = childCost(childNoBedMode, childNoBedManual, childNoBedCurrency);
-    const make = (cost:number) => {
-      const profit = computeProfit(cost,profitMode,profitRate,Number(minProfit)||0,maxProfit,fixedProfit);
-      return {cost,profit,suggested:cost+profit};
-    };
-    return {
-      travelerPerPax, leaderTotal, leaderPerPax,
-      adultNoLeader: make(travelerPerPax),
-      adultLeader: make(travelerPerPax + leaderPerPax),
-      childBedNoLeader: make(childBed),
-      childBedLeader: make(childBed + leaderPerPax),
-      childNoBedNoLeader: make(childNoBed),
-      childNoBedLeader: make(childNoBed + leaderPerPax),
-    };
-  }, [pax,travelerRows,leaderRows,mainCurrency,mainRate,profitMode,profitRate,minProfit,maxProfit,fixedProfit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency]);
-
-  const hasLeader = leaderRows.some(r => (Number(r.unitPrice)||0) > 0 && (Number(r.qty)||0) > 0);
-
-  const toNoLeaderType = (type: TravelerType): TravelerType => ({
-    "成人含领队":"成人不含领队",
-    "小孩含床含领队":"小孩含床不含领队",
-    "小孩不含床含领队":"小孩不含床不含领队",
-    "成人不含领队":"成人不含领队",
-    "小孩含床不含领队":"小孩含床不含领队",
-    "小孩不含床不含领队":"小孩不含床不含领队",
-  } as Record<TravelerType,TravelerType>)[type];
-
-  const isLeaderType = (type: TravelerType) => !type.includes("不含领队");
-
-  const effectiveSelectedType = (!hasLeader && isLeaderType(selectedType))
-    ? toNoLeaderType(selectedType)
-    : selectedType;
-
-  const selected = ({
-    "成人不含领队": calc.adultNoLeader,
-    "成人含领队": calc.adultLeader,
-    "小孩含床不含领队": calc.childBedNoLeader,
-    "小孩含床含领队": calc.childBedLeader,
-    "小孩不含床不含领队": calc.childNoBedNoLeader,
-    "小孩不含床含领队": calc.childNoBedLeader,
-  } as Record<TravelerType, {cost:number;profit:number;suggested:number}>)[effectiveSelectedType];
-
-  const selectedIncludesLeader = isLeaderType(effectiveSelectedType);
-  const selectedTravelerLabel = travelerBaseDisplay(effectiveSelectedType);
-  const selectedTravelerCost = ({
-    "成人不含领队": calc.adultNoLeader.cost,
-    "成人含领队": calc.adultNoLeader.cost,
-    "小孩含床不含领队": calc.childBedNoLeader.cost,
-    "小孩含床含领队": calc.childBedNoLeader.cost,
-    "小孩不含床不含领队": calc.childNoBedNoLeader.cost,
-    "小孩不含床含领队": calc.childNoBedNoLeader.cost,
-  } as Record<TravelerType, number>)[effectiveSelectedType];
-  const selectedSummaryLabel = `${selectedTravelerLabel} · ${selectedIncludesLeader ? t("Incl. Leader","含领队") : t("Excl. Leader","不含领队")}`;
-
-  const finalQuote = manualQuote === "" ? roundUpTo(selected.suggested, roundUnit) : Number(manualQuote);
-  const finalProfit = finalQuote - selected.cost;
-  const finalMargin = finalQuote ? finalProfit / finalQuote : 0;
-
-  useEffect(() => {
-    if (!hasLeader && isLeaderType(selectedType)) {
+  useEffect(()=>{
+    if(!hasLeader&&isLeaderType(selectedType)){
       setSelectedType(toNoLeaderType(selectedType));
       setManualQuote("");
     }
-  }, [hasLeader, selectedType]);
-
+  },[hasLeader,selectedType]);
 
   const setTraveler = (id:string, patch:Partial<TravelerCostRow>) => setTravelerRows(rows => rows.map(r => r.id === id ? {...r,...patch}:r));
   const addTraveler = () => setTravelerRows(rows => [...rows,{id:uid(),item:"",direction:"cost",mode:"每人",unitPrice:"",qty:1,currency:"RM",childRatioApplicable:false,note:""}]);
@@ -380,7 +345,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     const quotationData = {tourType,op:op || currentStaffName,opStaffId:initialQuotation?.quotation_data?.opStaffId || initialQuotation?.owner_id || currentStaffId,supplier,pax,mainCurrency,mainRate,customerContact,departureCity,flightInformation,
       flightTotalPrice,flightPriceCurrency,flightTicketType:flightTicketType.code,
       itineraryDays:travelDuration.days,itineraryLabel:travelDuration.label,
-      travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType:effectiveSelectedType,manualQuote,sourceInquiryId:resolvedSourceInquiryId,sourceInquiryNo:resolvedSourceInquiryNo,sourceInquirySnapshot:resolvedSourceInquirySnapshot};
+      travelerRows,leaderRows,leaderOpen,singleRoomAmount,singleRoomCurrency,hasLeader,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,childBedMode,childBedManual,childBedCurrency,childNoBedMode,childNoBedManual,childNoBedCurrency,selectedType:effectiveSelectedType,manualQuote,calculationInput:{...calculationInput,selectedType:effectiveSelectedType},calculationResult,sourceInquiryId:resolvedSourceInquiryId,sourceInquiryNo:resolvedSourceInquiryNo,sourceInquirySnapshot:resolvedSourceInquirySnapshot};
     const payload = {
       source_inquiry_id: resolvedSourceInquiryId || "",
       title: quoteTitle || customerName || destination || "Untitled Quotation",
