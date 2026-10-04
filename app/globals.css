@@ -17495,18 +17495,6 @@ td,
   letter-spacing:var(--foundation-track-section)!important;
 }
 
-/* Semantic Level 2 titles that use h3 / custom controls in existing markup. */
-.workspace-main .quotation-identity-head h3,
-.workspace-main .quotation-trip-context-head h3,
-.workspace-main .flight-info-head h3,
-.workspace-main .cost-setup-toggle>span:first-child{
-  color:var(--foundation-title-level-2-color)!important;
-  font-size:var(--foundation-type-section)!important;
-  line-height:var(--foundation-line-section)!important;
-  font-weight:var(--foundation-weight-section)!important;
-  letter-spacing:var(--foundation-track-section)!important;
-}
-
 /* Level 3 — subsection / card title */
 .workspace-main h3:not(.supplier-form-page *),
 .workspace-main h4:not(.supplier-form-page *){
@@ -17517,10 +17505,11 @@ td,
   letter-spacing:var(--foundation-track-subsection)!important;
 }
 
-/* Re-promote known semantic Level 2 h3 headings after the generic L3 rule. */
+/* Semantic Level 2 titles that use h3 / custom controls in existing markup. */
 .workspace-main .quotation-identity-head h3,
 .workspace-main .quotation-trip-context-head h3,
-.workspace-main .flight-info-head h3{
+.workspace-main .flight-info-head h3,
+.workspace-main .cost-setup-toggle>span:first-child{
   color:var(--foundation-title-level-2-color)!important;
   font-size:var(--foundation-type-section)!important;
   line-height:var(--foundation-line-section)!important;
