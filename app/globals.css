@@ -20001,3 +20001,81 @@ td,
   }
 }
 
+
+
+/* =========================================================
+   OUTBOUND QUOTATION — 4-STAGE WORKSPACE FOUNDATION
+   Context → Costing → Pricing → Workflow
+   Top-level stage headers are title-only. No descriptive
+   subtitle / intro copy is permitted under a stage title.
+   ========================================================= */
+.quotation-editor-shell .quotation-stage{
+  display:grid;
+  gap:14px;
+  margin:22px 0 0;
+}
+.quotation-editor-shell .quotation-stage:first-of-type{
+  margin-top:18px;
+}
+.quotation-editor-shell .quotation-stage-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-height:34px;
+  padding:0 2px;
+}
+.quotation-editor-shell .quotation-stage-no{
+  display:inline-grid;
+  place-items:center;
+  width:28px;
+  height:28px;
+  border-radius:999px;
+  background:var(--color-brand-primary-soft);
+  color:var(--color-brand-primary);
+  font-size:var(--type-meta);
+  line-height:1;
+  font-weight:750;
+}
+.quotation-editor-shell .quotation-stage-head h2{
+  margin:0;
+  color:var(--color-text-primary);
+  font-size:var(--foundation-type-section);
+  line-height:1.2;
+  font-weight:750;
+  letter-spacing:-.01em;
+}
+.quotation-editor-shell .quotation-stage-head p,
+.quotation-editor-shell .quotation-stage-head small,
+.quotation-editor-shell .quotation-stage-description{
+  display:none!important;
+}
+
+/* Stage ownership: inner modules keep their own functional titles,
+   but never become a second page-level hierarchy. */
+.quotation-editor-shell .quotation-stage>.section,
+.quotation-editor-shell .quotation-stage>.quote-meta-panel,
+.quotation-editor-shell .quotation-stage>.quote-source-inquiry,
+.quotation-editor-shell .quotation-stage>.two-col,
+.quotation-editor-shell .quotation-stage>.quotation-save-state,
+.quotation-editor-shell .quotation-stage>.inquiry-workflow-panel{
+  margin-top:0!important;
+  margin-bottom:0!important;
+}
+.quotation-editor-shell .quotation-stage>.section + .section,
+.quotation-editor-shell .quotation-stage>.section + .two-col,
+.quotation-editor-shell .quotation-stage>.two-col + .section,
+.quotation-editor-shell .quotation-stage>.quotation-save-state + .inquiry-workflow-panel{
+  margin-top:14px!important;
+}
+
+/* Foundation rule: module-title descriptions are not part of
+   Outbound Quotation. Functional helper text inside controls may remain. */
+.quotation-editor-shell .scenario-mode-note,
+.quotation-editor-shell .pricing-foundation-head p{
+  display:none!important;
+}
+
+/* The old summary layer is retired from the workspace hierarchy. */
+.quotation-editor-shell>.summary-grid{
+  display:none!important;
+}
