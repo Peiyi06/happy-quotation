@@ -883,6 +883,11 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </div>
     </header>
 
+    <section className="quotation-stage quotation-stage-context">
+      <div className="quotation-stage-head">
+        <span className="quotation-stage-no">01</span>
+        <h2>{t("Context","背景资料")}</h2>
+      </div>
     {workspaceMode&&resolvedSourceInquiryId&&<section className="quote-source-inquiry">
       <div>
         <span>{t("SOURCE INQUIRY","来源询价")}</span>
@@ -891,13 +896,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </div>
       <button className="btn" type="button" onClick={()=>{const href="/inquiries/"+resolvedSourceInquiryId;if(isDirty)setPendingHref(href);else router.push(href);}}>{t("Open Inquiry","打开询价")}</button>
     </section>}
-
-    <section className="summary-grid">
-      <Summary label={`${t("Traveller Cost","旅客成本")} / ${selectedTravelerLabel}`} value={money(selectedTravelerCost)} />
-      <Summary label={`${t("Tour Leader Allocation","领队分摊")} / ${selectedTravelerLabel}`} value={selectedIncludesLeader ? money(calc.leaderPerPax) : "—"} />
-      <Summary label={`${t("System Suggested Price","系统建议售价")} / ${selectedSummaryLabel}`} value={money(selected.suggested)} />
-      <Summary label={`${t("Final Quote","最终报价")} / ${selectedSummaryLabel}`} value={money(finalQuote)} strong />
-    </section>
 
     {workspaceMode && <section className="quote-meta-panel quotation-information-stack">
       <div className="quotation-context-section">
@@ -965,6 +963,13 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
       {saveMessage && <div className="save-message">{saveMessage}</div>}
     </section>}
+    </section>
+
+    <section className="quotation-stage quotation-stage-costing">
+      <div className="quotation-stage-head">
+        <span className="quotation-stage-no">02</span>
+        <h2>{t("Costing","成本计算")}</h2>
+      </div>
 
     <Section title={terms.commercialSettings}>
       <div className="form-grid six quotation-commercial-core">
@@ -999,11 +1004,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           </button>
         </div>
       </div>
-      <p className="scenario-mode-note">
-        {pricingMode==="single"
-          ? t("Use the Inquiry pax as one pricing scenario.","根据 Inquiry 的固定人数计算单一报价。")
-          : t("Compare and calculate multiple pax scenarios side by side.","同屏比较并计算不同人数的配套价格。")}
-      </p>
     </section>
 
     {pricingMode==="single" ? <>
@@ -1150,6 +1150,14 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </div>
     </Section>}
 
+    </section>
+
+    <section className="quotation-stage quotation-stage-pricing">
+      <div className="quotation-stage-head">
+        <span className="quotation-stage-no">03</span>
+        <h2>{t("Pricing","定价")}</h2>
+      </div>
+
     {pricingMode==="scenario"&&<Section title={t("Scenario Pricing Results","人数报价结果")}>
       <div className="scenario-result-grid">
         {scenarioResults.map(result=><article className="scenario-result-card" key={result.id}>
@@ -1279,7 +1287,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         <div className="pricing-foundation-head">
           <div>
             <span className="pricing-foundation-kicker">{t("SYSTEM PRICING MATRIX","系统定价矩阵")}</span>
-            <p>{t("Review system pricing, then set the final customer price from one source of truth.","先审核系统定价，再从同一个定价来源确认最终对客售价。")}</p>
           </div>
           <div className="pricing-foundation-rule">
             <span>{t("Rounding Rule","取整规则")}</span>
@@ -1376,6 +1383,14 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </div>
     </Section>
     </>}
+    </section>
+
+    <section className="quotation-stage quotation-stage-workflow">
+      <div className="quotation-stage-head">
+        <span className="quotation-stage-no">04</span>
+        <h2>{t("Workflow","工作流程")}</h2>
+      </div>
+
     {workspaceMode&&<div className={"quotation-save-state "+(isDirty?"unsaved":"saved")}>
       <div>
         <strong>{isDirty?t("● Unsaved Changes","● 有未保存修改"):t("✓ All changes saved","✓ 所有修改已保存")}</strong>
@@ -1385,12 +1400,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     </div>}
 
     {workspaceMode&&<section className="panel inquiry-workflow-panel quotation-editor-workflow">
-      <div className="panel-head inquiry-workflow-panel-head quotation-workflow-compact-head">
-        <div>
-          <h2>{t("Workflow","工作流程")}</h2>
-        </div>
-      </div>
-
       <div className="simple-workflow-grid quotation-workflow-compact system-workflow-grid">
         <div className={"simple-workflow-card "+((displayStatus==="under_review"||displayStatus==="ready")?"complete":"current")}>
           <div className="simple-workflow-card-head">
@@ -1440,6 +1449,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
         </div>
       </div>
     </section>}
+    </section>
 
     {pendingHref && <div className="unsaved-overlay no-print" role="dialog" aria-modal="true">
       <div className="unsaved-dialog">
