@@ -627,6 +627,32 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const printChildNoBed=childSetupCost(childNoBedSetup,Math.max(1,Number(pax)||1),mainCurrency,mainRate);
 
   const printTotalPages=pricingMode==="scenario"&&scenarioResults.length>0?5:4;
+  const sanitizePrintFilePart=(value:unknown)=>String(value??"")
+    .replace(/[\\/:*?"<>|]+/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+
+  const printCustomerName=resolvedSourceInquirySnapshot?.customerName||customerName||"";
+  const printDestination=resolvedSourceInquirySnapshot?.destination||destination||"";
+  const printTravelStartDate=resolvedSourceInquirySnapshot?.travelStartDate||departureDate||"";
+  const printQuotationNo=initialQuotation?.quotation_no||t("New Quotation","新报价");
+  const printFileBaseName=[
+    printQuotationNo,
+    printCustomerName,
+    printDestination,
+    printTravelStartDate
+  ].map(sanitizePrintFilePart).filter(Boolean).join(" - ");
+
+  const handlePrintPdf=()=>{
+    const previousTitle=document.title;
+    document.title=printFileBaseName||"Happy Express Quotation";
+    const restoreTitle=()=>{
+      document.title=previousTitle;
+      window.removeEventListener("afterprint",restoreTitle);
+    };
+    window.addEventListener("afterprint",restoreTitle);
+    window.print();
+  };
 
   return <main className={"app-shell "+(workspaceMode?"quotation-editor-shell":"")}>
     <div className="quotation-print-document" aria-hidden="true">
@@ -845,7 +871,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </div>
       <div className="top-actions quote-top-actions no-print">
         {workspaceMode&&<button className="btn quotation-editor-back" type="button" onClick={()=>{const href=quotationId?"/quotations/"+quotationId:"/quotations";if(isDirty)setPendingHref(href);else router.push(href);}}>{t("‹ Back","‹ 返回")}</button>}
-        <button className="btn ghost quote-action-secondary" type="button" onClick={()=>window.print()}>{t("Print / PDF","打印 / PDF")}</button>
+        <button className="btn ghost quote-action-secondary" type="button" onClick={handlePrintPdf}>{t("Print / PDF","打印 / PDF")}</button>
         {workspaceMode
           ?<div className="quotation-header-more">
               <button className="btn quotation-header-more-trigger" type="button" aria-expanded={showHeaderMore} aria-label={t("More actions","更多操作")} onClick={()=>setShowHeaderMore(v=>!v)}>•••</button>
