@@ -20079,3 +20079,31 @@ td,
 .quotation-editor-shell>.summary-grid{
   display:none!important;
 }
+
+
+/* =========================================================
+   QUOTATION STATE GOVERNANCE FOUNDATION
+   Draft / Revision Required = editable.
+   Under Review and all finalized states = locked.
+   ========================================================= */
+.quotation-detail-template .quotation-lock-state{
+  display:inline-flex;
+  align-items:center;
+  min-height:24px;
+  padding:0 9px;
+  border:1px solid var(--color-border-default);
+  border-radius:999px;
+  background:var(--color-bg-muted);
+  color:var(--color-text-secondary);
+  font-size:var(--type-meta);
+  font-weight:700;
+  white-space:nowrap;
+}
+.quotation-detail-template .quotation-locked-action{
+  pointer-events:none;
+  cursor:default;
+  opacity:.72;
+  background:var(--color-bg-muted)!important;
+  color:var(--color-text-secondary)!important;
+  border-color:var(--color-border-default)!important;
+}
