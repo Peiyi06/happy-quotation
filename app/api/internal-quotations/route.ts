@@ -15,6 +15,19 @@ export async function POST(request:Request) {
   if(!token) return NextResponse.json({error:"Unauthorized"},{status:401});
   const body=await request.json();
   const db=internalDb();
+
+  if(body.id){
+    const {data:existing,error:existingError}=await db.rpc("staff_get_quote",{p_token:token,p_id:body.id});
+    if(existingError||!existing?.id) return NextResponse.json({error:"Quotation not found"},{status:404});
+    const currentStatus=String(existing.status||"draft");
+    if(!["draft","revision_required"].includes(currentStatus)){
+      return NextResponse.json({
+        error:"Quotation is locked while it is under review or finalized. Management must Request Changes before editing.",
+        code:"QUOTATION_LOCKED",
+        status:currentStatus
+      },{status:423});
+    }
+  }
   const {data,error}=await db.rpc("staff_save_quote",{
     p_token:token,
     p_payload:body.payload||{},
