@@ -88,6 +88,8 @@ export default async function QuotationDetailPage({
   const rawReturnTo=String(sp.returnTo||"");
   const returnTo=rawReturnTo.startsWith("/")&&!rawReturnTo.startsWith("//")?rawReturnTo:"/quotations";
   const currentQuoteHref="/quotations/"+id+"?returnTo="+encodeURIComponent(returnTo);
+  const canEditQuotation=["draft","revision_required"].includes(String(data.status||"draft"));
+  const lockedQuotation=!canEditQuotation;
 
   return <div className="quotation-detail-template">
     <div className="page-head quote-detail-head">
@@ -95,12 +97,12 @@ export default async function QuotationDetailPage({
         <h1>{data.title||data.quotation_no}</h1>
         <div className="quotation-detail-meta-line">
           <span>{data.quotation_no}</span>
-          <span className={"status quotation-header-status status-"+String(data.status||"draft")}>{data.status==="under_review"?<UiText en="Under Review" zh="审核中" />:data.status==="revision_required"?<UiText en="Revision Required" zh="需要修改" />:data.status==="ready"?<UiText en="Ready" zh="已就绪" />:data.status==="sent"?<UiText en="Sent" zh="已发送" />:data.status==="revised"?<UiText en="Revised" zh="已修改" />:data.status==="confirmed"?<UiText en="Confirmed" zh="已确认" />:data.status==="lost"?<UiText en="Lost" zh="未成交" />:data.status==="archived"?<UiText en="Archived" zh="已归档" />:<UiText en="Draft" zh="草稿" />}</span>
+          <span className={"status quotation-header-status status-"+String(data.status||"draft")}>{data.status==="under_review"?<UiText en="Under Review" zh="审核中" />:data.status==="revision_required"?<UiText en="Revision Required" zh="需要修改" />:data.status==="ready"?<UiText en="Ready" zh="已就绪" />:data.status==="sent"?<UiText en="Sent" zh="已发送" />:data.status==="revised"?<UiText en="Revised" zh="已修改" />:data.status==="confirmed"?<UiText en="Confirmed" zh="已确认" />:data.status==="lost"?<UiText en="Lost" zh="未成交" />:data.status==="archived"?<UiText en="Archived" zh="已归档" />:<UiText en="Draft" zh="草稿" />}</span>{lockedQuotation&&<span className="quotation-lock-state"><UiText en="Locked" zh="已锁定" /></span>}
         </div>
       </div>
       <div className="detail-actions">
         <Link className="btn quotation-back-action" href={returnTo}>{returnTo.startsWith("/inquiries/")?<UiText en="‹ Inquiry" zh="‹ 询价" />:<UiText en="‹ Back" zh="‹ 返回" />}</Link>
-        <Link className="btn" href={"/quotations/"+id+"/edit"}><UiText en="Edit Quotation" zh="编辑报价" /></Link>
+        {canEditQuotation?<Link className="btn" href={"/quotations/"+id+"/edit"}><UiText en="Edit Quotation" zh="编辑报价" /></Link>:<span className="btn quotation-locked-action" aria-disabled="true"><UiText en="Quotation Locked" zh="报价已锁定" /></span>}
         <QuotationDetailMoreActions id={id} />
       </div>
     </div>
