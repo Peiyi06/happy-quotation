@@ -119,7 +119,7 @@ export default async function QuotationDetailPage({
       </div>
     </div>
 
-    <div className="quotation-record-stage-head quotation-record-context-head"><span>01</span><h2><UiText en="Context" zh="背景资料" /></h2></div>
+    <div className="quotation-record-stage-head quotation-record-context-head"><h2><UiText en="Context" zh="背景资料" /></h2></div>
 
     {data.source_inquiry_id&&<section className="quote-source-inquiry quote-source-inquiry-detail">
       <div>
@@ -131,7 +131,7 @@ export default async function QuotationDetailPage({
     </section>}
 
     <section className="quotation-record-stage quotation-management-costing">
-      <div className="quotation-record-stage-head"><span>02</span><h2><UiText en="Costing" zh="成本计算" /></h2></div>
+      <div className="quotation-record-stage-head"><h2><UiText en="Costing" zh="成本计算" /></h2></div>
 
       <section className="panel quotation-record-commercial">
         <div className="panel-head"><h2><UiText en="Commercial Settings" zh="商业设置" /></h2></div>
@@ -184,7 +184,7 @@ export default async function QuotationDetailPage({
     </section>
 
     <section className="quotation-record-stage quotation-record-pricing">
-      <div className="quotation-record-stage-head"><span>03</span><h2><UiText en="Pricing" zh="定价" /></h2></div>
+      <div className="quotation-record-stage-head"><h2><UiText en="Pricing" zh="定价" /></h2></div>
     {isScenarioPricing ? <>
       <section className="panel scenario-detail-panel">
         <div className="panel-head">
@@ -352,7 +352,7 @@ export default async function QuotationDetailPage({
       </div>
     </section>
 
-    <div className="quotation-record-stage-head quotation-record-workflow-head"><span>04</span><h2><UiText en="Workflow" zh="工作流程" /></h2></div>
+    <div className="quotation-record-stage-head quotation-record-workflow-head"><h2><UiText en="Workflow" zh="工作流程" /></h2></div>
 
     <QuotationReviewActions
       quotationId={id}
