@@ -102,6 +102,17 @@ export default async function QuotationDetailPage({
   const managementChildNoBedSummary=managementChildNoBed?childSetupCost(managementChildNoBed,managementPax,managementMainCurrency,managementMainRate):null;
   const sanitizeFilePart=(value:unknown)=>String(value??"").replace(/[\\/:*?"<>|]+/g," ").replace(/\s+/g," ").trim();
   const printFileName=[data.quotation_no,data.customer_name,data.destination,data.departure_date].map(sanitizeFilePart).filter(Boolean).join(" - ");
+  const managementPricingRows=[
+    {type:"成人不含领队",label:"adult",leader:false,value:calculationResult.variants["成人不含领队"]},
+    ...(hasLeader?[{type:"成人含领队",label:"adult",leader:true,value:calculationResult.variants["成人含领队"]}]:[]),
+    {type:"小孩含床不含领队",label:"childBed",leader:false,value:calculationResult.variants["小孩含床不含领队"]},
+    ...(hasLeader?[{type:"小孩含床含领队",label:"childBed",leader:true,value:calculationResult.variants["小孩含床含领队"]}]:[]),
+    {type:"小孩不含床不含领队",label:"childNoBed",leader:false,value:calculationResult.variants["小孩不含床不含领队"]},
+    ...(hasLeader?[{type:"小孩不含床含领队",label:"childNoBed",leader:true,value:calculationResult.variants["小孩不含床含领队"]}]:[])
+  ];
+  const selectedPricing=calculationResult.selected;
+  const selectedPricingType=String(calculationResult.selectedType||qd.selectedType||"成人不含领队");
+  const selectedPricingManual=qd.manualQuote!==""&&qd.manualQuote!=null;
 
   return <div className="quotation-detail-template">
     <div className="page-head quote-detail-head">
@@ -305,93 +316,68 @@ export default async function QuotationDetailPage({
 
     <section className="quotation-record-stage quotation-record-pricing">
       <div className="quotation-record-stage-head"><h2><UiText en="Pricing" zh="定价" /></h2></div>
-    {isScenarioPricing ? <>
-      <section className="panel scenario-detail-panel">
-        <div className="panel-head">
-          <div>
-            <span className="page-kicker"><UiText en="SCENARIO PRICING" zh="人数报价" /></span>
-            <h2><UiText en="Package Price Matrix" zh="配套人数价格矩阵" /></h2>
+
+      {isScenarioPricing ? <section className="panel quotation-record-pricing-panel">
+        <div className="panel-head"><h2><UiText en="System Pricing Matrix" zh="系统定价矩阵" /></h2></div>
+        <div className="data-table-wrap"><table className="data-table quotation-record-pricing-table">
+          <thead><tr>
+            <th><UiText en="Pax" zh="人数" /></th>
+            <th><UiText en="Cost / Pax" zh="每人成本" /></th>
+            <th><UiText en="System Suggested" zh="系统建议价" /></th>
+            <th><UiText en="Final Price / Pax" zh="最终售价 / 人" /></th>
+            <th><UiText en="Profit" zh="利润" /></th>
+            <th><UiText en="Margin" zh="毛利率" /></th>
+          </tr></thead>
+          <tbody>
+            {savedScenarioResults.map((result:any)=><tr key={result.id||result.pax}>
+              <td><strong>{result.pax} Pax</strong></td>
+              <td>{money(Number(result.costPerPax)||0)}</td>
+              <td>{money(Number(result.suggestedPrice)||0)}</td>
+              <td><strong>{money(Number(result.finalPrice)||0)}</strong></td>
+              <td>{money(Number(result.finalProfit)||0)}</td>
+              <td>{((Number(result.finalMargin)||0)*100).toFixed(1)}%</td>
+            </tr>)}
+          </tbody>
+        </table></div>
+      </section> : <>
+        <section className="panel quotation-record-pricing-panel">
+          <div className="panel-head"><h2><UiText en="System Pricing Matrix" zh="系统定价矩阵" /></h2></div>
+          <div className="data-table-wrap"><table className="data-table quotation-record-pricing-table">
+            <thead><tr>
+              <th><UiText en="Traveller Type" zh="旅客类型" /></th>
+              <th><UiText en="Leader" zh="领队" /></th>
+              <th><UiText en="Cost" zh="成本" /></th>
+              <th><UiText en="System Suggested" zh="系统建议价" /></th>
+              <th><UiText en="Final Price" zh="最终售价" /></th>
+              <th><UiText en="Profit" zh="利润" /></th>
+              <th><UiText en="Margin" zh="毛利率" /></th>
+            </tr></thead>
+            <tbody>
+              {managementPricingRows.map((row:any)=><tr key={row.type} className={row.type===selectedPricingType?"selected":""}>
+                <td><strong>{row.label==="adult"?<UiText en="Adult · Twin Sharing" zh="成人（双人一房）" />:row.label==="childBed"?<UiText en="Child with Bed" zh="小孩加床" />:<UiText en="Child without Bed" zh="小孩不加床" />}</strong></td>
+                <td>{row.leader?<UiText en="Incl. Leader" zh="含领队" />:<UiText en="Excl. Leader" zh="不含领队" />}</td>
+                <td>{money(Number(row.value.cost)||0)}</td>
+                <td>{money(Number(row.value.rounded)||0)}</td>
+                <td><strong>{money(Number(row.value.final)||0)}</strong>{row.type===selectedPricingType&&selectedPricingManual&&<small className="quotation-record-price-note"><UiText en="Manual Override" zh="人工调整" /></small>}</td>
+                <td>{money((Number(row.value.final)||0)-(Number(row.value.cost)||0))}</td>
+                <td>{((Number(row.value.margin)||0)*100).toFixed(1)}%</td>
+              </tr>)}
+            </tbody>
+          </table></div>
+        </section>
+
+        <section className="panel quotation-record-final-pricing">
+          <div className="panel-head"><h2><UiText en="Final Pricing Result" zh="最终报价结果" /></h2></div>
+          <div className="quotation-record-final-grid">
+            <Detail label={<UiText en="Selected Traveller" zh="已选择旅客类型" />} value={<SelectedTravellerText value={selectedPricingType}/>}/>
+            <Detail label={<UiText en="Final Customer Price / Pax" zh="最终对客售价 / 人" />} value={money(Number(selectedPricing.final)||0)}/>
+            <Detail label={<UiText en="Profit / Pax" zh="每人利润" />} value={money(Number(calculationResult.finalProfit)||0)}/>
+            <Detail label={<UiText en="Margin" zh="毛利率" />} value={((Number(calculationResult.finalMargin)||0)*100).toFixed(1)+"%"}/>
+            <Detail label={<UiText en="Pricing Source" zh="定价来源" />} value={selectedPricingManual?<UiText en="Manual Override" zh="人工调整" />:<UiText en="System Price" zh="系统价格" />}/>
+            <Detail label={<UiText en="Single Room Supplement" zh="单房差" />} value={singleRoomSupplement==null?"—":money(singleRoomSupplement)}/>
           </div>
-        </div>
-        <div className="scenario-result-grid scenario-detail-grid">
-          {savedScenarioResults.map((result:any)=><article className="scenario-result-card" key={result.id||result.pax}>
-            <div className="scenario-result-head">
-              <div><span><UiText en="SCENARIO" zh="人数方案" /></span><strong>{result.pax} Pax</strong></div>
-              <span className="scenario-result-days">{itineraryDays||"—"} <UiText en="Days" zh="天" /></span>
-            </div>
-            <div className="scenario-result-metrics">
-              <div className="metric"><span><UiText en="Cost / Pax" zh="每人成本" /></span><strong>{money(Number(result.costPerPax)||0)}</strong></div>
-              <div className="metric"><span><UiText en="System Suggested" zh="系统建议价" /></span><strong>{money(Number(result.suggestedPrice)||0)}</strong></div>
-            </div>
-            <div className="scenario-result-final">
-              <span><UiText en="Final Price / Pax" zh="最终报价 / 人" /></span>
-              <strong>{money(Number(result.finalPrice)||0)}</strong>
-            </div>
-            <div className="scenario-result-foot">
-              <span><UiText en="Profit" zh="利润" /> <strong>{money(Number(result.finalProfit)||0)}</strong></span>
-              <span><UiText en="Margin" zh="毛利率" /> <strong>{((Number(result.finalMargin)||0)*100).toFixed(1)}%</strong></span>
-            </div>
-          </article>)}
-        </div>
-      </section>
-    </> : <>
-    <section className="final-price-grid">
-      <div className="quote-result-hero">
-        <span><UiText en="Adult Price · Twin Sharing" zh="成人价格 · 双人一房" />{hasLeader?<UiText en=" · Includes Tour Leader" zh=" · 含领队" />:null}</span>
-        <strong>{money(adultSellingPrice)}</strong>
-        <small>{hasLeader?<><UiText en="Includes tour leader allocation " zh="已含领队分摊 " />{money(Number(calculationResult.leaderPerPax)||0)}</>:<UiText en="Adult price is based on twin sharing" zh="成人默认双人一房" />}</small>
-      </div>
-      <div className="quote-result-hero">
-        <span><UiText en="Single Room Price" zh="单人房价格" />{hasLeader?<UiText en=" · Includes Tour Leader" zh=" · 含领队" />:null}</span>
-        <strong>{singleRoomSellingPrice==null?"—":money(singleRoomSellingPrice)}</strong>
-        <small>{singleRoomSupplement==null?<UiText en="Single room supplement not entered" zh="尚未填写单人房差" />:<>{hasLeader?<UiText en="Includes Tour Leader · " zh="含领队 · " />:null}<UiText en="Single room supplement " zh="含单人房差 " />{money(singleRoomSupplement)}</>}</small>
-      </div>
-      <div className="quote-result-hero">
-        <span><UiText en="Flight Total Price" zh="航班总报价" /></span>
-        <strong>{flightTotalPrice==null?"—":`${flightPriceCurrency} ${flightTotalPrice.toLocaleString("en-MY",{minimumFractionDigits:2,maximumFractionDigits:2})}`}</strong>
-        <small>{flightTicketType==="fit"?<UiText en="FIT Ticket" zh="散票" />:flightTicketType==="git"?<UiText en="GIT" zh="团体票" />:flightTicketType==="review"?<UiText en="Manual Review" zh="需人工确认" />:"—"}</small>
-      </div>
-    </section>
-
-    <section className="dashboard-cards quote-detail-cards">
-      <div className="dash-card"><span><UiText en="Total Cost" zh="总成本" /></span><b>{money(Number(data.total_cost))}</b></div>
-      <div className="dash-card"><span><UiText en="Profit" zh="利润" /></span><b>{money(Number(data.profit))}</b></div>
-      <div className="dash-card"><span><UiText en="Margin" zh="利润率" /></span><b>{(margin*100).toFixed(1)}%</b></div>
-      <div className="dash-card"><span><UiText en="Pax" zh="人数" /></span><b>{data.pax||0}</b></div>
-    </section>
-
-    {/* FOUNDATION LOCK: comparison matrices use grouped comparison,
-        keep supporting metrics secondary, and emphasize the final recommendation. */}
-    <section className="panel quotation-matrix-panel">
-      <div className="panel-head"><h2><UiText en="Final Quotation Matrix" zh="最终报价矩阵" /></h2></div>
-      <div className={"quotation-matrix-compare"+(hasLeader?" has-leader":"")}>
-        <div className="quotation-matrix-head">
-          <span><UiText en="Traveller Type" zh="旅客类型" /></span>
-          <span><UiText en="Excl. Leader" zh="不含领队" /></span>
-          {hasLeader&&<span><UiText en="Incl. Leader" zh="含领队" /></span>}
-        </div>
-
-        {matrix.map((row:any)=><div className="quotation-matrix-row" key={row.key}>
-          <div className="quotation-matrix-traveller">
-            <strong>{row.key==="adult"?<UiText en="Adult · Twin Sharing" zh="成人（双人一房）" />:row.key==="childBed"?<UiText en="Child with Bed" zh="小孩加床" />:<UiText en="Child without Bed" zh="小孩不加床" />}</strong>
-          </div>
-
-          <div className="quotation-matrix-plan">
-            <div className="quotation-matrix-metric"><span><UiText en="Cost" zh="成本" /></span><strong>{money(row.noLeader.cost)}</strong></div>
-            <div className="quotation-matrix-metric"><span><UiText en="Profit" zh="利润" /></span><strong>{money(row.noLeader.profit)}</strong></div>
-            <div className="quotation-matrix-metric suggested"><span><UiText en="Suggested" zh="建议售价" /></span><strong>{money(row.noLeader.selling)}</strong></div>
-          </div>
-
-          {hasLeader&&<div className="quotation-matrix-plan">
-            <div className="quotation-matrix-metric"><span><UiText en="Cost" zh="成本" /></span><strong>{money(row.withLeader.cost)}</strong></div>
-            <div className="quotation-matrix-metric"><span><UiText en="Profit" zh="利润" /></span><strong>{money(row.withLeader.profit)}</strong></div>
-            <div className="quotation-matrix-metric suggested"><span><UiText en="Suggested" zh="建议售价" /></span><strong>{money(row.withLeader.selling)}</strong></div>
-          </div>}
-        </div>)}
-      </div>
-    </section>
-    </>}
-
+        </section>
+      </>}
     </section>
 
     <div className="quotation-record-stage-head quotation-record-workflow-head"><h2><UiText en="Workflow" zh="工作流程" /></h2></div>
@@ -459,6 +445,13 @@ function ChildCostRecord({title,setup,summary,pax,mainCurrency,mainRate}:{title:
       </table></div>
     </div>
   </section>;
+}
+
+function SelectedTravellerText({value}:{value:string}){
+  const hasLeader=!value.includes("不含领队");
+  if(value.includes("小孩含床")) return <><UiText en="Child with Bed" zh="小孩加床" /> · {hasLeader?<UiText en="Incl. Leader" zh="含领队" />:<UiText en="Excl. Leader" zh="不含领队" />}</>;
+  if(value.includes("小孩不含床")) return <><UiText en="Child without Bed" zh="小孩不加床" /> · {hasLeader?<UiText en="Incl. Leader" zh="含领队" />:<UiText en="Excl. Leader" zh="不含领队" />}</>;
+  return <><UiText en="Adult · Twin Sharing" zh="成人（双人一房）" /> · {hasLeader?<UiText en="Incl. Leader" zh="含领队" />:<UiText en="Excl. Leader" zh="不含领队" />}</>;
 }
 
 function Detail({label,value}:{label:any;value:any}){
