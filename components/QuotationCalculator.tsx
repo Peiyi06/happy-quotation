@@ -738,7 +738,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           </div>
         </PrintSectionNo>
 
-        <PrintSectionNo no="05" title={t("Final Pricing Decision","最终定价决定")}>
+        <PrintSectionNo no="05" title={terms.finalPricingResult}>
           <div className="print-final-decision">
             <div><span>{terms.travellerType}</span><strong>{selectedSummaryLabel}</strong></div>
             <div><span>{terms.costPerPax}</span><strong>{money(selected.cost)}</strong></div>
