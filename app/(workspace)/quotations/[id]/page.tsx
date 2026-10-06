@@ -34,7 +34,6 @@ export default async function QuotationDetailPage({
   const canReview=Boolean(user&&(user.role==="manager"||user.username.toLowerCase()==="long"));
   const canSubmit=Boolean(user&&(canReview||user.id===data.owner_id||user.id===sourceInquiry?.operation_assignee_id));
 
-  const margin=Number(data.margin||0);
   const qd=data.quotation_data||{};
   const scenarioPricing=qd.scenarioPricing||null;
   const isScenarioPricing=scenarioPricing?.mode==="scenario";
@@ -81,11 +80,8 @@ export default async function QuotationDetailPage({
   const flightPax=Number(qd.pax||data.pax)||0;
   const flightTicketType=flightPax>=1&&flightPax<=9?"fit":flightPax>=10&&flightPax<=200?"git":flightPax>200?"review":"none";
   const calculationResult=qd.calculationResult||calculateQuotation(buildQuotationCalculationInput(data));
-  const matrix=calculationResult.matrix;
   const hasLeader=Boolean(calculationResult.hasLeader);
-  const adultSellingPrice=Number(calculationResult.adultSellingPrice)||0;
   const singleRoomSupplement=calculationResult.singleRoomSupplement==null?null:Number(calculationResult.singleRoomSupplement);
-  const singleRoomSellingPrice=calculationResult.singleRoomSellingPrice==null?null:Number(calculationResult.singleRoomSellingPrice);
   const rawReturnTo=String(sp.returnTo||"");
   const returnTo=rawReturnTo.startsWith("/")&&!rawReturnTo.startsWith("//")?rawReturnTo:"/quotations";
   const currentQuoteHref="/quotations/"+id+"?returnTo="+encodeURIComponent(returnTo);
