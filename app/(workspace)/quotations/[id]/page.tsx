@@ -121,7 +121,23 @@ export default async function QuotationDetailPage({
 
     <div className="quotation-record-stage-head quotation-record-context-head"><h2><UiText en="Context" zh="背景资料" /></h2></div>
 
-    {data.source_inquiry_id&&<section className="quote-source-inquiry quote-source-inquiry-detail">
+    <section className="panel quotation-record-context-panel">
+      <div className="panel-head"><h2><UiText en="Customer & Trip" zh="客户与行程" /></h2></div>
+      <div className="detail-grid quotation-record-context-grid">
+        <Detail label={<UiText en="Customer / Company" zh="客户 / 公司" />} value={data.customer_name||qd.sourceInquirySnapshot?.customerName||"—"}/>
+        <Detail label={<UiText en="Contact" zh="联系方式" />} value={qd.customerContact||qd.sourceInquirySnapshot?.contact||"—"}/>
+        <Detail label={<UiText en="Departure City" zh="出发城市" />} value={qd.departureCity||qd.sourceInquirySnapshot?.departureCity||"—"}/>
+        <Detail label={<UiText en="Destination" zh="目的地" />} value={data.destination||qd.sourceInquirySnapshot?.destination||"—"}/>
+        <Detail label={<UiText en="Travel Start Date" zh="出发日期" />} value={data.departure_date?new Date(data.departure_date+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
+        <Detail label={<UiText en="Travel End Date" zh="返程日期" />} value={data.return_date?new Date(data.return_date+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
+        <Detail label={<UiText en="Duration" zh="行程天数" />} value={itineraryLabel||"—"}/>
+        <Detail label={<UiText en="Pax" zh="人数" />} value={data.pax||qd.pax||"—"}/>
+        <Detail label={<UiText en="Tour Type" zh="团型" />} value={data.tour_type||qd.tourType||"—"}/>
+        <Detail label={<UiText en="Supplier" zh="供应商" />} value={data.supplier||qd.supplier||"—"}/>
+      </div>
+    </section>
+
+{data.source_inquiry_id&&<section className="quote-source-inquiry quote-source-inquiry-detail">
       <div>
         <span><UiText en="SOURCE INQUIRY" zh="来源询价" /></span>
         <strong>{qd.sourceInquiryNo||<UiText en="Linked Inquiry" zh="关联询价" />}</strong>
@@ -129,6 +145,71 @@ export default async function QuotationDetailPage({
       </div>
       <Link className="btn" href={"/inquiries/"+data.source_inquiry_id+"?returnTo="+encodeURIComponent(currentQuoteHref)}><UiText en="Open Inquiry" zh="打开询价" /></Link>
     </section>}
+
+    <section className="panel quote-flight-panel">
+      <div className="panel-head quote-flight-head">
+        <div><h2><UiText en="Flight Information" zh="航班信息" /></h2></div>
+        {itineraryLabel && <div className="itinerary-pill">
+          <strong>{itineraryDays} <UiText en="Days" zh="天" /></strong>
+          <span>{itineraryLabel}</span>
+        </div>}
+      </div>
+
+      <div className="quote-flight-summary">
+        <Detail label={<UiText en="Departure Date" zh="出发日期" />} value={data.departure_date?new Date(data.departure_date+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
+        <Detail label={<UiText en="Return Date (Arrival)" zh="返程日期（抵达）" />} value={data.return_date?new Date(data.return_date+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
+        <Detail label={<UiText en="Flight Total Price" zh="航班总报价" />} value={flightTotalPrice==null?"—":`${flightPriceCurrency} ${flightTotalPrice.toLocaleString("en-MY",{minimumFractionDigits:2,maximumFractionDigits:2})}`}/>
+        <Detail label={<UiText en="Ticket Type" zh="机票类型" />} value={flightTicketType==="fit"?<UiText en="FIT Ticket" zh="散票" />:flightTicketType==="git"?<UiText en="GIT" zh="团体票" />:flightTicketType==="review"?<UiText en="Manual Review" zh="需人工确认" />:"—"}/>
+      </div>
+
+      <div className="quote-flight-grid">
+        <div className="quote-flight-card">
+          <h3><UiText en="Departure Flight" zh="去程航班" /></h3>
+          <div className="quote-flight-details">
+            <Detail label={<UiText en="Airport Route" zh="机场路线" />} value={outboundFromAirport||outboundToAirport?`${outboundFromAirport||"—"} → ${outboundToAirport||"—"}`:"—"}/>
+            <Detail label={<UiText en="Airline / Flight No." zh="航空公司 / 航班号" />} value={outboundFlightNo||"—"}/>
+            <Detail label={<UiText en="Flight Date" zh="航班日期" />} value={outboundFlightDate?new Date(outboundFlightDate+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
+            <Detail label={<UiText en="Departure Time" zh="起飞时间" />} value={outboundDepartureTime||"—"}/>
+            <Detail label={<UiText en="Arrival Time" zh="抵达时间" />} value={outboundArrivalTime||"—"}/>
+            <Detail label={<UiText en="Arrival Day" zh="抵达日" />} value={outboundDepartureTime&&outboundArrivalTime?(outboundNextDay?<UiText en="+1 Next Day" zh="+1 次日" />:<UiText en="Same Day" zh="同日" />):"—"}/>
+          </div>
+          {outboundTransitOpen && <div className="quote-transit-detail">
+            <div className="quote-transit-heading"><span><UiText en="TRANSIT" zh="中转" /></span><strong><UiText en="Departure Transit Flight" zh="去程中转航班" /></strong></div>
+            <div className="quote-flight-details">
+              <Detail label={<UiText en="Airport Route" zh="机场路线" />} value={outboundTransitFromAirport||outboundTransitToAirport?`${outboundTransitFromAirport||"—"} → ${outboundTransitToAirport||"—"}`:"—"}/>
+              <Detail label={<UiText en="Airline / Flight No." zh="航空公司 / 航班号" />} value={outboundTransitFlightNo||"—"}/>
+              <Detail label={<UiText en="Flight Date" zh="航班日期" />} value={outboundTransitFlightDate?new Date(outboundTransitFlightDate+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
+              <Detail label={<UiText en="Departure Time" zh="起飞时间" />} value={outboundTransitDepartureTime||"—"}/>
+              <Detail label={<UiText en="Arrival Time" zh="抵达时间" />} value={outboundTransitArrivalTime||"—"}/>
+              <Detail label={<UiText en="Arrival Day" zh="抵达日" />} value={outboundTransitDepartureTime&&outboundTransitArrivalTime?(outboundTransitNextDay?<UiText en="+1 Next Day" zh="+1 次日" />:<UiText en="Same Day" zh="同日" />):"—"}/>
+            </div>
+          </div>}
+        </div>
+
+        <div className="quote-flight-card">
+          <h3><UiText en="Return Flight" zh="返程航班" /></h3>
+          <div className="quote-flight-details">
+            <Detail label={<UiText en="Airport Route" zh="机场路线" />} value={returnFromAirport||returnToAirport?`${returnFromAirport||"—"} → ${returnToAirport||"—"}`:"—"}/>
+            <Detail label={<UiText en="Airline / Flight No." zh="航空公司 / 航班号" />} value={returnFlightNo||"—"}/>
+            <Detail label={<UiText en="Flight Date" zh="航班日期" />} value={returnFlightDate?new Date(returnFlightDate+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
+            <Detail label={<UiText en="Departure Time" zh="起飞时间" />} value={returnDepartureTime||"—"}/>
+            <Detail label={<UiText en="Arrival Time" zh="抵达时间" />} value={returnArrivalTime||"—"}/>
+            <Detail label={<UiText en="Arrival Day" zh="抵达日" />} value={returnDepartureTime&&returnArrivalTime?(returnNextDay?<UiText en="+1 Next Day" zh="+1 次日" />:<UiText en="Same Day" zh="同日" />):"—"}/>
+          </div>
+          {returnTransitOpen && <div className="quote-transit-detail">
+            <div className="quote-transit-heading"><span><UiText en="TRANSIT" zh="中转" /></span><strong><UiText en="Return Transit Flight" zh="返程中转航班" /></strong></div>
+            <div className="quote-flight-details">
+              <Detail label={<UiText en="Airport Route" zh="机场路线" />} value={returnTransitFromAirport||returnTransitToAirport?`${returnTransitFromAirport||"—"} → ${returnTransitToAirport||"—"}`:"—"}/>
+              <Detail label={<UiText en="Airline / Flight No." zh="航空公司 / 航班号" />} value={returnTransitFlightNo||"—"}/>
+              <Detail label={<UiText en="Flight Date" zh="航班日期" />} value={returnTransitFlightDate?new Date(returnTransitFlightDate+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
+              <Detail label={<UiText en="Departure Time" zh="起飞时间" />} value={returnTransitDepartureTime||"—"}/>
+              <Detail label={<UiText en="Arrival Time" zh="抵达时间" />} value={returnTransitArrivalTime||"—"}/>
+              <Detail label={<UiText en="Arrival Day" zh="抵达日" />} value={returnTransitDepartureTime&&returnTransitArrivalTime?(returnTransitNextDay?<UiText en="+1 Next Day" zh="+1 次日" />:<UiText en="Same Day" zh="同日" />):"—"}/>
+            </div>
+          </div>}
+        </div>
+      </div>
+    </section>
 
     <section className="quotation-record-stage quotation-management-costing">
       <div className="quotation-record-stage-head"><h2><UiText en="Costing" zh="成本计算" /></h2></div>
@@ -272,84 +353,6 @@ export default async function QuotationDetailPage({
     </section>
     </>}
 
-    </section>
-
-    <section className="panel quote-flight-panel">
-      <div className="panel-head quote-flight-head">
-        <div><h2><UiText en="Flight Information" zh="航班信息" /></h2></div>
-        {itineraryLabel && <div className="itinerary-pill">
-          <strong>{itineraryDays} <UiText en="Days" zh="天" /></strong>
-          <span>{itineraryLabel}</span>
-        </div>}
-      </div>
-
-      <div className="quote-flight-summary">
-        <Detail label={<UiText en="Departure Date" zh="出发日期" />} value={data.departure_date?new Date(data.departure_date+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
-        <Detail label={<UiText en="Return Date (Arrival)" zh="返程日期（抵达）" />} value={data.return_date?new Date(data.return_date+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
-        <Detail label={<UiText en="Flight Total Price" zh="航班总报价" />} value={flightTotalPrice==null?"—":`${flightPriceCurrency} ${flightTotalPrice.toLocaleString("en-MY",{minimumFractionDigits:2,maximumFractionDigits:2})}`}/>
-        <Detail label={<UiText en="Ticket Type" zh="机票类型" />} value={flightTicketType==="fit"?<UiText en="FIT Ticket" zh="散票" />:flightTicketType==="git"?<UiText en="GIT" zh="团体票" />:flightTicketType==="review"?<UiText en="Manual Review" zh="需人工确认" />:"—"}/>
-      </div>
-
-      <div className="quote-flight-grid">
-        <div className="quote-flight-card">
-          <h3><UiText en="Departure Flight" zh="去程航班" /></h3>
-          <div className="quote-flight-details">
-            <Detail label={<UiText en="Airport Route" zh="机场路线" />} value={outboundFromAirport||outboundToAirport?`${outboundFromAirport||"—"} → ${outboundToAirport||"—"}`:"—"}/>
-            <Detail label={<UiText en="Airline / Flight No." zh="航空公司 / 航班号" />} value={outboundFlightNo||"—"}/>
-            <Detail label={<UiText en="Flight Date" zh="航班日期" />} value={outboundFlightDate?new Date(outboundFlightDate+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
-            <Detail label={<UiText en="Departure Time" zh="起飞时间" />} value={outboundDepartureTime||"—"}/>
-            <Detail label={<UiText en="Arrival Time" zh="抵达时间" />} value={outboundArrivalTime||"—"}/>
-            <Detail label={<UiText en="Arrival Day" zh="抵达日" />} value={outboundDepartureTime&&outboundArrivalTime?(outboundNextDay?<UiText en="+1 Next Day" zh="+1 次日" />:<UiText en="Same Day" zh="同日" />):"—"}/>
-          </div>
-          {outboundTransitOpen && <div className="quote-transit-detail">
-            <div className="quote-transit-heading"><span><UiText en="TRANSIT" zh="中转" /></span><strong><UiText en="Departure Transit Flight" zh="去程中转航班" /></strong></div>
-            <div className="quote-flight-details">
-              <Detail label={<UiText en="Airport Route" zh="机场路线" />} value={outboundTransitFromAirport||outboundTransitToAirport?`${outboundTransitFromAirport||"—"} → ${outboundTransitToAirport||"—"}`:"—"}/>
-              <Detail label={<UiText en="Airline / Flight No." zh="航空公司 / 航班号" />} value={outboundTransitFlightNo||"—"}/>
-              <Detail label={<UiText en="Flight Date" zh="航班日期" />} value={outboundTransitFlightDate?new Date(outboundTransitFlightDate+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
-              <Detail label={<UiText en="Departure Time" zh="起飞时间" />} value={outboundTransitDepartureTime||"—"}/>
-              <Detail label={<UiText en="Arrival Time" zh="抵达时间" />} value={outboundTransitArrivalTime||"—"}/>
-              <Detail label={<UiText en="Arrival Day" zh="抵达日" />} value={outboundTransitDepartureTime&&outboundTransitArrivalTime?(outboundTransitNextDay?<UiText en="+1 Next Day" zh="+1 次日" />:<UiText en="Same Day" zh="同日" />):"—"}/>
-            </div>
-          </div>}
-        </div>
-
-        <div className="quote-flight-card">
-          <h3><UiText en="Return Flight" zh="返程航班" /></h3>
-          <div className="quote-flight-details">
-            <Detail label={<UiText en="Airport Route" zh="机场路线" />} value={returnFromAirport||returnToAirport?`${returnFromAirport||"—"} → ${returnToAirport||"—"}`:"—"}/>
-            <Detail label={<UiText en="Airline / Flight No." zh="航空公司 / 航班号" />} value={returnFlightNo||"—"}/>
-            <Detail label={<UiText en="Flight Date" zh="航班日期" />} value={returnFlightDate?new Date(returnFlightDate+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
-            <Detail label={<UiText en="Departure Time" zh="起飞时间" />} value={returnDepartureTime||"—"}/>
-            <Detail label={<UiText en="Arrival Time" zh="抵达时间" />} value={returnArrivalTime||"—"}/>
-            <Detail label={<UiText en="Arrival Day" zh="抵达日" />} value={returnDepartureTime&&returnArrivalTime?(returnNextDay?<UiText en="+1 Next Day" zh="+1 次日" />:<UiText en="Same Day" zh="同日" />):"—"}/>
-          </div>
-          {returnTransitOpen && <div className="quote-transit-detail">
-            <div className="quote-transit-heading"><span><UiText en="TRANSIT" zh="中转" /></span><strong><UiText en="Return Transit Flight" zh="返程中转航班" /></strong></div>
-            <div className="quote-flight-details">
-              <Detail label={<UiText en="Airport Route" zh="机场路线" />} value={returnTransitFromAirport||returnTransitToAirport?`${returnTransitFromAirport||"—"} → ${returnTransitToAirport||"—"}`:"—"}/>
-              <Detail label={<UiText en="Airline / Flight No." zh="航空公司 / 航班号" />} value={returnTransitFlightNo||"—"}/>
-              <Detail label={<UiText en="Flight Date" zh="航班日期" />} value={returnTransitFlightDate?new Date(returnTransitFlightDate+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
-              <Detail label={<UiText en="Departure Time" zh="起飞时间" />} value={returnTransitDepartureTime||"—"}/>
-              <Detail label={<UiText en="Arrival Time" zh="抵达时间" />} value={returnTransitArrivalTime||"—"}/>
-              <Detail label={<UiText en="Arrival Day" zh="抵达日" />} value={returnTransitDepartureTime&&returnTransitArrivalTime?(returnTransitNextDay?<UiText en="+1 Next Day" zh="+1 次日" />:<UiText en="Same Day" zh="同日" />):"—"}/>
-            </div>
-          </div>}
-        </div>
-      </div>
-    </section>
-
-    <section className="panel quotation-information-panel">
-      <div className="panel-head"><h2><UiText en="Quotation Information" zh="报价资料" /></h2></div>
-      <div className="detail-grid quotation-information-grid">
-        <Detail label={<UiText en="Customer" zh="客户" />} value={data.customer_name||"—"}/>
-        <Detail label={<UiText en="Destination" zh="目的地" />} value={data.destination||"—"}/>
-        <Detail label={<UiText en="Departure Date" zh="出发日期" />} value={data.departure_date?new Date(data.departure_date+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
-        <Detail label={<UiText en="Tour Type" zh="团型" />} value={data.tour_type||qd.tourType||"—"}/>
-        <Detail label={<UiText en="Supplier" zh="供应商" />} value={data.supplier||"—"}/>
-        <Detail label={<UiText en="Status" zh="状态" />} value={data.status==="under_review"?<UiText en="Under Review" zh="审核中" />:data.status==="revision_required"?<UiText en="Revision Required" zh="需要修改" />:data.status==="ready"?<UiText en="Ready" zh="已就绪" />:data.status==="sent"?<UiText en="Sent" zh="已发送" />:data.status==="revised"?<UiText en="Revised" zh="已修改" />:data.status==="confirmed"?<UiText en="Confirmed" zh="已确认" />:data.status==="lost"?<UiText en="Lost" zh="未成交" />:data.status==="archived"?<UiText en="Archived" zh="已归档" />:<UiText en="Draft" zh="草稿" />}/>
-        <Detail label={<UiText en="Updated" zh="更新时间" />} value={data.updated_at?new Date(data.updated_at).toLocaleString("en-MY"):"—"}/>
-      </div>
     </section>
 
     <div className="quotation-record-stage-head quotation-record-workflow-head"><h2><UiText en="Workflow" zh="工作流程" /></h2></div>
