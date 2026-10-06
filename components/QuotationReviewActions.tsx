@@ -63,13 +63,6 @@ export default function QuotationReviewActions({
   const itineraryCurrent=reviewComplete;
 
   return <section className="panel inquiry-workflow-panel quotation-workflow-panel">
-    <div className="panel-head inquiry-workflow-panel-head quotation-workflow-compact-head">
-      <div>
-        <span className="page-kicker">{t("WORKFLOW","工作流程")}</span>
-        <h2>{t("Workflow","工作流程")}</h2>
-      </div>
-    </div>
-
     <div className="simple-workflow-grid quotation-workflow-compact system-workflow-grid">
       <div className={"simple-workflow-card "+(quotationComplete?"complete":quotationCurrent?"current":"upcoming")}>
         <div className="simple-workflow-card-head">
@@ -80,9 +73,14 @@ export default function QuotationReviewActions({
           <strong>{t("Quotation","报价")}</strong>
         </div>
         {status==="revision_required"&&reviewNote&&<div className="quotation-workflow-note"><span>{t("Review Note","审核备注")}</span><strong>{reviewNote}</strong></div>}
-        {canSubmit&&(status==="draft"||status==="revision_required")&&<div className="simple-workflow-actions">
+        {status==="revision_required"&&canSubmit&&<div className="simple-workflow-actions">
+          <Link className="btn primary" href={"/quotations/"+quotationId+"/edit"}>
+            {t("Edit Quotation","编辑报价")}
+          </Link>
+        </div>}
+        {status==="draft"&&canSubmit&&<div className="simple-workflow-actions">
           <button className="btn primary" type="button" disabled={Boolean(busy)} onClick={()=>void run("submit")}>
-            {busy==="submit"?t("Submitting...","提交中..."):status==="revision_required"?t("Resubmit","重新提交"):t("Submit","提交")}
+            {busy==="submit"?t("Submitting...","提交中..."):t("Submit for Review","提交审核")}
           </button>
         </div>}
       </div>
@@ -92,7 +90,7 @@ export default function QuotationReviewActions({
       <div className={"simple-workflow-card "+(reviewComplete?"complete":reviewCurrent?"current":"upcoming")}>
         <div className="simple-workflow-card-head">
           <span className="simple-workflow-index">02</span>
-          <span className="simple-workflow-state">{reviewComplete?t("✓ Done","✓ 已完成"):reviewCurrent?t("Reviewing","审核中"):t("Next","下一步")}</span>
+          <span className="simple-workflow-state">{reviewComplete?t("✓ Approved","✓ 已批准"):reviewCurrent?t("Under Review","审核中"):t("Next","下一步")}</span>
         </div>
         <div className="simple-workflow-title">
           <strong>{t("Management Review","管理层审核")}</strong>
