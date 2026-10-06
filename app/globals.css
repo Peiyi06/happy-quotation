@@ -20426,3 +20426,47 @@ td,
     border-right:0!important;
   }
 }
+
+
+/* PRICING AUDIT — management quotation record */
+.quotation-detail-template .quotation-record-pricing{display:grid;gap:14px}
+.quotation-detail-template .quotation-record-pricing>.quotation-record-stage-head{margin-bottom:-2px}
+.quotation-detail-template .quotation-record-pricing-panel,
+.quotation-detail-template .quotation-record-final-pricing{
+  box-shadow:none!important;
+  border-color:var(--color-border-default)!important;
+}
+.quotation-detail-template .quotation-record-pricing-table{min-width:900px!important}
+.quotation-detail-template .quotation-record-pricing-table th,
+.quotation-detail-template .quotation-record-pricing-table td{text-align:right!important}
+.quotation-detail-template .quotation-record-pricing-table th:first-child,
+.quotation-detail-template .quotation-record-pricing-table td:first-child,
+.quotation-detail-template .quotation-record-pricing-table th:nth-child(2),
+.quotation-detail-template .quotation-record-pricing-table td:nth-child(2){text-align:left!important}
+.quotation-detail-template .quotation-record-pricing-table tr.selected td{background:#f8fafc!important}
+.quotation-detail-template .quotation-record-pricing-table tr.selected td:first-child{box-shadow:inset 3px 0 0 var(--color-brand-primary)}
+.quotation-detail-template .quotation-record-price-note{
+  display:block;margin-top:4px;color:var(--color-text-tertiary);
+  font-size:var(--foundation-type-meta)!important;font-weight:600;
+}
+.quotation-detail-template .quotation-record-final-grid{
+  display:grid;grid-template-columns:1.5fr repeat(5,minmax(0,1fr));
+  border-top:1px solid var(--color-border-default);
+}
+.quotation-detail-template .quotation-record-final-grid .detail-item{
+  min-height:86px;padding:16px 18px;border-right:1px solid var(--color-border-default);
+}
+.quotation-detail-template .quotation-record-final-grid .detail-item:last-child{border-right:0}
+.quotation-detail-template .quotation-record-final-grid .detail-item:nth-child(2) strong{
+  color:var(--color-brand-primary)!important;font-size:22px!important;
+}
+@media(max-width:1180px){
+  .quotation-detail-template .quotation-record-final-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .quotation-detail-template .quotation-record-final-grid .detail-item:nth-child(3n){border-right:0}
+  .quotation-detail-template .quotation-record-final-grid .detail-item:nth-child(n+4){border-top:1px solid var(--color-border-default)}
+}
+@media(max-width:720px){
+  .quotation-detail-template .quotation-record-final-grid{grid-template-columns:1fr}
+  .quotation-detail-template .quotation-record-final-grid .detail-item{border-right:0!important;border-top:1px solid var(--color-border-default)}
+  .quotation-detail-template .quotation-record-final-grid .detail-item:first-child{border-top:0}
+}
