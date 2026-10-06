@@ -86,3 +86,248 @@
   .print-child-totals{display:flex;justify-content:flex-end;gap:6mm;margin-top:1.8mm;padding-top:1.8mm;border-top:.6px solid #cbd5db;color:#6f7f89;font-size:7.2pt}
   .print-child-totals strong{margin-left:1.2mm;color:#173d59;font-size:8.4pt}
 }
+
+
+/* =========================================================
+   MANAGEMENT QUOTATION RECORD — PRINT FOUNDATION
+   The read-only management record prints as an internal audit
+   document. Screen-only controls are removed; business data stays.
+   ========================================================= */
+@media print{
+  @page{size:A4 landscape;margin:9mm 10mm 10mm}
+
+  body:has(.quotation-detail-template){
+    background:#fff!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+
+  body:has(.quotation-detail-template) .workspace{
+    display:block!important;
+    min-height:0!important;
+    background:#fff!important;
+  }
+
+  body:has(.quotation-detail-template) .sidebar,
+  body:has(.quotation-detail-template) .detail-actions,
+  body:has(.quotation-detail-template) .quotation-detail-more,
+  body:has(.quotation-detail-template) .quote-source-inquiry a,
+  body:has(.quotation-detail-template) .simple-workflow-actions,
+  body:has(.quotation-detail-template) .workflow-text-link,
+  body:has(.quotation-detail-template) .no-print{
+    display:none!important;
+  }
+
+  body:has(.quotation-detail-template) .workspace-main{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:0!important;
+  }
+
+  .quotation-detail-template{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:0!important;
+    color:#142433!important;
+    font-family:Arial,"Noto Sans",sans-serif!important;
+  }
+
+  .quotation-detail-template .quote-detail-head{
+    align-items:flex-start!important;
+    margin:0 0 5mm!important;
+    padding:0 0 4mm!important;
+    border-bottom:1.2px solid #163e5d!important;
+  }
+
+  .quotation-detail-template .quotation-detail-title-block h1{
+    margin:0!important;
+    color:#133d5e!important;
+    font-size:18pt!important;
+    line-height:1.08!important;
+    font-weight:800!important;
+  }
+
+  .quotation-detail-template .quotation-detail-meta-line{
+    margin-top:2mm!important;
+    gap:2mm!important;
+  }
+
+  .quotation-detail-template .quotation-detail-meta-line>span{
+    font-size:8pt!important;
+  }
+
+  .quotation-detail-template .quotation-lock-state{
+    display:inline-flex!important;
+    min-height:20px!important;
+    padding:0 7px!important;
+    font-size:7pt!important;
+  }
+
+  .quotation-detail-template .quotation-record-stage-head{
+    margin:5mm 0 2.5mm!important;
+    padding:0!important;
+    min-height:0!important;
+    break-after:avoid!important;
+    page-break-after:avoid!important;
+  }
+
+  .quotation-detail-template .quotation-record-stage-head h2{
+    color:#153f60!important;
+    font-size:12pt!important;
+    line-height:1.15!important;
+    font-weight:800!important;
+  }
+
+  .quotation-detail-template .panel{
+    margin-top:0!important;
+    box-shadow:none!important;
+    border-color:#d7e0e6!important;
+    border-radius:3mm!important;
+  }
+
+  .quotation-detail-template .panel-head{
+    break-after:avoid!important;
+    page-break-after:avoid!important;
+  }
+
+  .quotation-detail-template .panel-head h2,
+  .quotation-detail-template .quotation-record-child-items h3{
+    font-size:9.5pt!important;
+    line-height:1.2!important;
+  }
+
+  .quotation-detail-template .detail-item{
+    min-height:0!important;
+    padding:2.4mm 2.8mm!important;
+  }
+
+  .quotation-detail-template .detail-item span{
+    margin-bottom:1mm!important;
+    font-size:6.8pt!important;
+    line-height:1.2!important;
+  }
+
+  .quotation-detail-template .detail-item strong{
+    font-size:8.5pt!important;
+    line-height:1.28!important;
+  }
+
+  .quotation-detail-template .quotation-record-context-grid{
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  }
+
+  .quotation-detail-template .quotation-record-settings-grid{
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  }
+
+  .quotation-detail-template .quotation-record-child-summary{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  }
+
+  .quotation-detail-template .quotation-record-final-grid{
+    grid-template-columns:1.5fr repeat(5,minmax(0,1fr))!important;
+  }
+
+  .quotation-detail-template .data-table-wrap{
+    overflow:visible!important;
+  }
+
+  .quotation-detail-template .data-table,
+  .quotation-detail-template .quotation-record-cost-table,
+  .quotation-detail-template .quotation-record-child-table,
+  .quotation-detail-template .quotation-record-pricing-table{
+    width:100%!important;
+    min-width:0!important;
+    table-layout:fixed!important;
+  }
+
+  .quotation-detail-template .data-table th{
+    padding:1.7mm 1.8mm!important;
+    font-size:6.6pt!important;
+    line-height:1.2!important;
+  }
+
+  .quotation-detail-template .data-table td{
+    padding:1.8mm!important;
+    font-size:7.2pt!important;
+    line-height:1.25!important;
+  }
+
+  .quotation-detail-template .quotation-record-row-note,
+  .quotation-detail-template .quotation-record-row-mode,
+  .quotation-detail-template .quotation-record-price-note{
+    margin-top:.7mm!important;
+    font-size:6pt!important;
+  }
+
+  .quotation-detail-template .quotation-record-direction{
+    min-height:18px!important;
+    padding:0 5px!important;
+    font-size:6pt!important;
+  }
+
+  .quotation-detail-template .quote-flight-summary,
+  .quotation-detail-template .quote-flight-grid,
+  .quotation-detail-template .quotation-record-child-summary,
+  .quotation-detail-template .quotation-record-final-grid{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  .quotation-detail-template .quote-flight-card,
+  .quotation-detail-template .quotation-record-commercial,
+  .quotation-detail-template .quotation-record-cost-panel,
+  .quotation-detail-template .quotation-record-child-card,
+  .quotation-detail-template .quotation-record-pricing-panel,
+  .quotation-detail-template .quotation-record-final-pricing,
+  .quotation-detail-template .simple-workflow-card{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  /* Deliberate document hierarchy: Context → Costing → Pricing → Workflow. */
+  .quotation-detail-template .quotation-management-costing{
+    break-before:page!important;
+    page-break-before:always!important;
+  }
+
+  .quotation-detail-template .quotation-record-pricing{
+    break-before:page!important;
+    page-break-before:always!important;
+  }
+
+  .quotation-detail-template .quotation-record-workflow-head{
+    break-before:page!important;
+    page-break-before:always!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-panel{
+    padding:4mm!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-panel .simple-workflow-card{
+    min-height:34mm!important;
+    padding:3mm!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-panel .simple-workflow-index{
+    width:6mm!important;
+    height:6mm!important;
+    font-size:6.5pt!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-panel .simple-workflow-state,
+  .quotation-detail-template .quotation-workflow-panel .quotation-workflow-waiting{
+    font-size:6.5pt!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-panel .simple-workflow-title strong{
+    font-size:9pt!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-panel .quotation-workflow-note{
+    font-size:6.5pt!important;
+  }
+}
