@@ -20020,21 +20020,9 @@ td,
 .quotation-editor-shell .quotation-stage-head{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap: 0;
   min-height:34px;
   padding:0 2px;
-}
-.quotation-editor-shell .quotation-stage-no{
-  display:inline-grid;
-  place-items:center;
-  width:28px;
-  height:28px;
-  border-radius:999px;
-  background:var(--color-brand-primary-soft);
-  color:var(--color-brand-primary);
-  font-size:var(--type-meta);
-  line-height:1;
-  font-weight:750;
 }
 .quotation-editor-shell .quotation-stage-head h2{
   margin:0;
@@ -20116,21 +20104,9 @@ td,
 .quotation-detail-template .quotation-record-stage-head{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap: 0;
   min-height:34px;
   margin:24px 0 12px;
-}
-.quotation-detail-template .quotation-record-stage-head>span{
-  display:inline-grid;
-  place-items:center;
-  width:28px;
-  height:28px;
-  border-radius:999px;
-  background:var(--color-brand-primary-soft);
-  color:var(--color-brand-primary);
-  font-size:var(--foundation-type-meta);
-  font-weight:750;
-  line-height:1;
 }
 .quotation-detail-template .quotation-record-stage-head h2{
   margin:0;
