@@ -5,7 +5,7 @@ import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
 import QuotationReviewActions from "@/components/QuotationReviewActions";
 import QuotationPrintButton from "@/components/QuotationPrintButton";
 import {UiText} from "@/components/WorkspaceLanguage";
-import {Currency, childSetupCost, currencyRate, leaderRowPerPax, leaderRowTotal, travelerRowPerPax} from "@/lib/calculations";
+import {Currency, childExtraRowPerPax, childExtraRowTotal, childSetupCost, currencyRate, leaderRowPerPax, leaderRowTotal, travelerRowPerPax, travelerRowTotal} from "@/lib/calculations";
 import {buildQuotationCalculationInput,calculateQuotation} from "@/lib/quotationEngine";
 
 const money=(n:number)=>new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR",minimumFractionDigits:2}).format(n||0).replace("MYR","RM");
@@ -217,9 +217,10 @@ export default async function QuotationDetailPage({
       <section className="panel quotation-record-commercial">
         <div className="panel-head"><h2><UiText en="Commercial Settings" zh="商业设置" /></h2></div>
         <div className="detail-grid quotation-record-settings-grid">
+          <Detail label={<UiText en="Pricing Structure" zh="报价结构" />} value={isScenarioPricing?<UiText en="Scenario Package" zh="多人数组合" />:<UiText en="Fixed Pax" zh="固定人数" />}/>
           <Detail label={<UiText en="Main Currency" zh="主要币种" />} value={managementMainCurrency}/>
           <Detail label={<UiText en="Exchange Rate → RM" zh="汇率 → RM" />} value={managementMainRate||"—"}/>
-          <Detail label={<UiText en="Profit Method" zh="利润方式" />} value={qd.profitMode||"—"}/>
+          <Detail label={<UiText en="Profit Method" zh="利润方式" />} value={qd.profitMode?<ProfitModeText value={qd.profitMode}/>:"—"}/>
           <Detail label={<UiText en="Profit Rate" zh="利润率" />} value={qd.profitRate!=null?String((Number(qd.profitRate)||0)*100)+"%":"—"}/>
           <Detail label={<UiText en="Minimum Profit / Pax" zh="最低利润 / 人" />} value={qd.minProfit===""||qd.minProfit==null?"—":money(Number(qd.minProfit)||0)}/>
           <Detail label={<UiText en="Maximum Profit / Pax" zh="最高利润 / 人" />} value={qd.maxProfit===""||qd.maxProfit==null?"—":money(Number(qd.maxProfit)||0)}/>
@@ -230,37 +231,75 @@ export default async function QuotationDetailPage({
 
       <section className="panel quotation-record-cost-panel">
         <div className="panel-head"><h2><UiText en="Cost Breakdown" zh="成本明细" /></h2></div>
-        <div className="data-table-wrap"><table className="data-table quotation-record-cost-table"><thead><tr>
-          <th><UiText en="Cost Item" zh="成本项目" /></th><th><UiText en="Calculation" zh="计算方式" /></th><th><UiText en="Unit Price" zh="单价" /></th><th><UiText en="Qty" zh="数量" /></th><th><UiText en="Currency" zh="币种" /></th><th><UiText en="Rate" zh="汇率" /></th><th><UiText en="Cost / Pax" zh="每人成本" /></th>
-        </tr></thead><tbody>
-          {managementTravelerRows.map((row:any)=><tr key={row.id}><td>{row.item||"—"}</td><td>{row.mode||"—"}</td><td>{Number(row.unitPrice)||0}</td><td>{Number(row.qty)||0}</td><td>{row.currency||"—"}</td><td>{currencyRate(row.currency,managementMainCurrency,managementMainRate)||"—"}</td><td>{money(travelerRowPerPax(row,managementPax,managementMainCurrency,managementMainRate))}</td></tr>)}
-          {!managementTravelerRows.length&&<tr><td colSpan={7} className="empty">—</td></tr>}
-        </tbody></table></div>
+        <div className="data-table-wrap"><table className="data-table quotation-record-cost-table">
+          <thead><tr>
+            <th><UiText en="Cost Item" zh="成本项目" /></th>
+            <th><UiText en="Type / Calculation" zh="类型 / 计算方式" /></th>
+            <th><UiText en="Unit Price" zh="单价" /></th>
+            <th><UiText en="Qty / Days" zh="数量 / 天数" /></th>
+            <th><UiText en="Currency / Rate" zh="币种 / 汇率" /></th>
+            <th><UiText en="Cost / Pax" zh="每人成本" /></th>
+            <th><UiText en="Total" zh="总计" /></th>
+          </tr></thead>
+          <tbody>
+            {managementTravelerRows.map((row:any)=><tr key={row.id}>
+              <td><strong>{row.item||"—"}</strong>{row.note&&<small className="quotation-record-row-note">{row.note}</small>}</td>
+              <td><span className={"quotation-record-direction "+(row.direction==="deduction"?"deduction":"cost")}>{row.direction==="deduction"?<UiText en="Deduction −" zh="扣减 −" />:<UiText en="Cost +" zh="成本 +" />}</span><small className="quotation-record-row-mode"><CalcModeText value={row.mode}/></small></td>
+              <td>{Number(row.unitPrice)||0}</td>
+              <td>{Number(row.qty)||0}</td>
+              <td><strong>{row.currency||"—"}</strong><small className="quotation-record-row-mode"><UiText en="Rate" zh="汇率" /> {currencyRate(row.currency,managementMainCurrency,managementMainRate)||"—"}</small></td>
+              <td>{money(travelerRowPerPax(row,managementPax,managementMainCurrency,managementMainRate))}</td>
+              <td>{money(travelerRowTotal(row,managementPax,managementMainCurrency,managementMainRate))}</td>
+            </tr>)}
+            {!managementTravelerRows.length&&<tr><td colSpan={7} className="empty">—</td></tr>}
+          </tbody>
+        </table></div>
       </section>
 
       <section className="panel quotation-record-cost-panel">
         <div className="panel-head"><h2><UiText en="Tour Leader Cost Setup" zh="领队成本设置" /></h2></div>
-        <div className="data-table-wrap"><table className="data-table quotation-record-cost-table"><thead><tr>
-          <th><UiText en="Cost Item" zh="成本项目" /></th><th><UiText en="Calculation" zh="计算方式" /></th><th><UiText en="Unit Price" zh="单价" /></th><th><UiText en="Qty" zh="数量" /></th><th><UiText en="Currency" zh="币种" /></th><th><UiText en="Total" zh="总计" /></th><th><UiText en="Allocated / Pax" zh="分摊 / 人" /></th>
-        </tr></thead><tbody>
-          {managementLeaderRows.map((row:any)=><tr key={row.id}><td>{row.item||"—"}</td><td>{row.mode||"—"}</td><td>{Number(row.unitPrice)||0}</td><td>{Number(row.qty)||0}</td><td>{row.currency||"—"}</td><td>{money(leaderRowTotal(row,managementMainCurrency,managementMainRate))}</td><td>{money(leaderRowPerPax(row,managementPax,managementMainCurrency,managementMainRate))}</td></tr>)}
-          {!managementLeaderRows.length&&<tr><td colSpan={7} className="empty">—</td></tr>}
-        </tbody></table></div>
+        <div className="data-table-wrap"><table className="data-table quotation-record-cost-table">
+          <thead><tr>
+            <th><UiText en="Cost Item" zh="成本项目" /></th>
+            <th><UiText en="Type / Calculation" zh="类型 / 计算方式" /></th>
+            <th><UiText en="Unit Price" zh="单价" /></th>
+            <th><UiText en="Qty / Days" zh="数量 / 天数" /></th>
+            <th><UiText en="Currency / Rate" zh="币种 / 汇率" /></th>
+            <th><UiText en="Total" zh="总计" /></th>
+            <th><UiText en="Allocated / Pax" zh="分摊 / 人" /></th>
+          </tr></thead>
+          <tbody>
+            {managementLeaderRows.map((row:any)=><tr key={row.id}>
+              <td><strong>{row.item||"—"}</strong>{row.note&&<small className="quotation-record-row-note">{row.note}</small>}</td>
+              <td><span className={"quotation-record-direction "+(row.direction==="deduction"?"deduction":"cost")}>{row.direction==="deduction"?<UiText en="Deduction −" zh="扣减 −" />:<UiText en="Cost +" zh="成本 +" />}</span><small className="quotation-record-row-mode"><CalcModeText value={row.mode||"每人"}/></small></td>
+              <td>{Number(row.unitPrice)||0}</td>
+              <td>{Number(row.qty)||0}</td>
+              <td><strong>{row.currency||"—"}</strong><small className="quotation-record-row-mode"><UiText en="Rate" zh="汇率" /> {currencyRate(row.currency,managementMainCurrency,managementMainRate)||"—"}</small></td>
+              <td>{money(leaderRowTotal(row,managementMainCurrency,managementMainRate))}</td>
+              <td>{money(leaderRowPerPax(row,managementPax,managementMainCurrency,managementMainRate))}</td>
+            </tr>)}
+            {!managementLeaderRows.length&&<tr><td colSpan={7} className="empty">—</td></tr>}
+          </tbody>
+        </table></div>
       </section>
 
       <div className="quotation-record-child-grid">
-        <section className="panel quotation-record-child-card"><div className="panel-head"><h2><UiText en="Child with Bed" zh="小孩含床" /></h2></div><div className="quotation-record-child-summary">
-          <Detail label={<UiText en="Ground Ratio" zh="地接比例" />} value={managementChildBed?String(managementChildBed.groundRatio||0)+"%":"—"}/>
-          <Detail label={<UiText en="Ground Cost / Pax" zh="地接成本 / 人" />} value={managementChildBedSummary?money(managementChildBedSummary.ground):"—"}/>
-          <Detail label={<UiText en="Other Items / Pax" zh="其他成本 / 人" />} value={managementChildBedSummary?money(managementChildBedSummary.extras):"—"}/>
-          <Detail label={<UiText en="Child Cost / Pax" zh="儿童成本 / 人" />} value={managementChildBedSummary?money(managementChildBedSummary.total):"—"}/>
-        </div></section>
-        <section className="panel quotation-record-child-card"><div className="panel-head"><h2><UiText en="Child without Bed" zh="小孩不含床" /></h2></div><div className="quotation-record-child-summary">
-          <Detail label={<UiText en="Ground Ratio" zh="地接比例" />} value={managementChildNoBed?String(managementChildNoBed.groundRatio||0)+"%":"—"}/>
-          <Detail label={<UiText en="Ground Cost / Pax" zh="地接成本 / 人" />} value={managementChildNoBedSummary?money(managementChildNoBedSummary.ground):"—"}/>
-          <Detail label={<UiText en="Other Items / Pax" zh="其他成本 / 人" />} value={managementChildNoBedSummary?money(managementChildNoBedSummary.extras):"—"}/>
-          <Detail label={<UiText en="Child Cost / Pax" zh="儿童成本 / 人" />} value={managementChildNoBedSummary?money(managementChildNoBedSummary.total):"—"}/>
-        </div></section>
+        <ChildCostRecord
+          title={<UiText en="Child with Bed" zh="小孩含床" />}
+          setup={managementChildBed}
+          summary={managementChildBedSummary}
+          pax={managementPax}
+          mainCurrency={managementMainCurrency}
+          mainRate={managementMainRate}
+        />
+        <ChildCostRecord
+          title={<UiText en="Child without Bed" zh="小孩不含床" />}
+          setup={managementChildNoBed}
+          summary={managementChildNoBedSummary}
+          pax={managementPax}
+          mainCurrency={managementMainCurrency}
+          mainRate={managementMainRate}
+        />
       </div>
     </section>
 
@@ -368,6 +407,58 @@ export default async function QuotationDetailPage({
       sourceInquiryId={data.source_inquiry_id||null}
     />
   </div>;
+}
+
+function CalcModeText({value}:{value:string}){
+  if(value==="每人每天") return <UiText en="Per Person / Day" zh="每人每天" />;
+  if(value==="整团") return <UiText en="Per Group" zh="整团" />;
+  if(value==="整团每天") return <UiText en="Per Group / Day" zh="整团每天" />;
+  return <UiText en="Per Person" zh="每人" />;
+}
+
+function ProfitModeText({value}:{value:string}){
+  if(value==="固定金额") return <UiText en="Fixed Amount" zh="固定金额" />;
+  if(value==="按售价毛利率") return <UiText en="Margin on Selling Price" zh="按售价毛利率" />;
+  return <UiText en="Markup on Cost" zh="按成本加价率" />;
+}
+
+function ChildCostRecord({title,setup,summary,pax,mainCurrency,mainRate}:{title:any;setup:any;summary:any;pax:number;mainCurrency:Currency;mainRate:number}){
+  const rows=Array.isArray(setup?.otherRows)?setup.otherRows:[];
+  return <section className="panel quotation-record-child-card">
+    <div className="panel-head"><h2>{title}</h2></div>
+    <div className="quotation-record-child-summary">
+      <Detail label={<UiText en="Ground Base" zh="地接基数" />} value={setup?String(setup.groundCurrency||"")+" "+String(Number(setup.groundBase)||0):"—"}/>
+      <Detail label={<UiText en="Ground Ratio" zh="地接比例" />} value={setup?String(setup.groundRatio||0)+"%":"—"}/>
+      <Detail label={<UiText en="Ground Cost / Pax" zh="地接成本 / 人" />} value={summary?money(summary.ground):"—"}/>
+      <Detail label={<UiText en="Child Cost / Pax" zh="儿童成本 / 人" />} value={summary?money(summary.total):"—"}/>
+    </div>
+    <div className="quotation-record-child-items">
+      <h3><UiText en="Other Cost Items" zh="其他成本项目" /></h3>
+      <div className="data-table-wrap"><table className="data-table quotation-record-child-table">
+        <thead><tr>
+          <th><UiText en="Cost Item" zh="成本项目" /></th>
+          <th><UiText en="Type / Calculation" zh="类型 / 计算方式" /></th>
+          <th><UiText en="Unit Price" zh="单价" /></th>
+          <th><UiText en="Qty / Days" zh="数量 / 天数" /></th>
+          <th><UiText en="Currency / Rate" zh="币种 / 汇率" /></th>
+          <th><UiText en="Cost / Pax" zh="每人成本" /></th>
+          <th><UiText en="Total" zh="总计" /></th>
+        </tr></thead>
+        <tbody>
+          {rows.map((row:any)=><tr key={row.id}>
+            <td><strong>{row.item||"—"}</strong>{row.note&&<small className="quotation-record-row-note">{row.note}</small>}</td>
+            <td><span className={"quotation-record-direction "+(row.direction==="deduction"?"deduction":"cost")}>{row.direction==="deduction"?<UiText en="Deduction −" zh="扣减 −" />:<UiText en="Cost +" zh="成本 +" />}</span><small className="quotation-record-row-mode"><CalcModeText value={row.mode}/></small></td>
+            <td>{Number(row.unitPrice)||0}</td>
+            <td>{Number(row.qty)||0}</td>
+            <td><strong>{row.currency||"—"}</strong><small className="quotation-record-row-mode"><UiText en="Rate" zh="汇率" /> {currencyRate(row.currency,mainCurrency,mainRate)||"—"}</small></td>
+            <td>{money(childExtraRowPerPax(row,pax,mainCurrency,mainRate))}</td>
+            <td>{money(childExtraRowTotal(row,pax,mainCurrency,mainRate))}</td>
+          </tr>)}
+          {!rows.length&&<tr><td colSpan={7} className="empty">—</td></tr>}
+        </tbody>
+      </table></div>
+    </div>
+  </section>;
 }
 
 function Detail({label,value}:{label:any;value:any}){
