@@ -885,7 +885,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
     <section className="quotation-stage quotation-stage-context">
       <div className="quotation-stage-head">
-        <span className="quotation-stage-no">01</span>
         <h2>{t("Context","背景资料")}</h2>
       </div>
     {workspaceMode&&resolvedSourceInquiryId&&<section className="quote-source-inquiry">
@@ -967,7 +966,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
     <section className="quotation-stage quotation-stage-costing">
       <div className="quotation-stage-head">
-        <span className="quotation-stage-no">02</span>
         <h2>{t("Costing","成本计算")}</h2>
       </div>
 
@@ -1154,7 +1152,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
     <section className="quotation-stage quotation-stage-pricing">
       <div className="quotation-stage-head">
-        <span className="quotation-stage-no">03</span>
         <h2>{t("Pricing","定价")}</h2>
       </div>
 
@@ -1387,7 +1384,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
 
     <section className="quotation-stage quotation-stage-workflow">
       <div className="quotation-stage-head">
-        <span className="quotation-stage-no">04</span>
         <h2>{t("Workflow","工作流程")}</h2>
       </div>
 
