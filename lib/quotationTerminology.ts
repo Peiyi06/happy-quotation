@@ -11,6 +11,7 @@ export function quotationTerminology(t:QuotationTranslate){
     childCostSetup:t("Child Cost Setup","儿童成本设置"),
     quotationPricing:t("Quotation Pricing","报价定价"),
     systemPricingMatrix:t("System Pricing Matrix","系统定价矩阵"),
+    finalPricingResult:t("Final Pricing Result","最终报价结果"),
     finalCustomerPrice:t("Final Customer Price","最终对客售价"),
     travellerType:t("Traveller Type","旅客类型"),
     costItem:t("Cost Item","成本项目"),
