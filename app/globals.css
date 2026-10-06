@@ -20311,3 +20311,118 @@ td,
     border-right:0!important;
   }
 }
+
+
+/* COSTING AUDIT — management quotation record */
+.quotation-detail-template .quotation-management-costing{
+  display:grid;
+  gap:14px;
+}
+.quotation-detail-template .quotation-management-costing>.quotation-record-stage-head{
+  margin-bottom:-2px;
+}
+.quotation-detail-template .quotation-record-cost-panel .panel-head,
+.quotation-detail-template .quotation-record-commercial .panel-head,
+.quotation-detail-template .quotation-record-child-card .panel-head{
+  margin-bottom:10px!important;
+}
+.quotation-detail-template .quotation-record-settings-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+.quotation-detail-template .quotation-record-settings-grid .detail-item:nth-child(4n){
+  border-right:1px solid var(--color-border-default)!important;
+}
+.quotation-detail-template .quotation-record-settings-grid .detail-item:nth-child(3n){
+  border-right:0!important;
+}
+.quotation-detail-template .quotation-record-cost-table,
+.quotation-detail-template .quotation-record-child-table{
+  min-width:940px!important;
+}
+.quotation-detail-template .quotation-record-cost-table td,
+.quotation-detail-template .quotation-record-child-table td{
+  vertical-align:top!important;
+}
+.quotation-detail-template .quotation-record-cost-table td strong,
+.quotation-detail-template .quotation-record-child-table td strong{
+  font-weight:650!important;
+}
+.quotation-detail-template .quotation-record-row-note,
+.quotation-detail-template .quotation-record-row-mode{
+  display:block;
+  margin-top:4px;
+  color:var(--color-text-tertiary);
+  font-size:var(--foundation-type-meta)!important;
+  line-height:1.3;
+  font-weight:500;
+}
+.quotation-detail-template .quotation-record-direction{
+  display:inline-flex;
+  align-items:center;
+  min-height:22px;
+  padding:0 7px;
+  border-radius:999px;
+  border:1px solid var(--color-border-default);
+  background:var(--color-bg-muted);
+  color:var(--color-text-secondary);
+  font-size:var(--foundation-type-meta);
+  font-weight:650;
+  white-space:nowrap;
+}
+.quotation-detail-template .quotation-record-direction.deduction{
+  background:#fff5f4;
+  border-color:#efcfca;
+  color:#9b433a;
+}
+.quotation-detail-template .quotation-record-child-grid{
+  grid-template-columns:1fr!important;
+  gap:14px!important;
+}
+.quotation-detail-template .quotation-record-child-summary{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+.quotation-detail-template .quotation-record-child-summary .detail-item{
+  border-right:1px solid var(--color-border-default)!important;
+  border-bottom:0!important;
+}
+.quotation-detail-template .quotation-record-child-summary .detail-item:last-child{
+  border-right:0!important;
+}
+.quotation-detail-template .quotation-record-child-items{
+  padding:16px 18px 18px;
+  border-top:1px solid var(--color-border-default);
+}
+.quotation-detail-template .quotation-record-child-items h3{
+  margin:0 0 10px;
+  color:var(--color-text-primary);
+  font-size:var(--foundation-type-subsection);
+  line-height:1.2;
+  font-weight:700;
+}
+@media(max-width:980px){
+  .quotation-detail-template .quotation-record-settings-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .quotation-detail-template .quotation-record-settings-grid .detail-item:nth-child(3n){
+    border-right:1px solid var(--color-border-default)!important;
+  }
+  .quotation-detail-template .quotation-record-settings-grid .detail-item:nth-child(2n){
+    border-right:0!important;
+  }
+  .quotation-detail-template .quotation-record-child-summary{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .quotation-detail-template .quotation-record-child-summary .detail-item:nth-child(2n){
+    border-right:0!important;
+  }
+}
+@media(max-width:620px){
+  .quotation-detail-template .quotation-record-settings-grid,
+  .quotation-detail-template .quotation-record-child-summary{
+    grid-template-columns:1fr!important;
+  }
+  .quotation-detail-template .quotation-record-settings-grid .detail-item,
+  .quotation-detail-template .quotation-record-child-summary .detail-item{
+    border-right:0!important;
+  }
+}
