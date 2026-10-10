@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 import {quotationTerminology} from "@/lib/quotationTerminology";
 import FlightInformation,{emptyFlightInformation,type FlightInformationValue} from "@/components/FlightInformation";
+import QuotationFlightCollapsible from "@/components/QuotationFlightCollapsible";
 import {
   CalcMode, ChildCostRow, ChildCostSetup, ChildMode, Currency, LeaderCostRow, ProfitMode, TravelerCostRow,
   childExtraRowPerPax, childSetupCost, currencyRate, leaderRowPerPax, leaderRowTotal, travelerRowPerPax, travelerRowTotal
@@ -49,6 +50,14 @@ const formatDisplayDate = (date:string) => {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return "";
   const [y,m,d] = date.split("-");
   return `${d}/${m}/${y}`;
+};
+
+const isFlightInformationComplete=(value?:FlightInformationValue|null)=>{
+  if(!value) return false;
+  const required=(leg:any)=>Boolean(
+    leg?.fromAirport&&leg?.toAirport&&leg?.flightNo&&leg?.flightDate&&leg?.departureTime&&leg?.arrivalTime
+  );
+  return required(value.outbound)&&required(value.returning);
 };
 
 const childCostItemOrder=(item:string)=>{
@@ -160,6 +169,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [flightInformation,setFlightInformation] = useState<FlightInformationValue>(()=>emptyFlightInformation());
   const [flightTotalPrice, setFlightTotalPrice] = useState<number | "">("");
   const [flightPriceCurrency, setFlightPriceCurrency] = useState<Currency>("RM");
+  const [flightOpen,setFlightOpen] = useState(()=>!isFlightInformationComplete(initialQuotation?.quotation_data?.flightInformation));
   const [customerName, setCustomerName] = useState("");
   const [customerContact, setCustomerContact] = useState("");
   const [departureCity, setDepartureCity] = useState("");
@@ -254,6 +264,19 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     } catch {}
     setHydrated(true);
   }, [initialQuotation]);
+
+  const flightSummary=useMemo(()=>{
+    const outbound=flightInformation.outbound;
+    const returning=flightInformation.returning;
+    const parts:string[]=[];
+    if(outbound.fromAirport||outbound.toAirport) parts.push(`${outbound.fromAirport||"—"} → ${outbound.toAirport||"—"}`);
+    if(outbound.flightNo) parts.push(outbound.flightNo);
+    const start=formatDisplayDate(outbound.flightDate||departureDate);
+    const end=formatDisplayDate(returning.flightDate||returnDate);
+    if(start||end) parts.push([start||"—",end||"—"].join(" → "));
+    if(flightTotalPrice!==""&&flightTotalPrice!=null) parts.push(`${flightPriceCurrency} ${Number(flightTotalPrice).toLocaleString("en-MY",{minimumFractionDigits:2,maximumFractionDigits:2})}`);
+    return parts.join(" · ");
+  },[flightInformation,departureDate,returnDate,flightTotalPrice,flightPriceCurrency]);
 
   const currentSnapshot = JSON.stringify({
     quoteTitle,destination,departureDate,returnDate,customerName,customerContact,departureCity,status,
@@ -958,27 +981,30 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
       </div>
 
       <div className="flight-section-surface quotation-flight-section">
-        <FlightInformation
-          value={flightInformation}
-          onChange={setFlightInformation}
-          durationDays={travelDuration.days}
-          footer={
-            <div className="flight-total-price-row">
-              <Field label={t("Flight Total Price","航班总报价")}>
-                <input type="number" min="0" value={flightTotalPrice} onChange={e=>setFlightTotalPrice(e.target.value===""?"":Number(e.target.value))} placeholder="0.00" />
-              </Field>
-              <Field label={terms.currency}>
-                <select value={flightPriceCurrency} onChange={e=>setFlightPriceCurrency(e.target.value as Currency)}>{currencies.map(cur=><option key={cur} value={cur}>{currencyLabel(cur)}</option>)}</select>
-              </Field>
-              <div className="field">
-                <span>{t("Ticket Type","机票类型")}</span>
-                <div className={"ticket-type-auto "+flightTicketType.state}>
-                  <strong>{flightTicketType.label}</strong>
+        <QuotationFlightCollapsible summary={flightSummary} open={flightOpen} onToggle={setFlightOpen}>
+          <FlightInformation
+            value={flightInformation}
+            onChange={setFlightInformation}
+            durationDays={travelDuration.days}
+            hideHeader
+            footer={
+              <div className="flight-total-price-row">
+                <Field label={t("Flight Total Price","航班总报价")}>
+                  <input type="number" min="0" value={flightTotalPrice} onChange={e=>setFlightTotalPrice(e.target.value===""?"":Number(e.target.value))} placeholder="0.00" />
+                </Field>
+                <Field label={terms.currency}>
+                  <select value={flightPriceCurrency} onChange={e=>setFlightPriceCurrency(e.target.value as Currency)}>{currencies.map(cur=><option key={cur} value={cur}>{currencyLabel(cur)}</option>)}</select>
+                </Field>
+                <div className="field">
+                  <span>{t("Ticket Type","机票类型")}</span>
+                  <div className={"ticket-type-auto "+flightTicketType.state}>
+                    <strong>{flightTicketType.label}</strong>
+                  </div>
                 </div>
               </div>
-            </div>
-          }
-        />
+            }
+          />
+        </QuotationFlightCollapsible>
       </div>
 
       {saveMessage && <div className="save-message">{saveMessage}</div>}
