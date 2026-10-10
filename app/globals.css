@@ -20346,3 +20346,31 @@ td,
 .quotation-detail-template .quotation-record-pricing{
   gap:14px!important;
 }
+
+
+/* QUOTATION EDIT VIEW CONTENT WIDTH FOUNDATION
+   Keep inner modules fluid, but prevent the editor from stretching across
+   the full workspace on wide screens. */
+.quotation-editor-shell{
+  width:min(100%,1480px)!important;
+  max-width:1480px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+
+.quotation-editor-shell .quotation-stage,
+.quotation-editor-shell .section,
+.quotation-editor-shell .quote-meta-panel,
+.quotation-editor-shell .quotation-save-state,
+.quotation-editor-shell .quotation-editor-workflow{
+  width:100%!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+
+@media(max-width:1540px){
+  .quotation-editor-shell{
+    width:100%!important;
+    max-width:100%!important;
+  }
+}
