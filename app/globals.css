@@ -20317,3 +20317,19 @@ td,
     min-width:980px!important;
   }
 }
+
+
+/* QUOTATION STAGE LABEL CLEANUP
+   Context / Costing / Pricing remain structural wrappers only.
+   Their visible outer headings are intentionally removed. */
+.quotation-editor-shell .quotation-stage-context,
+.quotation-editor-shell .quotation-stage-costing,
+.quotation-editor-shell .quotation-stage-pricing{
+  gap:14px!important;
+}
+.quotation-editor-shell .quotation-stage-context>.quote-source-inquiry:first-child,
+.quotation-editor-shell .quotation-stage-context>.quote-meta-panel:first-child,
+.quotation-editor-shell .quotation-stage-costing>.section:first-child,
+.quotation-editor-shell .quotation-stage-pricing>.section:first-child{
+  margin-top:0!important;
+}
