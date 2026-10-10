@@ -51,6 +51,27 @@ const formatDisplayDate = (date:string) => {
   return `${d}/${m}/${y}`;
 };
 
+const childCostItemOrder=(item:string)=>{
+  const key=String(item||"").trim().toLowerCase();
+  const order:Record<string,number>={
+    "小费":10,"tips":10,
+    "旅游保险":20,"travel insurance":20,
+    "机场接送":30,"airport transfer":30
+  };
+  return order[key]??1000;
+};
+
+const sortChildCostRows=(rows:ChildCostRow[]=[])=>
+  rows
+    .map((row,index)=>({row,index,rank:childCostItemOrder(row.item)}))
+    .sort((a,b)=>a.rank-b.rank||a.index-b.index)
+    .map(entry=>entry.row);
+
+const normalizeChildCostSetupOrder=(setup:ChildCostSetup):ChildCostSetup=>({
+  ...setup,
+  otherRows:sortChildCostRows(setup.otherRows||[])
+});
+
 const defaultTravelerRows: TravelerCostRow[] = [
   { id: uid(), item: "地接报价", direction:"cost", mode: "每人", unitPrice: "", qty: 1, currency: "RMB", childRatioApplicable: true, note: "" },
   { id: uid(), item: "小费", direction:"cost", mode: "每人每天", unitPrice: "", qty: 1, currency: "RM", childRatioApplicable: false, note: "" },
@@ -79,9 +100,9 @@ const createDefaultChildSetup = (): ChildCostSetup => ({
   groundCurrency:"RMB",
   groundDirection:"cost",
   otherRows:[
+    {id:uid(),item:"小费",direction:"cost",mode:"每人每天",unitPrice:"",qty:1,currency:"RM",note:""},
     {id:uid(),item:"旅游保险",direction:"cost",mode:"每人",unitPrice:"",qty:1,currency:"RM",note:""},
-    {id:uid(),item:"机场接送",direction:"cost",mode:"整团",unitPrice:"",qty:1,currency:"RM",note:""},
-    {id:uid(),item:"小费",direction:"cost",mode:"每人每天",unitPrice:"",qty:1,currency:"RM",note:""}
+    {id:uid(),item:"机场接送",direction:"cost",mode:"整团",unitPrice:"",qty:1,currency:"RM",note:""}
   ]
 });
 
@@ -219,7 +240,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           profitMode:setProfitMode,profitRate:setProfitRate,minProfit:setMinProfit,maxProfit:setMaxProfit,fixedProfit:setFixedProfit,roundUnit:setRoundUnit,
           childBedMode:setChildBedMode,childBedManual:setChildBedManual,childBedCurrency:setChildBedCurrency,
           childNoBedMode:setChildNoBedMode,childNoBedManual:setChildNoBedManual,childNoBedCurrency:setChildNoBedCurrency,
-          childBedSetup:setChildBedSetup,childNoBedSetup:setChildNoBedSetup,
+          childBedSetup:(x:any)=>setChildBedSetup(normalizeChildCostSetupOrder(x)),childNoBedSetup:(x:any)=>setChildNoBedSetup(normalizeChildCostSetupOrder(x)),
           selectedType:setSelectedType,manualQuote:setManualQuote
         };
         setters[k]?.(v);
@@ -1486,7 +1507,7 @@ function ChildCostCard({title,t,setup,setSetup,pax,mainCurrency,mainRate,display
   const normalizedSetup:ChildCostSetup={
     ...setup,
     groundDirection:setup.groundDirection||"cost",
-    otherRows:(setup.otherRows||[]).map(row=>({...row,direction:row.direction||"cost",mode:row.mode||"每人"}))
+    otherRows:sortChildCostRows((setup.otherRows||[]).map(row=>({...row,direction:row.direction||"cost",mode:row.mode||"每人"})))
   };
   const summary=childSetupCost(normalizedSetup,pax,mainCurrency,mainRate);
   const updateRow=(id:string,patch:Partial<ChildCostRow>)=>setSetup({...normalizedSetup,otherRows:normalizedSetup.otherRows.map(row=>row.id===id?{...row,...patch}:row)});
