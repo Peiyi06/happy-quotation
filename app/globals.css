@@ -20210,3 +20210,110 @@ td,
     display:none!important;
   }
 }
+
+
+/* COST BREAKDOWN DETAIL REFINEMENT
+   Compact operational table: stronger scan line, calmer inputs, tighter numeric columns. */
+.quotation-editor-shell .quotation-stage-costing .section:has(.traveller-cost-table)>.section-head{
+  margin-bottom:14px!important;
+}
+.quotation-editor-shell .quotation-stage-costing .section:has(.traveller-cost-table)>.section-head .btn{
+  min-height:36px!important;
+  height:36px!important;
+  padding:0 13px!important;
+  border-radius:9px!important;
+  font-size:11px!important;
+  font-weight:650!important;
+}
+
+.quotation-editor-shell .traveller-cost-table-head,
+.quotation-editor-shell .traveller-cost-row-main{
+  grid-template-columns:
+    minmax(210px,1.55fr)
+    minmax(96px,.68fr)
+    minmax(138px,.94fr)
+    minmax(104px,.72fr)
+    minmax(88px,.60fr)
+    minmax(108px,.72fr)
+    minmax(132px,.84fr)
+    32px!important;
+}
+
+.quotation-editor-shell .traveller-cost-table-head{
+  min-height:40px!important;
+  padding:0 10px!important;
+}
+.quotation-editor-shell .traveller-cost-table-head span{
+  padding:0 6px!important;
+  font-size:9.5px!important;
+  letter-spacing:.01em!important;
+}
+
+.quotation-editor-shell .traveller-cost-row-main{
+  min-height:54px!important;
+  padding:7px 10px!important;
+}
+.quotation-editor-shell .traveller-cost-cell,
+.quotation-editor-shell .traveller-cost-result{
+  padding:0 6px!important;
+}
+
+.quotation-editor-shell .traveller-cost-cell input,
+.quotation-editor-shell .traveller-cost-cell select{
+  height:34px!important;
+  min-height:34px!important;
+  padding:0 9px!important;
+  border-radius:7px!important;
+  font-size:12px!important;
+  font-weight:600!important;
+}
+
+/* Numeric columns read as one vertical ledger. */
+.quotation-editor-shell .traveller-cost-row-main>.traveller-cost-cell:nth-child(4) input,
+.quotation-editor-shell .traveller-cost-row-main>.traveller-cost-cell:nth-child(5) input{
+  text-align:right!important;
+  font-variant-numeric:tabular-nums;
+}
+.quotation-editor-shell .traveller-cost-result{
+  justify-items:end!important;
+  text-align:right!important;
+}
+.quotation-editor-shell .traveller-cost-result strong{
+  font-size:14px!important;
+  font-variant-numeric:tabular-nums;
+}
+.quotation-editor-shell .traveller-cost-result small,
+.quotation-editor-shell .traveller-cost-currency small,
+.quotation-editor-shell .traveller-cost-note-preview{
+  font-size:8.8px!important;
+}
+
+/* Keep the final action column quiet until needed. */
+.quotation-editor-shell .traveller-cost-more summary{
+  width:26px!important;
+  height:26px!important;
+}
+.quotation-editor-shell .traveller-cost-row:not(:hover) .traveller-cost-more summary:not(:focus-visible){
+  color:#a8b1b8!important;
+}
+
+/* Leader rows inherit the exact same cost-ledger rhythm. */
+.quotation-editor-shell .leader-cost-table .traveller-cost-table-head,
+.quotation-editor-shell .leader-cost-table .traveller-cost-row-main{
+  grid-template-columns:
+    minmax(210px,1.55fr)
+    minmax(96px,.68fr)
+    minmax(138px,.94fr)
+    minmax(104px,.72fr)
+    minmax(88px,.60fr)
+    minmax(108px,.72fr)
+    minmax(132px,.84fr)
+    32px!important;
+}
+
+@media(max-width:1180px){
+  .quotation-editor-shell .traveller-cost-table-head,
+  .quotation-editor-shell .traveller-cost-row-main{
+    min-width:980px!important;
+  }
+}
