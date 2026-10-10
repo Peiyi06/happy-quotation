@@ -331,3 +331,40 @@
     font-size:6.5pt!important;
   }
 }
+
+
+/* Collapsible flight sections always expand in print/PDF. */
+@media print{
+  .quotation-flight-collapse-toggle{display:none!important}
+  .quotation-flight-collapse-print-head{
+    display:flex!important;
+    align-items:flex-end!important;
+    justify-content:space-between!important;
+    gap:8mm!important;
+    margin:0 0 2.5mm!important;
+    padding:0 0 2mm!important;
+    border-bottom:.5px solid #d7e0e6!important;
+  }
+  .quotation-flight-collapse-print-head strong{
+    color:#153f60!important;
+    font-size:10pt!important;
+    font-weight:800!important;
+  }
+  .quotation-flight-collapse-print-head span{
+    color:#6f7f89!important;
+    font-size:7pt!important;
+    text-align:right!important;
+  }
+  .quotation-flight-collapse-body,
+  .quotation-flight-collapse-body[hidden]{
+    display:block!important;
+    padding-top:0!important;
+    border-top:0!important;
+  }
+  .quotation-detail-template .quotation-flight-collapse,
+  .quotation-editor-shell .quotation-flight-section{
+    padding:0!important;
+    border:0!important;
+    background:#fff!important;
+  }
+}
