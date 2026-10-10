@@ -20069,3 +20069,85 @@ td,
     grid-row:1 / span 2!important;
   }
 }
+
+
+/* QUOTATION COLLAPSIBLE FINAL ALIGNMENT
+   Flight Information must align exactly with Tour Leader / Child Cost Setup. */
+.quotation-editor-shell .quotation-information-stack{
+  width:100%!important;
+  max-width:none!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  box-sizing:border-box!important;
+}
+.quotation-editor-shell .quotation-flight-section{
+  width:100%!important;
+  max-width:none!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  box-sizing:border-box!important;
+}
+.quotation-editor-shell .quotation-flight-collapse{
+  width:100%!important;
+  max-width:none!important;
+}
+.quotation-editor-shell .quotation-flight-collapse-toggle{
+  width:100%!important;
+  box-sizing:border-box!important;
+  grid-template-columns:auto minmax(0,1fr) 30px!important;
+}
+.quotation-editor-shell .quotation-flight-collapse-title{
+  grid-column:1!important;
+  grid-row:1!important;
+}
+.quotation-editor-shell .quotation-flight-collapse-summary{
+  grid-column:2!important;
+  grid-row:1!important;
+  min-width:0!important;
+}
+.quotation-editor-shell .quotation-flight-collapse-chevron{
+  grid-column:3!important;
+  grid-row:1!important;
+  justify-self:end!important;
+  margin-left:auto!important;
+}
+
+/* Same explicit column ownership in Management Record. */
+.quotation-detail-template .quotation-flight-collapse-toggle{
+  grid-template-columns:auto minmax(0,1fr) 30px!important;
+}
+.quotation-detail-template .quotation-flight-collapse-title{
+  grid-column:1!important;
+  grid-row:1!important;
+}
+.quotation-detail-template .quotation-flight-collapse-summary{
+  grid-column:2!important;
+  grid-row:1!important;
+}
+.quotation-detail-template .quotation-flight-collapse-chevron{
+  grid-column:3!important;
+  grid-row:1!important;
+  justify-self:end!important;
+}
+
+@media(max-width:700px){
+  .quotation-editor-shell .quotation-flight-collapse-toggle,
+  .quotation-detail-template .quotation-flight-collapse-toggle{
+    grid-template-columns:minmax(0,1fr) 30px!important;
+  }
+  .quotation-editor-shell .quotation-flight-collapse-title,
+  .quotation-detail-template .quotation-flight-collapse-title{
+    grid-column:1!important;
+    grid-row:1!important;
+  }
+  .quotation-editor-shell .quotation-flight-collapse-summary,
+  .quotation-detail-template .quotation-flight-collapse-summary{
+    grid-column:1!important;
+    grid-row:2!important;
+  }
+  .quotation-editor-shell .quotation-flight-collapse-chevron,
+  .quotation-detail-template .quotation-flight-collapse-chevron{
+    grid-column:2!important;
+    grid-row:1 / span 2!important;
+  }
+}
