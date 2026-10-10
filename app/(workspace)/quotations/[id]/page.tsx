@@ -135,8 +135,6 @@ export default async function QuotationDetailPage({
       </div>
     </div>
 
-    <div className="quotation-record-stage-head quotation-record-context-head"><h2><UiText en="Context" zh="背景资料" /></h2></div>
-
     <section className="panel quotation-record-context-panel">
       <div className="panel-head"><h2><UiText en="Customer & Trip" zh="客户与行程" /></h2></div>
       <div className="detail-grid quotation-record-context-grid">
@@ -225,8 +223,6 @@ export default async function QuotationDetailPage({
     </QuotationFlightCollapsible>
 
     <section className="quotation-record-stage quotation-management-costing">
-      <div className="quotation-record-stage-head"><h2><UiText en="Costing" zh="成本计算" /></h2></div>
-
       <section className="panel quotation-record-commercial">
         <div className="panel-head"><h2><UiText en="Commercial Settings" zh="商业设置" /></h2></div>
         <div className="detail-grid quotation-record-settings-grid">
@@ -317,8 +313,6 @@ export default async function QuotationDetailPage({
     </section>
 
     <section className="quotation-record-stage quotation-record-pricing">
-      <div className="quotation-record-stage-head"><h2><UiText en="Pricing" zh="定价" /></h2></div>
-
       {isScenarioPricing ? <section className="panel quotation-record-pricing-panel">
         <div className="panel-head"><h2><UiText en="System Pricing Matrix" zh="系统定价矩阵" /></h2></div>
         <div className="data-table-wrap"><table className="data-table quotation-record-pricing-table">
