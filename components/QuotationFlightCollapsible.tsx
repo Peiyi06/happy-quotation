@@ -26,21 +26,21 @@ export default function QuotationFlightCollapsible({
     onToggle?.(next);
   };
 
-  return <div className={"quotation-flight-collapse "+(expanded?"open":"collapsed")}>
+  return <div className={"quotation-flight-collapse cost-setup-collapsible "+(expanded?"open":"collapsed")}>
     <button
       type="button"
-      className="quotation-flight-collapse-toggle no-print"
+      className="quotation-flight-collapse-toggle cost-setup-toggle no-print"
       aria-expanded={expanded}
       onClick={toggle}
     >
       <span className="quotation-flight-collapse-title">{t("Flight Information","航班信息")}</span>
       {summary&&<span className="quotation-flight-collapse-summary">{summary}</span>}
-      <span className="quotation-flight-collapse-chevron" aria-hidden="true">{expanded?"⌃":"⌄"}</span>
+      <span className="quotation-flight-collapse-chevron cost-setup-chevron" aria-hidden="true">⌄</span>
     </button>
     <div className="quotation-flight-collapse-print-head">
       <strong>{t("Flight Information","航班信息")}</strong>
       {summary&&<span>{summary}</span>}
     </div>
-    <div className="quotation-flight-collapse-body" hidden={!expanded}>{children}</div>
+    <div className="quotation-flight-collapse-body cost-setup-content" hidden={!expanded}>{children}</div>
   </div>;
 }
