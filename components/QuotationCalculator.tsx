@@ -52,14 +52,6 @@ const formatDisplayDate = (date:string) => {
   return `${d}/${m}/${y}`;
 };
 
-const isFlightInformationComplete=(value?:FlightInformationValue|null)=>{
-  if(!value) return false;
-  const required=(leg:any)=>Boolean(
-    leg?.fromAirport&&leg?.toAirport&&leg?.flightNo&&leg?.flightDate&&leg?.departureTime&&leg?.arrivalTime
-  );
-  return required(value.outbound)&&required(value.returning);
-};
-
 const childCostItemOrder=(item:string)=>{
   const key=String(item||"").trim().toLowerCase();
   const order:Record<string,number>={
@@ -169,7 +161,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [flightInformation,setFlightInformation] = useState<FlightInformationValue>(()=>emptyFlightInformation());
   const [flightTotalPrice, setFlightTotalPrice] = useState<number | "">("");
   const [flightPriceCurrency, setFlightPriceCurrency] = useState<Currency>("RM");
-  const [flightOpen,setFlightOpen] = useState(()=>!isFlightInformationComplete(initialQuotation?.quotation_data?.flightInformation));
+  const [flightOpen,setFlightOpen] = useState(false);
   const [customerName, setCustomerName] = useState("");
   const [customerContact, setCustomerContact] = useState("");
   const [departureCity, setDepartureCity] = useState("");
