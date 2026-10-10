@@ -83,7 +83,8 @@ export default function FlightInformation({
   durationDays=0,
   footer,
   compact=false,
-  disabled=false
+  disabled=false,
+  hideHeader=false
 }:{
   value:FlightInformationValue;
   onChange:(value:FlightInformationValue)=>void;
@@ -91,6 +92,7 @@ export default function FlightInformation({
   footer?:React.ReactNode;
   compact?:boolean;
   disabled?:boolean;
+  hideHeader?:boolean;
 }){
   const {language}=useWorkspaceLanguage();
   const t=(en:string,zh:string)=>language==="zh"?zh:en;
@@ -166,12 +168,12 @@ export default function FlightInformation({
   };
 
   return <div className={"flight-info-card shared-flight-information"+(compact?" compact":"")}>
-    <div className="flight-info-head">
+    {!hideHeader&&<div className="flight-info-head">
       <div>
         <h2>{t("Flight Information","航班信息")}</h2>
       </div>
       {durationDays>0&&<div className="itinerary-pill"><strong>{durationDays} {t("Days","天")}</strong><span>{t("Travel Duration","行程天数")}</span></div>}
-    </div>
+    </div>}
     <div className="flight-pair-grid">
       <div className="flight-block">
         <div className="flight-block-head">
