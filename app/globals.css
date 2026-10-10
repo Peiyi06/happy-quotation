@@ -20498,3 +20498,86 @@ td,
     max-width:100%!important;
   }
 }
+
+
+/* MANAGEMENT RECORD — SCREEN DECISION VIEW / PRINT AUDIT VIEW */
+@media screen{
+  .quotation-detail-template .management-print-only{
+    display:none!important;
+  }
+  .quotation-detail-template .management-screen-only{
+    display:table-cell!important;
+  }
+
+  .quotation-detail-template .quotation-record-cost-table,
+  .quotation-detail-template .quotation-record-child-table{
+    min-width:0!important;
+    width:100%!important;
+    table-layout:fixed!important;
+  }
+
+  .quotation-detail-template .quotation-record-cost-table th,
+  .quotation-detail-template .quotation-record-cost-table td,
+  .quotation-detail-template .quotation-record-child-table th,
+  .quotation-detail-template .quotation-record-child-table td{
+    white-space:normal!important;
+    overflow-wrap:anywhere;
+  }
+
+  .quotation-detail-template .quotation-record-cost-table th:nth-child(1),
+  .quotation-detail-template .quotation-record-cost-table td:nth-child(1){
+    width:18%;
+  }
+  .quotation-detail-template .quotation-record-cost-table th:nth-child(2),
+  .quotation-detail-template .quotation-record-cost-table td:nth-child(2){
+    width:25%;
+  }
+  .quotation-detail-template .quotation-record-cost-table th:nth-child(3),
+  .quotation-detail-template .quotation-record-cost-table td:nth-child(3){
+    width:16%;
+  }
+  .quotation-detail-template .quotation-record-cost-table th:nth-child(6),
+  .quotation-detail-template .quotation-record-cost-table td:nth-child(6){
+    width:21%;
+  }
+  .quotation-detail-template .quotation-record-cost-table th:last-child,
+  .quotation-detail-template .quotation-record-cost-table td:last-child{
+    width:20%;
+    text-align:right!important;
+  }
+
+  .quotation-detail-template .quotation-record-child-table th:nth-child(1),
+  .quotation-detail-template .quotation-record-child-table td:nth-child(1){
+    width:18%;
+  }
+  .quotation-detail-template .quotation-record-child-table th:nth-child(2),
+  .quotation-detail-template .quotation-record-child-table td:nth-child(2){
+    width:25%;
+  }
+  .quotation-detail-template .quotation-record-child-table th:nth-child(3),
+  .quotation-detail-template .quotation-record-child-table td:nth-child(3){
+    width:16%;
+  }
+  .quotation-detail-template .quotation-record-child-table th:nth-child(6),
+  .quotation-detail-template .quotation-record-child-table td:nth-child(6){
+    width:21%;
+  }
+  .quotation-detail-template .quotation-record-child-table th:last-child,
+  .quotation-detail-template .quotation-record-child-table td:last-child{
+    width:20%;
+    text-align:right!important;
+  }
+
+  .quotation-detail-template .management-screen-only .quotation-record-row-mode{
+    margin-top:3px;
+  }
+}
+
+@media print{
+  .quotation-detail-template .management-screen-only{
+    display:none!important;
+  }
+  .quotation-detail-template .management-print-only{
+    display:table-cell!important;
+  }
+}
