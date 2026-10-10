@@ -1240,7 +1240,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             <span>{terms.unitPrice}</span>
             <span>{t("Qty / Days","数量 / 天数")}</span>
             <span>{terms.currency}</span>
-            <span>{terms.costPerPax}</span>
+            <span>{t("Total Cost","总成本")}</span>
             <span></span>
           </div>
           <div className="traveller-cost-table-body">
@@ -1276,9 +1276,9 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
                     <select aria-label={terms.currency} value={r.currency} onChange={e=>setLeader(r.id,{currency:e.target.value as Currency})}>{currencies.map(cur=><option key={cur} value={cur}>{currencyLabel(cur)}</option>)}</select>
                     <small>{terms.rate} {rate||"—"}</small>
                   </div>
-                  <div className={"traveller-cost-result "+(perPax<0?"deduction-value":"")}>
-                    <strong>{money(perPax)}</strong>
-                    <small>{t("Total","总计")} {money(total)}</small>
+                  <div className={"traveller-cost-result leader-cost-total "+(total<0?"deduction-value":"")}>
+                    <strong>{money(total)}</strong>
+                    <small>{t("Per-pax allocation is kept in Print / PDF","每人分摊保留于打印 / PDF")}</small>
                   </div>
                   <details className="traveller-cost-more no-print">
                     <summary aria-label={t("More actions","更多操作")}>•••</summary>
