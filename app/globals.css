@@ -20451,3 +20451,50 @@ td,
     max-width:100%!important;
   }
 }
+
+
+/* MANAGEMENT RECORD WIDTH CORRECTION
+   The workspace column is narrower than 1360px once the sidebar is present,
+   so 1360px did not visually constrain this page. Use a real readable canvas
+   and contain wide tables inside their own scroll area. */
+@media screen{
+  .quotation-detail-template{
+    width:min(100%,1180px)!important;
+    max-width:1180px!important;
+    min-width:0!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    overflow-x:clip!important;
+  }
+
+  .quotation-detail-template .data-table-wrap{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow-x:auto!important;
+  }
+
+  /* Make the separation explicit between the collapsed flight card
+     and the first Costing card instead of relying only on stage margin. */
+  .quotation-detail-template .quotation-flight-collapse{
+    margin-bottom:26px!important;
+  }
+
+  .quotation-detail-template .quotation-management-costing{
+    margin-top:0!important;
+  }
+}
+
+@media screen and (max-width:1240px){
+  .quotation-detail-template{
+    width:calc(100% - 32px)!important;
+    max-width:1180px!important;
+  }
+}
+
+@media screen and (max-width:760px){
+  .quotation-detail-template{
+    width:100%!important;
+    max-width:100%!important;
+  }
+}
