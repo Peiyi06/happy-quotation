@@ -20333,3 +20333,16 @@ td,
 .quotation-editor-shell .quotation-stage-pricing>.section:first-child{
   margin-top:0!important;
 }
+
+
+/* MANAGEMENT QUOTATION STAGE LABEL CLEANUP
+   Context / Costing / Pricing remain structural only in detail view. */
+.quotation-detail-template .quotation-record-context-panel:first-of-type,
+.quotation-detail-template .quotation-management-costing>.panel:first-child,
+.quotation-detail-template .quotation-record-pricing>.panel:first-child{
+  margin-top:0!important;
+}
+.quotation-detail-template .quotation-management-costing,
+.quotation-detail-template .quotation-record-pricing{
+  gap:14px!important;
+}
