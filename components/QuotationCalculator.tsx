@@ -920,9 +920,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     </header>
 
     <section className="quotation-stage quotation-stage-context">
-      <div className="quotation-stage-head">
-        <h2>{t("Context","背景资料")}</h2>
-      </div>
     {workspaceMode&&resolvedSourceInquiryId&&<section className="quote-source-inquiry">
       <div>
         <span>{t("SOURCE INQUIRY","来源询价")}</span>
@@ -1004,9 +1001,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     </section>
 
     <section className="quotation-stage quotation-stage-costing">
-      <div className="quotation-stage-head">
-        <h2>{t("Costing","成本计算")}</h2>
-      </div>
 
     <Section title={terms.commercialSettings}>
       <div className="form-grid six quotation-commercial-core">
@@ -1190,9 +1184,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
     </section>
 
     <section className="quotation-stage quotation-stage-pricing">
-      <div className="quotation-stage-head">
-        <h2>{t("Pricing","定价")}</h2>
-      </div>
 
     {pricingMode==="scenario"&&<Section title={t("Scenario Pricing Results","人数报价结果")}>
       <div className="scenario-result-grid">
