@@ -20374,3 +20374,38 @@ td,
     max-width:100%!important;
   }
 }
+
+
+/* QUOTATION EDIT VIEW WIDTH + STAGE RHYTHM REFINEMENT
+   Narrow the editor canvas and restore separation after removing visible stage labels. */
+.quotation-editor-shell{
+  width:min(100%,1360px)!important;
+  max-width:1360px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+
+.quotation-editor-shell .quotation-stage{
+  margin-top:26px!important;
+}
+
+.quotation-editor-shell .quotation-stage:first-of-type{
+  margin-top:0!important;
+}
+
+.quotation-editor-shell .quotation-stage-context{
+  margin-top:0!important;
+}
+
+.quotation-editor-shell .quotation-stage-costing,
+.quotation-editor-shell .quotation-stage-pricing,
+.quotation-editor-shell .quotation-stage-workflow{
+  margin-top:26px!important;
+}
+
+@media(max-width:1420px){
+  .quotation-editor-shell{
+    width:100%!important;
+    max-width:100%!important;
+  }
+}
