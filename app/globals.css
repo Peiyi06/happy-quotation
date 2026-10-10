@@ -20581,3 +20581,78 @@ td,
     display:table-cell!important;
   }
 }
+
+
+/* MANAGEMENT PRICING — SCREEN DECISION VIEW / PRINT AUDIT VIEW
+   Screen emphasizes price selection. Profit diagnostics remain in print. */
+@media screen{
+  .quotation-detail-template .quotation-record-pricing-table{
+    min-width:0!important;
+    width:100%!important;
+    table-layout:fixed!important;
+  }
+
+  /* Fixed-pax matrix: Traveller / Leader / Cost / Suggested / Final */
+  .quotation-detail-template .quotation-record-pricing-table th:nth-last-child(-n+2),
+  .quotation-detail-template .quotation-record-pricing-table td:nth-last-child(-n+2){
+    display:none!important;
+  }
+
+  .quotation-detail-template .quotation-record-pricing-table th:first-child,
+  .quotation-detail-template .quotation-record-pricing-table td:first-child{
+    width:24%;
+  }
+  .quotation-detail-template .quotation-record-pricing-table th:nth-child(2),
+  .quotation-detail-template .quotation-record-pricing-table td:nth-child(2){
+    width:17%;
+  }
+  .quotation-detail-template .quotation-record-pricing-table th:nth-child(3),
+  .quotation-detail-template .quotation-record-pricing-table td:nth-child(3){
+    width:18%;
+  }
+  .quotation-detail-template .quotation-record-pricing-table th:nth-child(4),
+  .quotation-detail-template .quotation-record-pricing-table td:nth-child(4){
+    width:20%;
+  }
+  .quotation-detail-template .quotation-record-pricing-table th:nth-child(5),
+  .quotation-detail-template .quotation-record-pricing-table td:nth-child(5){
+    width:21%;
+  }
+
+  /* Final Pricing Result is the decision summary.
+     Keep traveller, final price, pricing source, single-room supplement.
+     Profit / margin remain available in print. */
+  .quotation-detail-template .quotation-record-final-grid{
+    grid-template-columns:1.35fr 1.25fr 1fr 1fr!important;
+  }
+  .quotation-detail-template .quotation-record-final-grid .detail-item:nth-child(3),
+  .quotation-detail-template .quotation-record-final-grid .detail-item:nth-child(4){
+    display:none!important;
+  }
+  .quotation-detail-template .quotation-record-final-grid .detail-item{
+    border-top:0!important;
+  }
+  .quotation-detail-template .quotation-record-final-grid .detail-item:nth-child(2){
+    border-right:1px solid var(--color-border-default)!important;
+  }
+  .quotation-detail-template .quotation-record-final-grid .detail-item:nth-child(5){
+    border-right:1px solid var(--color-border-default)!important;
+  }
+  .quotation-detail-template .quotation-record-final-grid .detail-item:nth-child(6){
+    border-right:0!important;
+  }
+
+  .quotation-detail-template .quotation-record-pricing-panel .data-table-wrap{
+    overflow-x:hidden!important;
+  }
+}
+
+@media print{
+  .quotation-detail-template .quotation-record-pricing-table th,
+  .quotation-detail-template .quotation-record-pricing-table td{
+    display:table-cell!important;
+  }
+  .quotation-detail-template .quotation-record-final-grid .detail-item{
+    display:block!important;
+  }
+}
