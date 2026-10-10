@@ -20151,3 +20151,62 @@ td,
     grid-row:1 / span 2!important;
   }
 }
+
+
+/* FLIGHT COLLAPSE — TRUE SHARED COST-SETUP FOUNDATION
+   The editor now reuses the exact cost-setup classes; only summary placement differs. */
+.quotation-editor-shell .quotation-flight-collapse.cost-setup-collapsible{
+  width:100%!important;
+  margin:0!important;
+}
+.quotation-editor-shell .quotation-flight-collapse .cost-setup-toggle{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:18px!important;
+}
+.quotation-editor-shell .quotation-flight-collapse-title{
+  flex:0 0 auto!important;
+}
+.quotation-editor-shell .quotation-flight-collapse-summary{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  margin-left:8px!important;
+  text-align:left!important;
+}
+.quotation-editor-shell .quotation-flight-collapse .cost-setup-chevron{
+  margin-left:auto!important;
+  flex:0 0 30px!important;
+}
+.quotation-editor-shell .quotation-flight-collapse .cost-setup-content{
+  padding:18px 22px 22px!important;
+}
+.quotation-editor-shell .quotation-flight-section{
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  overflow:visible!important;
+}
+
+/* In Context, Flight Information is its own collapsible surface,
+   not a second shell around the shared collapsible card. */
+.quotation-editor-shell .quotation-information-stack{
+  display:grid!important;
+  gap:18px!important;
+}
+.quotation-editor-shell .quotation-flight-section>.quotation-flight-collapse{
+  border:1px solid var(--color-border-default)!important;
+  border-radius:var(--radius-lg)!important;
+  background:var(--color-bg-surface)!important;
+  overflow:hidden!important;
+}
+
+@media(max-width:700px){
+  .quotation-editor-shell .quotation-flight-collapse .cost-setup-toggle{
+    min-height:60px!important;
+    padding:0 16px!important;
+  }
+  .quotation-editor-shell .quotation-flight-collapse-summary{
+    display:none!important;
+  }
+}
