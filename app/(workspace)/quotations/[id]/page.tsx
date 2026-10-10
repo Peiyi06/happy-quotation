@@ -244,20 +244,22 @@ export default async function QuotationDetailPage({
           <thead><tr>
             <th><UiText en="Cost Item" zh="成本项目" /></th>
             <th><UiText en="Type / Calculation" zh="类型 / 计算方式" /></th>
-            <th><UiText en="Unit Price" zh="单价" /></th>
-            <th><UiText en="Qty / Days" zh="数量 / 天数" /></th>
+            <th className="management-screen-only"><UiText en="Unit / Qty" zh="单价 / 数量" /></th>
+            <th className="management-print-only"><UiText en="Unit Price" zh="单价" /></th>
+            <th className="management-print-only"><UiText en="Qty / Days" zh="数量 / 天数" /></th>
             <th><UiText en="Currency / Rate" zh="币种 / 汇率" /></th>
-            <th><UiText en="Cost / Pax" zh="每人成本" /></th>
+            <th className="management-print-only"><UiText en="Cost / Pax" zh="每人成本" /></th>
             <th><UiText en="Total" zh="总计" /></th>
           </tr></thead>
           <tbody>
             {managementTravelerRows.map((row:any)=><tr key={row.id}>
               <td><strong>{row.item||"—"}</strong>{row.note&&<small className="quotation-record-row-note">{row.note}</small>}</td>
               <td><span className={"quotation-record-direction "+(row.direction==="deduction"?"deduction":"cost")}>{row.direction==="deduction"?<UiText en="Deduction −" zh="扣减 −" />:<UiText en="Cost +" zh="成本 +" />}</span><small className="quotation-record-row-mode"><CalcModeText value={row.mode}/></small></td>
-              <td>{Number(row.unitPrice)||0}</td>
-              <td>{Number(row.qty)||0}</td>
+              <td className="management-screen-only"><strong>{Number(row.unitPrice)||0}</strong><small className="quotation-record-row-mode">× {Number(row.qty)||0}</small></td>
+              <td className="management-print-only">{Number(row.unitPrice)||0}</td>
+              <td className="management-print-only">{Number(row.qty)||0}</td>
               <td><strong>{row.currency||"—"}</strong><small className="quotation-record-row-mode"><UiText en="Rate" zh="汇率" /> {currencyRate(row.currency,managementMainCurrency,managementMainRate)||"—"}</small></td>
-              <td>{money(travelerRowPerPax(row,managementPax,managementMainCurrency,managementMainRate))}</td>
+              <td className="management-print-only">{money(travelerRowPerPax(row,managementPax,managementMainCurrency,managementMainRate))}</td>
               <td>{money(travelerRowTotal(row,managementPax,managementMainCurrency,managementMainRate))}</td>
             </tr>)}
             {!managementTravelerRows.length&&<tr><td colSpan={7} className="empty">—</td></tr>}
@@ -271,21 +273,23 @@ export default async function QuotationDetailPage({
           <thead><tr>
             <th><UiText en="Cost Item" zh="成本项目" /></th>
             <th><UiText en="Type / Calculation" zh="类型 / 计算方式" /></th>
-            <th><UiText en="Unit Price" zh="单价" /></th>
-            <th><UiText en="Qty / Days" zh="数量 / 天数" /></th>
+            <th className="management-screen-only"><UiText en="Unit / Qty" zh="单价 / 数量" /></th>
+            <th className="management-print-only"><UiText en="Unit Price" zh="单价" /></th>
+            <th className="management-print-only"><UiText en="Qty / Days" zh="数量 / 天数" /></th>
             <th><UiText en="Currency / Rate" zh="币种 / 汇率" /></th>
             <th><UiText en="Total" zh="总计" /></th>
-            <th><UiText en="Allocated / Pax" zh="分摊 / 人" /></th>
+            <th className="management-print-only"><UiText en="Allocated / Pax" zh="分摊 / 人" /></th>
           </tr></thead>
           <tbody>
             {managementLeaderRows.map((row:any)=><tr key={row.id}>
               <td><strong>{row.item||"—"}</strong>{row.note&&<small className="quotation-record-row-note">{row.note}</small>}</td>
               <td><span className={"quotation-record-direction "+(row.direction==="deduction"?"deduction":"cost")}>{row.direction==="deduction"?<UiText en="Deduction −" zh="扣减 −" />:<UiText en="Cost +" zh="成本 +" />}</span><small className="quotation-record-row-mode"><CalcModeText value={row.mode||"每人"}/></small></td>
-              <td>{Number(row.unitPrice)||0}</td>
-              <td>{Number(row.qty)||0}</td>
+              <td className="management-screen-only"><strong>{Number(row.unitPrice)||0}</strong><small className="quotation-record-row-mode">× {Number(row.qty)||0}</small></td>
+              <td className="management-print-only">{Number(row.unitPrice)||0}</td>
+              <td className="management-print-only">{Number(row.qty)||0}</td>
               <td><strong>{row.currency||"—"}</strong><small className="quotation-record-row-mode"><UiText en="Rate" zh="汇率" /> {currencyRate(row.currency,managementMainCurrency,managementMainRate)||"—"}</small></td>
               <td>{money(leaderRowTotal(row,managementMainCurrency,managementMainRate))}</td>
-              <td>{money(leaderRowPerPax(row,managementPax,managementMainCurrency,managementMainRate))}</td>
+              <td className="management-print-only">{money(leaderRowPerPax(row,managementPax,managementMainCurrency,managementMainRate))}</td>
             </tr>)}
             {!managementLeaderRows.length&&<tr><td colSpan={7} className="empty">—</td></tr>}
           </tbody>
@@ -420,20 +424,22 @@ function ChildCostRecord({title,setup,summary,pax,mainCurrency,mainRate}:{title:
         <thead><tr>
           <th><UiText en="Cost Item" zh="成本项目" /></th>
           <th><UiText en="Type / Calculation" zh="类型 / 计算方式" /></th>
-          <th><UiText en="Unit Price" zh="单价" /></th>
-          <th><UiText en="Qty / Days" zh="数量 / 天数" /></th>
+          <th className="management-screen-only"><UiText en="Unit / Qty" zh="单价 / 数量" /></th>
+          <th className="management-print-only"><UiText en="Unit Price" zh="单价" /></th>
+          <th className="management-print-only"><UiText en="Qty / Days" zh="数量 / 天数" /></th>
           <th><UiText en="Currency / Rate" zh="币种 / 汇率" /></th>
-          <th><UiText en="Cost / Pax" zh="每人成本" /></th>
+          <th className="management-print-only"><UiText en="Cost / Pax" zh="每人成本" /></th>
           <th><UiText en="Total" zh="总计" /></th>
         </tr></thead>
         <tbody>
           {rows.map((row:any)=><tr key={row.id}>
             <td><strong>{row.item||"—"}</strong>{row.note&&<small className="quotation-record-row-note">{row.note}</small>}</td>
             <td><span className={"quotation-record-direction "+(row.direction==="deduction"?"deduction":"cost")}>{row.direction==="deduction"?<UiText en="Deduction −" zh="扣减 −" />:<UiText en="Cost +" zh="成本 +" />}</span><small className="quotation-record-row-mode"><CalcModeText value={row.mode}/></small></td>
-            <td>{Number(row.unitPrice)||0}</td>
-            <td>{Number(row.qty)||0}</td>
+            <td className="management-screen-only"><strong>{Number(row.unitPrice)||0}</strong><small className="quotation-record-row-mode">× {Number(row.qty)||0}</small></td>
+            <td className="management-print-only">{Number(row.unitPrice)||0}</td>
+            <td className="management-print-only">{Number(row.qty)||0}</td>
             <td><strong>{row.currency||"—"}</strong><small className="quotation-record-row-mode"><UiText en="Rate" zh="汇率" /> {currencyRate(row.currency,mainCurrency,mainRate)||"—"}</small></td>
-            <td>{money(childExtraRowPerPax(row,pax,mainCurrency,mainRate))}</td>
+            <td className="management-print-only">{money(childExtraRowPerPax(row,pax,mainCurrency,mainRate))}</td>
             <td>{money(childExtraRowTotal(row,pax,mainCurrency,mainRate))}</td>
           </tr>)}
           {!rows.length&&<tr><td colSpan={7} className="empty">—</td></tr>}
