@@ -20656,3 +20656,149 @@ td,
     display:block!important;
   }
 }
+
+
+/* MANAGEMENT WORKFLOW + PRINT AUDIT FINALIZATION */
+.quotation-detail-template .quotation-workflow-print-audit{
+  display:none;
+}
+
+@media screen{
+  .quotation-detail-template .quotation-workflow-panel{
+    padding:16px 18px!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-panel .simple-workflow-grid{
+    grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr) 28px minmax(0,1fr)!important;
+    gap:8px!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-panel .simple-workflow-card{
+    min-height:108px!important;
+    padding:14px!important;
+    gap:8px!important;
+    border-radius:14px!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-panel .simple-workflow-card-head{
+    min-height:24px!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-panel .simple-workflow-title strong{
+    font-size:13px!important;
+    line-height:1.25!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-panel .simple-workflow-index{
+    width:26px!important;
+    height:26px!important;
+    font-size:9px!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-panel .simple-workflow-state{
+    font-size:9.5px!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-panel .simple-workflow-actions{
+    gap:7px!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-panel .simple-workflow-actions .btn{
+    min-height:32px!important;
+    height:32px!important;
+    padding:0 11px!important;
+    font-size:10.5px!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-panel .quotation-workflow-note,
+  .quotation-detail-template .quotation-workflow-panel .quotation-workflow-waiting{
+    font-size:10px!important;
+  }
+}
+
+@media print{
+  .quotation-detail-template .quotation-workflow-panel .simple-workflow-grid,
+  .quotation-detail-template .quotation-workflow-panel .workflow-error{
+    display:none!important;
+  }
+
+  .quotation-detail-template .quotation-workflow-print-audit{
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    border:1px solid #cfd8e3;
+    border-radius:10px;
+    overflow:hidden;
+    background:#fff;
+  }
+
+  .quotation-detail-template .quotation-workflow-print-audit>div{
+    min-height:16mm;
+    padding:3mm;
+    display:grid;
+    align-content:start;
+    gap:1.2mm;
+    border-right:1px solid #d9e0e6;
+  }
+
+  .quotation-detail-template .quotation-workflow-print-audit>div:nth-child(4){
+    border-right:0;
+  }
+
+  .quotation-detail-template .quotation-workflow-print-audit span{
+    color:#6b7280;
+    font-size:7.5pt;
+    font-weight:600;
+  }
+
+  .quotation-detail-template .quotation-workflow-print-audit strong{
+    color:#111827;
+    font-size:9pt;
+    line-height:1.35;
+    font-weight:650;
+  }
+
+  .quotation-detail-template .quotation-workflow-print-audit .quotation-workflow-print-note{
+    grid-column:1 / -1;
+    min-height:auto;
+    border-top:1px solid #d9e0e6;
+    border-right:0;
+  }
+
+  /* Audit document rules: repeat table heads and avoid orphaned section titles. */
+  .quotation-detail-template .data-table thead{
+    display:table-header-group!important;
+  }
+
+  .quotation-detail-template .panel-head,
+  .quotation-detail-template .quotation-record-workflow-head,
+  .quotation-detail-template .quotation-flight-collapse-print-head{
+    break-after:avoid!important;
+    page-break-after:avoid!important;
+  }
+
+  .quotation-detail-template .quotation-record-cost-panel,
+  .quotation-detail-template .quotation-record-pricing-panel,
+  .quotation-detail-template .quotation-record-final-pricing,
+  .quotation-detail-template .quotation-workflow-panel{
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+
+  .quotation-detail-template .quotation-record-cost-table tr,
+  .quotation-detail-template .quotation-record-child-table tr,
+  .quotation-detail-template .quotation-record-pricing-table tr,
+  .quotation-detail-template .quotation-workflow-print-audit{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  /* Restore full final pricing audit grid for print. */
+  .quotation-detail-template .quotation-record-final-grid{
+    grid-template-columns:1.5fr repeat(5,minmax(0,1fr))!important;
+  }
+
+  .quotation-detail-template .quotation-record-final-grid .detail-item{
+    display:block!important;
+    border-top:0!important;
+  }
+}
