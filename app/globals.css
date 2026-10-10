@@ -19991,3 +19991,81 @@ td,
     padding-right:18px;
   }
 }
+
+
+/* QUOTATION FLIGHT COLLAPSE — COST SETUP VISUAL ALIGNMENT
+   Flight / Tour Leader / Child Cost share one collapsible-section language. */
+.quotation-editor-shell .quotation-flight-section{
+  padding:0!important;
+  overflow:hidden!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:var(--radius-lg)!important;
+  background:var(--color-bg-surface)!important;
+  box-shadow:none!important;
+}
+.quotation-editor-shell .quotation-flight-collapse-toggle{
+  min-height:68px!important;
+  padding:0 30px!important;
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr) 30px!important;
+  gap:18px!important;
+}
+.workspace-main .quotation-editor-shell .quotation-flight-collapse-title{
+  color:var(--foundation-title-level-2-color)!important;
+  font-size:var(--foundation-type-section)!important;
+  line-height:var(--foundation-line-section)!important;
+  font-weight:var(--foundation-weight-section)!important;
+  letter-spacing:var(--foundation-track-section)!important;
+}
+.quotation-editor-shell .quotation-flight-collapse-chevron{
+  width:30px!important;
+  height:30px!important;
+  font-size:20px!important;
+}
+.quotation-editor-shell .quotation-flight-collapse-toggle:hover{
+  background:#fbfcfd!important;
+}
+.quotation-editor-shell .quotation-flight-collapse-toggle:hover .quotation-flight-collapse-chevron{
+  background:var(--color-bg-soft)!important;
+  color:var(--color-brand-primary)!important;
+  border-radius:999px!important;
+}
+.quotation-editor-shell .quotation-flight-collapse.open .quotation-flight-collapse-toggle{
+  min-height:68px!important;
+}
+.quotation-editor-shell .quotation-flight-collapse-body{
+  padding:18px 22px 22px!important;
+  border-top:1px solid var(--color-border-default)!important;
+}
+.quotation-editor-shell .quotation-flight-section:has(.quotation-flight-collapse.open){
+  padding:0!important;
+}
+
+/* Keep Management Record typography aligned without making the card oversized. */
+.workspace-main .quotation-detail-template .quotation-flight-collapse-title{
+  color:var(--foundation-title-level-2-color)!important;
+  font-size:var(--foundation-type-section)!important;
+  line-height:var(--foundation-line-section)!important;
+  font-weight:var(--foundation-weight-section)!important;
+  letter-spacing:var(--foundation-track-section)!important;
+}
+
+@media(max-width:700px){
+  .quotation-editor-shell .quotation-flight-collapse-toggle{
+    min-height:60px!important;
+    padding:0 16px!important;
+    grid-template-columns:minmax(0,1fr) 30px!important;
+    gap:8px!important;
+  }
+  .workspace-main .quotation-editor-shell .quotation-flight-collapse-title{
+    font-size:18px!important;
+  }
+  .quotation-editor-shell .quotation-flight-collapse-summary{
+    grid-column:1!important;
+    grid-row:2!important;
+  }
+  .quotation-editor-shell .quotation-flight-collapse-chevron{
+    grid-column:2!important;
+    grid-row:1 / span 2!important;
+  }
+}
