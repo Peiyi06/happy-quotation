@@ -19867,3 +19867,127 @@ td,
 .quotation-detail-template .quotation-workflow-panel .simple-workflow-actions{
   margin-top:auto!important;
 }
+
+
+/* QUOTATION FLIGHT COLLAPSE FOUNDATION
+   Completed flight information defaults to a compact summary.
+   Incomplete flight information stays open for completion. */
+.quotation-flight-collapse{
+  min-width:0;
+}
+.quotation-flight-collapse-toggle{
+  width:100%;
+  min-height:58px;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:14px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:var(--color-text-primary);
+  text-align:left;
+  cursor:pointer;
+}
+.quotation-flight-collapse-title{
+  font-size:var(--foundation-type-subsection);
+  line-height:1.2;
+  font-weight:750;
+  letter-spacing:-.01em;
+  white-space:nowrap;
+}
+.quotation-flight-collapse-summary{
+  min-width:0;
+  overflow:hidden;
+  color:var(--color-text-secondary);
+  font-size:var(--foundation-type-meta);
+  line-height:1.35;
+  font-weight:500;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.quotation-flight-collapse-chevron{
+  display:grid;
+  place-items:center;
+  width:28px;
+  height:28px;
+  color:var(--color-text-secondary);
+  font-size:18px;
+  line-height:1;
+}
+.quotation-flight-collapse-body{
+  padding-top:16px;
+  border-top:1px solid var(--color-border-default);
+}
+.quotation-flight-collapse-print-head{
+  display:none;
+}
+
+/* Editor: collapsed flight surface should read like a single clean row. */
+.quotation-editor-shell .quotation-flight-section{
+  padding-top:10px!important;
+  padding-bottom:10px!important;
+}
+.quotation-editor-shell .quotation-flight-section:has(.quotation-flight-collapse.open){
+  padding-top:14px!important;
+  padding-bottom:24px!important;
+}
+.quotation-editor-shell .quotation-flight-collapse.open .quotation-flight-collapse-toggle{
+  min-height:48px;
+}
+.quotation-editor-shell .quotation-flight-collapse.open .quotation-flight-collapse-body{
+  padding-top:18px;
+}
+
+/* Management record: same interaction language, no nested card weight. */
+.quotation-detail-template .quotation-flight-collapse{
+  margin-top:14px;
+  padding:10px 22px;
+  border:1px solid var(--color-border-default);
+  border-radius:16px;
+  background:#fff;
+}
+.quotation-detail-template .quotation-flight-collapse.open{
+  padding-bottom:20px;
+}
+.quotation-detail-template .quotation-flight-collapse .quote-flight-panel{
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.quotation-detail-template .quotation-flight-collapse .quote-flight-summary{
+  margin-top:0!important;
+}
+.quotation-detail-template .quotation-record-context-panel + .quote-source-inquiry{
+  margin-top:14px!important;
+}
+.quotation-detail-template .quote-source-inquiry + .quotation-flight-collapse,
+.quotation-detail-template .quotation-record-context-panel + .quotation-flight-collapse{
+  margin-top:14px!important;
+}
+
+@media(max-width:760px){
+  .quotation-flight-collapse-toggle{
+    grid-template-columns:1fr auto;
+    gap:6px 10px;
+    min-height:64px;
+  }
+  .quotation-flight-collapse-title{
+    grid-column:1;
+  }
+  .quotation-flight-collapse-summary{
+    grid-column:1;
+    grid-row:2;
+  }
+  .quotation-flight-collapse-chevron{
+    grid-column:2;
+    grid-row:1 / span 2;
+  }
+  .quotation-detail-template .quotation-flight-collapse{
+    padding-left:18px;
+    padding-right:18px;
+  }
+}
