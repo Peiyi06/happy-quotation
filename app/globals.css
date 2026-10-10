@@ -20409,3 +20409,45 @@ td,
     max-width:100%!important;
   }
 }
+
+
+/* MANAGEMENT RECORD CONTENT WIDTH + STAGE RHYTHM FOUNDATION
+   Match the calmer editor canvas while keeping print full-width. */
+@media screen{
+  .quotation-detail-template{
+    width:min(100%,1360px)!important;
+    max-width:1360px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+
+  .quotation-detail-template .quotation-record-context-panel,
+  .quotation-detail-template .quotation-management-costing,
+  .quotation-detail-template .quotation-record-pricing,
+  .quotation-detail-template .quotation-workflow-panel,
+  .quotation-detail-template .quotation-flight-collapse{
+    width:100%!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+  }
+
+  .quotation-detail-template .quotation-flight-collapse{
+    margin-top:26px!important;
+  }
+
+  .quotation-detail-template .quotation-management-costing,
+  .quotation-detail-template .quotation-record-pricing{
+    margin-top:26px!important;
+  }
+
+  .quotation-detail-template .quotation-record-workflow-head{
+    margin-top:26px!important;
+  }
+}
+
+@media screen and (max-width:1420px){
+  .quotation-detail-template{
+    width:100%!important;
+    max-width:100%!important;
+  }
+}
