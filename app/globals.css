@@ -20802,3 +20802,31 @@ td,
     border-top:0!important;
   }
 }
+
+
+/* =========================================================
+   QUOTATION EDITOR DENSITY — LEADER / CHILD COST SETUP
+   Screen view prioritizes operational inputs. Detailed per-pax
+   leader allocation remains in Print / PDF.
+   ========================================================= */
+.quotation-editor-shell .two-col:has(.cost-setup-collapsible.open){
+  grid-template-columns:minmax(0,1fr)!important;
+}
+
+.quotation-editor-shell .leader-cost-table .traveller-cost-result.leader-cost-total strong{
+  font-size:13px!important;
+}
+.quotation-editor-shell .leader-cost-table .traveller-cost-result.leader-cost-total small{
+  max-width:124px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:var(--color-text-tertiary)!important;
+  font-size:8.4px!important;
+}
+
+@media(max-width:1180px){
+  .quotation-editor-shell .two-col{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+}
