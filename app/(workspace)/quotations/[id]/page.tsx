@@ -80,10 +80,6 @@ export default async function QuotationDetailPage({
   const flightPriceCurrency=(qd.flightPriceCurrency||"RM") as Currency;
   const flightPax=Number(qd.pax||data.pax)||0;
   const flightTicketType=flightPax>=1&&flightPax<=9?"fit":flightPax>=10&&flightPax<=200?"git":flightPax>200?"review":"none";
-  const managementFlightComplete=Boolean(
-    outboundFromAirport&&outboundToAirport&&outboundFlightNo&&outboundFlightDate&&outboundDepartureTime&&outboundArrivalTime&&
-    returnFromAirport&&returnToAirport&&returnFlightNo&&returnFlightDate&&returnDepartureTime&&returnArrivalTime
-  );
   const managementFlightSummary=[
     outboundFromAirport||outboundToAirport?`${outboundFromAirport||"—"} → ${outboundToAirport||"—"}`:"",
     outboundFlightNo,
@@ -168,7 +164,7 @@ export default async function QuotationDetailPage({
 
     <QuotationFlightCollapsible
       summary={managementFlightSummary}
-      defaultOpen={!managementFlightComplete}
+      defaultOpen={false}
     >
       <section className="panel quote-flight-panel">
       <div className="quote-flight-summary">
