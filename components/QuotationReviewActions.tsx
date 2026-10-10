@@ -125,6 +125,29 @@ export default function QuotationReviewActions({
       </div>
     </div>
 
+    <div className="quotation-workflow-print-audit">
+      <div>
+        <span>{t("Quotation Status","报价状态")}</span>
+        <strong>{status.replaceAll("_"," ")}</strong>
+      </div>
+      <div>
+        <span>{t("Management Review","管理层审核")}</span>
+        <strong>{reviewComplete?t("Approved","已批准"):reviewCurrent?t("Under Review","审核中"):status==="revision_required"?t("Changes Requested","要求修改"):t("Pending","待处理")}</strong>
+      </div>
+      <div>
+        <span>{t("Reviewed By","审核人")}</span>
+        <strong>{reviewedBy||"—"}</strong>
+      </div>
+      <div>
+        <span>{t("Reviewed At","审核时间")}</span>
+        <strong>{reviewedAt?new Date(reviewedAt).toLocaleString("en-MY"):"—"}</strong>
+      </div>
+      {reviewNote&&<div className="quotation-workflow-print-note">
+        <span>{t("Review Note","审核备注")}</span>
+        <strong>{reviewNote}</strong>
+      </div>}
+    </div>
+
     {error&&<small className="workflow-error">{error}</small>}
   </section>;
 }
