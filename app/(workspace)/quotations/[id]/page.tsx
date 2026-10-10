@@ -4,6 +4,7 @@ import QuotationDetailMoreActions from "@/components/QuotationDetailMoreActions"
 import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
 import QuotationReviewActions from "@/components/QuotationReviewActions";
 import QuotationPrintButton from "@/components/QuotationPrintButton";
+import QuotationFlightCollapsible from "@/components/QuotationFlightCollapsible";
 import {UiText} from "@/components/WorkspaceLanguage";
 import {Currency, childExtraRowPerPax, childExtraRowTotal, childSetupCost, currencyRate, leaderRowPerPax, leaderRowTotal, travelerRowPerPax, travelerRowTotal} from "@/lib/calculations";
 import {buildQuotationCalculationInput,calculateQuotation} from "@/lib/quotationEngine";
@@ -79,6 +80,18 @@ export default async function QuotationDetailPage({
   const flightPriceCurrency=(qd.flightPriceCurrency||"RM") as Currency;
   const flightPax=Number(qd.pax||data.pax)||0;
   const flightTicketType=flightPax>=1&&flightPax<=9?"fit":flightPax>=10&&flightPax<=200?"git":flightPax>200?"review":"none";
+  const managementFlightComplete=Boolean(
+    outboundFromAirport&&outboundToAirport&&outboundFlightNo&&outboundFlightDate&&outboundDepartureTime&&outboundArrivalTime&&
+    returnFromAirport&&returnToAirport&&returnFlightNo&&returnFlightDate&&returnDepartureTime&&returnArrivalTime
+  );
+  const managementFlightSummary=[
+    outboundFromAirport||outboundToAirport?`${outboundFromAirport||"—"} → ${outboundToAirport||"—"}`:"",
+    outboundFlightNo,
+    data.departure_date&&data.return_date
+      ? `${new Date(data.departure_date+"T00:00:00").toLocaleDateString("en-MY")} → ${new Date(data.return_date+"T00:00:00").toLocaleDateString("en-MY")}`
+      : "",
+    flightTotalPrice==null?"":`${flightPriceCurrency} ${flightTotalPrice.toLocaleString("en-MY",{minimumFractionDigits:2,maximumFractionDigits:2})}`
+  ].filter(Boolean).join(" · ");
   const calculationResult=qd.calculationResult||calculateQuotation(buildQuotationCalculationInput(data));
   const hasLeader=Boolean(calculationResult.hasLeader);
   const singleRoomSupplement=calculationResult.singleRoomSupplement==null?null:Number(calculationResult.singleRoomSupplement);
@@ -153,15 +166,11 @@ export default async function QuotationDetailPage({
       <Link className="btn" href={"/inquiries/"+data.source_inquiry_id+"?returnTo="+encodeURIComponent(currentQuoteHref)}><UiText en="Open Inquiry" zh="打开询价" /></Link>
     </section>}
 
-    <section className="panel quote-flight-panel">
-      <div className="panel-head quote-flight-head">
-        <div><h2><UiText en="Flight Information" zh="航班信息" /></h2></div>
-        {itineraryLabel && <div className="itinerary-pill">
-          <strong>{itineraryDays} <UiText en="Days" zh="天" /></strong>
-          <span>{itineraryLabel}</span>
-        </div>}
-      </div>
-
+    <QuotationFlightCollapsible
+      summary={managementFlightSummary}
+      defaultOpen={!managementFlightComplete}
+    >
+      <section className="panel quote-flight-panel">
       <div className="quote-flight-summary">
         <Detail label={<UiText en="Departure Date" zh="出发日期" />} value={data.departure_date?new Date(data.departure_date+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
         <Detail label={<UiText en="Return Date (Arrival)" zh="返程日期（抵达）" />} value={data.return_date?new Date(data.return_date+"T00:00:00").toLocaleDateString("en-MY"):"—"}/>
@@ -216,7 +225,8 @@ export default async function QuotationDetailPage({
           </div>}
         </div>
       </div>
-    </section>
+      </section>
+    </QuotationFlightCollapsible>
 
     <section className="quotation-record-stage quotation-management-costing">
       <div className="quotation-record-stage-head"><h2><UiText en="Costing" zh="成本计算" /></h2></div>
