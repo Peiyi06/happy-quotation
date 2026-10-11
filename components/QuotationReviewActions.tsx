@@ -56,9 +56,9 @@ export default function QuotationReviewActions({
     }
   }
 
-  const quotationComplete=["under_review","ready","sent","confirmed"].includes(status);
+  const quotationComplete=["under_review","ready"].includes(status);
   const reviewCurrent=status==="under_review";
-  const reviewComplete=["ready","sent","confirmed"].includes(status);
+  const reviewComplete=status==="ready";
   const quotationCurrent=status==="draft"||status==="revision_required";
   const itineraryCurrent=reviewComplete;
 
