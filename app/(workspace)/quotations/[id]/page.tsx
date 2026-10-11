@@ -125,7 +125,7 @@ export default async function QuotationDetailPage({
         <h1>{data.title||data.quotation_no}</h1>
         <div className="quotation-detail-meta-line">
           <span>{data.quotation_no}</span>
-          <span className={"status quotation-header-status status-"+String(data.status||"draft")}>{data.status==="under_review"?<UiText en="Under Review" zh="审核中" />:data.status==="revision_required"?<UiText en="Revision Required" zh="需要修改" />:data.status==="ready"?<UiText en="Ready" zh="已就绪" />:data.status==="sent"?<UiText en="Sent" zh="已发送" />:data.status==="revised"?<UiText en="Revised" zh="已修改" />:data.status==="confirmed"?<UiText en="Confirmed" zh="已确认" />:data.status==="lost"?<UiText en="Lost" zh="未成交" />:data.status==="archived"?<UiText en="Archived" zh="已归档" />:<UiText en="Draft" zh="草稿" />}</span>{lockedQuotation&&<span className="quotation-lock-state"><UiText en="Locked" zh="已锁定" /></span>}
+          <span className={"status quotation-header-status status-"+String(data.status||"draft")}>{data.status==="under_review"?<UiText en="Under Review" zh="审核中" />:data.status==="revision_required"?<UiText en="Revision Required" zh="需要修改" />:data.status==="ready"?<UiText en="Ready" zh="已就绪" />:<UiText en="Draft" zh="草稿" />}</span>{lockedQuotation&&<span className="quotation-lock-state"><UiText en="Locked" zh="已锁定" /></span>}
         </div>
       </div>
       <div className="detail-actions">
