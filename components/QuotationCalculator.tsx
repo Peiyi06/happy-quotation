@@ -22,7 +22,7 @@ import {
 const calcModes: CalcMode[] = ["每人", "每人每天", "整团", "整团每天"];
 const currencies: Currency[] = ["RM", "RMB", "USD", "JPY", "KRW", "THB", "VND", "其他"];
 const profitModes: ProfitMode[] = ["固定金额", "按成本加价率", "按售价毛利率"];
-type QuoteStatus = "draft"|"under_review"|"revision_required"|"ready"|"sent"|"revised"|"confirmed"|"lost"|"archived";
+type QuoteStatus = "draft"|"under_review"|"revision_required"|"ready";
 type CalculatorProps = { workspaceMode?: boolean; quotationId?: string; initialQuotation?: any; currentStaffId?: string; currentStaffName?: string; sourceInquiryId?: string; sourceInquiryNo?: string; sourceInquirySnapshot?: any };
 
 const travelerTypeLabel = (type: TravelerType) => ({
