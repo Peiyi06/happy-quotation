@@ -27,12 +27,7 @@ const quotationStatusLabels:Record<string,{en:string;zh:string}>={
   draft:{en:"Draft",zh:"草稿"},
   under_review:{en:"Under Review",zh:"审核中"},
   revision_required:{en:"Revision Required",zh:"需要修改"},
-  ready:{en:"Ready",zh:"已就绪"},
-  sent:{en:"Sent",zh:"已发送"},
-  revised:{en:"Revised",zh:"已修改"},
-  confirmed:{en:"Confirmed",zh:"已确认"},
-  lost:{en:"Lost",zh:"未成交"},
-  archived:{en:"Archived",zh:"已归档"}
+  ready:{en:"Ready",zh:"已就绪"}
 };
 
 const itineraryStatusLabels:Record<string,{en:string;zh:string}>={
@@ -70,9 +65,9 @@ export default async function InquiryDetailPage({
         :"sales";
   const supplierStatus=data.supplier_inquiry_status||"draft";
   const visibleQuotes=viewerMode==="sales"
-    ?linkedQuotes.filter((q:any)=>["ready","sent","confirmed"].includes(q.status))
+    ?linkedQuotes.filter((q:any)=>q.status==="ready")
     :linkedQuotes;
-  const approvedQuotes=linkedQuotes.filter((q:any)=>["ready","sent","confirmed"].includes(q.status));
+  const approvedQuotes=linkedQuotes.filter((q:any)=>q.status==="ready");
   const caseStatus=String(data.status||"new");
   const operationComplete=["under_review","revision_required","ready","ready_customer","itinerary_ready","closed"].includes(caseStatus);
   const quotationReady=["ready","ready_customer","itinerary_ready","closed"].includes(caseStatus);
