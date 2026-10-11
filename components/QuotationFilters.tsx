@@ -17,11 +17,6 @@ export default function QuotationFilters({
       <option value="under_review">{t("Under Review","审核中")}</option>
       <option value="revision_required">{t("Revision Required","需要修改")}</option>
       <option value="ready">{t("Ready","已就绪")}</option>
-      <option value="sent">{t("Sent","已发送")}</option>
-      <option value="revised">{t("Revised","已修改")}</option>
-      <option value="confirmed">{t("Confirmed","已确认")}</option>
-      <option value="lost">{t("Lost","未成交")}</option>
-      <option value="archived">{t("Archived","已归档")}</option>
     </select>
     <button className="btn">{t("Filter","筛选")}</button>
   </form>;
