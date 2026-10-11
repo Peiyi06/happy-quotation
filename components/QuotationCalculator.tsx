@@ -641,11 +641,6 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const printStatus=displayStatus==="under_review"?t("Under Review","审核中")
     :displayStatus==="revision_required"?t("Revision Required","需要修改")
     :displayStatus==="ready"?t("Ready","已就绪")
-    :displayStatus==="sent"?t("Sent","已发送")
-    :displayStatus==="revised"?t("Revised","已修改")
-    :displayStatus==="confirmed"?t("Confirmed","已确认")
-    :displayStatus==="lost"?t("Lost","未成交")
-    :displayStatus==="archived"?t("Archived","已归档")
     :t("Draft","草稿");
 
   const printTravelerRows=travelerRows.map(row=>{
@@ -900,7 +895,7 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           ?<div className="quotation-editor-meta-line">
               <span>{initialQuotation?.quotation_no||t("New Draft","新草稿")}</span>
               <span className={"status quotation-editor-status status-"+displayStatus}>
-                {displayStatus==="under_review"?t("Under Review","审核中"):displayStatus==="revision_required"?t("Revision Required","需要修改"):displayStatus==="ready"?t("Ready","已就绪"):displayStatus==="sent"?t("Sent","已发送"):displayStatus==="revised"?t("Revised","已修改"):displayStatus==="confirmed"?t("Confirmed","已确认"):displayStatus==="lost"?t("Lost","未成交"):displayStatus==="archived"?t("Archived","已归档"):t("Draft","草稿")}
+                {displayStatus==="under_review"?t("Under Review","审核中"):displayStatus==="revision_required"?t("Revision Required","需要修改"):displayStatus==="ready"?t("Ready","已就绪"):t("Draft","草稿")}
               </span>
             </div>
           :<p>{t("Outbound Tour Quotation Calculator","出境游报价计算器")}</p>}
