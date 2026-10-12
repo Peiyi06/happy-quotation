@@ -42,6 +42,7 @@ export default async function ItineraryDetailPage({
       <div className="detail-actions">
         <Link className="btn itinerary-back-action" href={returnTo}>{returnTo.startsWith("/inquiries/")?<UiText en="‹ Inquiry" zh="‹ 询价" />:<UiText en="‹ Back" zh="‹ 返回" />}</Link>
         <ItineraryActions id={id}/>
+        <Link className="btn" href={"/itineraries/"+id+"/export"}><UiText en="Export PDF" zh="导出 PDF" /></Link>
         <Link className="btn" href={"/itineraries/"+id+"/edit"}><UiText en="Edit Itinerary" zh="编辑行程" /></Link>
       </div>
     </div>
