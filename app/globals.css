@@ -21313,3 +21313,16 @@ td,
 .itinerary-editor .itinerary-more-menu-popover button+button{
   margin-top:2px;
 }
+
+
+/* Itinerary popover escape hatch:
+   preserve clipped card surfaces normally, but allow an open
+   utility menu to float beyond the Day Card boundary. */
+.itinerary-editor .itinerary-day-card:has(.itinerary-more-menu[open]){
+  overflow:visible!important;
+}
+
+.itinerary-editor .itinerary-day-card:has(.itinerary-more-menu[open]) .itinerary-attraction-section,
+.itinerary-editor .itinerary-day-card:has(.itinerary-more-menu[open]) .itinerary-attraction-list{
+  overflow:visible!important;
+}
