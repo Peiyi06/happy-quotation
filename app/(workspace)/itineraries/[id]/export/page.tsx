@@ -62,12 +62,14 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
     url:text(qd.coverImage?.url),
     name:text(qd.coverImage?.name),
     position:["left","center","right"].includes(qd.coverImage?.position)?qd.coverImage.position:"center",
-    overlay:["light","standard","strong"].includes(qd.coverImage?.overlay)?qd.coverImage.overlay:"standard"
+    overlay:["light","standard","strong"].includes(qd.coverImage?.overlay)?qd.coverImage.overlay:"standard",
+    brightness:Math.min(130,Math.max(70,Number(qd.coverImage?.brightness)||100))
   }:null;
   const autoCoverUrl=coverImageFromDays(days)||list(hotels?.[0]?.images).find((img:any)=>text(img?.url))?.url||"";
   const coverImage=manualCover?.url||autoCoverUrl;
   const coverPosition=manualCover?.position||"center";
   const coverOverlay=manualCover?.overlay||"standard";
+  const coverBrightness=manualCover?.brightness||100;
   const basePayload={
     source_inquiry_id:data.source_inquiry_id||qd.sourceInquiryId||"",
     title:data.title||"",
@@ -97,7 +99,7 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
     <main className={styles.document}>
 
       <section id="itinerary-cover" data-overlay={coverOverlay} className={styles.cover+(coverImage?" "+styles.coverHasImage:"")}>
-        <div id="itinerary-cover-media" className={styles.coverMedia} style={coverImage?{backgroundImage:`url("${coverImage}")`,backgroundPosition:coverPosition}:undefined} aria-hidden="true"/>
+        <div id="itinerary-cover-media" className={styles.coverMedia} style={coverImage?{backgroundImage:`url("${coverImage}")`,backgroundPosition:coverPosition,filter:`brightness(${coverBrightness/100})`}:undefined} aria-hidden="true"/>
         <div className={styles.coverOverlay} aria-hidden="true"/>
 
         <div className={styles.coverContent}>
