@@ -49,9 +49,9 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
               ...(user.role === "manager"
                 ? [
                     {title:{en:"Staff Accounts",zh:"员工账号"},href:"/team",action:{en:"Open →",zh:"打开 →"}},
-                    {title:{en:"Trash",zh:"回收站"},href:"/trash",action:{en:"Open →",zh:"打开 →"}},
                   ]
                 : []),
+              {title:{en:"Trash",zh:"回收站"},href:"/trash",action:{en:"Open →",zh:"打开 →"}},
               {title:{en:"Language & Display",zh:"语言与显示"},href:"/settings",action:{en:"Open →",zh:"打开 →"}},
             ]}
           />
