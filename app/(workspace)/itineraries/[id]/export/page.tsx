@@ -4,6 +4,14 @@ import ItineraryExportToolbar from "@/components/ItineraryExportToolbar";
 
 const text=(value:any)=>String(value??"").trim();
 const list=(value:any)=>Array.isArray(value)?value:[];
+const safeFilePart=(value:any)=>text(value).replace(/[\\/:*?"<>|]+/g," ").replace(/\s+/g," ").trim();
+const dayDate=(start:string,index:number)=>{
+  if(!start) return "";
+  const d=new Date(start+"T00:00:00");
+  if(Number.isNaN(d.getTime())) return "";
+  d.setDate(d.getDate()+index);
+  return d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
+};
 
 export default async function ItineraryCustomerExportPage({params}:{params:Promise<{id:string}>}){
   const {id}=await params;
@@ -20,9 +28,15 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
   const included=list(qd.includedItems).filter((x:any)=>text(typeof x==="string"?x:x?.name));
   const excluded=list(qd.notIncludedItems).filter((x:any)=>text(typeof x==="string"?x:x?.name));
   const reminders=list(qd.reminders).filter((x:any)=>text(typeof x==="string"?x:x?.title)||text(x?.description));
+  const fileName=[
+    "Happy Express Travel",
+    data.destination,
+    `${data.days_count||""}D${data.nights_count||""}N`,
+    data.customer_name
+  ].map(safeFilePart).filter(Boolean).join(" - ");
 
   return <div className="itinerary-export-screen">
-    <ItineraryExportToolbar/>
+    <ItineraryExportToolbar fileName={fileName}/>
     <main className="itinerary-export-document">
       <section className="itinerary-export-cover">
         <div className="itinerary-export-brand-space" aria-hidden="true"></div>
@@ -52,19 +66,33 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
         <div className="itinerary-export-section-head"><span>{flights.length?"02":"01"}</span><div><h2>Daily Itinerary</h2><p>每日行程</p></div></div>
         <div className="itinerary-export-days">
           {days.map((day:any,index:number)=>{
-            const attractions=list(day?.attractions);
-            return <article className="itinerary-export-day" key={day?.id||index}>
-              <div className="itinerary-export-day-head"><div><small>DAY {String(index+1).padStart(2,"0")}</small><h3>{day?.title||`Day ${index+1}`}</h3></div><strong>{day?.hotel||""}</strong></div>
-              {text(day?.content)&&<p className="itinerary-export-day-copy">{day.content}</p>}
-              {(text(day?.meals?.breakfast)||text(day?.meals?.lunch)||text(day?.meals?.dinner))&&<div className="itinerary-export-meals">
-                <span><b>Breakfast</b>{day?.meals?.breakfast||"—"}</span>
-                <span><b>Lunch</b>{day?.meals?.lunch||"—"}</span>
-                <span><b>Dinner</b>{day?.meals?.dinner||"—"}</span>
-              </div>}
+            const attractions=list(day?.attractions).filter((a:any)=>text(a?.name)||list(a?.images).some((img:any)=>text(img?.url)));
+            const date=dayDate(qd.travelStartDate||"",index);
+            const mealVisible=text(day?.meals?.breakfast)||text(day?.meals?.lunch)||text(day?.meals?.dinner);
+            const hotel=text(day?.hotel)&&text(day?.hotel)!=="-"?text(day.hotel):"";
+            return <article className={"itinerary-export-day "+(attractions.length>3?"long-day":"compact-day")} key={day?.id||index}>
+              <div className="itinerary-export-day-head">
+                <div className="itinerary-export-day-no"><small>DAY</small><b>{String(index+1).padStart(2,"0")}</b></div>
+                <div className="itinerary-export-day-title">
+                  <h3>{day?.title||`Day ${index+1}`}</h3>
+                  {date&&<span>{date}</span>}
+                </div>
+              </div>
+
+              <div className="itinerary-export-day-core">
+                {text(day?.content)&&<p className="itinerary-export-day-copy">{day.content}</p>}
+                {mealVisible&&<div className="itinerary-export-meals">
+                  <span><b>Breakfast / 早餐</b>{day?.meals?.breakfast||"—"}</span>
+                  <span><b>Lunch / 午餐</b>{day?.meals?.lunch||"—"}</span>
+                  <span><b>Dinner / 晚餐</b>{day?.meals?.dinner||"—"}</span>
+                </div>}
+                {hotel&&<div className="itinerary-export-day-hotel"><span>Hotel / 酒店</span><strong>{hotel}</strong></div>}
+              </div>
+
               {attractions.length>0&&<div className="itinerary-export-attractions">
                 {attractions.map((a:any,ai:number)=>{
                   const images=list(a?.images).filter((img:any)=>text(img?.url)).slice(0,3);
-                  return <div className="itinerary-export-attraction" key={a?.id||ai}>
+                  return <div className={"itinerary-export-attraction image-count-"+images.length} key={a?.id||ai}>
                     {images.length>0&&<div className={"itinerary-export-attraction-images count-"+images.length}>{images.map((img:any,ii:number)=><img key={img?.path||img?.url||ii} src={img.url} alt={a?.name||"Attraction"}/>)}</div>}
                     {text(a?.name)&&<strong>{a.name}</strong>}
                   </div>;
