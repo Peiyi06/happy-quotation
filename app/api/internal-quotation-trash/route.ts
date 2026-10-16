@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { internalDb, internalToken, internalUser } from "@/lib/internalSession";
+import { internalDb, internalToken } from "@/lib/internalSession";
 
 export async function POST(request:Request){
   const token=await internalToken();
@@ -14,8 +14,6 @@ export async function POST(request:Request){
   }
 
   if(body.action==="restore"){
-    const user=await internalUser();
-    if(!user||user.role!=="manager") return NextResponse.json({error:"Manager only"},{status:403});
     const {data,error}=await db.rpc("staff_restore_quote",{p_token:token,p_id:body.id});
     if(error||!data?.ok) return NextResponse.json({error:data?.error||error?.message||"Unable to restore"},{status:400});
     return NextResponse.json(data);
