@@ -39,9 +39,7 @@ export default async function QuotationDetailPage({
       user.role==="manager"||
       (
         user.id===data.owner_id&&
-        String(data.status||"draft")==="draft"&&
-        !data.reviewed_at&&
-        !data.approval_snapshot
+        String(data.status||"draft")==="draft"
       )
     )
   );
