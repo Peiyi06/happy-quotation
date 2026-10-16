@@ -189,3 +189,15 @@
     -webkit-print-color-adjust:exact!important;
   }
 }
+
+
+/* Manual cover overlay strength */
+.cover[data-overlay="light"] .coverOverlay{
+  background:linear-gradient(180deg,rgba(8,24,40,.28) 0%,rgba(8,24,40,.18) 32%,rgba(8,24,40,.32) 62%,rgba(8,24,40,.68) 100%)!important;
+}
+.cover[data-overlay="standard"] .coverOverlay{
+  background:linear-gradient(180deg,rgba(8,24,40,.44) 0%,rgba(8,24,40,.28) 30%,rgba(8,24,40,.46) 58%,rgba(8,24,40,.78) 76%,rgba(8,24,40,.90) 100%)!important;
+}
+.cover[data-overlay="strong"] .coverOverlay{
+  background:linear-gradient(180deg,rgba(8,24,40,.58) 0%,rgba(8,24,40,.42) 30%,rgba(8,24,40,.60) 58%,rgba(8,24,40,.88) 78%,rgba(8,24,40,.96) 100%)!important;
+}
