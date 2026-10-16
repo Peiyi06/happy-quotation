@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { internalDb, internalToken } from "@/lib/internalSession";
 import ItineraryExportToolbar from "@/components/ItineraryExportToolbar";
+import ItineraryPagedPreview from "@/components/ItineraryPagedPreview";
 import styles from "./ItineraryExport.module.css";
 
 const text=(value:any)=>String(value??"").trim();
@@ -96,9 +97,10 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
       initialCover={manualCover}
       autoCoverUrl={autoCoverUrl}
     />
-    <main className={styles.document}>
+    <ItineraryPagedPreview sourceId="itinerary-print-source"/>
+    <main id="itinerary-print-source" className={styles.document}>
 
-      <section id="itinerary-cover" data-overlay={coverOverlay} className={styles.cover+(coverImage?" "+styles.coverHasImage:"")}>
+      <section id="itinerary-cover" data-preview-page="cover" data-overlay={coverOverlay} className={styles.cover+(coverImage?" "+styles.coverHasImage:"")}>
         <div id="itinerary-cover-media" className={styles.coverMedia} style={coverImage?{backgroundImage:`url("${coverImage}")`,backgroundPosition:coverPosition,filter:`brightness(${coverBrightness/100})`}:undefined} aria-hidden="true"/>
         <div className={styles.coverOverlay} aria-hidden="true"/>
 
@@ -127,7 +129,7 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
         </div>
       </section>
 
-      {flights.length>0&&<section className={styles.overviewPage}>
+      {flights.length>0&&<section data-preview-block="overview" className={styles.overviewPage}>
         <div className={styles.sectionTitle}>
           <span>01</span>
           <div><h2>Trip Overview</h2><p>行程概览与航班资料</p></div>
@@ -158,7 +160,7 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
       </section>}
 
       <section className={styles.dailySection}>
-        <div className={styles.sectionTitle}>
+        <div data-preview-block="daily-title" data-keep-next="true" className={styles.sectionTitle}>
           <span>{flights.length?"02":"01"}</span>
           <div><h2>Daily Itinerary</h2><p>每日行程</p></div>
         </div>
@@ -168,7 +170,7 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
             const images=representativeAttractions(day);
             const hotel=text(day?.hotel)&&text(day?.hotel)!=="-"?text(day.hotel):"";
             const date=dayDate(qd.travelStartDate||"",index);
-            return <article className={styles.day} key={day?.id||index}>
+            return <article data-preview-block="day" className={styles.day} key={day?.id||index}>
               <header className={styles.dayHeader}>
                 <div className={styles.dayNumber}><small>DAY</small><b>{String(index+1).padStart(2,"0")}</b></div>
                 <div>
@@ -199,7 +201,7 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
       </section>
 
       {hotels.length>0&&<section className={styles.hotelSection}>
-        <div className={styles.sectionTitle}>
+        <div data-preview-block="hotel-title" data-keep-next="true" className={styles.sectionTitle}>
           <span>H</span>
           <div><h2>Hotel Introduction</h2><p>酒店介绍</p></div>
         </div>
@@ -213,7 +215,7 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
               hotel?.roomSize!==""&&hotel?.roomSize!=null?`${hotel.roomSize} m²`:""
             ].filter(Boolean).join(" · ");
 
-            return <article className={styles.hotelCard} key={hotel?.id||index}>
+            return <article data-preview-block="hotel" className={styles.hotelCard} key={hotel?.id||index}>
               <header>
                 <div>
                   <small>HOTEL {String(index+1).padStart(2,"0")}</small>
@@ -233,7 +235,7 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
         </div>
       </section>}
 
-      {(included.length>0||excluded.length>0||reminders.length>0)&&<section className={styles.finalSection}>
+      {(included.length>0||excluded.length>0||reminders.length>0)&&<section data-preview-block="final" className={styles.finalSection}>
         <div className={styles.sectionTitle}>
           <span>+</span>
           <div><h2>Travel Notes</h2><p>配套详情与温馨提醒</p></div>
