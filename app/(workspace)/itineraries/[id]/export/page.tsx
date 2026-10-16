@@ -39,11 +39,24 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
     <ItineraryExportToolbar fileName={fileName}/>
     <main className="itinerary-export-document">
       <section className="itinerary-export-cover">
-        <div className="itinerary-export-brand-space" aria-hidden="true"></div>
-        <div className="itinerary-export-kicker">HAPPY EXPRESS TRAVEL</div>
-        <h1>{data.title||data.destination||"Travel Itinerary"}</h1>
-        <p>TRAVEL ITINERARY · 行程确认</p>
-        <div className="itinerary-export-gold-line"></div>
+        <div className="itinerary-export-cover-band" aria-hidden="true"></div>
+        <div className="itinerary-export-cover-top">
+          <div>
+            <div className="itinerary-export-kicker">HAPPY EXPRESS TRAVEL</div>
+            <p className="itinerary-export-doc-label">TRAVEL ITINERARY · 行程确认</p>
+          </div>
+          <div className="itinerary-export-brand-space" aria-label="Logo area"></div>
+        </div>
+
+        <div className="itinerary-export-cover-main">
+          <span className="itinerary-export-cover-route">{qd.departureCity||"Departure"} → {data.destination||"Destination"}</span>
+          <h1>{data.title||data.destination||"Travel Itinerary"}</h1>
+          <div className="itinerary-export-gold-line"></div>
+          <p className="itinerary-export-cover-meta">
+            {[qd.travelStartDate&&qd.travelEndDate?`${qd.travelStartDate} → ${qd.travelEndDate}`:(qd.travelStartDate||""),data.days_count&&data.nights_count?`${data.days_count}D${data.nights_count}N`:"",qd.pax?`${qd.pax} Pax`:""].filter(Boolean).join(" · ")}
+          </p>
+        </div>
+
         <div className="itinerary-export-overview">
           <div><span>Destination / 目的地</span><strong>{data.destination||"—"}</strong></div>
           <div><span>Travel Date / 旅游日期</span><strong>{qd.travelStartDate||"—"}{qd.travelEndDate?" → "+qd.travelEndDate:""}</strong></div>
@@ -52,14 +65,30 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
           <div><span>Customer / 客户</span><strong>{data.customer_name||"—"}</strong></div>
           <div><span>Tour Type / 团型</span><strong>{qd.tourType||"—"}</strong></div>
         </div>
+
+        <div className="itinerary-export-cover-ref">
+          <span>Document Ref.</span>
+          <strong>{data.itinerary_no||"—"}</strong>
+        </div>
       </section>
 
-      {flights.length>0&&<section className="itinerary-export-section">
+      {flights.length>0&&<section className="itinerary-export-section itinerary-export-flight-section">
         <div className="itinerary-export-section-head"><span>01</span><div><h2>Flight Information</h2><p>航班资料</p></div></div>
-        <div className="itinerary-export-table-wrap"><table>
-          <thead><tr><th>Route / 路线</th><th>Flight / 航班</th><th>Date / 日期</th><th>Departure / 起飞</th><th>Arrival / 抵达</th><th>Remarks / 备注</th></tr></thead>
-          <tbody>{flights.map((f:any,i:number)=><tr key={f.id||i}><td><b>{f.from||"—"} → {f.to||"—"}</b></td><td>{f.flightNo||"—"}</td><td>{f.date||"—"}</td><td>{f.departureTime||"—"}</td><td>{f.arrivalTime||"—"}</td><td>{f.remarks||"—"}</td></tr>)}</tbody>
-        </table></div>
+        <div className="itinerary-export-flight-list">
+          {flights.map((f:any,i:number)=><article className="itinerary-export-flight-card" key={f.id||i}>
+            <div className="itinerary-export-flight-route">
+              <small>{i===0?"OUTBOUND":"FLIGHT "+String(i+1).padStart(2,"0")}</small>
+              <strong>{f.from||"—"} <span>→</span> {f.to||"—"}</strong>
+            </div>
+            <div className="itinerary-export-flight-facts">
+              <div><span>Flight / 航班</span><b>{f.flightNo||"—"}</b></div>
+              <div><span>Date / 日期</span><b>{f.date||"—"}</b></div>
+              <div><span>Departure / 起飞</span><b>{f.departureTime||"—"}</b></div>
+              <div><span>Arrival / 抵达</span><b>{f.arrivalTime||"—"}</b></div>
+            </div>
+            {text(f.remarks)&&<div className="itinerary-export-flight-remarks"><span>Remarks / 备注</span><strong>{f.remarks}</strong></div>}
+          </article>)}
+        </div>
       </section>}
 
       <section className="itinerary-export-section">
@@ -133,7 +162,14 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
         <div className="itinerary-export-reminders">{reminders.map((x:any,i:number)=><div key={x?.id||i}><strong>{typeof x==="string"?`Reminder ${i+1}`:(x?.title||`Reminder ${i+1}`)}</strong>{typeof x==="string"?<p>{x}</p>:text(x?.description)&&<p>{x.description}</p>}</div>)}</div>
       </section>}
 
-      <footer className="itinerary-export-footer"><span>Happy Express Travel</span><span>{data.itinerary_no||""}</span></footer>
+      <footer className="itinerary-export-footer">
+        <span>Happy Express Travel · Customer Itinerary</span>
+        <span>{data.itinerary_no||""}</span>
+      </footer>
+      <div className="itinerary-export-print-footer" aria-hidden="true">
+        <span>Happy Express Travel</span>
+        <span>{data.itinerary_no||""}</span>
+      </div>
     </main>
   </div>;
 }
