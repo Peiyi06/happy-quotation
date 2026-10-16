@@ -34,6 +34,17 @@ export default async function QuotationDetailPage({
   }
   const canReview=Boolean(user&&(user.role==="manager"||user.username.toLowerCase()==="long"));
   const canSubmit=Boolean(user&&(canReview||user.id===data.owner_id||user.id===sourceInquiry?.operation_assignee_id));
+  const canMoveToTrash=Boolean(
+    user&&(
+      user.role==="manager"||
+      (
+        user.id===data.owner_id&&
+        String(data.status||"draft")==="draft"&&
+        !data.reviewed_at&&
+        !data.approval_snapshot
+      )
+    )
+  );
 
   const qd=data.quotation_data||{};
   const scenarioPricing=qd.scenarioPricing||null;
@@ -131,7 +142,7 @@ export default async function QuotationDetailPage({
       <div className="detail-actions">
         <Link className="btn quotation-back-action" href={returnTo}>{returnTo.startsWith("/inquiries/")?<UiText en="‹ Inquiry" zh="‹ 询价" />:<UiText en="‹ Back" zh="‹ 返回" />}</Link><QuotationPrintButton fileName={printFileName}/>
         {canEditQuotation?<Link className="btn" href={"/quotations/"+id+"/edit"}><UiText en="Edit Quotation" zh="编辑报价" /></Link>:<span className="btn quotation-locked-action" aria-disabled="true"><UiText en="Quotation Locked" zh="报价已锁定" /></span>}
-        <QuotationDetailMoreActions id={id} />
+        <QuotationDetailMoreActions id={id} canMoveToTrash={canMoveToTrash} />
       </div>
     </div>
 
