@@ -201,3 +201,31 @@
 .cover[data-overlay="strong"] .coverOverlay{
   background:linear-gradient(180deg,rgba(8,24,40,.58) 0%,rgba(8,24,40,.42) 30%,rgba(8,24,40,.60) 58%,rgba(8,24,40,.88) 78%,rgba(8,24,40,.96) 100%)!important;
 }
+
+
+/* =========================================================
+   ITINERARY PDF — ATTRACTION GRID HORIZONTAL ALIGNMENT
+   Keep text/meta indented, but let image gallery use the full
+   day content width so the visual grid is centered on the page.
+   ========================================================= */
+.dayBody .attractionGrid{
+  width:calc(100% + 17mm)!important;
+  max-width:none!important;
+  margin-left:-17mm!important;
+  margin-right:0!important;
+  box-sizing:border-box!important;
+}
+
+.dayBody .attractionFigure,
+.dayBody .attractionImage{
+  min-width:0!important;
+  max-width:100%!important;
+}
+
+@media print{
+  .dayBody .attractionGrid{
+    width:calc(100% + 17mm)!important;
+    max-width:none!important;
+    margin-left:-17mm!important;
+  }
+}
