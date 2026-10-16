@@ -25,6 +25,23 @@ const representativeAttractions=(day:any)=>{
   return result;
 };
 
+
+const coverImageFromDays=(days:any[])=>{
+  const ranked=days
+    .map((day:any,index:number)=>{
+      const images=representativeAttractions(day);
+      return {index,images};
+    })
+    .filter((x:any)=>x.images.length>0)
+    .sort((a:any,b:any)=>{
+      const aRich=a.images.length>=3?1:0;
+      const bRich=b.images.length>=3?1:0;
+      if(aRich!==bRich) return bRich-aRich;
+      return a.index-b.index;
+    });
+  return ranked[0]?.images?.[0]?.url||"";
+};
+
 export default async function ItineraryCustomerExportPage({params}:{params:Promise<{id:string}>}){
   const {id}=await params;
   const token=await internalToken();
@@ -40,6 +57,7 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
   const included=list(qd.includedItems).filter((x:any)=>text(typeof x==="string"?x:x?.name));
   const excluded=list(qd.notIncludedItems).filter((x:any)=>text(typeof x==="string"?x:x?.name));
   const reminders=list(qd.reminders).filter((x:any)=>text(typeof x==="string"?x:x?.title)||text(x?.description));
+  const coverImage=coverImageFromDays(days)||list(hotels?.[0]?.images).find((img:any)=>text(img?.url))?.url||"";
 
   const fileName=[
     "Happy Express Travel",
@@ -52,32 +70,33 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
     <ItineraryExportToolbar fileName={fileName}/>
     <main className={styles.document}>
 
-      <section className={styles.cover}>
-        <div className={styles.coverTop}>
-          <div>
-            <div className={styles.brand}>HAPPY EXPRESS TRAVEL</div>
-            <div className={styles.documentType}>TRAVEL ITINERARY · 行程确认</div>
+      <section className={styles.cover+(coverImage?" "+styles.coverHasImage:"")}>
+        <div className={styles.coverMedia} style={coverImage?{backgroundImage:`url("${coverImage}")`}:undefined} aria-hidden="true"/>
+        <div className={styles.coverOverlay} aria-hidden="true"/>
+
+        <div className={styles.coverContent}>
+          <div className={styles.coverTop}>
+            <div>
+              <div className={styles.brand}>HAPPY EXPRESS TRAVEL</div>
+              <div className={styles.documentType}>TRAVEL ITINERARY · 行程确认</div>
+            </div>
+            <div className={styles.logoSpace} aria-label="Logo area"/>
           </div>
-          <div className={styles.logoSpace} aria-label="Logo area"/>
-        </div>
 
-        <div className={styles.coverHero}>
-          <div className={styles.route}>{qd.departureCity||"Departure"} → {data.destination||"Destination"}</div>
-          <h1>{data.title||data.destination||"Travel Itinerary"}</h1>
-          <div className={styles.goldRule}/>
-          <p>
-            {[qd.travelStartDate&&qd.travelEndDate?`${qd.travelStartDate} → ${qd.travelEndDate}`:(qd.travelStartDate||""),data.days_count&&data.nights_count?`${data.days_count}D${data.nights_count}N`:"",qd.pax?`${qd.pax} Pax`:""].filter(Boolean).join(" · ")}
-          </p>
-        </div>
+          <div className={styles.coverHero}>
+            <div className={styles.route}>{qd.departureCity||"Departure"} → {data.destination||"Destination"}</div>
+            <h1>{data.title||data.destination||"Travel Itinerary"}</h1>
+            <div className={styles.goldRule}/>
+            <p>
+              {[qd.travelStartDate&&qd.travelEndDate?`${qd.travelStartDate} → ${qd.travelEndDate}`:(qd.travelStartDate||""),data.days_count&&data.nights_count?`${data.days_count}D${data.nights_count}N`:"",qd.pax?`${qd.pax} Pax`:"",qd.tourType||""].filter(Boolean).join(" · ")}
+            </p>
+          </div>
 
-        <div className={styles.coverSummary}>
-          <div><span>Destination / 目的地</span><strong>{data.destination||"—"}</strong></div>
-          <div><span>Travel Date / 旅游日期</span><strong>{qd.travelStartDate||"—"}{qd.travelEndDate?" → "+qd.travelEndDate:""}</strong></div>
-          <div><span>Customer / 客户</span><strong>{data.customer_name||"—"}</strong></div>
-          <div><span>Tour Type / 团型</span><strong>{qd.tourType||"—"}</strong></div>
+          <div className={styles.coverBottom}>
+            <span>{data.destination||"Travel Itinerary"}</span>
+            <strong>{data.itinerary_no||""}</strong>
+          </div>
         </div>
-
-        <div className={styles.documentRef}>Document Ref. <strong>{data.itinerary_no||"—"}</strong></div>
       </section>
 
       {flights.length>0&&<section className={styles.overviewPage}>
