@@ -22102,3 +22102,106 @@ td,
     grid-template-columns:1fr;
   }
 }
+
+
+/* =========================================================
+   ITINERARY CUSTOMER PDF — FINAL PRINT FOUNDATION / QA
+   Use a named A4 page so margins repeat on every printed page.
+   This isolates itinerary printing from Supplier / Quotation PDF rules.
+   ========================================================= */
+.itinerary-export-document{
+  page:itinerary-customer-pdf;
+  box-sizing:border-box;
+}
+
+@page itinerary-customer-pdf{
+  size:A4 portrait;
+  margin:12mm 15mm 16mm;
+}
+
+@media print{
+  body:has(.itinerary-export-screen){
+    margin:0!important;
+    background:#fff!important;
+  }
+
+  .itinerary-export-screen{
+    width:auto!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+    background:#fff!important;
+  }
+
+  .itinerary-export-document{
+    width:auto!important;
+    max-width:none!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0 0 7mm!important;
+    overflow:visible!important;
+    background:#fffdfa!important;
+    box-shadow:none!important;
+    print-color-adjust:exact!important;
+    -webkit-print-color-adjust:exact!important;
+  }
+
+  /* Keep headings with at least the first meaningful content block. */
+  .itinerary-export-section-head{
+    break-after:avoid-page!important;
+    page-break-after:avoid!important;
+  }
+
+  .itinerary-export-section{
+    orphans:3;
+    widows:3;
+  }
+
+  .itinerary-export-day-copy,
+  .itinerary-export-reminder-card p,
+  .itinerary-export-hotel-note p{
+    orphans:3;
+    widows:3;
+  }
+
+  /* Do not leave a hotel/package/reminder heading isolated at page bottom. */
+  .itinerary-export-hotel-section .itinerary-export-section-head + .itinerary-export-hotels,
+  .itinerary-export-package-section .itinerary-export-section-head + .itinerary-export-package-grid,
+  .itinerary-export-reminder-section .itinerary-export-section-head + .itinerary-export-reminders{
+    break-before:avoid-page;
+    page-break-before:avoid;
+  }
+
+  /* Stable footer safe zone. The document has matching bottom room. */
+  .itinerary-export-print-footer{
+    left:15mm!important;
+    right:15mm!important;
+    bottom:5mm!important;
+    height:7mm;
+    box-sizing:border-box;
+    background:#fffdfa!important;
+  }
+
+  /* The screen-only closing footer must never generate a trailing blank page. */
+  .itinerary-export-footer{
+    display:none!important;
+  }
+
+  /* Prevent empty trailing fragments after the last visible section. */
+  .itinerary-export-document>section:last-of-type{
+    margin-bottom:0!important;
+  }
+
+  /* Images must print as image surfaces, never stretch a page fragment. */
+  .itinerary-export-attraction-images,
+  .itinerary-export-hotel-images{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  img{
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+}
