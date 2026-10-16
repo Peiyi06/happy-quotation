@@ -22246,3 +22246,76 @@ td,
 }
 
 /* Hero/cover imagery may continue using cover elsewhere; content cards do not. */
+
+
+/* =========================================================
+   ITINERARY CUSTOMER PDF — HOTEL IMAGE FOUNDATION V4
+   Up to four images, complete-image priority.
+   1 = full width
+   2 = equal two-column
+   3 = two above + one full-width below
+   4 = equal 2 x 2 grid
+   ========================================================= */
+.itinerary-export-hotel-images{
+  height:auto!important;
+  min-height:0!important;
+  display:grid!important;
+  gap:1.8mm!important;
+  margin:4mm 5mm 5mm!important;
+  overflow:visible!important;
+  border-radius:3mm!important;
+  background:transparent!important;
+}
+
+.itinerary-export-hotel-images img{
+  width:100%!important;
+  height:38mm!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  display:block!important;
+  border-radius:2.4mm!important;
+  background:#f7f5ef!important;
+  break-inside:avoid!important;
+  page-break-inside:avoid!important;
+}
+
+.itinerary-export-hotel-images.count-1{
+  grid-template-columns:1fr!important;
+}
+
+.itinerary-export-hotel-images.count-1 img{
+  height:54mm!important;
+}
+
+.itinerary-export-hotel-images.count-2{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+
+.itinerary-export-hotel-images.count-3{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+
+.itinerary-export-hotel-images.count-3 img:nth-child(3){
+  grid-column:1 / -1;
+  height:46mm!important;
+}
+
+.itinerary-export-hotel-images.count-4{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+
+.itinerary-export-hotel-images.count-4 img{
+  height:34mm!important;
+}
+
+@media print{
+  .itinerary-export-hotel-images{
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+
+  .itinerary-export-hotel-images img{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+}
