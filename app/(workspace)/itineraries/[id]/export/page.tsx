@@ -7,6 +7,11 @@ import styles from "./ItineraryExport.module.css";
 const text=(value:any)=>String(value??"").trim();
 const list=(value:any)=>Array.isArray(value)?value:[];
 const safeFilePart=(value:any)=>text(value).replace(/[\\/:*?"<>|]+/g," ").replace(/\s+/g," ").trim();
+const compactDestination=(value:any)=>{
+  const raw=text(value);
+  if(!raw) return "";
+  return raw.split(/[，,]/)[0]?.trim()||raw;
+};
 
 const dayDate=(start:string,index:number)=>{
   if(!start) return "";
@@ -82,12 +87,15 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
     itinerary_data:qd
   };
 
+  const destinationLabel=compactDestination(data.destination);
+  const durationLabel=data.days_count&&data.nights_count?`${data.days_count}D${data.nights_count}N`:"";
+  const identityLabel=safeFilePart(data.customer_name)||safeFilePart(data.itinerary_no)||"Itinerary";
   const fileName=[
     "Happy Express Travel",
-    data.destination,
-    data.days_count&&data.nights_count?`${data.days_count}D${data.nights_count}N`:"",
-    data.customer_name
-  ].map(safeFilePart).filter(Boolean).join(" - ");
+    [destinationLabel,durationLabel].filter(Boolean).join(" "),
+    "行程确认",
+    identityLabel
+  ].map(safeFilePart).filter(Boolean).join("｜");
 
   return <div className={styles.screen}>
     <ItineraryExportToolbar
