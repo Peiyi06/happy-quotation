@@ -2,6 +2,9 @@
 
 import {useEffect, useRef} from "react";
 
+const LOW_DENSITY=0.55;
+const TARGET_DENSITY=0.85;
+
 export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
   const hostRef=useRef<HTMLDivElement|null>(null);
 
@@ -14,7 +17,6 @@ export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
         const host=hostRef.current;
         const source=document.getElementById(sourceId);
         if(!host||!source) return;
-
         host.innerHTML="";
 
         const cover=source.querySelector<HTMLElement>('[data-preview-page="cover"]');
@@ -26,35 +28,70 @@ export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
         const blocks=Array.from(source.querySelectorAll<HTMLElement>("[data-preview-block]"));
         let pageNo=cover?2:1;
         let page=createPage(host,pageNo);
-        const maxHeight=page.inner.clientHeight;
 
-        const appendBlock=(node:HTMLElement)=>{
+        const newPage=()=>{
+          pageNo++;
+          page=createPage(host,pageNo);
+          return page;
+        };
+
+        const density=()=>page.inner.scrollHeight/Math.max(1,page.inner.clientHeight);
+
+        const appendClone=(node:HTMLElement)=>{
           const clone=node.cloneNode(true) as HTMLElement;
           clone.classList.add("itinerary-preview-clone-block");
           page.inner.appendChild(clone);
           return clone;
         };
 
+        const addContinuation=(block:HTMLElement)=>{
+          if(block.dataset.previewBlock!=="gallery-row") return null;
+          const row=Number(block.dataset.galleryRow||"0");
+          if(row===0) return null;
+          const el=document.createElement("div");
+          el.className="itinerary-preview-continuation";
+          el.textContent="DAY "+(block.dataset.dayNumber||"")+" · "+(block.dataset.dayTitle||"")+" · Gallery";
+          page.inner.appendChild(el);
+          return el;
+        };
+
         for(let i=0;i<blocks.length;i++){
           const block=blocks[i];
+          const type=block.dataset.previewBlock||"";
           const keepNext=block.dataset.keepNext==="true";
-          const clone=appendBlock(block);
+
+          // If the current page is already visually full, start the next logical block on a new page.
+          if(page.inner.children.length>0 && density()>=TARGET_DENSITY && (type==="day-core"||type==="hotel"||type==="final")){
+            newPage();
+          }
+
+          let continuation=addContinuation(block);
+          let clone=appendClone(block);
 
           let nextClone:HTMLElement|null=null;
           if(keepNext&&i+1<blocks.length){
-            nextClone=appendBlock(blocks[i+1]);
+            nextClone=appendClone(blocks[i+1]);
           }
 
-          if(page.inner.scrollHeight>maxHeight&&page.inner.children.length>(keepNext?2:1)){
+          if(page.inner.scrollHeight>page.inner.clientHeight){
             clone.remove();
             if(nextClone) nextClone.remove();
-            pageNo++;
-            page=createPage(host,pageNo);
-            page.inner.appendChild(clone);
-            if(nextClone) page.inner.appendChild(nextClone);
+            if(continuation) continuation.remove();
+
+            // Keep short pages productive, but never force an overflowing block.
+            newPage();
+            continuation=addContinuation(block);
+            clone=appendClone(block);
+            if(keepNext&&i+1<blocks.length) nextClone=appendClone(blocks[i+1]);
           }
 
           if(keepNext&&nextClone) i++;
+
+          // A short text-only day should invite the next block onto the same page.
+          // A gallery row may also share the page while density remains below the target.
+          if((type==="day-core"||type==="gallery-row") && density()<LOW_DENSITY){
+            continue;
+          }
         }
 
         const pages=Array.from(host.querySelectorAll<HTMLElement>(".itinerary-preview-page"));
@@ -65,9 +102,9 @@ export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
       });
     };
 
-    const createResizeObserver=typeof ResizeObserver!=="undefined"?new ResizeObserver(()=>build()):null;
+    const ro=typeof ResizeObserver!=="undefined"?new ResizeObserver(()=>build()):null;
     const source=document.getElementById(sourceId);
-    if(source&&createResizeObserver) createResizeObserver.observe(source);
+    if(source&&ro) ro.observe(source);
 
     build();
     window.addEventListener("resize",build);
@@ -78,7 +115,7 @@ export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
 
     return ()=>{
       cancelAnimationFrame(raf);
-      createResizeObserver?.disconnect();
+      ro?.disconnect();
       window.removeEventListener("resize",build);
       window.removeEventListener("itinerary-preview-refresh",build as EventListener);
       images.forEach(img=>img.removeEventListener("load",build));
@@ -103,6 +140,5 @@ function createPage(host:HTMLDivElement,pageNo:number){
   page.appendChild(label);
   page.appendChild(inner);
   host.appendChild(page);
-
   return {page,inner};
 }
