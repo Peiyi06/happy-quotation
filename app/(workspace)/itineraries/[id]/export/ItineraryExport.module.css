@@ -109,3 +109,83 @@
     overflow:hidden!important;
   }
 }
+
+
+/* =========================================================
+   ITINERARY PDF — HERO COVER CONTRAST FOUNDATION
+   Image changes. Typography does not.
+   ========================================================= */
+.coverOverlay{
+  background:
+    linear-gradient(
+      180deg,
+      rgba(8,24,40,.44) 0%,
+      rgba(8,24,40,.28) 30%,
+      rgba(8,24,40,.46) 58%,
+      rgba(8,24,40,.78) 76%,
+      rgba(8,24,40,.90) 100%
+    )!important;
+}
+
+.coverHero{
+  position:relative;
+  z-index:3;
+}
+
+.coverHero::before{
+  content:"";
+  position:absolute;
+  left:-10mm;
+  right:-18mm;
+  top:-10mm;
+  bottom:-12mm;
+  z-index:-1;
+  pointer-events:none;
+  background:linear-gradient(
+    90deg,
+    rgba(8,24,40,.72) 0%,
+    rgba(8,24,40,.52) 46%,
+    rgba(8,24,40,.10) 100%
+  );
+  filter:blur(.2px);
+}
+
+.cover .brand{
+  color:#fffaf2!important;
+}
+
+.cover .documentType,
+.cover .route{
+  color:#e4c277!important;
+}
+
+.cover .coverHero h1{
+  color:#fffaf2!important;
+  text-shadow:0 2px 18px rgba(0,0,0,.52)!important;
+}
+
+.cover .coverHero p{
+  color:rgba(255,250,242,.92)!important;
+  text-shadow:0 1px 10px rgba(0,0,0,.42)!important;
+}
+
+.cover .goldRule{
+  background:#d7b66b!important;
+}
+
+.cover .coverBottom{
+  color:rgba(255,250,242,.88)!important;
+  border-top-color:rgba(255,255,255,.35)!important;
+}
+
+.cover .coverBottom strong{
+  color:#fffaf2!important;
+}
+
+@media print{
+  .coverOverlay,
+  .coverHero::before{
+    print-color-adjust:exact!important;
+    -webkit-print-color-adjust:exact!important;
+  }
+}
