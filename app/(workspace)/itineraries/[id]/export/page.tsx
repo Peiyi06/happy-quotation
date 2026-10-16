@@ -245,31 +245,19 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
         </div>
       </section>}
 
-      {(included.length>0||excluded.length>0||reminders.length>0)&&<section data-preview-block="final" className={styles.finalSection}>
+      {reminders.length>0&&<section data-preview-block="final" className={styles.finalSection}>
         <div className={styles.sectionTitle}>
           <span>+</span>
-          <div><h2>Travel Notes</h2><p>配套详情与温馨提醒</p></div>
+          <div><h2>Travel Notes</h2><p>温馨提醒</p></div>
         </div>
 
-        <div className={styles.finalGrid}>
-          {included.length>0&&<div>
-            <h3>Included / 配套包含</h3>
-            <ul>{included.map((x:any,i:number)=><li key={x?.id||i}>{typeof x==="string"?x:x?.name}</li>)}</ul>
-          </div>}
-          {excluded.length>0&&<div>
-            <h3>Not Included / 配套不包含</h3>
-            <ul>{excluded.map((x:any,i:number)=><li key={x?.id||i}>{typeof x==="string"?x:x?.name}</li>)}</ul>
-          </div>}
-        </div>
-
-        {reminders.length>0&&<div className={styles.reminders}>
-          <h3>Friendly Reminder / 温馨提醒</h3>
+        <div className={styles.reminders}>
           {reminders.map((x:any,i:number)=>{
             const title=typeof x==="string"?`Reminder ${i+1}`:(x?.title||`Reminder ${i+1}`);
             const body=typeof x==="string"?x:x?.description;
             return <div key={x?.id||i}><b>{String(i+1).padStart(2,"0")}</b><span><strong>{title}</strong>{text(body)&&<p>{body}</p>}</span></div>;
           })}
-        </div>}
+        </div>
       </section>}
 
       <div className={styles.printFooter} aria-hidden="true">
