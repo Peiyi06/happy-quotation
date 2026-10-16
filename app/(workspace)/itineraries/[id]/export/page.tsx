@@ -184,11 +184,26 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
                 </div>
               </div>
 
-              {images.length>0&&<div data-preview-block="day-images" className={styles.attractionGrid}>
-                {images.map((img,ii)=><figure className={styles.attractionFigure} key={img.url+ii}>
-                  <div className={styles.attractionImage}><img src={img.url} alt={img.name}/></div>
-                  <figcaption>{img.name}</figcaption>
-                </figure>)}
+              {images.length>0&&<div className={styles.attractionGallery}>
+                {Array.from({length:Math.ceil(images.length/2)},(_,rowIndex)=>{
+                  const row=images.slice(rowIndex*2,rowIndex*2+2);
+                  return <div
+                    data-preview-block="gallery-row"
+                    data-day-number={String(index+1).padStart(2,"0")}
+                    data-day-title={day?.title||`Day ${index+1}`}
+                    data-gallery-row={String(rowIndex)}
+                    className={styles.attractionGrid}
+                    key={"gallery-"+index+"-"+rowIndex}
+                  >
+                    <div className={styles.galleryContinuation}>
+                      DAY {String(index+1).padStart(2,"0")} · Gallery
+                    </div>
+                    {row.map((img,ii)=><figure className={styles.attractionFigure} key={img.url+ii}>
+                      <div className={styles.attractionImage}><img src={img.url} alt={img.name}/></div>
+                      <figcaption>{img.name}</figcaption>
+                    </figure>)}
+                  </div>;
+                })}
               </div>}
             </article>;
           })}
