@@ -22319,3 +22319,249 @@ td,
     page-break-inside:avoid!important;
   }
 }
+
+
+/* =========================================================
+   ITINERARY CUSTOMER PDF — EDITORIAL RHYTHM V5
+   Keep A4 portrait, but remove dashboard-like card density.
+   Short days flow naturally; attractions read like a travel
+   editorial; hotel cards are compact enough for ~2 per page.
+   ========================================================= */
+
+/* ---------- DAILY ITINERARY ---------- */
+.itinerary-export-days{
+  gap:6mm!important;
+}
+
+.itinerary-export-day{
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  padding:0 0 5mm!important;
+  border-bottom:1px solid #dfe4e9!important;
+}
+
+.itinerary-export-day:last-child{
+  border-bottom:0!important;
+}
+
+.itinerary-export-day-head{
+  padding:0 0 3mm!important;
+  background:transparent!important;
+  border:0!important;
+}
+
+.itinerary-export-day-core{
+  padding-left:16mm;
+}
+
+.itinerary-export-day-copy{
+  margin:0 0 3mm!important;
+  padding:0!important;
+  color:#354154!important;
+  font-size:8.6pt!important;
+  line-height:1.6!important;
+}
+
+.itinerary-export-meals{
+  margin:0!important;
+  border:1px solid #e2e7ed!important;
+  border-radius:2.5mm!important;
+  overflow:hidden;
+  background:#fff!important;
+}
+
+.itinerary-export-day-hotel{
+  margin:2.5mm 0 0!important;
+  padding:2.5mm 3mm!important;
+  border:0!important;
+  border-left:1mm solid #c7a85d!important;
+  border-radius:0 2mm 2mm 0!important;
+  background:#fbfaf6!important;
+}
+
+/* A day is allowed to continue onto the next page.
+   Only the day header + core info stay together. */
+.itinerary-export-day.compact-day,
+.itinerary-export-day.long-day{
+  break-inside:auto!important;
+  page-break-inside:auto!important;
+}
+
+.itinerary-export-day-head,
+.itinerary-export-day-core{
+  break-inside:avoid-page!important;
+  page-break-inside:avoid!important;
+}
+
+/* ---------- ATTRACTIONS: EDITORIAL IMAGE + CAPTION ---------- */
+.itinerary-export-attractions{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:4mm 5mm!important;
+  padding:4mm 0 0 16mm!important;
+}
+
+.itinerary-export-attraction{
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  overflow:visible!important;
+  box-shadow:none!important;
+}
+
+.itinerary-export-attraction-images{
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:1.2mm!important;
+  overflow:visible!important;
+  border-radius:2.5mm!important;
+  background:#f7f5ef!important;
+}
+
+.itinerary-export-attraction-images img{
+  width:auto!important;
+  max-width:100%!important;
+  height:auto!important;
+  max-height:42mm!important;
+  min-height:0!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  margin:auto!important;
+  border-radius:2.5mm!important;
+  background:#f7f5ef!important;
+}
+
+.itinerary-export-attraction-images.count-1 img{
+  width:100%!important;
+}
+
+/* Multiple images inside a single attraction stay compact. */
+.itinerary-export-attraction-images.count-2,
+.itinerary-export-attraction-images.count-3{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+
+.itinerary-export-attraction-images.count-3 img:first-child{
+  grid-row:auto!important;
+  grid-column:1 / -1;
+}
+
+.itinerary-export-attraction>strong{
+  display:block!important;
+  margin-top:1.8mm!important;
+  padding:0!important;
+  color:#17263a!important;
+  font-size:8.4pt!important;
+  font-weight:700!important;
+  line-height:1.35!important;
+}
+
+.itinerary-export-attraction.image-count-0{
+  min-height:0!important;
+  padding:2mm 0!important;
+  border-top:1px solid #e4e8ed!important;
+}
+
+/* ---------- HOTELS: COMPACT EDITORIAL CARDS ---------- */
+.itinerary-export-hotels{
+  gap:5mm!important;
+}
+
+.itinerary-export-hotel{
+  border:1px solid #dfe4e9!important;
+  border-radius:3mm!important;
+  background:#fff!important;
+  break-inside:avoid-page!important;
+  page-break-inside:avoid!important;
+}
+
+.itinerary-export-hotel-head{
+  padding:3mm 4mm!important;
+}
+
+.itinerary-export-hotel-head h3{
+  font-size:10.2pt!important;
+}
+
+.itinerary-export-hotel-meta span{
+  min-height:11mm!important;
+  padding:2.2mm 3mm!important;
+}
+
+.itinerary-export-hotel-note{
+  padding:2.5mm 4mm 0!important;
+}
+
+.itinerary-export-hotel-images{
+  margin:3mm 4mm 4mm!important;
+  gap:1.4mm!important;
+}
+
+.itinerary-export-hotel-images img{
+  height:27mm!important;
+  border-radius:2mm!important;
+}
+
+.itinerary-export-hotel-images.count-1 img{
+  height:42mm!important;
+}
+
+.itinerary-export-hotel-images.count-2{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+
+.itinerary-export-hotel-images.count-3{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+
+.itinerary-export-hotel-images.count-3 img:nth-child(3){
+  grid-column:auto!important;
+  height:27mm!important;
+}
+
+.itinerary-export-hotel-images.count-4{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+
+.itinerary-export-hotel-images.count-4 img{
+  height:25mm!important;
+}
+
+/* ---------- PRINT FLOW ---------- */
+@media print{
+  .itinerary-export-days{
+    gap:5mm!important;
+  }
+
+  .itinerary-export-day{
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+
+  .itinerary-export-day-head,
+  .itinerary-export-day-core{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  .itinerary-export-attractions{
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+
+  .itinerary-export-attraction{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  .itinerary-export-hotel{
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+}
