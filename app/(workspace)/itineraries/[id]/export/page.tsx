@@ -57,7 +57,27 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
   const included=list(qd.includedItems).filter((x:any)=>text(typeof x==="string"?x:x?.name));
   const excluded=list(qd.notIncludedItems).filter((x:any)=>text(typeof x==="string"?x:x?.name));
   const reminders=list(qd.reminders).filter((x:any)=>text(typeof x==="string"?x:x?.title)||text(x?.description));
-  const coverImage=coverImageFromDays(days)||list(hotels?.[0]?.images).find((img:any)=>text(img?.url))?.url||"";
+  const manualCover=qd.coverImage&&text(qd.coverImage?.url)?{
+    path:text(qd.coverImage?.path),
+    url:text(qd.coverImage?.url),
+    name:text(qd.coverImage?.name),
+    position:["left","center","right"].includes(qd.coverImage?.position)?qd.coverImage.position:"center",
+    overlay:["light","standard","strong"].includes(qd.coverImage?.overlay)?qd.coverImage.overlay:"standard"
+  }:null;
+  const autoCoverUrl=coverImageFromDays(days)||list(hotels?.[0]?.images).find((img:any)=>text(img?.url))?.url||"";
+  const coverImage=manualCover?.url||autoCoverUrl;
+  const coverPosition=manualCover?.position||"center";
+  const coverOverlay=manualCover?.overlay||"standard";
+  const basePayload={
+    source_inquiry_id:data.source_inquiry_id||qd.sourceInquiryId||"",
+    title:data.title||"",
+    destination:data.destination||"",
+    days_count:data.days_count||days.length||1,
+    nights_count:data.nights_count||0,
+    customer_name:data.customer_name||"",
+    status:data.status||"draft",
+    itinerary_data:qd
+  };
 
   const fileName=[
     "Happy Express Travel",
@@ -67,11 +87,17 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
   ].map(safeFilePart).filter(Boolean).join(" - ");
 
   return <div className={styles.screen}>
-    <ItineraryExportToolbar fileName={fileName}/>
+    <ItineraryExportToolbar
+      fileName={fileName}
+      itineraryId={id}
+      basePayload={basePayload}
+      initialCover={manualCover}
+      autoCoverUrl={autoCoverUrl}
+    />
     <main className={styles.document}>
 
-      <section className={styles.cover+(coverImage?" "+styles.coverHasImage:"")}>
-        <div className={styles.coverMedia} style={coverImage?{backgroundImage:`url("${coverImage}")`}:undefined} aria-hidden="true"/>
+      <section id="itinerary-cover" data-overlay={coverOverlay} className={styles.cover+(coverImage?" "+styles.coverHasImage:"")}>
+        <div id="itinerary-cover-media" className={styles.coverMedia} style={coverImage?{backgroundImage:`url("${coverImage}")`,backgroundPosition:coverPosition}:undefined} aria-hidden="true"/>
         <div className={styles.coverOverlay} aria-hidden="true"/>
 
         <div className={styles.coverContent}>
