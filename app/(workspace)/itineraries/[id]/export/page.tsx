@@ -132,34 +132,66 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
         </div>
       </section>
 
-      {hotels.length>0&&<section className="itinerary-export-section">
+      {hotels.length>0&&<section className="itinerary-export-section itinerary-export-hotel-section">
         <div className="itinerary-export-section-head"><span>H</span><div><h2>Hotel Introduction</h2><p>酒店介绍</p></div></div>
         <div className="itinerary-export-hotels">{hotels.map((hotel:any,index:number)=>{
           const images=list(hotel?.images).filter((img:any)=>text(img?.url)).slice(0,3);
-          return <article className="itinerary-export-hotel" key={hotel?.id||index}>
-            <div className="itinerary-export-hotel-head"><div><small>HOTEL {String(index+1).padStart(2,"0")}</small><h3>{hotel?.name||"Hotel"}</h3></div><strong>{hotel?.starRating||""}</strong></div>
-            <div className="itinerary-export-hotel-meta">
-              {text(hotel?.cityArea)&&<span><b>Area / 地区</b>{hotel.cityArea}</span>}
-              {text(hotel?.stayNights)&&<span><b>Stay / 入住</b>{hotel.stayNights}</span>}
-              {hotel?.roomSize!==""&&hotel?.roomSize!=null&&<span><b>Room / 房间</b>{hotel.roomSize} m²</span>}
+          const hotelFacts=[
+            text(hotel?.cityArea)?{label:"Area / 地区",value:hotel.cityArea}:null,
+            text(hotel?.stayNights)?{label:"Stay / 入住",value:hotel.stayNights}:null,
+            hotel?.roomSize!==""&&hotel?.roomSize!=null?{label:"Room / 房间",value:`${hotel.roomSize} m²`}:null,
+            text(hotel?.openingYear)?{label:"Opened / 开业",value:hotel.openingYear}:null,
+            text(hotel?.renovationYear)?{label:"Renovated / 装修",value:hotel.renovationYear}:null
+          ].filter(Boolean) as Array<{label:string;value:any}>;
+          return <article className={"itinerary-export-hotel hotel-images-"+images.length} key={hotel?.id||index}>
+            <div className="itinerary-export-hotel-head">
+              <div>
+                <small>HOTEL {String(index+1).padStart(2,"0")}</small>
+                <h3>{hotel?.name||"Hotel"}</h3>
+              </div>
+              {text(hotel?.starRating)&&<strong>{hotel.starRating}</strong>}
             </div>
-            {text(hotel?.nearbyNotes)&&<p>{hotel.nearbyNotes}</p>}
-            {images.length>0&&<div className={"itinerary-export-hotel-images count-"+images.length}>{images.map((img:any,ii:number)=><img key={img?.path||img?.url||ii} src={img.url} alt={hotel?.name||"Hotel"}/>)}</div>}
+
+            {hotelFacts.length>0&&<div className={"itinerary-export-hotel-meta count-"+hotelFacts.length}>
+              {hotelFacts.map((fact:any,fi:number)=><span key={fi}><b>{fact.label}</b>{fact.value}</span>)}
+            </div>}
+
+            {text(hotel?.nearbyNotes)&&<div className="itinerary-export-hotel-note">
+              <span>Location / 周边</span>
+              <p>{hotel.nearbyNotes}</p>
+            </div>}
+
+            {images.length>0&&<div className={"itinerary-export-hotel-images count-"+images.length}>
+              {images.map((img:any,ii:number)=><img key={img?.path||img?.url||ii} src={img.url} alt={hotel?.name||"Hotel"}/>)}
+            </div>}
           </article>;
         })}</div>
       </section>}
 
-      {(included.length>0||excluded.length>0)&&<section className="itinerary-export-section">
+      {(included.length>0||excluded.length>0)&&<section className="itinerary-export-section itinerary-export-package-section">
         <div className="itinerary-export-section-head"><span>+</span><div><h2>Package Details</h2><p>配套包含与不包含</p></div></div>
         <div className="itinerary-export-package-grid">
-          {included.length>0&&<div><h3>Included / 配套包含</h3><ul>{included.map((x:any,i:number)=><li key={x?.id||i}>{typeof x==="string"?x:x?.name}</li>)}</ul></div>}
-          {excluded.length>0&&<div><h3>Not Included / 配套不包含</h3><ul>{excluded.map((x:any,i:number)=><li key={x?.id||i}>{typeof x==="string"?x:x?.name}</li>)}</ul></div>}
+          {included.length>0&&<div className="itinerary-export-package-card included">
+            <div className="itinerary-export-package-head"><span>✓</span><h3>Included / 配套包含</h3></div>
+            <ul>{included.map((x:any,i:number)=><li key={x?.id||i}><span>{String(i+1).padStart(2,"0")}</span><strong>{typeof x==="string"?x:x?.name}</strong></li>)}</ul>
+          </div>}
+          {excluded.length>0&&<div className="itinerary-export-package-card excluded">
+            <div className="itinerary-export-package-head"><span>—</span><h3>Not Included / 配套不包含</h3></div>
+            <ul>{excluded.map((x:any,i:number)=><li key={x?.id||i}><span>{String(i+1).padStart(2,"0")}</span><strong>{typeof x==="string"?x:x?.name}</strong></li>)}</ul>
+          </div>}
         </div>
       </section>}
 
-      {reminders.length>0&&<section className="itinerary-export-section">
+      {reminders.length>0&&<section className="itinerary-export-section itinerary-export-reminder-section">
         <div className="itinerary-export-section-head"><span>!</span><div><h2>Friendly Reminder</h2><p>温馨提醒</p></div></div>
-        <div className="itinerary-export-reminders">{reminders.map((x:any,i:number)=><div key={x?.id||i}><strong>{typeof x==="string"?`Reminder ${i+1}`:(x?.title||`Reminder ${i+1}`)}</strong>{typeof x==="string"?<p>{x}</p>:text(x?.description)&&<p>{x.description}</p>}</div>)}</div>
+        <div className="itinerary-export-reminders">{reminders.map((x:any,i:number)=>{
+          const title=typeof x==="string"?`Reminder ${i+1}`:(x?.title||`Reminder ${i+1}`);
+          const body=typeof x==="string"?x:x?.description;
+          return <article className="itinerary-export-reminder-card" key={x?.id||i}>
+            <div className="itinerary-export-reminder-index">{String(i+1).padStart(2,"0")}</div>
+            <div><strong>{title}</strong>{text(body)&&<p>{body}</p>}</div>
+          </article>;
+        })}</div>
       </section>}
 
       <footer className="itinerary-export-footer">
