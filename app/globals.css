@@ -21272,3 +21272,44 @@ td,
   background:#fff4f2!important;
   color:#9f1f15!important;
 }
+
+
+/* =========================================================
+   ITINERARY UTILITY ACTION MENU — FOUNDATION FIX
+   Popovers must render as independent elevated surfaces and
+   remain above adjacent itinerary rows/cards.
+   ========================================================= */
+.itinerary-editor .itinerary-attraction-row,
+.itinerary-editor .itinerary-attraction-summary,
+.itinerary-editor .itinerary-attraction-summary-actions{
+  overflow:visible!important;
+}
+
+.itinerary-editor .itinerary-attraction-row:has(.itinerary-more-menu[open]),
+.itinerary-editor .itinerary-hotel-card:has(.itinerary-more-menu[open]),
+.itinerary-editor .itinerary-day-card:has(.itinerary-more-menu[open]){
+  position:relative;
+  z-index:80;
+}
+
+.itinerary-editor .itinerary-more-menu[open]{
+  z-index:90;
+}
+
+.itinerary-editor .itinerary-more-menu-popover{
+  z-index:100!important;
+  overflow:hidden;
+  padding:6px!important;
+  border:1px solid var(--color-border-default)!important;
+  border-radius:11px!important;
+  background:var(--color-bg-surface)!important;
+  box-shadow:0 10px 28px rgba(16,42,67,.12)!important;
+}
+
+.itinerary-editor .itinerary-more-menu-popover button{
+  cursor:pointer;
+}
+
+.itinerary-editor .itinerary-more-menu-popover button+button{
+  margin-top:2px;
+}
