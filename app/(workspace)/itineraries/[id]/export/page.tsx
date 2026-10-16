@@ -135,7 +135,7 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
       {hotels.length>0&&<section className="itinerary-export-section itinerary-export-hotel-section">
         <div className="itinerary-export-section-head"><span>H</span><div><h2>Hotel Introduction</h2><p>酒店介绍</p></div></div>
         <div className="itinerary-export-hotels">{hotels.map((hotel:any,index:number)=>{
-          const images=list(hotel?.images).filter((img:any)=>text(img?.url)).slice(0,3);
+          const images=list(hotel?.images).filter((img:any)=>text(img?.url)).slice(0,4);
           const hotelFacts=[
             text(hotel?.cityArea)?{label:"Area / 地区",value:hotel.cityArea}:null,
             text(hotel?.stayNights)?{label:"Stay / 入住",value:hotel.stayNights}:null,
