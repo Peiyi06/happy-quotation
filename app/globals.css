@@ -21262,3 +21262,13 @@ td,
     page-break-inside:avoid;
   }
 }
+
+
+/* Utility action menu foundation — destructive action variant */
+.quotation-detail-menu-action-danger{
+  color:#b42318!important;
+}
+.quotation-detail-menu-action-danger:hover{
+  background:#fff4f2!important;
+  color:#9f1f15!important;
+}
