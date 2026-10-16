@@ -21538,3 +21538,269 @@ td,
     page-break-inside:auto!important;
   }
 }
+
+
+/* =========================================================
+   ITINERARY CUSTOMER PDF — COVER / FLIGHTS / FOOTER V2
+   Formal travel-document layer, separate from workspace UI.
+   ========================================================= */
+.itinerary-export-cover{
+  position:relative;
+  overflow:hidden;
+  padding:0 0 8mm!important;
+  border-bottom:1px solid #d9c89d;
+  margin-bottom:9mm;
+}
+
+.itinerary-export-cover-band{
+  position:absolute;
+  top:0;
+  left:-16mm;
+  width:122mm;
+  height:34mm;
+  border-radius:0 0 36mm 0;
+  background:#0b1f3a;
+  z-index:0;
+}
+
+.itinerary-export-cover-top{
+  position:relative;
+  z-index:1;
+  min-height:26mm;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10mm;
+  padding:6mm 0 0;
+}
+
+.itinerary-export-cover-top .itinerary-export-kicker{
+  color:#fff!important;
+  font-size:7.6pt!important;
+  letter-spacing:.16em!important;
+}
+
+.itinerary-export-doc-label{
+  margin:2mm 0 0;
+  color:#e7d8b2!important;
+  font-size:8pt!important;
+  font-weight:700;
+  letter-spacing:.07em;
+}
+
+.itinerary-export-brand-space{
+  position:relative!important;
+  right:auto!important;
+  top:auto!important;
+  width:42mm!important;
+  height:18mm!important;
+  flex:0 0 42mm;
+  border-radius:3mm;
+}
+
+.itinerary-export-cover-main{
+  position:relative;
+  z-index:1;
+  padding:12mm 0 7mm;
+}
+
+.itinerary-export-cover-route{
+  display:inline-flex;
+  margin-bottom:3mm;
+  color:#b18a3a;
+  font-size:8pt;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+.itinerary-export-cover-main h1{
+  max-width:150mm!important;
+  margin:0!important;
+  color:#0b1f3a!important;
+  font-size:27pt!important;
+  line-height:1.08!important;
+  letter-spacing:-.03em!important;
+}
+
+.itinerary-export-cover-main .itinerary-export-gold-line{
+  margin:5mm 0 4mm!important;
+}
+
+.itinerary-export-cover-meta{
+  margin:0!important;
+  color:#5d6879!important;
+  font-size:9pt!important;
+  font-weight:650;
+  letter-spacing:.02em;
+}
+
+.itinerary-export-cover-ref{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:2mm;
+  margin-top:4mm;
+  color:#7b8492;
+  font-size:7pt;
+}
+
+.itinerary-export-cover-ref strong{
+  color:#0b1f3a;
+  font-size:7.4pt;
+  letter-spacing:.04em;
+}
+
+.itinerary-export-flight-list{
+  display:grid;
+  gap:3mm;
+}
+
+.itinerary-export-flight-card{
+  display:grid;
+  grid-template-columns:32mm minmax(0,1fr);
+  gap:4mm;
+  padding:4mm;
+  border:1px solid #d8dee8;
+  border-radius:4mm;
+  background:#fff;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+
+.itinerary-export-flight-route{
+  display:grid;
+  align-content:center;
+  gap:1.5mm;
+  padding-right:4mm;
+  border-right:1px solid #e2e7ed;
+}
+
+.itinerary-export-flight-route small{
+  color:#b18a3a;
+  font-size:6.5pt;
+  font-weight:850;
+  letter-spacing:.09em;
+}
+
+.itinerary-export-flight-route strong{
+  color:#0b1f3a;
+  font-size:12pt;
+  line-height:1.2;
+  letter-spacing:.01em;
+}
+
+.itinerary-export-flight-route strong span{
+  color:#b18a3a;
+  padding:0 1mm;
+}
+
+.itinerary-export-flight-facts{
+  display:grid;
+  grid-template-columns:1.05fr 1.25fr .85fr .85fr;
+  align-items:stretch;
+}
+
+.itinerary-export-flight-facts>div{
+  min-width:0;
+  display:grid;
+  align-content:center;
+  gap:1mm;
+  padding:1.5mm 3mm;
+  border-right:1px solid #e7ebef;
+}
+
+.itinerary-export-flight-facts>div:last-child{
+  border-right:0;
+}
+
+.itinerary-export-flight-facts span,
+.itinerary-export-flight-remarks span{
+  color:#7b8492;
+  font-size:6.5pt;
+  font-weight:700;
+}
+
+.itinerary-export-flight-facts b{
+  color:#263247;
+  font-size:8.4pt;
+  line-height:1.3;
+}
+
+.itinerary-export-flight-remarks{
+  grid-column:2;
+  display:grid;
+  grid-template-columns:24mm minmax(0,1fr);
+  gap:3mm;
+  padding:2.5mm 3mm 0;
+  border-top:1px solid #edf0f3;
+}
+
+.itinerary-export-flight-remarks strong{
+  color:#364153;
+  font-size:7.8pt;
+  line-height:1.4;
+}
+
+.itinerary-export-print-footer{
+  display:none;
+}
+
+@media print{
+  .itinerary-export-document{
+    position:relative;
+    padding-bottom:18mm!important;
+  }
+
+  .itinerary-export-cover{
+    break-inside:avoid;
+    page-break-inside:avoid;
+  }
+
+  .itinerary-export-flight-card{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  .itinerary-export-footer{
+    display:none!important;
+  }
+
+  .itinerary-export-print-footer{
+    position:fixed;
+    left:15mm;
+    right:15mm;
+    bottom:5mm;
+    display:flex!important;
+    justify-content:space-between;
+    align-items:center;
+    gap:8mm;
+    padding-top:2.3mm;
+    border-top:1px solid #d9c89d;
+    background:#fffdfa;
+    color:#7b8492;
+    font-size:6.7pt;
+    z-index:1000;
+  }
+}
+
+@media(max-width:760px){
+  .itinerary-export-flight-card{
+    grid-template-columns:1fr;
+  }
+  .itinerary-export-flight-route{
+    padding-right:0;
+    padding-bottom:3mm;
+    border-right:0;
+    border-bottom:1px solid #e2e7ed;
+  }
+  .itinerary-export-flight-facts{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .itinerary-export-flight-facts>div:nth-child(2){
+    border-right:0;
+  }
+  .itinerary-export-flight-remarks{
+    grid-column:auto;
+  }
+}
