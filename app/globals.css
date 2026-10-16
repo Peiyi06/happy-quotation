@@ -22719,3 +22719,31 @@ td,
     flex-wrap:wrap;
   }
 }
+
+
+.itinerary-export-cover-brightness{
+  min-width:150px;
+  display:grid;
+  gap:5px;
+}
+.itinerary-export-cover-brightness>span{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  color:#7a8492;
+  font-size:10px;
+  font-weight:700;
+}
+.itinerary-export-cover-brightness>span b{
+  color:#17263a;
+  font-size:11px;
+}
+.itinerary-export-cover-brightness input[type="range"]{
+  width:150px;
+  accent-color:#173b5c;
+  cursor:pointer;
+}
+.itinerary-export-cover-brightness input[type="range"]:disabled{
+  opacity:.4;
+  cursor:default;
+}
