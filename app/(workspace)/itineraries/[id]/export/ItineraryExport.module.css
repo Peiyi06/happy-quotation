@@ -468,3 +468,57 @@
     right:12mm!important;
   }
 }
+
+
+/* =========================================================
+   ITINERARY PDF — CONTENT-AWARE PAGINATION FOUNDATION
+   Day core stays intact; gallery rows paginate independently.
+   ========================================================= */
+.attractionGallery{
+  display:grid;
+  gap:4mm;
+  margin-top:4mm;
+}
+
+.attractionGallery .attractionGrid{
+  position:relative;
+  margin-top:0!important;
+  break-inside:avoid-page!important;
+  page-break-inside:avoid!important;
+}
+
+.galleryContinuation{
+  display:none;
+}
+
+.dayCore{
+  break-inside:avoid-page!important;
+  page-break-inside:avoid!important;
+}
+
+.attractionGallery .attractionFigure{
+  break-inside:avoid-page!important;
+  page-break-inside:avoid!important;
+}
+
+@media print{
+  .day{
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+
+  .dayCore{
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+
+  .attractionGallery{
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+
+  .attractionGallery .attractionGrid{
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+}
