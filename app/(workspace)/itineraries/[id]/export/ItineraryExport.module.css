@@ -373,3 +373,98 @@
     grid-template-columns:38mm minmax(0,1fr)!important;
   }
 }
+
+
+/* =========================================================
+   ITINERARY PDF — COMPACT MOBILE-READABLE DAILY FOUNDATION
+   Larger text, wider content box, smarter day pagination.
+   ========================================================= */
+.day{
+  break-inside:auto!important;
+  page-break-inside:auto!important;
+  padding-bottom:5mm!important;
+}
+
+.dayCore{
+  break-inside:avoid-page!important;
+  page-break-inside:avoid!important;
+}
+
+.dayList{
+  gap:5.5mm!important;
+}
+
+.dayBody{
+  padding-left:14mm!important;
+}
+
+.dayHeader{
+  grid-template-columns:14mm minmax(0,1fr)!important;
+  gap:4mm!important;
+  margin-bottom:3.5mm!important;
+}
+
+.dayHeader h3{
+  font-size:17pt!important;
+  line-height:1.16!important;
+}
+
+.dayHeader span{
+  font-size:9.2pt!important;
+}
+
+.dayCopy{
+  margin-bottom:3.5mm!important;
+  font-size:11.2pt!important;
+  line-height:1.55!important;
+}
+
+.dayMeta>div{
+  padding:3.2mm 3.5mm!important;
+}
+
+.dayMeta span{
+  font-size:8.8pt!important;
+}
+
+.dayMeta strong{
+  margin-top:1.3mm!important;
+  font-size:10.2pt!important;
+}
+
+.attractionFigure figcaption{
+  font-size:10pt!important;
+}
+
+.dayBody .attractionGrid,
+.day .attractionGrid{
+  width:calc(100% + 14mm)!important;
+  max-width:none!important;
+  margin-left:-14mm!important;
+}
+
+@page itineraryCustomer{
+  size:A4 portrait;
+  margin:12mm 12mm 16mm;
+}
+
+@media print{
+  .day{
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+  .dayCore{
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+  .dayBody .attractionGrid,
+  .day .attractionGrid{
+    width:calc(100% + 14mm)!important;
+    max-width:none!important;
+    margin-left:-14mm!important;
+  }
+  .printFooter{
+    left:12mm!important;
+    right:12mm!important;
+  }
+}
