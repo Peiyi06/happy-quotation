@@ -22218,3 +22218,31 @@ td,
   background:var(--color-bg-soft)!important;
   border-color:var(--color-border-strong)!important;
 }
+
+
+/* =========================================================
+   ITINERARY CUSTOMER PDF — IMAGE PRESERVATION RULE
+   Customer documents prioritize complete attraction/hotel imagery
+   over aggressive visual cropping.
+   ========================================================= */
+.itinerary-export-attraction-images{
+  height:38mm!important;
+  background:#f7f5ef!important;
+}
+
+.itinerary-export-attraction-images img,
+.itinerary-export-hotel-images img{
+  object-fit:contain!important;
+  object-position:center center!important;
+  background:#f7f5ef!important;
+}
+
+/* Keep multi-image compositions tidy without cropping the subject. */
+.itinerary-export-attraction-images.count-2,
+.itinerary-export-attraction-images.count-3,
+.itinerary-export-hotel-images.count-2,
+.itinerary-export-hotel-images.count-3{
+  background:#f7f5ef!important;
+}
+
+/* Hero/cover imagery may continue using cover elsewhere; content cards do not. */
