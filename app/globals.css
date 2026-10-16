@@ -22565,3 +22565,72 @@ td,
     page-break-inside:avoid!important;
   }
 }
+
+
+/* =========================================================
+   ITINERARY CUSTOMER PDF — IMAGE STANDARDIZATION V6
+   Unified visual frames with complete-image priority.
+   ========================================================= */
+
+/* Attraction: consistent visual height across all cards. */
+.itinerary-export-attraction-images{
+  height:36mm!important;
+  min-height:36mm!important;
+  max-height:36mm!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  background:#f7f5ef!important;
+  border-radius:2.5mm!important;
+}
+
+.itinerary-export-attraction-images img{
+  width:100%!important;
+  height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  background:#f7f5ef!important;
+  border-radius:2.5mm!important;
+}
+
+/* Multiple attraction images remain equal-sized inside the same frame. */
+.itinerary-export-attraction-images.count-2,
+.itinerary-export-attraction-images.count-3{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-template-rows:1fr!important;
+  gap:1.2mm!important;
+}
+
+.itinerary-export-attraction-images.count-3{
+  grid-template-rows:repeat(2,minmax(0,1fr))!important;
+}
+
+.itinerary-export-attraction-images.count-3 img:first-child{
+  grid-column:1 / -1!important;
+}
+
+/* Hotel: consistent compact frames. */
+.itinerary-export-hotel-images img{
+  width:100%!important;
+  height:26mm!important;
+  max-height:26mm!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  background:#f7f5ef!important;
+}
+
+.itinerary-export-hotel-images.count-1 img{
+  height:42mm!important;
+  max-height:42mm!important;
+}
+
+.itinerary-export-hotel-images.count-2 img,
+.itinerary-export-hotel-images.count-3 img,
+.itinerary-export-hotel-images.count-4 img{
+  height:26mm!important;
+  max-height:26mm!important;
+}
