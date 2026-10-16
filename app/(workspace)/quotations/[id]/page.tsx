@@ -34,15 +34,8 @@ export default async function QuotationDetailPage({
   }
   const canReview=Boolean(user&&(user.role==="manager"||user.username.toLowerCase()==="long"));
   const canSubmit=Boolean(user&&(canReview||user.id===data.owner_id||user.id===sourceInquiry?.operation_assignee_id));
-  const canMoveToTrash=Boolean(
-    user&&(
-      user.role==="manager"||
-      (
-        user.id===data.owner_id&&
-        String(data.status||"draft")==="draft"
-      )
-    )
-  );
+  const canTrashResult=await db.rpc("staff_can_trash_quote",{p_token:token,p_id:id});
+  const canMoveToTrash=Boolean(canTrashResult.data);
 
   const qd=data.quotation_data||{};
   const scenarioPricing=qd.scenarioPricing||null;
