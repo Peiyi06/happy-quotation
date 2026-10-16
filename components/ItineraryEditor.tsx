@@ -820,6 +820,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       <div className="detail-actions itinerary-editor-actions">
         {isDirty&&<span className="unsaved-badge">{t("Unsaved changes","尚未保存")}</span>}
         <button className="btn itinerary-editor-back" onClick={()=>isDirty?setPendingHref("/itineraries"):router.push("/itineraries")}>{t("‹ Back","‹ 返回")}</button>
+        {itineraryId&&<button className="btn itinerary-editor-export" type="button" onClick={()=>isDirty?setPendingHref("/itineraries/"+itineraryId+"/export"):router.push("/itineraries/"+itineraryId+"/export")}>{t("Export PDF","导出 PDF")}</button>}
         <button className="btn primary" onClick={()=>void save()} disabled={saving}>{saving?t("Saving...","保存中..."):t("Save Itinerary","保存行程")}</button>
       </div>
     </div>
