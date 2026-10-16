@@ -132,14 +132,7 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
       {flights.length>0&&<section data-preview-block="overview" className={styles.overviewPage}>
         <div className={styles.sectionTitle}>
           <span>01</span>
-          <div><h2>Trip Overview</h2><p>行程概览与航班资料</p></div>
-        </div>
-
-        <div className={styles.tripStrip}>
-          <div><span>Route / 路线</span><strong>{qd.departureCity||"—"} → {data.destination||"—"}</strong></div>
-          <div><span>Duration / 天数</span><strong>{data.days_count}D{data.nights_count}N</strong></div>
-          <div><span>Pax / 人数</span><strong>{qd.pax||"—"}</strong></div>
-          <div><span>Tour Type / 团型</span><strong>{qd.tourType||"—"}</strong></div>
+          <div><h2>Flight Information</h2><p>航班资料</p></div>
         </div>
 
         <div className={styles.flightList}>
@@ -147,6 +140,7 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
             <div className={styles.flightRoute}>
               <small>{i===0?"OUTBOUND":i===flights.length-1?"RETURN":"FLIGHT "+String(i+1).padStart(2,"0")}</small>
               <strong>{f.from||"—"} <em>→</em> {f.to||"—"}</strong>
+              {text(f.remarks)&&<span className={styles.flightCarrier}>{f.remarks}</span>}
             </div>
             <div className={styles.flightFacts}>
               <div><span>Flight / 航班</span><b>{f.flightNo||"—"}</b></div>
@@ -154,7 +148,6 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
               <div><span>Departure / 起飞</span><b>{f.departureTime||"—"}</b></div>
               <div><span>Arrival / 抵达</span><b>{f.arrivalTime||"—"}</b></div>
             </div>
-            {text(f.remarks)&&<div className={styles.flightRemarks}>{f.remarks}</div>}
           </article>)}
         </div>
       </section>}
