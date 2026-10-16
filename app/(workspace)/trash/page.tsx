@@ -6,7 +6,7 @@ const money=(n:number)=>new Intl.NumberFormat("en-MY",{style:"currency",currency
 
 export default async function TrashPage(){
   const user=await internalUser();
-  if(!user||user.role!=="manager") return <div className="panel"><UiText en="Manager only." zh="仅限 Manager 使用。" /></div>;
+  if(!user) return <div className="panel"><UiText en="Unauthorized." zh="未授权。" /></div>;
   const token=await internalToken();
   const db=internalDb();
   const {data}=token?await db.rpc("staff_list_trash",{p_token:token}):{data:[]};
@@ -14,7 +14,7 @@ export default async function TrashPage(){
 
   return <div>
     <div className="page-head workspace-flat-head">
-      <div><h1><UiText en="Deleted Quotations" zh="已删除报价" /></h1><p><UiText en="Hidden quotations are kept here and can be restored by a Manager." zh="这里显示被隐藏的报价。资料仍保留，可由 Manager 恢复。" /></p></div>
+      <div><h1><UiText en="Deleted Quotations" zh="已删除报价" /></h1><p>{user.role==="manager"?<UiText en="Hidden quotations are kept here and can be restored." zh="这里显示被隐藏的报价，资料仍保留并可恢复。" />:<UiText en="Your deleted Draft quotations are kept here and can be restored." zh="这里保留您删除的 Draft 报价，并可随时恢复。" />}</p></div>
     </div>
     <section className="panel trash-table-panel">
       <div className="data-table-wrap"><table className="data-table trash-table"><thead><tr><th><UiText en="Quote No" zh="报价编号" /></th><th><UiText en="Tour" zh="行程" /></th><th><UiText en="Sales" zh="销售" /></th><th><UiText en="Customer" zh="客户" /></th><th><UiText en="Pax" zh="人数" /></th><th><UiText en="Selling" zh="售价" /></th><th><UiText en="Deleted By" zh="删除者" /></th><th><UiText en="Deleted" zh="删除时间" /></th><th><UiText en="Action" zh="操作" /></th></tr></thead><tbody>
