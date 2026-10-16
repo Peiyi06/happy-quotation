@@ -50,7 +50,7 @@ export default function QuotationDetailMoreActions({
       <DuplicateQuotationButton id={id} compact />
       {canMoveToTrash&&<button
         type="button"
-        className="btn quotation-trash-action"
+        className="quotation-detail-menu-action quotation-detail-menu-action-danger"
         disabled={busy}
         onClick={(event)=>{event.stopPropagation();void moveToTrash();}}
       >
