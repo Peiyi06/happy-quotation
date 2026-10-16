@@ -10,6 +10,7 @@ type CoverImage={
   name:string;
   position:"left"|"center"|"right";
   overlay:"light"|"standard"|"strong";
+  brightness:number;
 };
 
 type Props={
@@ -36,6 +37,7 @@ export default function ItineraryExportToolbar({fileName,itineraryId,basePayload
 
   const currentPosition=cover?.position||"center";
   const currentOverlay=cover?.overlay||"standard";
+  const currentBrightness=Math.min(130,Math.max(70,Number(cover?.brightness)||100));
   const hasManual=Boolean(cover?.url);
   const statusText=useMemo(()=>message||(
     hasManual?t("Manual cover","手动封面"):autoCoverUrl?t("Auto cover","自动封面"):t("Brand fallback","品牌背景")
@@ -48,6 +50,7 @@ export default function ItineraryExportToolbar({fileName,itineraryId,basePayload
       const url=next?.url||autoCoverUrl||"";
       media.style.backgroundImage=url?"url(\""+url.replace(/"/g,"%22")+"\")":"";
       media.style.backgroundPosition=next?.position||"center";
+      media.style.filter="brightness("+String(Math.min(130,Math.max(70,Number(next?.brightness)||100))/100)+")";
     }
     if(root) root.dataset.overlay=next?.overlay||"standard";
   }
@@ -93,7 +96,8 @@ export default function ItineraryExportToolbar({fileName,itineraryId,basePayload
         url:data.url||"",
         name:data.name||file.name,
         position:cover?.position||"center",
-        overlay:cover?.overlay||"standard"
+        overlay:cover?.overlay||"standard",
+        brightness:Math.min(130,Math.max(70,Number(cover?.brightness)||100))
       };
       const previousPath=cover?.path;
       await persistCover(next);
@@ -173,6 +177,26 @@ export default function ItineraryExportToolbar({fileName,itineraryId,basePayload
         </select>
       </label>
 
+      <label className="itinerary-export-cover-brightness">
+        <span>{t("Brightness","亮度")} <b>{currentBrightness}%</b></span>
+        <input
+          type="range"
+          min="70"
+          max="130"
+          step="5"
+          value={currentBrightness}
+          disabled={!hasManual||saving}
+          onChange={e=>{
+            if(!cover) return;
+            const next={...cover,brightness:Number(e.target.value)};
+            setCover(next);
+            updatePreview(next);
+          }}
+          onMouseUp={e=>void patchCover({brightness:Number((e.currentTarget as HTMLInputElement).value)})}
+          onTouchEnd={e=>void patchCover({brightness:Number((e.currentTarget as HTMLInputElement).value)})}
+          aria-label={t("Hero cover brightness","封面背景亮度")}
+        />
+      </label>
       <label className="itinerary-export-cover-select">
         <span>{t("Overlay","遮罩")}</span>
         <select value={currentOverlay} disabled={!hasManual||saving} onChange={e=>void patchCover({overlay:e.target.value as CoverImage["overlay"]})}>
