@@ -22634,3 +22634,88 @@ td,
   height:26mm!important;
   max-height:26mm!important;
 }
+
+
+/* =========================================================
+   ITINERARY PDF PREVIEW — HERO COVER CONTROLS
+   ========================================================= */
+.itinerary-export-toolbar-wrap{
+  width:min(210mm,calc(100vw - 48px));
+  margin:0 auto 18px;
+}
+.itinerary-export-toolbar-wrap .itinerary-export-toolbar{
+  width:100%;
+  margin:0 0 10px;
+}
+.itinerary-export-cover-controls{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-height:52px;
+  padding:9px 10px;
+  border:1px solid #d9e0e7;
+  border-radius:14px;
+  background:rgba(255,255,255,.86);
+  box-shadow:0 8px 24px rgba(15,31,54,.06);
+}
+.itinerary-export-cover-status{
+  min-width:150px;
+  display:grid;
+  gap:2px;
+  margin-right:auto;
+}
+.itinerary-export-cover-status strong{
+  color:#0b1f3a;
+  font-size:13px;
+}
+.itinerary-export-cover-status span{
+  color:#7a8492;
+  font-size:11px;
+}
+.itinerary-export-cover-upload{
+  cursor:pointer;
+  white-space:nowrap;
+}
+.itinerary-export-cover-upload input{
+  display:none;
+}
+.itinerary-export-cover-upload.disabled{
+  opacity:.55;
+  pointer-events:none;
+}
+.itinerary-export-cover-select{
+  display:grid;
+  gap:3px;
+}
+.itinerary-export-cover-select>span{
+  color:#7a8492;
+  font-size:10px;
+  font-weight:700;
+}
+.itinerary-export-cover-select select{
+  min-width:92px;
+  height:34px;
+  padding:0 28px 0 10px;
+  border:1px solid #cfd7df;
+  border-radius:9px;
+  background:#fff;
+  color:#17263a;
+  font:inherit;
+  font-size:12px;
+}
+.itinerary-export-cover-select select:disabled{
+  opacity:.45;
+  background:#f5f6f7;
+}
+.itinerary-export-cover-remove{
+  color:#b42318!important;
+  border-color:#e6c3bf!important;
+}
+@media(max-width:900px){
+  .itinerary-export-toolbar-wrap{
+    width:210mm;
+  }
+  .itinerary-export-cover-controls{
+    flex-wrap:wrap;
+  }
+}
