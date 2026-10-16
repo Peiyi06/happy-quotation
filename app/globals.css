@@ -21804,3 +21804,301 @@ td,
     grid-column:auto;
   }
 }
+
+
+/* =========================================================
+   ITINERARY CUSTOMER PDF — HOTEL / PACKAGE / REMINDER V3
+   Formal back-half document surfaces with predictable print flow.
+   ========================================================= */
+.itinerary-export-hotel-section,
+.itinerary-export-package-section,
+.itinerary-export-reminder-section{
+  break-before:auto;
+}
+
+.itinerary-export-hotels{
+  display:grid;
+  gap:5mm!important;
+}
+
+.itinerary-export-hotel{
+  padding-bottom:0!important;
+  overflow:hidden;
+  border:1px solid #d8dee8;
+  border-radius:4mm;
+  background:#fff;
+  break-inside:avoid-page;
+  page-break-inside:avoid;
+}
+
+.itinerary-export-hotel-head{
+  padding:4mm 5mm!important;
+  background:#f6f8fa!important;
+  border-bottom:1px solid #e0e5eb!important;
+}
+
+.itinerary-export-hotel-head small{
+  color:#b18a3a!important;
+  font-size:6.7pt!important;
+  font-weight:850!important;
+  letter-spacing:.09em!important;
+}
+
+.itinerary-export-hotel-head h3{
+  margin:1mm 0 0!important;
+  color:#0b1f3a!important;
+  font-size:11.2pt!important;
+  line-height:1.25!important;
+}
+
+.itinerary-export-hotel-head>strong{
+  display:inline-flex;
+  min-height:7mm;
+  align-items:center;
+  padding:0 3mm;
+  border-radius:999px;
+  background:#eef2f6!important;
+  color:#4b596d!important;
+  font-size:7.5pt!important;
+  font-weight:750;
+}
+
+.itinerary-export-hotel-meta{
+  display:grid!important;
+  grid-template-columns:repeat(auto-fit,minmax(28mm,1fr))!important;
+  margin:0!important;
+  border:0!important;
+  border-bottom:1px solid #e2e7ed!important;
+  border-radius:0!important;
+}
+
+.itinerary-export-hotel-meta span{
+  min-height:14mm!important;
+  padding:3mm 4mm!important;
+  border-right:1px solid #e2e7ed!important;
+  color:#273244!important;
+  font-size:8pt!important;
+}
+
+.itinerary-export-hotel-meta span:last-child{
+  border-right:0!important;
+}
+
+.itinerary-export-hotel-note{
+  display:grid;
+  grid-template-columns:28mm minmax(0,1fr);
+  gap:3mm;
+  padding:3.5mm 5mm 0;
+}
+
+.itinerary-export-hotel-note>span{
+  color:#7b8492;
+  font-size:7pt;
+  font-weight:750;
+  text-transform:uppercase;
+  letter-spacing:.035em;
+}
+
+.itinerary-export-hotel-note p{
+  margin:0!important;
+  padding:0!important;
+  color:#3c485a;
+  font-size:8.2pt;
+  line-height:1.55;
+}
+
+.itinerary-export-hotel-images{
+  margin:4mm 5mm 5mm!important;
+  height:42mm;
+  overflow:hidden;
+  display:grid!important;
+  gap:1.2mm!important;
+  border-radius:3mm!important;
+  background:#eef1f4;
+}
+
+.itinerary-export-hotel-images.count-1{
+  grid-template-columns:1fr!important;
+}
+.itinerary-export-hotel-images.count-2{
+  grid-template-columns:repeat(2,1fr)!important;
+}
+.itinerary-export-hotel-images.count-3{
+  grid-template-columns:1.35fr .65fr!important;
+  grid-template-rows:repeat(2,1fr);
+}
+.itinerary-export-hotel-images.count-3 img:first-child{
+  grid-row:1 / 3;
+}
+.itinerary-export-hotel-images img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  display:block;
+}
+
+.itinerary-export-package-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:4mm!important;
+  align-items:start;
+}
+
+.itinerary-export-package-card{
+  overflow:hidden;
+  padding:0!important;
+  border:1px solid #d8dee8!important;
+  border-radius:4mm!important;
+  background:#fff!important;
+  break-inside:avoid-page;
+  page-break-inside:avoid;
+}
+
+.itinerary-export-package-card.included{
+  border-top:1.2mm solid #9fb7a6!important;
+}
+.itinerary-export-package-card.excluded{
+  border-top:1.2mm solid #d6b0aa!important;
+}
+
+.itinerary-export-package-head{
+  min-height:13mm;
+  display:flex;
+  align-items:center;
+  gap:3mm;
+  padding:3mm 4mm;
+  border-bottom:1px solid #e5e9ee;
+  background:#f7f9fb;
+}
+
+.itinerary-export-package-head>span{
+  width:7mm;
+  height:7mm;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#eef2f6;
+  color:#0b1f3a;
+  font-size:7pt;
+  font-weight:800;
+}
+
+.itinerary-export-package-head h3{
+  margin:0!important;
+  color:#0b1f3a!important;
+  font-size:9.3pt!important;
+}
+
+.itinerary-export-package-card ul{
+  margin:0!important;
+  padding:1.5mm 4mm 3mm!important;
+  list-style:none!important;
+}
+
+.itinerary-export-package-card li{
+  display:grid;
+  grid-template-columns:8mm minmax(0,1fr);
+  gap:2mm;
+  align-items:start;
+  margin:0!important;
+  padding:2.2mm 0!important;
+  border-bottom:1px solid #edf0f3;
+  color:#354154!important;
+  font-size:8.1pt!important;
+  line-height:1.45!important;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+
+.itinerary-export-package-card li:last-child{
+  border-bottom:0;
+}
+
+.itinerary-export-package-card li>span{
+  color:#9aa3af;
+  font-size:6.7pt;
+  font-weight:800;
+  letter-spacing:.04em;
+}
+
+.itinerary-export-package-card li>strong{
+  font-weight:600;
+}
+
+.itinerary-export-reminders{
+  display:grid;
+  gap:3mm!important;
+}
+
+.itinerary-export-reminder-card{
+  display:grid;
+  grid-template-columns:10mm minmax(0,1fr);
+  gap:3mm;
+  padding:3.5mm 4mm;
+  border:1px solid #e3dfd2;
+  border-left:1.2mm solid #c7a85d;
+  border-radius:3mm;
+  background:#fbfaf6;
+  break-inside:avoid!important;
+  page-break-inside:avoid!important;
+}
+
+.itinerary-export-reminder-index{
+  width:8mm;
+  height:8mm;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#0b1f3a;
+  color:#fff;
+  font-size:6.5pt;
+  font-weight:800;
+}
+
+.itinerary-export-reminder-card strong{
+  color:#0b1f3a!important;
+  font-size:8.8pt!important;
+  line-height:1.35;
+}
+
+.itinerary-export-reminder-card p{
+  margin:1.5mm 0 0!important;
+  color:#4b5565!important;
+  font-size:8pt!important;
+  line-height:1.55!important;
+  white-space:pre-line;
+}
+
+@media print{
+  .itinerary-export-hotel{
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+
+  .itinerary-export-package-card{
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+
+  .itinerary-export-package-card li,
+  .itinerary-export-reminder-card{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  .itinerary-export-hotel-section .itinerary-export-section-head,
+  .itinerary-export-package-section .itinerary-export-section-head,
+  .itinerary-export-reminder-section .itinerary-export-section-head{
+    break-after:avoid!important;
+    page-break-after:avoid!important;
+  }
+}
+
+@media(max-width:760px){
+  .itinerary-export-package-grid{
+    grid-template-columns:1fr!important;
+  }
+  .itinerary-export-hotel-note{
+    grid-template-columns:1fr;
+  }
+}
