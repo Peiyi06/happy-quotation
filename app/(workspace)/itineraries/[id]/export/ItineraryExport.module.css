@@ -229,3 +229,147 @@
     margin-left:-17mm!important;
   }
 }
+
+
+/* =========================================================
+   ITINERARY PDF — FLIGHT-FIRST + LARGE TYPE FOUNDATION
+   Hero owns trip summary. Flight is Section 01.
+   Daily content enlarged for print readability.
+   ========================================================= */
+.tripStrip{
+  display:none!important;
+}
+
+.overviewPage{
+  margin-bottom:8mm!important;
+}
+
+.flightList{
+  gap:4.5mm!important;
+}
+
+.flightRow{
+  grid-template-columns:38mm minmax(0,1fr)!important;
+}
+
+.flightRoute{
+  position:relative;
+  padding:4.5mm 5mm 4.5mm 0!important;
+}
+
+.flightRoute small{
+  font-size:7pt!important;
+}
+
+.flightRoute strong{
+  font-size:14pt!important;
+}
+
+.flightCarrier{
+  display:inline-flex;
+  width:max-content;
+  max-width:100%;
+  margin-top:2mm;
+  padding:1mm 2.2mm;
+  border-radius:99px;
+  background:#f4f1e9;
+  color:#6f5b2d;
+  font-size:6.8pt;
+  font-weight:800;
+  letter-spacing:.04em;
+  line-height:1.2;
+  overflow-wrap:anywhere;
+}
+
+.flightFacts{
+  grid-template-columns:1fr 1.25fr 1.15fr 1.15fr!important;
+}
+
+.flightFacts>div{
+  padding:4.2mm 3.5mm!important;
+}
+
+.flightFacts span{
+  font-size:7.5pt!important;
+  line-height:1.25!important;
+}
+
+.flightFacts b{
+  margin-top:1.4mm!important;
+  font-size:9.3pt!important;
+  line-height:1.3!important;
+}
+
+.dailySection .sectionTitle{
+  margin-bottom:7mm!important;
+}
+
+.dayList{
+  gap:8mm!important;
+}
+
+.day{
+  padding-bottom:7mm!important;
+}
+
+.dayHeader{
+  grid-template-columns:14mm minmax(0,1fr)!important;
+  gap:4.5mm!important;
+  margin-bottom:4mm!important;
+}
+
+.dayNumber{
+  width:13mm!important;
+  height:13mm!important;
+}
+
+.dayNumber small{
+  font-size:6.2pt!important;
+}
+
+.dayNumber b{
+  font-size:10.8pt!important;
+}
+
+.dayHeader h3{
+  font-size:15.5pt!important;
+  line-height:1.18!important;
+}
+
+.dayHeader span{
+  margin-top:1.2mm!important;
+  font-size:8.7pt!important;
+}
+
+.dayCopy{
+  margin-bottom:4mm!important;
+  font-size:10.2pt!important;
+  line-height:1.62!important;
+}
+
+.dayMeta>div{
+  padding:3.4mm 3.8mm!important;
+}
+
+.dayMeta span{
+  font-size:8pt!important;
+  line-height:1.25!important;
+}
+
+.dayMeta strong{
+  margin-top:1.5mm!important;
+  font-size:9.5pt!important;
+  line-height:1.35!important;
+}
+
+.attractionFigure figcaption{
+  margin-top:2mm!important;
+  font-size:9.2pt!important;
+  line-height:1.35!important;
+}
+
+@media print{
+  .flightRow{
+    grid-template-columns:38mm minmax(0,1fr)!important;
+  }
+}
