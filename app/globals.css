@@ -22824,3 +22824,22 @@ td,
     width:210mm;
   }
 }
+
+
+/* Content-aware pagination cues in screen preview only */
+.itinerary-preview-continuation{
+  margin:0 0 4mm;
+  padding:2.3mm 3mm;
+  border-left:1.2mm solid #b8965d;
+  background:#fbfaf6;
+  color:#173b5c;
+  font-size:8pt;
+  font-weight:800;
+  letter-spacing:.025em;
+}
+.itinerary-preview-page-inner [data-preview-block="gallery-row"]{
+  margin-bottom:4.5mm!important;
+}
+.itinerary-preview-page-inner [data-preview-block="day-core"]{
+  margin-bottom:4mm!important;
+}
