@@ -163,31 +163,33 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
             const images=representativeAttractions(day);
             const hotel=text(day?.hotel)&&text(day?.hotel)!=="-"?text(day.hotel):"";
             const date=dayDate(qd.travelStartDate||"",index);
-            return <article data-preview-block="day" className={styles.day} key={day?.id||index}>
-              <header className={styles.dayHeader}>
-                <div className={styles.dayNumber}><small>DAY</small><b>{String(index+1).padStart(2,"0")}</b></div>
-                <div>
-                  <h3>{day?.title||`Day ${index+1}`}</h3>
-                  {date&&<span>{date}</span>}
-                </div>
-              </header>
+            return <article className={styles.day} key={day?.id||index}>
+              <div data-preview-block="day-core" className={styles.dayCore}>
+                <header className={styles.dayHeader}>
+                  <div className={styles.dayNumber}><small>DAY</small><b>{String(index+1).padStart(2,"0")}</b></div>
+                  <div>
+                    <h3>{day?.title||`Day ${index+1}`}</h3>
+                    {date&&<span>{date}</span>}
+                  </div>
+                </header>
 
-              <div className={styles.dayBody}>
-                {text(day?.content)&&<p className={styles.dayCopy}>{day.content}</p>}
-                <div className={styles.dayMeta}>
-                  <div><span>Breakfast / 早餐</span><strong>{day?.meals?.breakfast||"—"}</strong></div>
-                  <div><span>Lunch / 午餐</span><strong>{day?.meals?.lunch||"—"}</strong></div>
-                  <div><span>Dinner / 晚餐</span><strong>{day?.meals?.dinner||"—"}</strong></div>
-                  {hotel&&<div className={styles.hotelMeta}><span>Hotel / 酒店</span><strong>{hotel}</strong></div>}
+                <div className={styles.dayBody}>
+                  {text(day?.content)&&<p className={styles.dayCopy}>{day.content}</p>}
+                  <div className={styles.dayMeta}>
+                    <div><span>Breakfast / 早餐</span><strong>{day?.meals?.breakfast||"—"}</strong></div>
+                    <div><span>Lunch / 午餐</span><strong>{day?.meals?.lunch||"—"}</strong></div>
+                    <div><span>Dinner / 晚餐</span><strong>{day?.meals?.dinner||"—"}</strong></div>
+                    {hotel&&<div className={styles.hotelMeta}><span>Hotel / 酒店</span><strong>{hotel}</strong></div>}
+                  </div>
                 </div>
-
-                {images.length>0&&<div className={styles.attractionGrid}>
-                  {images.map((img,ii)=><figure className={styles.attractionFigure} key={img.url+ii}>
-                    <div className={styles.attractionImage}><img src={img.url} alt={img.name}/></div>
-                    <figcaption>{img.name}</figcaption>
-                  </figure>)}
-                </div>}
               </div>
+
+              {images.length>0&&<div data-preview-block="day-images" className={styles.attractionGrid}>
+                {images.map((img,ii)=><figure className={styles.attractionFigure} key={img.url+ii}>
+                  <div className={styles.attractionImage}><img src={img.url} alt={img.name}/></div>
+                  <figcaption>{img.name}</figcaption>
+                </figure>)}
+              </div>}
             </article>;
           })}
         </div>
