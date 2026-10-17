@@ -44,8 +44,9 @@ export default function ItineraryExportToolbar({fileName,itineraryId,basePayload
   ),[message,hasManual,autoCoverUrl,language]);
 
   function updatePreview(next:CoverImage|null){
-    const media=document.getElementById("itinerary-cover-media") as HTMLDivElement|null;
-    const root=document.getElementById("itinerary-cover") as HTMLElement|null;
+    const source=document.getElementById("itinerary-print-source");
+    const media=source?.querySelector<HTMLDivElement>("#itinerary-cover-media")||null;
+    const root=source?.querySelector<HTMLElement>("#itinerary-cover")||null;
     if(media){
       const url=next?.url||autoCoverUrl||"";
       media.style.backgroundImage=url?"url(\""+url.replace(/"/g,"%22")+"\")":"";
@@ -53,6 +54,7 @@ export default function ItineraryExportToolbar({fileName,itineraryId,basePayload
       media.style.filter="brightness("+String(Math.min(130,Math.max(70,Number(next?.brightness)||100))/100)+")";
     }
     if(root) root.dataset.overlay=next?.overlay||"standard";
+    window.dispatchEvent(new Event("itinerary-preview-refresh"));
   }
 
   async function persistCover(next:CoverImage|null){
@@ -99,12 +101,20 @@ export default function ItineraryExportToolbar({fileName,itineraryId,basePayload
         overlay:cover?.overlay||"standard",
         brightness:Math.min(130,Math.max(70,Number(cover?.brightness)||100))
       };
+      const previous=cover;
       const previousPath=cover?.path;
-      await persistCover(next);
       setCover(next);
       updatePreview(next);
+      try{
+        await persistCover(next);
+      }catch(error){
+        setCover(previous);
+        updatePreview(previous);
+        throw error;
+      }
       if(previousPath&&previousPath!==next.path) await deleteStored(previousPath);
       setMessage(t("Cover saved","封面已保存"));
+      router.refresh();
     }catch(error:any){
       setMessage(error?.message||t("Unable to save cover.","无法保存封面。"));
     }finally{setSaving(false);}
@@ -120,6 +130,7 @@ export default function ItineraryExportToolbar({fileName,itineraryId,basePayload
     try{
       await persistCover(next);
       setMessage(t("Cover saved","封面已保存"));
+      router.refresh();
     }catch(error:any){
       setCover(previous);
       updatePreview(previous);
@@ -137,6 +148,7 @@ export default function ItineraryExportToolbar({fileName,itineraryId,basePayload
       updatePreview(null);
       await deleteStored(previous.path);
       setMessage(t("Auto cover restored","已恢复自动封面"));
+      router.refresh();
     }catch(error:any){
       setMessage(error?.message||t("Unable to remove cover.","无法移除封面。"));
     }finally{setSaving(false);}
@@ -149,7 +161,12 @@ export default function ItineraryExportToolbar({fileName,itineraryId,basePayload
         <strong>{t("Customer PDF Preview","顾客 PDF 预览")}</strong>
         <span>{t("Review the cover, pagination and images before printing.","打印前可直接调整封面并检查分页与图片。")}</span>
       </div>
-      <button className="btn primary" type="button" onClick={()=>window.print()}>{t("Print / Save PDF","打印 / 保存 PDF")}</button>
+      <button
+        className="btn primary"
+        type="button"
+        disabled={saving}
+        onClick={()=>{updatePreview(cover);requestAnimationFrame(()=>window.print());}}
+      >{saving?t("Saving...","保存中..."):t("Print / Save PDF","打印 / 保存 PDF")}</button>
     </div>
 
     <div className="itinerary-export-cover-controls">
