@@ -22793,12 +22793,6 @@ td,
   max-width:100%;
 }
 
-.itinerary-preview-print-footer{
-  position:absolute!important;
-  display:flex!important;
-  z-index:5!important;
-  pointer-events:none;
-}
 .itinerary-preview-page-inner [data-preview-page="cover"]{
   min-height:255mm!important;
   height:255mm!important;
