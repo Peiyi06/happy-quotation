@@ -110,11 +110,7 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
       initialCover={manualCover}
       autoCoverUrl={autoCoverUrl}
     />
-    <ItineraryPagedPreview
-      sourceId="itinerary-print-source"
-      footerLeft="Happy Express Travel"
-      footerRight={data.itinerary_no||""}
-    />
+    <ItineraryPagedPreview sourceId="itinerary-print-source"/>
     <main id="itinerary-print-source" className={styles.document}>
 
       <section id="itinerary-cover" data-preview-page="cover" data-overlay={coverOverlay} className={styles.cover+(coverImage?" "+styles.coverHasImage:"")}>
@@ -277,7 +273,7 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
         </div>
       </section>}
 
-      <div className={styles.printFooter} aria-hidden="true">
+      <div data-preview-footer className={styles.printFooter} aria-hidden="true">
         <span>Happy Express Travel</span>
         <span>{data.itinerary_no||""}</span>
       </div>
