@@ -22900,3 +22900,37 @@ td,
   }
 }
 
+
+
+/* =========================================================
+   ITINERARY EDITOR — MANUAL JOURNEY ROUTE
+   ========================================================= */
+.itinerary-journey-route-panel .panel-head{align-items:flex-start}
+.itinerary-journey-route-editor{display:flex;align-items:center;flex-wrap:wrap;gap:10px 18px}
+.itinerary-journey-stop-editor{
+  position:relative;display:flex;align-items:center;gap:7px;min-width:285px;
+  padding:8px 9px;border:1px solid #dde3ea;border-radius:12px;background:#fff
+}
+.itinerary-journey-stop-no{
+  display:grid;place-items:center;width:28px;height:28px;flex:0 0 auto;border-radius:50%;
+  background:#173b5c;color:#fff;font-size:11px;font-weight:800
+}
+.itinerary-journey-stop-editor input{
+  min-width:135px;flex:1 1 auto;border:0;outline:0;background:transparent;
+  color:#1d1d1f;font-size:14px;font-weight:650
+}
+.itinerary-journey-stop-actions{display:flex;align-items:center;gap:4px}
+.itinerary-journey-stop-actions button{
+  min-width:28px;height:28px;padding:0 7px;border:1px solid #e1e5ea;border-radius:8px;
+  background:#fff;color:#52606f;cursor:pointer
+}
+.itinerary-journey-stop-actions button:disabled{opacity:.35;cursor:default}
+.itinerary-journey-stop-actions .danger-link{width:auto;color:#c94135}
+.itinerary-journey-arrow{
+  position:absolute;right:-20px;color:#c9a35e;font-weight:800;pointer-events:none
+}
+@media(max-width:900px){
+  .itinerary-journey-route-editor{display:grid}
+  .itinerary-journey-stop-editor{min-width:0;width:100%}
+  .itinerary-journey-arrow{display:none}
+}
