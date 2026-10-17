@@ -10,6 +10,32 @@ export const revalidate=0;
 const text=(value:any)=>String(value??"").trim();
 const list=(value:any)=>Array.isArray(value)?value:[];
 const safeFilePart=(value:any)=>text(value).replace(/[\\/:*?"<>|]+/g," ").replace(/\s+/g," ").trim();
+const cleanRouteStop=(value:any)=>{
+  const raw=text(value);
+  if(!raw) return "";
+  return raw
+    .replace(/^day\s*\d+[:：-]?/i,"")
+    .replace(/\([^)]*\)/g,"")
+    .replace(/[｜|]/g,"→")
+    .split(/→|>|–|—| - /)
+    .map((x:string)=>x.trim())
+    .filter(Boolean)[0]||raw;
+};
+
+const buildJourneyStops=(departure:any,destination:any,days:any[])=>{
+  const candidates=[
+    text(departure),
+    ...days.slice(0,6).map((d:any)=>cleanRouteStop(d?.title)),
+    text(destination)
+  ].filter(Boolean);
+  const unique:string[]=[];
+  for(const item of candidates){
+    if(!unique.some(x=>x.toLowerCase()===item.toLowerCase())) unique.push(item);
+    if(unique.length===6) break;
+  }
+  return unique;
+};
+
 const compactDestination=(value:any)=>{
   const raw=text(value);
   if(!raw) return "";
@@ -94,6 +120,7 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
     itinerary_data:qd
   };
 
+  const journeyStops=buildJourneyStops(qd.departureCity,data.destination,days);
   const destinationLabel=compactDestination(data.destination);
   const durationLabel=data.days_count&&data.nights_count?`${data.days_count}D${data.nights_count}N`:"";
   const customerLabel=safeFilePart(data.customer_name);
@@ -175,6 +202,26 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
           <span>{flights.length?"02":"01"}</span>
           <div><h2>Daily Itinerary</h2><p>每日行程</p></div>
         </div>
+        {pdfStyle==="concept-a"&&journeyStops.length>1&&<div data-preview-block="journey-route" data-keep-next="true" className={styles.conceptAJourneyShell}>
+          <div className={styles.conceptAJourneyMicro} aria-hidden="true">
+            <span className={styles.conceptAJourneyArc}/>
+            <span className={styles.conceptAJourneyGlow}/>
+          </div>
+          <div className={styles.conceptAJourneyHead}>
+            <div>
+              <small>JOURNEY ROUTE</small>
+              <strong>行程路线</strong>
+            </div>
+            <span>{journeyStops.length} Stops</span>
+          </div>
+          <div className={styles.conceptAJourneyTrack}>
+            {journeyStops.map((stop:string,i:number)=><div className={styles.conceptAJourneyStop} key={stop+"-"+i}>
+              <span className={styles.conceptAJourneyNode}>{String(i+1).padStart(2,"0")}</span>
+              <strong>{stop}</strong>
+              {i<journeyStops.length-1&&<i aria-hidden="true"/>}
+            </div>)}
+          </div>
+        </div>}
 
         <div className={styles.dayList}>
           {days.map((day:any,index:number)=>{
