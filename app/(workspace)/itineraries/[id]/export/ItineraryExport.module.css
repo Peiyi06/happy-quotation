@@ -537,3 +537,183 @@
     overflow:visible!important;
   }
 }
+
+
+/* =========================================================
+   ITINERARY PDF — CONCEPT A / ELEGANT EDITORIAL
+   Experimental visual layer. Basic remains untouched.
+   ========================================================= */
+.conceptASectionTitle{
+  margin-bottom:8mm!important;
+}
+.conceptASectionTitle>span{
+  width:12mm!important;
+  height:12mm!important;
+  background:#6f4b8f!important;
+  box-shadow:0 5px 14px rgba(81,53,109,.18);
+}
+.conceptASectionTitle h2{
+  color:#2f2940!important;
+  font-size:19pt!important;
+  letter-spacing:-.02em!important;
+}
+.conceptASectionTitle p{
+  color:#a56b94!important;
+  letter-spacing:.04em!important;
+}
+
+.conceptADay{
+  border-bottom:0!important;
+  padding-bottom:8mm!important;
+}
+.conceptADayCore{
+  padding:0 0 5mm!important;
+  border-bottom:1px solid #eee8f2;
+}
+.conceptADayHeader{
+  grid-template-columns:18mm minmax(0,1fr)!important;
+  gap:4mm!important;
+  align-items:start!important;
+  margin-bottom:4.5mm!important;
+}
+.conceptADayNumber{
+  width:16mm!important;
+  height:16mm!important;
+  border-radius:5mm 5mm 5mm 1.5mm!important;
+  background:linear-gradient(145deg,#5f3f7d,#7a58a0)!important;
+  box-shadow:0 5px 14px rgba(82,55,107,.2);
+}
+.conceptADayNumber small{
+  color:#f1d9e9!important;
+  font-size:5.6pt!important;
+  letter-spacing:.08em!important;
+}
+.conceptADayNumber b{
+  font-size:12pt!important;
+  line-height:1!important;
+}
+.conceptADayHeader>div:last-child{
+  min-width:0;
+}
+.conceptADayHeader h3{
+  display:flex;
+  align-items:center;
+  min-height:10mm;
+  margin:0!important;
+  padding:2.2mm 4mm!important;
+  border-radius:99px;
+  background:linear-gradient(90deg,#e8d8ef 0%,#d7b8dd 100%);
+  color:#463254!important;
+  font-size:14.6pt!important;
+  line-height:1.18!important;
+  letter-spacing:-.015em!important;
+  box-shadow:inset 0 0 0 1px rgba(106,71,132,.08);
+}
+.conceptADayHeader h3:before{
+  content:"●";
+  margin-right:2.2mm;
+  color:#6f4b8f;
+  font-size:6pt;
+  flex:0 0 auto;
+}
+.conceptADayHeader span{
+  margin:1.4mm 0 0 4mm!important;
+  color:#8f8496!important;
+  font-size:8.6pt!important;
+  font-weight:700!important;
+  letter-spacing:.04em!important;
+}
+.conceptADayBody{
+  position:relative;
+  width:100%!important;
+  padding-left:18mm!important;
+}
+.conceptADayBody:before{
+  content:"";
+  position:absolute;
+  left:6.4mm;
+  top:.8mm;
+  bottom:1mm;
+  width:1px;
+  background:linear-gradient(180deg,#c9b4d5 0%,#e8dfee 72%,transparent 100%);
+}
+.conceptADayCopy{
+  position:relative;
+  margin:0 0 4.2mm!important;
+  padding:0 0 0 4mm!important;
+  color:#3f3a46!important;
+  font-size:10.4pt!important;
+  line-height:1.62!important;
+}
+.conceptADayCopy:before{
+  content:"";
+  position:absolute;
+  left:-1.35mm;
+  top:2.5mm;
+  width:2.6mm;
+  height:2.6mm;
+  border-radius:50%;
+  background:#6f4b8f;
+  box-shadow:0 0 0 1.6mm #f5eef7;
+}
+.conceptADayMeta{
+  margin-top:3.5mm!important;
+  border:1px solid #e6dfe9!important;
+  border-radius:3mm!important;
+  overflow:hidden;
+  background:#fcfafc!important;
+  box-shadow:0 5px 16px rgba(51,38,62,.04);
+}
+.conceptADayMeta>div{
+  padding:3.2mm 3.4mm!important;
+  border-right:1px solid #ece6ef!important;
+}
+.conceptADayMeta>div:nth-child(3){
+  border-right:0!important;
+}
+.conceptADayMeta span{
+  color:#8f7f94!important;
+  font-size:7.7pt!important;
+  font-weight:700!important;
+}
+.conceptADayMeta strong{
+  color:#3c3343!important;
+  font-size:9.4pt!important;
+}
+
+.conceptAAttractionGrid{
+  gap:3mm!important;
+  margin-top:4mm!important;
+}
+.conceptAAttractionFigure{
+  position:relative;
+}
+.conceptAAttractionImage{
+  height:49mm!important;
+  border-radius:4mm!important;
+  box-shadow:0 7px 20px rgba(34,25,42,.08);
+}
+.conceptAAttractionFigure figcaption{
+  margin-top:2mm!important;
+  color:#51465a!important;
+  font-size:9.5pt!important;
+  font-weight:750!important;
+  letter-spacing:.005em!important;
+}
+.conceptAAttractionFigure figcaption:before{
+  content:"⌖";
+  margin-right:1.2mm;
+  color:#8b5ca0;
+  font-size:8pt;
+}
+
+@media print{
+  .conceptADayCore{
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+  .conceptAAttractionGrid{
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+}
