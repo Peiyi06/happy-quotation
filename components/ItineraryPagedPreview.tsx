@@ -29,7 +29,7 @@ export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
 
         const newPage=()=>{
           pageNo++;
-          page=createPage(host,pageNo);
+          page=createPage(host,pageNo,footerSource);
         };
 
         const appendClone=(node:HTMLElement)=>{
