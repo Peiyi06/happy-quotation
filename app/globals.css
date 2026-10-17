@@ -22934,3 +22934,193 @@ td,
   .itinerary-journey-stop-editor{min-width:0;width:100%}
   .itinerary-journey-arrow{display:none}
 }
+
+
+
+/* =========================================================
+   ITINERARY EDITOR — JOURNEY ROUTE FOUNDATION
+   Matches the Apple-style workspace foundation.
+   ========================================================= */
+.itinerary-journey-route-panel{
+  border:1px solid #e2e7ed!important;
+  border-radius:16px!important;
+  background:#fff!important;
+  box-shadow:0 8px 24px rgba(23,59,92,.045)!important;
+  padding:18px 18px 20px!important;
+}
+.itinerary-journey-route-panel>.panel-head{
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:space-between!important;
+  gap:16px!important;
+  padding:0 0 14px!important;
+  margin:0 0 14px!important;
+  border-bottom:1px solid #edf0f3!important;
+}
+.itinerary-journey-route-panel>.panel-head h2{
+  margin:0!important;
+  color:#173b5c!important;
+  font-size:18px!important;
+  line-height:1.2!important;
+  font-weight:800!important;
+  letter-spacing:-.01em!important;
+}
+.itinerary-journey-route-panel>.panel-head .panel-subtext{
+  margin:5px 0 0!important;
+  color:#7b8794!important;
+  font-size:12px!important;
+  line-height:1.45!important;
+}
+.itinerary-journey-route-panel>.panel-head .itinerary-add-action{
+  min-height:36px!important;
+  padding:0 14px!important;
+  border:1px solid #d7dee6!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  color:#173b5c!important;
+  box-shadow:0 1px 2px rgba(23,59,92,.04)!important;
+  font-size:13px!important;
+  font-weight:750!important;
+}
+.itinerary-journey-route-panel>.panel-head .itinerary-add-action:hover{
+  background:#f7f9fb!important;
+  border-color:#c8d2dc!important;
+}
+
+.itinerary-journey-route-panel .itinerary-journey-route-editor{
+  display:grid!important;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr))!important;
+  gap:12px!important;
+  align-items:stretch!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-editor{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:34px minmax(0,1fr) auto!important;
+  grid-template-areas:"no input actions"!important;
+  align-items:center!important;
+  gap:9px!important;
+  min-width:0!important;
+  min-height:58px!important;
+  padding:10px 10px!important;
+  border:1px solid #e1e6eb!important;
+  border-radius:13px!important;
+  background:#fbfcfd!important;
+  box-shadow:none!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-editor:focus-within{
+  border-color:#9fb3c7!important;
+  background:#fff!important;
+  box-shadow:0 0 0 3px rgba(23,59,92,.07)!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-no{
+  grid-area:no!important;
+  display:grid!important;
+  place-items:center!important;
+  width:32px!important;
+  height:32px!important;
+  border-radius:10px!important;
+  background:#173b5c!important;
+  color:#fff!important;
+  font-size:11px!important;
+  font-weight:850!important;
+  letter-spacing:.04em!important;
+  box-shadow:0 4px 10px rgba(23,59,92,.12)!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-editor>input{
+  grid-area:input!important;
+  width:100%!important;
+  min-width:0!important;
+  height:36px!important;
+  padding:0 10px!important;
+  border:1px solid transparent!important;
+  border-radius:9px!important;
+  outline:none!important;
+  background:transparent!important;
+  color:#1d1d1f!important;
+  font-size:14px!important;
+  font-weight:650!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-editor>input::placeholder{
+  color:#a2abb5!important;
+  font-weight:500!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-actions{
+  grid-area:actions!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:4px!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-actions>button{
+  display:grid!important;
+  place-items:center!important;
+  min-width:30px!important;
+  width:30px!important;
+  height:30px!important;
+  padding:0!important;
+  border:1px solid #dce2e8!important;
+  border-radius:8px!important;
+  background:#fff!important;
+  color:#566577!important;
+  font-size:13px!important;
+  line-height:1!important;
+  box-shadow:none!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-actions>button:hover:not(:disabled){
+  background:#f3f6f8!important;
+  border-color:#cad3dc!important;
+  color:#173b5c!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-actions>button:disabled{
+  opacity:.28!important;
+  cursor:default!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-actions>.danger-link{
+  width:auto!important;
+  min-width:auto!important;
+  padding:0 9px!important;
+  border-color:#f0d9d6!important;
+  background:#fffafa!important;
+  color:#c34b40!important;
+  font-size:11px!important;
+  font-weight:750!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-arrow{
+  position:absolute!important;
+  right:-18px!important;
+  top:50%!important;
+  transform:translateY(-50%)!important;
+  z-index:2!important;
+  color:#c8a25e!important;
+  font-size:16px!important;
+  font-weight:800!important;
+  pointer-events:none!important;
+}
+.itinerary-journey-route-panel .itinerary-editor-empty{
+  margin:0!important;
+  padding:18px!important;
+  border:1px dashed #d8dfe6!important;
+  border-radius:12px!important;
+  background:#fafbfd!important;
+  color:#8994a0!important;
+  font-size:13px!important;
+}
+
+@media(max-width:760px){
+  .itinerary-journey-route-panel{
+    padding:15px!important;
+  }
+  .itinerary-journey-route-panel>.panel-head{
+    align-items:stretch!important;
+    flex-direction:column!important;
+  }
+  .itinerary-journey-route-panel>.panel-head .itinerary-add-action{
+    align-self:flex-start!important;
+  }
+  .itinerary-journey-route-panel .itinerary-journey-route-editor{
+    grid-template-columns:1fr!important;
+  }
+  .itinerary-journey-route-panel .itinerary-journey-arrow{
+    display:none!important;
+  }
+}
