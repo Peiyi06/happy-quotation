@@ -94,7 +94,7 @@ const buildRouteMapPoints=(stops:string[])=>{
       if(item.geo) return {...item,...project(item.geo.lat,item.geo.lng),mode:"geo"};
       const prev=[...resolved.slice(0,i)].reverse().find((x:any)=>x.geo);
       const next=resolved.slice(i+1).find((x:any)=>x.geo);
-      if(prev&&next){
+      if(prev?.geo&&next?.geo){
         const a=project(prev.geo.lat,prev.geo.lng),b=project(next.geo.lat,next.geo.lng);
         const ratio=(i-prev.index)/(next.index-prev.index);
         return {...item,x:a.x+(b.x-a.x)*ratio,y:a.y+(b.y-a.y)*ratio,mode:"interpolated"};
