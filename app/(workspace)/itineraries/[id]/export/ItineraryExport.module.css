@@ -522,3 +522,51 @@
     page-break-inside:avoid!important;
   }
 }
+
+
+/* =========================================================
+   ITINERARY PDF — GALLERY ALIGNMENT CLEANUP
+   Remove legacy negative-margin expansion after gallery was
+   split out of dayBody. Keep gallery inside A4 safe content box.
+   ========================================================= */
+.dayBody .attractionGrid,
+.day .attractionGrid,
+.attractionGallery .attractionGrid{
+  width:100%!important;
+  max-width:100%!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  box-sizing:border-box!important;
+  overflow:visible!important;
+}
+
+.attractionGrid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+
+.attractionFigure,
+.attractionImage{
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+
+.attractionImage img{
+  width:100%!important;
+  max-width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  display:block!important;
+}
+
+@media print{
+  .dayBody .attractionGrid,
+  .day .attractionGrid,
+  .attractionGallery .attractionGrid{
+    width:100%!important;
+    max-width:100%!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    overflow:visible!important;
+  }
+}
