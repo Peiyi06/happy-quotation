@@ -22,7 +22,7 @@ export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
         const cover=source.querySelector<HTMLElement>('[data-preview-page="cover"]');
         if(cover){
           const shell=createPage(host,1);
-          shell.inner.appendChild(cover.cloneNode(true));
+          shell.inner.appendChild(sanitizeClone(cover));
         }
 
         const blocks=Array.from(source.querySelectorAll<HTMLElement>("[data-preview-block]"));
@@ -38,7 +38,7 @@ export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
         const density=()=>page.inner.scrollHeight/Math.max(1,page.inner.clientHeight);
 
         const appendClone=(node:HTMLElement)=>{
-          const clone=node.cloneNode(true) as HTMLElement;
+          const clone=sanitizeClone(node);
           clone.classList.add("itinerary-preview-clone-block");
           page.inner.appendChild(clone);
           return clone;
@@ -123,6 +123,13 @@ export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
   },[sourceId]);
 
   return <div ref={hostRef} className="itinerary-paged-preview no-print" aria-label="A4 PDF page preview"/>;
+}
+
+function sanitizeClone(node:HTMLElement){
+  const clone=node.cloneNode(true) as HTMLElement;
+  if(clone.id) clone.removeAttribute("id");
+  clone.querySelectorAll<HTMLElement>("[id]").forEach(el=>el.removeAttribute("id"));
+  return clone;
 }
 
 function createPage(host:HTMLDivElement,pageNo:number){
