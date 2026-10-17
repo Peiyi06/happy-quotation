@@ -22794,18 +22794,9 @@ td,
 }
 
 .itinerary-preview-print-footer{
-  position:absolute;
-  left:12mm;
-  right:12mm;
-  bottom:5mm;
-  display:flex;
-  justify-content:space-between;
-  padding-top:2mm;
-  border-top:1px solid #d9c89d;
-  background:#fffdfa;
-  color:#8a93a0;
-  font-size:6.7pt;
-  z-index:5;
+  position:absolute!important;
+  display:flex!important;
+  z-index:5!important;
   pointer-events:none;
 }
 .itinerary-preview-page-inner [data-preview-page="cover"]{
