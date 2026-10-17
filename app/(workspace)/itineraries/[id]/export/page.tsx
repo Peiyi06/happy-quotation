@@ -80,6 +80,61 @@ const routeParts=(value:any)=>text(value)
   .map((x:string)=>x.trim())
   .filter(Boolean);
 
+const ROUTE_CITY_ALIASES:Array<{aliases:string[];label:string}>=[
+  {aliases:["kul","klia","kuala lumpur","吉隆坡"],label:"吉隆坡"},
+  {aliases:["ckg","chongqing","chongqing jiangbei","重庆江北","重庆","重慶"],label:"重庆"},
+  {aliases:["kix","kansai","kansai international airport","关西国际机场","關西國際機場"],label:"大阪"},
+  {aliases:["osaka","大阪"],label:"大阪"},
+  {aliases:["kyoto","京都"],label:"京都"},
+  {aliases:["nara","奈良"],label:"奈良"},
+  {aliases:["cnx","chiang mai","chiang mai international airport","清迈","清邁"],label:"清迈"},
+  {aliases:["chiang rai","清莱","清萊"],label:"清莱"},
+  {aliases:["bkk","dmk","bangkok","suvarnabhumi","don mueang","曼谷"],label:"曼谷"},
+  {aliases:["han","hanoi","noi bai","河内","河內"],label:"河内"},
+  {aliases:["wulong","武隆"],label:"武隆"},
+  {aliases:["pengshui","彭水"],label:"彭水"},
+  {aliases:["dazu","大足"],label:"大足"},
+  {aliases:["chengdu","成都"],label:"成都"},
+  {aliases:["jiuzhaigou","九寨沟","九寨溝"],label:"九寨沟"},
+  {aliases:["leshan","乐山","樂山"],label:"乐山"},
+  {aliases:["emei","峨眉山","mount emei","mt. e'mei"],label:"峨眉山"}
+];
+
+const routeCityLabel=(value:any)=>{
+  const raw=text(value).replace(/^中国\s*/,"").replace(/^China\s*/i,"").trim();
+  const key=normalizeRouteLabel(raw);
+  if(!key) return "";
+  const match=ROUTE_CITY_ALIASES.find(item=>item.aliases.some(alias=>{
+    const a=normalizeRouteLabel(alias);
+    return key===a||key.includes(a)||a.includes(key);
+  }));
+  return match?.label||raw;
+};
+
+const buildJourneyRouteSequence=(flights:any[],days:any[])=>{
+  const result:string[]=[];
+  const push=(value:any)=>{
+    const label=routeCityLabel(value);
+    if(!label) return;
+    if(result[result.length-1]!==label) result.push(label);
+  };
+
+  // 1) International / starting city comes from the outbound flight.
+  push(flights?.[0]?.from);
+
+  // 2) Each day contributes only its final destination / overnight city.
+  //    Example: 彭水 → 大足 → 重庆 contributes 重庆, not every intermediate stop.
+  for(const day of days){
+    const parts=routeParts(day?.title);
+    if(parts.length) push(parts[parts.length-1]);
+  }
+
+  // 3) Return city comes from the final flight destination.
+  push(flights?.[flights.length-1]?.to);
+
+  return result;
+};
+
 const canonicalRouteLabel=(value:any)=>{
   const raw=text(value);
   const key=normalizeRouteLabel(raw).replace(/^中国\s*/,"").replace(/^china\s*/,"");
@@ -259,6 +314,7 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
   };
 
   const journeyStops=buildJourneyStops(qd.departureCity,data.destination,days);
+  const journeyRouteSequence=buildJourneyRouteSequence(flights,days);
   const localJourneyStops=buildLocalJourneyStops(flights,days,data.destination);
   const localJourneyLabels=localJourneyStops.map((x:any)=>x.geoLabel);
   const journeyMapPoints=buildRouteMapPoints(localJourneyLabels).map((p:any,i:number)=>({...p,label:localJourneyStops[i]?.label||p.label,kind:localJourneyStops[i]?.kind||"stop"}));
@@ -345,16 +401,16 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
             </div>
           </div>
 
-          {localJourneyStops.length>1&&<div className={styles.conceptAOverviewJourney}>
+          {journeyRouteSequence.length>1&&<div className={styles.conceptAOverviewJourney}>
             <div className={styles.conceptAJourneyHead}>
               <div><small>JOURNEY ROUTE</small><strong>行程路线</strong></div>
-              <span>{localJourneyStops.length} Stops</span>
+              <span>{journeyRouteSequence.length} Stops</span>
             </div>
             <div className={styles.conceptAJourneyTrack}>
-              {localJourneyStops.map((item:any,i:number)=><div className={styles.conceptAJourneyStop} key={item.label+"-overview-"+i}>
+              {journeyRouteSequence.map((stop:string,i:number)=><div className={styles.conceptAJourneyStop} key={stop+"-overview-"+i}>
                 <span className={styles.conceptAJourneyNode}>{String(i+1).padStart(2,"0")}</span>
-                <strong>{item.label}</strong>
-                {i<localJourneyStops.length-1&&<i aria-hidden="true"/>}
+                <strong>{stop}</strong>
+                {i<journeyRouteSequence.length-1&&<i aria-hidden="true"/>}
               </div>)}
             </div>
           </div>}
