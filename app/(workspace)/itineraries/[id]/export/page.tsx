@@ -4,6 +4,9 @@ import ItineraryExportToolbar from "@/components/ItineraryExportToolbar";
 import ItineraryPagedPreview from "@/components/ItineraryPagedPreview";
 import styles from "./ItineraryExport.module.css";
 
+export const dynamic="force-dynamic";
+export const revalidate=0;
+
 const text=(value:any)=>String(value??"").trim();
 const list=(value:any)=>Array.isArray(value)?value:[];
 const safeFilePart=(value:any)=>text(value).replace(/[\\/:*?"<>|]+/g," ").replace(/\s+/g," ").trim();
