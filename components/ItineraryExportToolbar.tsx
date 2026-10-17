@@ -31,8 +31,14 @@ export default function ItineraryExportToolbar({fileName,itineraryId,basePayload
 
   useEffect(()=>{
     const previous=document.title;
-    document.title=fileName||"Happy Express Travel - Itinerary";
-    return ()=>{document.title=previous;};
+    const nextTitle=fileName||"Happy Express Travel - Itinerary";
+    const applyPrintTitle=()=>{document.title=nextTitle;};
+    document.title=nextTitle;
+    window.addEventListener("beforeprint",applyPrintTitle);
+    return ()=>{
+      window.removeEventListener("beforeprint",applyPrintTitle);
+      document.title=previous;
+    };
   },[fileName]);
 
   const currentPosition=cover?.position||"center";
@@ -154,6 +160,22 @@ export default function ItineraryExportToolbar({fileName,itineraryId,basePayload
     }finally{setSaving(false);}
   }
 
+  function printWithFoundationName(){
+    updatePreview(cover);
+    const nextTitle=fileName||"Happy Express Travel - Itinerary";
+    document.title=nextTitle;
+    const restoreTitle=()=>{
+      // Keep export page title aligned with the PDF naming foundation after printing.
+      document.title=nextTitle;
+      window.removeEventListener("afterprint",restoreTitle);
+    };
+    window.addEventListener("afterprint",restoreTitle);
+    requestAnimationFrame(()=>{
+      document.title=nextTitle;
+      requestAnimationFrame(()=>window.print());
+    });
+  }
+
   return <div className="itinerary-export-toolbar-wrap no-print">
     <div className="itinerary-export-toolbar">
       <button className="btn" type="button" onClick={()=>router.back()}>{t("‹ Back","‹ 返回")}</button>
@@ -165,7 +187,7 @@ export default function ItineraryExportToolbar({fileName,itineraryId,basePayload
         className="btn primary"
         type="button"
         disabled={saving}
-        onClick={()=>{updatePreview(cover);requestAnimationFrame(()=>window.print());}}
+        onClick={printWithFoundationName}
       >{saving?t("Saving...","保存中..."):t("Print / Save PDF","打印 / 保存 PDF")}</button>
     </div>
 
