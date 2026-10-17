@@ -141,9 +141,6 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   const [journeyRoute,setJourneyRoute]=useState<string[]>(
     Array.isArray(data.journeyRoute)?data.journeyRoute.map((x:any)=>String(x??"").trim()).filter(Boolean):[]
   );
-  const [journeyRoute,setJourneyRoute]=useState<string[]>(
-    Array.isArray(data.journeyRoute)?data.journeyRoute.map((x:any)=>String(x??"").trim()).filter(Boolean):[]
-  );
   const [days,setDays]=useState<DayItem[]>(initialDays);
   const [hotels,setHotels]=useState<HotelItem[]>(
     Array.isArray(data.hotels)?data.hotels.map((h:any)=>({
@@ -314,28 +311,6 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
 
   function removeFlight(id:string){
     setSuggestedFlights(items=>items.filter(f=>f.id!==id));
-  }
-
-  function addJourneyStop(){
-    setJourneyRoute(items=>[...items,""]);
-  }
-
-  function patchJourneyStop(index:number,value:string){
-    setJourneyRoute(items=>items.map((item,i)=>i===index?value:item));
-  }
-
-  function removeJourneyStop(index:number){
-    setJourneyRoute(items=>items.filter((_,i)=>i!==index));
-  }
-
-  function moveJourneyStop(index:number,dir:-1|1){
-    setJourneyRoute(items=>{
-      const target=index+dir;
-      if(target<0||target>=items.length) return items;
-      const next=[...items];
-      [next[index],next[target]]=[next[target],next[index]];
-      return next;
-    });
   }
 
   function addJourneyStop(){
@@ -934,29 +909,6 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
           <td><button type="button" className="danger-link" onClick={()=>removeFlight(f.id)}>{t("Delete","删除")}</button></td>
         </tr>)}</tbody>
       </table></div> : <div className="itinerary-attraction-empty itinerary-editor-empty">{t("No suggested flights yet. Add one when needed.","尚未填写建议航班。需要时可新增航班。")}</div>}
-    </section>
-
-    <section className="panel itinerary-journey-route-panel">
-      <div className="panel-head">
-        <div>
-          <h2>{t("Journey Route","行程路线")}</h2>
-          <p className="panel-subtext">{t("Set the exact route shown in the customer PDF. Stops stay in the order you enter them and duplicates are allowed.","手动设定顾客 PDF 显示的行程路线。系统会按照输入顺序显示，并允许重复地点。")}</p>
-        </div>
-        <button className="btn itinerary-add-action" type="button" onClick={addJourneyStop}>{t("+ Add Stop","+ 新增节点")}</button>
-      </div>
-
-      {journeyRoute.length>0?<div className="itinerary-journey-route-editor">
-        {journeyRoute.map((stop,index)=><div className="itinerary-journey-stop-editor" key={"journey-stop-"+index}>
-          <span className="itinerary-journey-stop-no">{String(index+1).padStart(2,"0")}</span>
-          <input value={stop} onChange={e=>patchJourneyStop(index,e.target.value)} placeholder={t("e.g. Chongqing","例如：重庆")}/>
-          <div className="itinerary-journey-stop-actions">
-            <button type="button" onClick={()=>moveJourneyStop(index,-1)} disabled={index===0} aria-label={t("Move left","向前移动")}>←</button>
-            <button type="button" onClick={()=>moveJourneyStop(index,1)} disabled={index===journeyRoute.length-1} aria-label={t("Move right","向后移动")}>→</button>
-            <button type="button" className="danger-link" onClick={()=>removeJourneyStop(index)}>{t("Delete","删除")}</button>
-          </div>
-          {index<journeyRoute.length-1&&<span className="itinerary-journey-arrow">→</span>}
-        </div>)}
-      </div>:<div className="itinerary-attraction-empty itinerary-editor-empty">{t("No journey route yet. Add the first stop to start the route.","尚未填写行程路线。点击新增节点开始编辑。")}</div>}
     </section>
 
     <section className="panel itinerary-journey-route-panel">
