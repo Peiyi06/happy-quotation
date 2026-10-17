@@ -458,7 +458,7 @@
 .itinerary-detail-attractions h4{margin:0 0 10px;color:var(--navy2);font-size:14px}
 .itinerary-detail-attraction-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .itinerary-detail-attraction{border:1px solid var(--color-border-default);border-radius:10px;background:var(--color-bg-surface);overflow:hidden}
-.itinerary-detail-attraction img{width:100%;height:140px;object-fit:cover;display:block}
+.itinerary-detail-attraction img{width:160px;max-width:100%;aspect-ratio:4/3;height:auto;object-fit:cover;object-position:center;border-radius:8px;display:block;margin:6px 6px 0}
 .itinerary-detail-attraction strong{display:block;padding:9px 10px;color:var(--navy2);font-size:12px}
 @media(max-width:1100px){.itinerary-attraction-row{grid-template-columns:42px 1fr 1fr}.itinerary-attraction-preview,.itinerary-attraction-actions{grid-column:2/-1}.itinerary-detail-meta{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.itinerary-day-main-grid,.itinerary-meal-grid{grid-template-columns:1fr}.itinerary-subhead{align-items:flex-start;flex-direction:column}.itinerary-attraction-row{grid-template-columns:1fr}.itinerary-attraction-index,.itinerary-attraction-preview,.itinerary-attraction-actions{grid-column:auto}.itinerary-attraction-preview{width:100%;height:180px}.itinerary-detail-meta,.itinerary-detail-attraction-grid{grid-template-columns:1fr}}
@@ -510,11 +510,11 @@
 .itinerary-hotel-detail-meta span{display:block;font-size:10px;color:var(--muted);margin-bottom:4px}
 .itinerary-hotel-detail-meta strong{font-size:12px;color:var(--navy2)}
 .itinerary-hotel-notes{margin:12px 0 0;white-space:pre-wrap;color:var(--text);font-size:13px;line-height:1.6}
-.itinerary-hotel-detail-images{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
-.itinerary-hotel-detail-images img{width:100%;aspect-ratio:4/3;height:auto;object-fit:cover;object-position:center;border-radius:10px;display:block;background:#f5f7f9}
+.itinerary-hotel-detail-images{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,160px));gap:10px;margin-top:14px;justify-content:start;align-items:start}
+.itinerary-hotel-detail-images img{width:160px;max-width:100%;aspect-ratio:4/3;height:auto;object-fit:cover;object-position:center;border-radius:10px;display:block;background:#f5f7f9}
 @media(max-width:1100px){.itinerary-hotel-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.itinerary-hotel-detail-meta{grid-template-columns:repeat(3,minmax(0,1fr))}.itinerary-hotel-image-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:760px){.itinerary-hotel-grid,.itinerary-hotel-detail-meta{grid-template-columns:1fr}.itinerary-hotel-detail-images{grid-template-columns:repeat(2,minmax(0,1fr))}.itinerary-hotel-image-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.itinerary-hotel-head{align-items:flex-start;flex-direction:column}}
-@media(max-width:520px){.itinerary-hotel-detail-images{grid-template-columns:1fr}}
+@media(max-width:760px){.itinerary-hotel-grid,.itinerary-hotel-detail-meta{grid-template-columns:1fr}.itinerary-hotel-detail-images{grid-template-columns:repeat(auto-fill,minmax(140px,150px))}.itinerary-hotel-detail-images img{width:150px}.itinerary-hotel-image-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.itinerary-hotel-head{align-items:flex-start;flex-direction:column}}
+@media(max-width:520px){.itinerary-hotel-detail-images{grid-template-columns:repeat(2,minmax(0,1fr))}.itinerary-hotel-detail-images img{width:100%}}
 
 .itinerary-day-title-wrap{display:flex;align-items:center;gap:12px;min-width:0}
 .itinerary-day-title-wrap>div{display:flex;flex-direction:column;gap:2px}
