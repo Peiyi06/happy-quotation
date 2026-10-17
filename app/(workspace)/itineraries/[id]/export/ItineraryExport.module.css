@@ -1428,3 +1428,58 @@
     page-break-inside:avoid!important;
   }
 }
+
+
+/* =========================================================
+   CONCEPT A — OVERVIEW STACK REFINEMENT
+   Reading order: Flight Information → Journey Route → Route Map.
+   ========================================================= */
+.conceptAOverviewStack{
+  display:grid;
+  gap:4mm;
+}
+.conceptAOverviewFlights,
+.conceptAOverviewMapCard{
+  min-height:0!important;
+}
+.conceptAOverviewFlights{
+  padding:3.5mm 3.8mm!important;
+}
+.conceptACompactFlightList{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:3mm!important;
+}
+.conceptACompactFlight{
+  min-height:39mm;
+}
+.conceptAOverviewJourney{
+  margin-top:0!important;
+  padding:3.2mm 4mm 3.6mm!important;
+}
+.conceptAOverviewMapCard{
+  padding:3.5mm 3.8mm 3.2mm!important;
+}
+.conceptARouteMap{
+  border-radius:3.6mm!important;
+}
+.conceptARouteMap svg{
+  width:100%!important;
+  max-height:92mm;
+}
+.conceptAMapLegend{
+  margin-top:2mm!important;
+}
+@media print{
+  .conceptAOverviewStack{
+    gap:3.5mm!important;
+  }
+  .conceptACompactFlightList{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .conceptAOverviewFlights,
+  .conceptAOverviewJourney,
+  .conceptAOverviewMapCard{
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+}
