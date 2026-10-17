@@ -920,18 +920,29 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
         <button className="btn itinerary-add-action" type="button" onClick={addJourneyStop}>{t("+ Add Stop","+ 新增节点")}</button>
       </div>
 
-      {journeyRoute.length>0?<div className="itinerary-journey-route-editor">
-        {journeyRoute.map((stop,index)=><div className="itinerary-journey-stop-editor" key={"journey-stop-"+index}>
-          <span className="itinerary-journey-stop-no">{String(index+1).padStart(2,"0")}</span>
-          <input value={stop} onChange={e=>patchJourneyStop(index,e.target.value)} placeholder={t("e.g. Chongqing","例如：重庆")}/>
-          <div className="itinerary-journey-stop-actions">
-            <button type="button" onClick={()=>moveJourneyStop(index,-1)} disabled={index===0} aria-label={t("Move earlier","向前移动")}>←</button>
-            <button type="button" onClick={()=>moveJourneyStop(index,1)} disabled={index===journeyRoute.length-1} aria-label={t("Move later","向后移动")}>→</button>
-            <button type="button" className="danger-link" onClick={()=>removeJourneyStop(index)}>{t("Delete","删除")}</button>
-          </div>
-          {index<journeyRoute.length-1&&<span className="itinerary-journey-arrow">→</span>}
-        </div>)}
-      </div>:<div className="itinerary-attraction-empty itinerary-editor-empty">{t("No journey route yet. Add the first stop to start the route.","尚未填写行程路线。点击新增节点开始编辑。")}</div>}
+      {journeyRoute.length>0?<>
+        <div className="itinerary-journey-route-preview" aria-label={t("Route preview","路线预览")}>
+          {journeyRoute.map((stop,index)=><div className="itinerary-journey-preview-stop" key={"journey-preview-"+index}>
+            <span>{String(index+1).padStart(2,"0")}</span>
+            <strong>{stop.trim()||t("Untitled","未命名")}</strong>
+            {index<journeyRoute.length-1&&<i>→</i>}
+          </div>)}
+        </div>
+        <div className="itinerary-journey-route-editor">
+          {journeyRoute.map((stop,index)=><div className="itinerary-journey-stop-editor" key={"journey-stop-"+index}>
+            <span className="itinerary-journey-stop-no">{String(index+1).padStart(2,"0")}</span>
+            <label className="field itinerary-journey-stop-field">
+              <span>{t("Stop","地点")}</span>
+              <input value={stop} onChange={e=>patchJourneyStop(index,e.target.value)} placeholder={t("e.g. Chongqing","例如：重庆")}/>
+            </label>
+            <div className="itinerary-journey-stop-actions">
+              <button className="btn journey-order-btn" type="button" onClick={()=>moveJourneyStop(index,-1)} disabled={index===0} aria-label={t("Move earlier","向前移动")} title={t("Move earlier","向前移动")}>←</button>
+              <button className="btn journey-order-btn" type="button" onClick={()=>moveJourneyStop(index,1)} disabled={index===journeyRoute.length-1} aria-label={t("Move later","向后移动")} title={t("Move later","向后移动")}>→</button>
+              <button className="btn journey-delete-btn" type="button" onClick={()=>removeJourneyStop(index)}>{t("Delete","删除")}</button>
+            </div>
+          </div>)}
+        </div>
+      </>:<div className="itinerary-attraction-empty itinerary-editor-empty">{t("No journey route yet. Add the first stop to start the route.","尚未填写行程路线。点击新增节点开始编辑。")}</div>}
     </section>
 
     <section className="panel">
