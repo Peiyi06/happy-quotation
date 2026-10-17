@@ -181,9 +181,11 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
             const images=representativeAttractions(day);
             const hotel=text(day?.hotel)&&text(day?.hotel)!=="-"?text(day.hotel):"";
             const date=dayDate(qd.travelStartDate||"",index);
-            return <article className={styles.day+(pdfStyle==="concept-a"?" "+styles.conceptADay:"")} key={day?.id||index}>
+            const conceptAPilot=pdfStyle==="concept-a"&&index<2;
+            const highlightNames=conceptAPilot?list(day?.attractions).map((a:any)=>text(a?.name)).filter(Boolean).slice(0,3):[];
+            return <article className={styles.day+(pdfStyle==="concept-a"?" "+styles.conceptADay:"")+(conceptAPilot?" "+styles.conceptAPilotDay:"")} key={day?.id||index}>
               <div data-preview-block="day-core" className={styles.dayCore+(pdfStyle==="concept-a"?" "+styles.conceptADayCore:"")}>
-                <header className={styles.dayHeader+(pdfStyle==="concept-a"?" "+styles.conceptADayHeader:"")}>
+                <header className={styles.dayHeader+(pdfStyle==="concept-a"?" "+styles.conceptADayHeader:"")+(conceptAPilot?" "+styles.conceptAPilotHeader:"")}>
                   <div className={styles.dayNumber+(pdfStyle==="concept-a"?" "+styles.conceptADayNumber:"")}><small>DAY</small><b>{String(index+1).padStart(2,"0")}</b></div>
                   <div>
                     <h3>{day?.title||`Day ${index+1}`}</h3>
@@ -193,6 +195,10 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
 
                 <div className={styles.dayBody+(pdfStyle==="concept-a"?" "+styles.conceptADayBody:"")}>
                   {text(day?.content)&&<p className={styles.dayCopy+(pdfStyle==="concept-a"?" "+styles.conceptADayCopy:"")}>{day.content}</p>}
+                  {highlightNames.length>0&&<div className={styles.conceptAHighlights}>
+                    <span className={styles.conceptAHighlightsLabel}>Highlights</span>
+                    <div>{highlightNames.map((name:string)=><span className={styles.conceptAHighlightChip} key={name}>{name}</span>)}</div>
+                  </div>}
                   <div className={styles.dayMeta+(pdfStyle==="concept-a"?" "+styles.conceptADayMeta:"")}>
                     <div><span>Breakfast / 早餐</span><strong>{day?.meals?.breakfast||"—"}</strong></div>
                     <div><span>Lunch / 午餐</span><strong>{day?.meals?.lunch||"—"}</strong></div>
@@ -203,7 +209,32 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
               </div>
 
               {images.length>0&&<div className={styles.attractionGallery}>
-                {Array.from({length:Math.ceil(images.length/2)},(_,rowIndex)=>{
+                {conceptAPilot?<>
+                  <div
+                    data-preview-block="gallery-row"
+                    data-day-number={String(index+1).padStart(2,"0")}
+                    data-day-title={day?.title||`Day ${index+1}`}
+                    data-gallery-row="hero"
+                    className={styles.conceptAHeroGallery}
+                  >
+                    <figure className={styles.conceptAHeroFigure}>
+                      <div className={styles.conceptAHeroImage}><img src={images[0].url} alt={images[0].name}/></div>
+                      <figcaption><span>Featured Stop</span><strong>{images[0].name}</strong></figcaption>
+                    </figure>
+                  </div>
+                  {images.length>1&&<div
+                    data-preview-block="gallery-row"
+                    data-day-number={String(index+1).padStart(2,"0")}
+                    data-day-title={day?.title||`Day ${index+1}`}
+                    data-gallery-row="support"
+                    className={styles.conceptASupportGallery}
+                  >
+                    {images.slice(1,3).map((img,ii)=><figure className={styles.conceptASupportFigure} key={img.url+ii}>
+                      <div className={styles.conceptASupportImage}><img src={img.url} alt={img.name}/></div>
+                      <figcaption>{img.name}</figcaption>
+                    </figure>)}
+                  </div>}
+                </>:Array.from({length:Math.ceil(images.length/2)},(_,rowIndex)=>{
                   const row=images.slice(rowIndex*2,rowIndex*2+2);
                   return <div
                     data-preview-block="gallery-row"
