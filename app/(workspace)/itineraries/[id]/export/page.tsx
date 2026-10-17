@@ -314,7 +314,8 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
   };
 
   const journeyStops=buildJourneyStops(qd.departureCity,data.destination,days);
-  const journeyRouteSequence=buildJourneyRouteSequence(flights,days);
+  const manualJourneyRoute=list(qd.journeyRoute).map((x:any)=>text(x)).filter(Boolean);
+  const journeyRouteSequence=manualJourneyRoute.length?manualJourneyRoute:buildJourneyRouteSequence(flights,days);
   const localJourneyStops=buildLocalJourneyStops(flights,days,data.destination);
   const localJourneyLabels=localJourneyStops.map((x:any)=>x.geoLabel);
   const journeyMapPoints=buildRouteMapPoints(localJourneyLabels).map((p:any,i:number)=>({...p,label:localJourneyStops[i]?.label||p.label,kind:localJourneyStops[i]?.kind||"stop"}));
