@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {useWorkspaceLanguage} from "@/components/WorkspaceLanguage";
 
 type CoverImage={
@@ -19,10 +19,12 @@ type Props={
   basePayload:any;
   initialCover:CoverImage|null;
   autoCoverUrl:string;
+  pdfStyle:"basic"|"concept-a"|"concept-b"|"concept-c";
 };
 
-export default function ItineraryExportToolbar({fileName,itineraryId,basePayload,initialCover,autoCoverUrl}:Props){
+export default function ItineraryExportToolbar({fileName,itineraryId,basePayload,initialCover,autoCoverUrl,pdfStyle}:Props){
   const router=useRouter();
+  const pathname=usePathname();
   const {language}=useWorkspaceLanguage();
   const t=(en:string,zh:string)=>language==="zh"?zh:en;
   const [cover,setCover]=useState<CoverImage|null>(initialCover);
@@ -160,6 +162,22 @@ export default function ItineraryExportToolbar({fileName,itineraryId,basePayload
     }finally{setSaving(false);}
   }
 
+  function selectPdfStyle(next:Props["pdfStyle"]){
+    if(next===pdfStyle) return;
+    const params=new URLSearchParams(window.location.search);
+    if(next==="basic") params.delete("pdfStyle");
+    else params.set("pdfStyle",next);
+    const query=params.toString();
+    router.replace(pathname+(query?"?"+query:""),{scroll:false});
+  }
+
+  const styleOptions:Array<{id:Props["pdfStyle"];en:string;zh:string;status:"locked"|"draft"}>=[
+    {id:"basic",en:"Basic",zh:"基础版",status:"locked"},
+    {id:"concept-a",en:"Concept A",zh:"方案 A",status:"draft"},
+    {id:"concept-b",en:"Concept B",zh:"方案 B",status:"draft"},
+    {id:"concept-c",en:"Concept C",zh:"方案 C",status:"draft"}
+  ];
+
   function printWithFoundationName(){
     updatePreview(cover);
     const nextTitle=fileName||"Happy Express Travel - Itinerary";
@@ -189,6 +207,26 @@ export default function ItineraryExportToolbar({fileName,itineraryId,basePayload
         disabled={saving}
         onClick={printWithFoundationName}
       >{saving?t("Saving...","保存中..."):t("Print / Save PDF","打印 / 保存 PDF")}</button>
+    </div>
+
+    <div className="itinerary-export-style-row">
+      <div className="itinerary-export-style-copy">
+        <strong>{t("PDF Style","PDF 版式")}</strong>
+        <span>{t("Basic is locked. Concepts A–C are reserved for visual design trials.","基础版已锁定；方案 A–C 用于接下来的视觉设计测试。")}</span>
+      </div>
+      <div className="itinerary-export-style-switch" role="tablist" aria-label={t("PDF style","PDF 版式")}>
+        {styleOptions.map(option=><button
+          key={option.id}
+          type="button"
+          role="tab"
+          aria-selected={pdfStyle===option.id}
+          className={"itinerary-export-style-option "+(pdfStyle===option.id?"active":"")}
+          onClick={()=>selectPdfStyle(option.id)}
+        >
+          <span>{t(option.en,option.zh)}</span>
+          <small>{option.status==="locked"?t("Locked","已锁定"):t("Draft","草稿")}</small>
+        </button>)}
+      </div>
     </div>
 
     <div className="itinerary-export-cover-controls">
