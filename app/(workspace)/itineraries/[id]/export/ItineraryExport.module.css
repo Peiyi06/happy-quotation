@@ -38,7 +38,6 @@
   font-size:6.7pt;
   z-index:1000;
 }
-@page itineraryCustomer{size:A4 portrait;margin:12mm 15mm 16mm}
 @media print{.screen{min-height:0!important;height:auto!important;padding:0;background:#fff;overflow:visible}.document{width:auto;min-height:0!important;height:auto!important;margin:0;padding:0!important;box-shadow:none;background:#fffdfa;print-color-adjust:exact;-webkit-print-color-adjust:exact}.cover{min-height:255mm;print-color-adjust:exact;-webkit-print-color-adjust:exact}.coverContent{min-height:255mm}.overviewPage{margin-bottom:8mm;break-after:auto!important;page-break-after:auto!important}.dailySection{margin-bottom:0}.day{break-inside:avoid-page!important;page-break-inside:avoid!important}.dayHeader,.dayMeta,.sectionTitle{break-inside:avoid;page-break-inside:avoid}.hotelSection{margin-top:0!important;break-before:page!important;page-break-before:always!important}.finalSection{margin-top:10mm!important;break-before:auto!important;page-break-before:auto!important;break-inside:avoid-page!important;page-break-inside:avoid!important;padding-bottom:10mm!important}.hotelCard,.flightRow,.attractionFigure,.reminders>div{break-inside:avoid-page;page-break-inside:avoid}.printFooter{display:flex}}
 @media(max-width:900px){.screen{padding:12px;overflow-x:auto}.document{width:210mm}}
 
@@ -213,34 +212,6 @@
 }
 .cover[data-overlay="strong"] .coverOverlay{
   background:linear-gradient(180deg,rgba(8,24,40,.58) 0%,rgba(8,24,40,.42) 30%,rgba(8,24,40,.60) 58%,rgba(8,24,40,.88) 78%,rgba(8,24,40,.96) 100%)!important;
-}
-
-
-/* =========================================================
-   ITINERARY PDF — ATTRACTION GRID HORIZONTAL ALIGNMENT
-   Keep text/meta indented, but let image gallery use the full
-   day content width so the visual grid is centered on the page.
-   ========================================================= */
-.dayBody .attractionGrid{
-  width:calc(100% + 17mm)!important;
-  max-width:none!important;
-  margin-left:-17mm!important;
-  margin-right:0!important;
-  box-sizing:border-box!important;
-}
-
-.dayBody .attractionFigure,
-.dayBody .attractionImage{
-  min-width:0!important;
-  max-width:100%!important;
-}
-
-@media print{
-  .dayBody .attractionGrid{
-    width:calc(100% + 17mm)!important;
-    max-width:none!important;
-    margin-left:-17mm!important;
-  }
 }
 
 
@@ -449,13 +420,6 @@
   font-size:10pt!important;
 }
 
-.dayBody .attractionGrid,
-.day .attractionGrid{
-  width:calc(100% + 14mm)!important;
-  max-width:none!important;
-  margin-left:-14mm!important;
-}
-
 @page itineraryCustomer{
   size:A4 portrait;
   margin:12mm 12mm 16mm;
@@ -469,16 +433,6 @@
   .dayCore{
     break-inside:avoid-page!important;
     page-break-inside:avoid!important;
-  }
-  .dayBody .attractionGrid,
-  .day .attractionGrid{
-    width:calc(100% + 14mm)!important;
-    max-width:none!important;
-    margin-left:-14mm!important;
-  }
-  .printFooter{
-    left:12mm!important;
-    right:12mm!important;
   }
 }
 
