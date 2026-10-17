@@ -16,20 +16,19 @@ export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
         if(!host||!source) return;
         host.innerHTML="";
 
-        const footerSource=source.querySelector<HTMLElement>("[data-preview-footer]");
         const cover=source.querySelector<HTMLElement>('[data-preview-page="cover"]');
         if(cover){
-          const shell=createPage(host,1,footerSource);
+          const shell=createPage(host,1);
           shell.inner.appendChild(sanitizeClone(cover));
         }
 
         const blocks=Array.from(source.querySelectorAll<HTMLElement>("[data-preview-block]"));
         let pageNo=cover?2:1;
-        let page=createPage(host,pageNo,footerSource);
+        let page=createPage(host,pageNo);
 
         const newPage=()=>{
           pageNo++;
-          page=createPage(host,pageNo,footerSource);
+          page=createPage(host,pageNo);
         };
 
         const appendClone=(node:HTMLElement)=>{
@@ -114,8 +113,7 @@ function sanitizeClone(node:HTMLElement){
 
 function createPage(
   host:HTMLDivElement,
-  pageNo:number,
-  footerSource:HTMLElement|null
+  pageNo:number
 ){
   const page=document.createElement("section");
   page.className="itinerary-preview-page";
@@ -128,14 +126,8 @@ function createPage(
   const inner=document.createElement("div");
   inner.className="itinerary-preview-page-inner";
 
-  const footer=footerSource?sanitizeClone(footerSource):null;
-  if(footer){
-    footer.classList.add("itinerary-preview-print-footer");
-  }
-
   page.appendChild(label);
   page.appendChild(inner);
-  if(footer) page.appendChild(footer);
   host.appendChild(page);
   return {page,inner};
 }
