@@ -23124,3 +23124,171 @@ td,
     display:none!important;
   }
 }
+
+
+/* =========================================================
+   ITINERARY EDITOR — JOURNEY ROUTE FOUNDATION V2
+   Stable preview + full-width editor rows.
+   ========================================================= */
+.itinerary-journey-route-panel .itinerary-journey-route-preview{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:wrap!important;
+  gap:8px 0!important;
+  margin:0 0 14px!important;
+  padding:12px 14px!important;
+  border:1px solid #e4e8ed!important;
+  border-radius:12px!important;
+  background:#f8fafc!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-preview-stop{
+  display:inline-flex!important;
+  align-items:center!important;
+  min-width:0!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-preview-stop>span{
+  display:grid!important;
+  place-items:center!important;
+  width:24px!important;
+  height:24px!important;
+  flex:0 0 auto!important;
+  border-radius:8px!important;
+  background:#173b5c!important;
+  color:#fff!important;
+  font-size:9px!important;
+  font-weight:850!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-preview-stop>strong{
+  max-width:150px!important;
+  margin-left:7px!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  color:#26384a!important;
+  font-size:12px!important;
+  font-weight:750!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-preview-stop>i{
+  margin:0 10px!important;
+  color:#c7a15d!important;
+  font-size:13px!important;
+  font-style:normal!important;
+  font-weight:800!important;
+}
+
+.itinerary-journey-route-panel .itinerary-journey-route-editor{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:9px!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-editor{
+  display:grid!important;
+  grid-template-columns:38px minmax(0,1fr) auto!important;
+  grid-template-areas:"no field actions"!important;
+  align-items:end!important;
+  gap:10px!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:64px!important;
+  padding:9px 10px!important;
+  border:1px solid #e3e7ec!important;
+  border-radius:12px!important;
+  background:#fff!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-no{
+  grid-area:no!important;
+  align-self:center!important;
+  width:32px!important;
+  height:32px!important;
+  border-radius:9px!important;
+  background:#173b5c!important;
+  color:#fff!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-field{
+  grid-area:field!important;
+  display:grid!important;
+  gap:5px!important;
+  margin:0!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-field>span{
+  color:#7d8792!important;
+  font-size:10px!important;
+  font-weight:750!important;
+  letter-spacing:.02em!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-field>input{
+  width:100%!important;
+  min-width:0!important;
+  height:36px!important;
+  padding:0 11px!important;
+  border:1px solid #d9e0e7!important;
+  border-radius:9px!important;
+  background:#fbfcfd!important;
+  color:#1d1d1f!important;
+  font-size:14px!important;
+  font-weight:650!important;
+  outline:none!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-field>input:focus{
+  border-color:#9fb3c7!important;
+  background:#fff!important;
+  box-shadow:0 0 0 3px rgba(23,59,92,.07)!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-stop-actions{
+  grid-area:actions!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  padding-bottom:1px!important;
+}
+.itinerary-journey-route-panel .journey-order-btn{
+  width:34px!important;
+  min-width:34px!important;
+  height:34px!important;
+  padding:0!important;
+  border-radius:9px!important;
+  border:1px solid #dbe1e7!important;
+  background:#fff!important;
+  color:#4d5b6a!important;
+}
+.itinerary-journey-route-panel .journey-order-btn:hover:not(:disabled){
+  background:#f3f6f9!important;
+  color:#173b5c!important;
+}
+.itinerary-journey-route-panel .journey-order-btn:disabled{
+  opacity:.3!important;
+}
+.itinerary-journey-route-panel .journey-delete-btn{
+  height:34px!important;
+  padding:0 10px!important;
+  border-radius:9px!important;
+  border:1px solid #efd9d6!important;
+  background:#fffafa!important;
+  color:#c6493e!important;
+  font-size:11px!important;
+  font-weight:750!important;
+}
+.itinerary-journey-route-panel .itinerary-journey-arrow{
+  display:none!important;
+}
+
+@media(max-width:620px){
+  .itinerary-journey-route-panel .itinerary-journey-route-preview{
+    display:grid!important;
+    gap:7px!important;
+  }
+  .itinerary-journey-route-panel .itinerary-journey-preview-stop>i{
+    display:none!important;
+  }
+  .itinerary-journey-route-panel .itinerary-journey-stop-editor{
+    grid-template-columns:34px minmax(0,1fr)!important;
+    grid-template-areas:
+      "no field"
+      ". actions"!important;
+    align-items:center!important;
+  }
+  .itinerary-journey-route-panel .itinerary-journey-stop-actions{
+    justify-content:flex-end!important;
+    padding-bottom:0!important;
+  }
+}
