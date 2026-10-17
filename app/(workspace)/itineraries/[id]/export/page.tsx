@@ -92,12 +92,14 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
 
   const destinationLabel=compactDestination(data.destination);
   const durationLabel=data.days_count&&data.nights_count?`${data.days_count}D${data.nights_count}N`:"";
-  const identityLabel=safeFilePart(data.customer_name)||safeFilePart(data.itinerary_no)||"Itinerary";
+  const customerLabel=safeFilePart(data.customer_name);
+  const itineraryLabel=safeFilePart(data.itinerary_no);
   const fileName=[
     "Happy Express Travel",
     [destinationLabel,durationLabel].filter(Boolean).join(" "),
     "行程确认",
-    identityLabel
+    customerLabel,
+    itineraryLabel||(!customerLabel?"Itinerary":"")
   ].map(safeFilePart).filter(Boolean).join("｜");
 
   return <div className={styles.screen}>
