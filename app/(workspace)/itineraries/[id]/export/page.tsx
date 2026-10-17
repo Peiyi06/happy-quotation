@@ -111,6 +111,14 @@ const routeCityLabel=(value:any)=>{
   return match?.label||raw;
 };
 
+const balanceJourneyRouteRows=(stops:string[])=>{
+  const items=stops.filter(Boolean);
+  const n=items.length;
+  if(n<=6) return [items];
+  const first=Math.ceil(n/2);
+  return [items.slice(0,first),items.slice(first)];
+};
+
 const buildJourneyRouteSequence=(flights:any[],days:any[])=>{
   const result:string[]=[];
   const push=(value:any)=>{
@@ -316,6 +324,7 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
   const journeyStops=buildJourneyStops(qd.departureCity,data.destination,days);
   const manualJourneyRoute=list(qd.journeyRoute).map((x:any)=>text(x)).filter(Boolean);
   const journeyRouteSequence=manualJourneyRoute.length?manualJourneyRoute:buildJourneyRouteSequence(flights,days);
+  const journeyRouteRows=balanceJourneyRouteRows(journeyRouteSequence);
   const localJourneyStops=buildLocalJourneyStops(flights,days,data.destination);
   const localJourneyLabels=localJourneyStops.map((x:any)=>x.geoLabel);
   const journeyMapPoints=buildRouteMapPoints(localJourneyLabels).map((p:any,i:number)=>({...p,label:localJourneyStops[i]?.label||p.label,kind:localJourneyStops[i]?.kind||"stop"}));
@@ -407,12 +416,20 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
               <div><small>JOURNEY ROUTE</small><strong>行程路线</strong></div>
               <span>{journeyRouteSequence.length} Stops</span>
             </div>
-            <div className={styles.conceptAJourneyTrack}>
-              {journeyRouteSequence.map((stop:string,i:number)=><div className={styles.conceptAJourneyStop} key={stop+"-overview-"+i}>
-                <span className={styles.conceptAJourneyNode}>{String(i+1).padStart(2,"0")}</span>
-                <strong>{stop}</strong>
-                {i<journeyRouteSequence.length-1&&<i aria-hidden="true"/>}
-              </div>)}
+            <div className={styles.conceptAJourneyRows}>
+              {journeyRouteRows.map((row:string[],rowIndex:number)=>{
+                const offset=journeyRouteRows.slice(0,rowIndex).reduce((sum:number,r:string[])=>sum+r.length,0);
+                return <div className={styles.conceptAJourneyTrack} data-count={row.length} key={"journey-row-"+rowIndex}>
+                  {row.map((stop:string,i:number)=>{
+                    const globalIndex=offset+i;
+                    return <div className={styles.conceptAJourneyStop} key={stop+"-overview-"+globalIndex}>
+                      <span className={styles.conceptAJourneyNode}>{String(globalIndex+1).padStart(2,"0")}</span>
+                      <strong>{stop}</strong>
+                      {i<row.length-1&&<i aria-hidden="true"/>}
+                    </div>;
+                  })}
+                </div>;
+              })}
             </div>
           </div>}
 
