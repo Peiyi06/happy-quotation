@@ -1183,3 +1183,248 @@
     margin-bottom:4.5mm!important;
   }
 }
+
+
+/* =========================================================
+   CONCEPT A — JOURNEY OVERVIEW PAGE
+   Page 2 combines Flight Information + Journey Route + Hybrid Map.
+   Basic remains frozen.
+   ========================================================= */
+.conceptAOverviewPage{
+  position:relative;
+  min-height:250mm;
+  padding-top:1mm;
+}
+.conceptAOverviewTitle{
+  display:grid;
+  grid-template-columns:12mm 1fr auto;
+  align-items:center;
+  gap:3.5mm;
+  margin-bottom:5mm;
+  padding-bottom:3mm;
+  border-bottom:1px solid #E1D5C0;
+}
+.conceptAOverviewIndex{
+  display:grid;
+  place-items:center;
+  width:11mm;
+  height:11mm;
+  border-radius:3.6mm 3.6mm 3.6mm 1.2mm;
+  background:#0B2340;
+  color:#EACB91;
+  font-size:9pt;
+  font-weight:850;
+  box-shadow:0 5px 14px rgba(11,35,64,.14);
+}
+.conceptAOverviewTitle h2{
+  margin:0;
+  color:#0B2340;
+  font-size:19pt;
+  line-height:1.05;
+  letter-spacing:-.025em;
+}
+.conceptAOverviewTitle p{
+  margin:.7mm 0 0;
+  color:#B28746;
+  font-size:8.4pt;
+  font-weight:800;
+  letter-spacing:.08em;
+}
+.conceptAOverviewTitle>span{
+  color:#8B95A1;
+  font-size:6.5pt;
+  font-weight:800;
+  letter-spacing:.1em;
+}
+.conceptAOverviewGrid{
+  display:grid;
+  grid-template-columns:.92fr 1.08fr;
+  gap:4mm;
+  align-items:stretch;
+}
+.conceptAOverviewFlights,
+.conceptAOverviewMapCard{
+  min-height:114mm;
+  padding:3.5mm;
+  border:1px solid #E5DED1;
+  border-radius:4mm;
+  background:#FFFDF8;
+  box-shadow:0 8px 22px rgba(11,35,64,.045);
+}
+.conceptAOverviewBlockHead{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:4mm;
+  margin-bottom:3mm;
+}
+.conceptAOverviewBlockHead>div{
+  display:grid;
+  gap:.5mm;
+}
+.conceptAOverviewBlockHead small{
+  color:#B28746;
+  font-size:6.5pt;
+  font-weight:850;
+  letter-spacing:.12em;
+}
+.conceptAOverviewBlockHead strong{
+  color:#0B2340;
+  font-size:10.2pt;
+}
+.conceptAOverviewBlockHead>span{
+  padding:.9mm 1.8mm;
+  border:1px solid #E7D7BA;
+  border-radius:99px;
+  background:#FFF9EF;
+  color:#8E7146;
+  font-size:6.4pt;
+  font-weight:800;
+}
+.conceptACompactFlightList{
+  display:grid;
+  gap:2.3mm;
+}
+.conceptACompactFlight{
+  display:grid;
+  gap:2mm;
+  padding:3mm;
+  border:1px solid #E8E1D6;
+  border-radius:3mm;
+  background:#FFFEFB;
+}
+.conceptACompactFlightRoute{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:3mm;
+}
+.conceptACompactFlightRoute small{
+  color:#B28746;
+  font-size:6.3pt;
+  font-weight:850;
+  letter-spacing:.1em;
+}
+.conceptACompactFlightRoute strong{
+  color:#173B5C;
+  font-size:11pt;
+  line-height:1;
+}
+.conceptACompactFlightRoute em{
+  margin:0 1.2mm;
+  color:#D6A75A;
+  font-style:normal;
+}
+.conceptACompactFlightFacts{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:1.8mm;
+}
+.conceptACompactFlightFacts>div{
+  display:grid;
+  gap:.4mm;
+  padding:1.7mm 2mm;
+  border-radius:2mm;
+  background:#F7F5F0;
+}
+.conceptACompactFlightFacts span{
+  color:#89929D;
+  font-size:5.8pt;
+  font-weight:750;
+  text-transform:uppercase;
+}
+.conceptACompactFlightFacts b{
+  color:#27364A;
+  font-size:8.5pt;
+}
+.conceptAOverviewEmpty{
+  display:grid;
+  place-items:center;
+  min-height:45mm;
+  border:1px dashed #D8DDE3;
+  border-radius:3mm;
+  color:#8B95A1;
+  font-size:8pt;
+  text-align:center;
+}
+.conceptARouteMap{
+  overflow:hidden;
+  border:1px solid #D9E5E0;
+  border-radius:3.4mm;
+  background:#EAF3F0;
+}
+.conceptARouteMap svg{
+  display:block;
+  width:100%;
+  height:auto;
+}
+.conceptAMapLegend{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:2.2mm 4mm;
+  margin-top:2.3mm;
+  color:#5C6876;
+  font-size:6.4pt;
+  font-weight:700;
+}
+.conceptAMapLegend>span{
+  display:inline-flex;
+  align-items:center;
+  gap:1.2mm;
+}
+.conceptAMapLegend small{
+  width:100%;
+  color:#929BA5;
+  font-size:5.7pt;
+  line-height:1.35;
+  font-weight:600;
+}
+.conceptAMapLegendNode{
+  width:2.2mm;
+  height:2.2mm;
+  border-radius:50%;
+  background:#0B2340;
+  box-shadow:0 0 0 .6mm #E9D6AF;
+}
+.conceptAMapLegendLine{
+  width:6mm;
+  height:1px;
+  border-top:1px dashed #D6A75A;
+}
+.conceptAOverviewJourney{
+  position:relative;
+  overflow:hidden;
+  margin-top:4mm;
+  padding:3.4mm 4mm 3.8mm;
+  border:1px solid #E6DED0;
+  border-radius:3.6mm;
+  background:linear-gradient(135deg,#FFFDF8,#F8F2E7);
+}
+.conceptAOverviewJourney:after{
+  content:"";
+  position:absolute;
+  right:-12mm;
+  bottom:-20mm;
+  width:48mm;
+  height:48mm;
+  border-radius:50%;
+  border:1px solid rgba(214,167,90,.16);
+  box-shadow:
+    0 0 0 7mm rgba(23,59,92,.025),
+    0 0 0 14mm rgba(214,167,90,.025);
+}
+
+@media print{
+  .conceptAOverviewPage{
+    break-before:page!important;
+    page-break-before:always!important;
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+  .conceptAOverviewGrid,
+  .conceptAOverviewJourney{
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+}
