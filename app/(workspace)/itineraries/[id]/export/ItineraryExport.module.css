@@ -541,7 +541,8 @@
 
 /* =========================================================
    ITINERARY PDF — CONCEPT A / ELEGANT EDITORIAL
-   Experimental visual layer. Basic remains untouched.
+   Happy Express brand palette: Deep Navy × Champagne Gold.
+   Basic remains untouched.
    ========================================================= */
 .conceptASectionTitle{
   margin-bottom:8mm!important;
@@ -549,16 +550,16 @@
 .conceptASectionTitle>span{
   width:12mm!important;
   height:12mm!important;
-  background:#6f4b8f!important;
-  box-shadow:0 5px 14px rgba(81,53,109,.18);
+  background:#0B2340!important;
+  box-shadow:0 5px 14px rgba(11,35,64,.16);
 }
 .conceptASectionTitle h2{
-  color:#2f2940!important;
+  color:#0B2340!important;
   font-size:19pt!important;
   letter-spacing:-.02em!important;
 }
 .conceptASectionTitle p{
-  color:#a56b94!important;
+  color:#B68A46!important;
   letter-spacing:.04em!important;
 }
 
@@ -568,7 +569,7 @@
 }
 .conceptADayCore{
   padding:0 0 5mm!important;
-  border-bottom:1px solid #eee8f2;
+  border-bottom:1px solid #E8E1D4;
 }
 .conceptADayHeader{
   grid-template-columns:18mm minmax(0,1fr)!important;
@@ -580,11 +581,11 @@
   width:16mm!important;
   height:16mm!important;
   border-radius:5mm 5mm 5mm 1.5mm!important;
-  background:linear-gradient(145deg,#5f3f7d,#7a58a0)!important;
-  box-shadow:0 5px 14px rgba(82,55,107,.2);
+  background:linear-gradient(145deg,#0B2340,#173B5C)!important;
+  box-shadow:0 5px 14px rgba(11,35,64,.2);
 }
 .conceptADayNumber small{
-  color:#f1d9e9!important;
+  color:#EACB91!important;
   font-size:5.6pt!important;
   letter-spacing:.08em!important;
 }
@@ -602,23 +603,23 @@
   margin:0!important;
   padding:2.2mm 4mm!important;
   border-radius:99px;
-  background:linear-gradient(90deg,#e8d8ef 0%,#d7b8dd 100%);
-  color:#463254!important;
+  background:linear-gradient(90deg,#F8F2E7 0%,#F1E2C7 100%);
+  color:#0B2340!important;
   font-size:14.6pt!important;
   line-height:1.18!important;
   letter-spacing:-.015em!important;
-  box-shadow:inset 0 0 0 1px rgba(106,71,132,.08);
+  box-shadow:inset 0 0 0 1px rgba(182,138,70,.14);
 }
 .conceptADayHeader h3:before{
   content:"●";
   margin-right:2.2mm;
-  color:#6f4b8f;
+  color:#D6A75A;
   font-size:6pt;
   flex:0 0 auto;
 }
 .conceptADayHeader span{
   margin:1.4mm 0 0 4mm!important;
-  color:#8f8496!important;
+  color:#7F8894!important;
   font-size:8.6pt!important;
   font-weight:700!important;
   letter-spacing:.04em!important;
@@ -635,13 +636,13 @@
   top:.8mm;
   bottom:1mm;
   width:1px;
-  background:linear-gradient(180deg,#c9b4d5 0%,#e8dfee 72%,transparent 100%);
+  background:linear-gradient(180deg,#D7B776 0%,#EEE3CD 72%,transparent 100%);
 }
 .conceptADayCopy{
   position:relative;
   margin:0 0 4.2mm!important;
   padding:0 0 0 4mm!important;
-  color:#3f3a46!important;
+  color:#27364A!important;
   font-size:10.4pt!important;
   line-height:1.62!important;
 }
@@ -653,31 +654,31 @@
   width:2.6mm;
   height:2.6mm;
   border-radius:50%;
-  background:#6f4b8f;
-  box-shadow:0 0 0 1.6mm #f5eef7;
+  background:#D6A75A;
+  box-shadow:0 0 0 1.6mm #FBF5EA;
 }
 .conceptADayMeta{
   margin-top:3.5mm!important;
-  border:1px solid #e6dfe9!important;
+  border:1px solid #E7DFD0!important;
   border-radius:3mm!important;
   overflow:hidden;
-  background:#fcfafc!important;
-  box-shadow:0 5px 16px rgba(51,38,62,.04);
+  background:#FFFDF8!important;
+  box-shadow:0 5px 16px rgba(11,35,64,.04);
 }
 .conceptADayMeta>div{
   padding:3.2mm 3.4mm!important;
-  border-right:1px solid #ece6ef!important;
+  border-right:1px solid #EFE8DB!important;
 }
 .conceptADayMeta>div:nth-child(3){
   border-right:0!important;
 }
 .conceptADayMeta span{
-  color:#8f7f94!important;
+  color:#9A7B4F!important;
   font-size:7.7pt!important;
   font-weight:700!important;
 }
 .conceptADayMeta strong{
-  color:#3c3343!important;
+  color:#27364A!important;
   font-size:9.4pt!important;
 }
 
@@ -691,11 +692,11 @@
 .conceptAAttractionImage{
   height:49mm!important;
   border-radius:4mm!important;
-  box-shadow:0 7px 20px rgba(34,25,42,.08);
+  box-shadow:0 7px 20px rgba(11,35,64,.08);
 }
 .conceptAAttractionFigure figcaption{
   margin-top:2mm!important;
-  color:#51465a!important;
+  color:#27364A!important;
   font-size:9.5pt!important;
   font-weight:750!important;
   letter-spacing:.005em!important;
@@ -703,7 +704,7 @@
 .conceptAAttractionFigure figcaption:before{
   content:"⌖";
   margin-right:1.2mm;
-  color:#8b5ca0;
+  color:#C9984D;
   font-size:8pt;
 }
 
