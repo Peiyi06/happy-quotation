@@ -1483,3 +1483,52 @@
     page-break-inside:avoid!important;
   }
 }
+
+
+/* =========================================================
+   CONCEPT A — JOURNEY ROUTE AUTO BALANCE
+   2–6 single row; 7–12 balanced across two rows.
+   ========================================================= */
+.conceptAJourneyRows{
+  display:grid;
+  gap:3mm;
+}
+.conceptAJourneyRows .conceptAJourneyTrack{
+  width:100%;
+}
+.conceptAJourneyRows .conceptAJourneyTrack[data-count="2"] .conceptAJourneyStop,
+.conceptAJourneyRows .conceptAJourneyTrack[data-count="3"] .conceptAJourneyStop,
+.conceptAJourneyRows .conceptAJourneyTrack[data-count="4"] .conceptAJourneyStop,
+.conceptAJourneyRows .conceptAJourneyTrack[data-count="5"] .conceptAJourneyStop,
+.conceptAJourneyRows .conceptAJourneyTrack[data-count="6"] .conceptAJourneyStop{
+  min-width:0;
+}
+.conceptAJourneyRows .conceptAJourneyTrack[data-count="6"]{
+  gap:1mm;
+}
+.conceptAJourneyRows .conceptAJourneyTrack[data-count="6"] .conceptAJourneyStop{
+  gap:.9mm;
+}
+.conceptAJourneyRows .conceptAJourneyTrack[data-count="6"] .conceptAJourneyStop strong{
+  font-size:7.15pt;
+}
+.conceptAJourneyRows .conceptAJourneyTrack[data-count="5"] .conceptAJourneyStop strong{
+  font-size:7.45pt;
+}
+.conceptAJourneyRows .conceptAJourneyTrack[data-count="4"] .conceptAJourneyStop strong,
+.conceptAJourneyRows .conceptAJourneyTrack[data-count="3"] .conceptAJourneyStop strong,
+.conceptAJourneyRows .conceptAJourneyTrack[data-count="2"] .conceptAJourneyStop strong{
+  font-size:7.8pt;
+}
+.conceptAJourneyRows .conceptAJourneyStop strong{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+@media print{
+  .conceptAJourneyRows{
+    gap:2.6mm!important;
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+}
