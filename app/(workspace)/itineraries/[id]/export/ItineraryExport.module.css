@@ -718,3 +718,122 @@
     page-break-inside:avoid!important;
   }
 }
+
+
+/* =========================================================
+   ITINERARY PDF — CONCEPT A COMPACT PASS
+   Reduce excess whitespace while preserving mobile readability.
+   ========================================================= */
+.conceptASectionTitle{
+  margin-bottom:5.5mm!important;
+}
+.conceptASectionTitle>span{
+  width:10.5mm!important;
+  height:10.5mm!important;
+}
+.conceptASectionTitle h2{
+  font-size:17.5pt!important;
+}
+.conceptASectionTitle p{
+  margin-top:.6mm!important;
+}
+
+.conceptADay{
+  padding-bottom:4.5mm!important;
+}
+.conceptADayCore{
+  padding-bottom:3.5mm!important;
+}
+.conceptADayHeader{
+  grid-template-columns:15.5mm minmax(0,1fr)!important;
+  gap:3mm!important;
+  margin-bottom:3mm!important;
+}
+.conceptADayNumber{
+  width:14mm!important;
+  height:14mm!important;
+  border-radius:4mm 4mm 4mm 1.2mm!important;
+}
+.conceptADayNumber small{
+  font-size:5.1pt!important;
+}
+.conceptADayNumber b{
+  font-size:10.8pt!important;
+}
+.conceptADayHeader h3{
+  min-height:8.2mm!important;
+  padding:1.6mm 3.2mm!important;
+  font-size:13.6pt!important;
+}
+.conceptADayHeader h3:before{
+  margin-right:1.7mm!important;
+}
+.conceptADayHeader span{
+  margin:1mm 0 0 3mm!important;
+  font-size:8.1pt!important;
+}
+
+.conceptADayBody{
+  padding-left:13mm!important;
+}
+.conceptADayBody:before{
+  left:4.7mm!important;
+}
+.conceptADayCopy{
+  margin-bottom:2.8mm!important;
+  padding-left:3mm!important;
+  font-size:9.8pt!important;
+  line-height:1.48!important;
+}
+.conceptADayCopy:before{
+  left:-1.05mm!important;
+  top:2.2mm!important;
+  width:2.2mm!important;
+  height:2.2mm!important;
+  box-shadow:0 0 0 1.3mm #FBF5EA!important;
+}
+
+.conceptADayMeta{
+  margin-top:2.4mm!important;
+  border-radius:2.4mm!important;
+}
+.conceptADayMeta>div{
+  padding:2.3mm 2.8mm!important;
+}
+.conceptADayMeta span{
+  font-size:7.1pt!important;
+}
+.conceptADayMeta strong{
+  margin-top:.9mm!important;
+  font-size:8.7pt!important;
+  line-height:1.25!important;
+}
+
+.conceptAAttractionGrid{
+  gap:2.4mm!important;
+  margin-top:2.8mm!important;
+}
+.conceptAAttractionImage{
+  height:42mm!important;
+  border-radius:3mm!important;
+}
+.conceptAAttractionFigure figcaption{
+  margin-top:1.3mm!important;
+  font-size:8.8pt!important;
+  line-height:1.2!important;
+}
+
+@media print{
+  .conceptADay{
+    padding-bottom:4mm!important;
+  }
+  .conceptADayHeader{
+    margin-bottom:2.7mm!important;
+  }
+  .conceptADayMeta>div{
+    padding:2.1mm 2.6mm!important;
+  }
+  .conceptAAttractionImage{
+    height:40mm!important;
+  }
+}
