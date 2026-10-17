@@ -2,15 +2,7 @@
 
 import {useEffect, useRef} from "react";
 
-export default function ItineraryPagedPreview({
-  sourceId,
-  footerLeft,
-  footerRight
-}:{
-  sourceId:string;
-  footerLeft:string;
-  footerRight:string;
-}){
+export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
   const hostRef=useRef<HTMLDivElement|null>(null);
 
   useEffect(()=>{
@@ -24,15 +16,16 @@ export default function ItineraryPagedPreview({
         if(!host||!source) return;
         host.innerHTML="";
 
+        const footerSource=source.querySelector<HTMLElement>("[data-preview-footer]");
         const cover=source.querySelector<HTMLElement>('[data-preview-page="cover"]');
         if(cover){
-          const shell=createPage(host,1,footerLeft,footerRight);
+          const shell=createPage(host,1,footerSource);
           shell.inner.appendChild(sanitizeClone(cover));
         }
 
         const blocks=Array.from(source.querySelectorAll<HTMLElement>("[data-preview-block]"));
         let pageNo=cover?2:1;
-        let page=createPage(host,pageNo,footerLeft,footerRight);
+        let page=createPage(host,pageNo,footerSource);
 
         const newPage=()=>{
           pageNo++;
@@ -107,7 +100,7 @@ export default function ItineraryPagedPreview({
       window.removeEventListener("itinerary-preview-refresh",build as EventListener);
       images.forEach(img=>img.removeEventListener("load",build));
     };
-  },[sourceId,footerLeft,footerRight]);
+  },[sourceId]);
 
   return <div ref={hostRef} className="itinerary-paged-preview no-print" aria-label="A4 PDF page preview"/>;
 }
@@ -122,8 +115,7 @@ function sanitizeClone(node:HTMLElement){
 function createPage(
   host:HTMLDivElement,
   pageNo:number,
-  footerLeft:string,
-  footerRight:string
+  footerSource:HTMLElement|null
 ){
   const page=document.createElement("section");
   page.className="itinerary-preview-page";
@@ -136,17 +128,14 @@ function createPage(
   const inner=document.createElement("div");
   inner.className="itinerary-preview-page-inner";
 
-  const footer=document.createElement("div");
-  footer.className="itinerary-preview-print-footer";
-  const left=document.createElement("span");
-  left.textContent=footerLeft;
-  const right=document.createElement("span");
-  right.textContent=footerRight;
-  footer.append(left,right);
+  const footer=footerSource?sanitizeClone(footerSource):null;
+  if(footer){
+    footer.classList.add("itinerary-preview-print-footer");
+  }
 
   page.appendChild(label);
   page.appendChild(inner);
-  page.appendChild(footer);
+  if(footer) page.appendChild(footer);
   host.appendChild(page);
   return {page,inner};
 }
