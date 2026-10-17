@@ -848,3 +848,185 @@
 [data-pdf-foundation="basic-locked"]{
   --itinerary-basic-foundation-locked:1;
 }
+
+
+/* =========================================================
+   CONCEPT A — DAY 01/02 DESIGN ELEMENT PILOT
+   Route emphasis + highlight chips + hero/support image hierarchy.
+   Scoped only to Concept A pilot days. Basic remains frozen.
+   ========================================================= */
+.conceptAPilotDay{
+  position:relative;
+}
+.conceptAPilotDay:before{
+  content:"";
+  position:absolute;
+  right:0;
+  top:1mm;
+  width:24mm;
+  height:1px;
+  background:linear-gradient(90deg,transparent,#D6A75A);
+  opacity:.8;
+}
+.conceptAPilotHeader{
+  position:relative;
+}
+.conceptAPilotHeader:after{
+  content:"";
+  position:absolute;
+  left:17mm;
+  right:0;
+  bottom:-1.3mm;
+  height:1px;
+  background:linear-gradient(90deg,rgba(214,167,90,.55),rgba(214,167,90,0));
+}
+.conceptAPilotHeader h3{
+  position:relative;
+  overflow:hidden;
+}
+.conceptAPilotHeader h3:after{
+  content:"";
+  width:7mm;
+  height:7mm;
+  margin-left:auto;
+  border:1px solid rgba(214,167,90,.52);
+  border-radius:50%;
+  box-shadow:inset 0 0 0 2.2mm #FFFDF8;
+  flex:0 0 auto;
+}
+
+.conceptAHighlights{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  align-items:start;
+  gap:2.2mm;
+  margin:0 0 2.6mm;
+}
+.conceptAHighlightsLabel{
+  padding-top:1.4mm;
+  color:#A67C3F;
+  font-size:7pt;
+  font-weight:850;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.conceptAHighlights>div{
+  display:flex;
+  flex-wrap:wrap;
+  gap:1.4mm;
+}
+.conceptAHighlightChip{
+  display:inline-flex;
+  align-items:center;
+  min-height:6.2mm;
+  padding:1.2mm 2.6mm;
+  border:1px solid #E6D5B7;
+  border-radius:99px;
+  background:#FFF9EF;
+  color:#173B5C;
+  font-size:7.8pt;
+  font-weight:760;
+  line-height:1.15;
+}
+.conceptAHighlightChip:before{
+  content:"";
+  width:1.8mm;
+  height:1.8mm;
+  margin-right:1.4mm;
+  border-radius:50%;
+  background:#D6A75A;
+  box-shadow:0 0 0 .7mm rgba(214,167,90,.14);
+}
+
+.conceptAHeroGallery{
+  margin-top:2.8mm;
+}
+.conceptAHeroFigure{
+  position:relative;
+  margin:0;
+}
+.conceptAHeroImage{
+  height:54mm;
+  overflow:hidden;
+  border-radius:4mm;
+  background:#ECE8DF;
+  box-shadow:0 8px 22px rgba(11,35,64,.1);
+}
+.conceptAHeroImage img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+}
+.conceptAHeroFigure figcaption{
+  position:absolute;
+  left:3mm;
+  bottom:3mm;
+  display:grid;
+  gap:.4mm;
+  max-width:70%;
+  padding:2.2mm 3mm;
+  border-radius:2.6mm;
+  background:rgba(11,35,64,.88);
+  color:#fff;
+  backdrop-filter:blur(4px);
+}
+.conceptAHeroFigure figcaption span{
+  color:#EACB91;
+  font-size:6.4pt;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.conceptAHeroFigure figcaption strong{
+  font-size:9.6pt;
+  line-height:1.2;
+}
+
+.conceptASupportGallery{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:2.4mm;
+  margin-top:2.4mm;
+}
+.conceptASupportFigure{
+  margin:0;
+}
+.conceptASupportImage{
+  height:29mm;
+  overflow:hidden;
+  border-radius:3mm;
+  background:#ECE8DF;
+}
+.conceptASupportImage img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+}
+.conceptASupportFigure figcaption{
+  margin-top:1.2mm;
+  color:#344356;
+  font-size:8pt;
+  font-weight:720;
+  line-height:1.18;
+}
+.conceptASupportFigure figcaption:before{
+  content:"•";
+  margin-right:1.2mm;
+  color:#D6A75A;
+}
+
+@media print{
+  .conceptAHeroGallery,
+  .conceptASupportGallery{
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+  .conceptAHeroImage{
+    height:50mm;
+  }
+  .conceptASupportImage{
+    height:27mm;
+  }
+}
