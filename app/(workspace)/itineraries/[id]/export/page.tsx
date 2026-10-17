@@ -257,7 +257,7 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
           <span>HAPPY EXPRESS TRAVEL</span>
         </div>
 
-        <div className={styles.conceptAOverviewGrid}>
+        <div className={styles.conceptAOverviewStack}>
           <div className={styles.conceptAOverviewFlights}>
             <div className={styles.conceptAOverviewBlockHead}>
               <div><small>FLIGHT INFORMATION</small><strong>航班资料</strong></div>
@@ -279,13 +279,27 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
             </div>
           </div>
 
+          {journeyStops.length>1&&<div className={styles.conceptAOverviewJourney}>
+            <div className={styles.conceptAJourneyHead}>
+              <div><small>JOURNEY ROUTE</small><strong>行程路线</strong></div>
+              <span>{journeyStops.length} Stops</span>
+            </div>
+            <div className={styles.conceptAJourneyTrack}>
+              {journeyStops.map((stop:string,i:number)=><div className={styles.conceptAJourneyStop} key={stop+"-overview-"+i}>
+                <span className={styles.conceptAJourneyNode}>{String(i+1).padStart(2,"0")}</span>
+                <strong>{stop}</strong>
+                {i<journeyStops.length-1&&<i aria-hidden="true"/>}
+              </div>)}
+            </div>
+          </div>}
+
           <div className={styles.conceptAOverviewMapCard}>
             <div className={styles.conceptAOverviewBlockHead}>
               <div><small>ROUTE MAP</small><strong>路线地图</strong></div>
               <span>{journeyMapPoints.some((p:any)=>p.mode==="geo")?"Geo-based":"Schematic"}</span>
             </div>
             <div className={styles.conceptARouteMap}>
-              <svg viewBox="0 0 100 86" role="img" aria-label="Journey route map">
+              <svg viewBox="0 0 100 70" role="img" aria-label="Journey route map">
                 <defs>
                   <linearGradient id="routeMapBg" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stopColor="#EEF5F2"/>
@@ -295,16 +309,15 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
                     <feDropShadow dx="0" dy="1" stdDeviation="1.2" floodColor="#0B2340" floodOpacity=".18"/>
                   </filter>
                 </defs>
-                <rect x="1" y="1" width="98" height="84" rx="6" fill="url(#routeMapBg)"/>
-                <path d="M9 63 C18 40,29 23,43 19 C57 15,67 23,78 18 C89 14,94 28,91 42 C88 58,74 72,59 75 C42 79,24 75,9 63 Z" fill="#BBD8CF" opacity=".78"/>
-                <path d="M8 27 C25 31,38 25,53 31 C67 37,78 34,94 25" fill="none" stroke="#FFFFFF" strokeWidth=".6" opacity=".65"/>
-                <path d="M15 13 C31 19,42 16,56 19 C71 22,83 18,91 13" fill="none" stroke="#FFFFFF" strokeWidth=".45" opacity=".5"/>
-                <path d={journeyMapPath} fill="none" stroke="#D6A75A" strokeWidth="1.3" strokeDasharray="2.2 1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                {journeyMapPoints.map((p:any,i:number)=><g key={p.label+"-map-"+i} transform={`translate(${p.x} ${p.y})`}>
-                  <circle r="3.5" fill="#FFFFFF" filter="url(#routeNodeShadow)"/>
-                  <circle r="2.35" fill="#0B2340" stroke="#D6A75A" strokeWidth=".8"/>
-                  <text x="0" y=".9" textAnchor="middle" fontSize="2.45" fontWeight="800" fill="#FFFFFF">{i+1}</text>
-                  <text x={p.x>72?-4:4} y={p.y<20?5:-4} textAnchor={p.x>72?"end":"start"} fontSize="3.15" fontWeight="800" fill="#0B2340">{p.label}</text>
+                <rect x="1" y="1" width="98" height="68" rx="6" fill="url(#routeMapBg)"/>
+                <path d="M7 53 C17 31,30 17,44 15 C59 13,70 19,82 16 C92 14,96 25,93 37 C89 51,76 60,59 62 C41 65,22 62,7 53 Z" fill="#BBD8CF" opacity=".78"/>
+                <path d="M8 22 C25 26,38 21,53 26 C67 31,79 28,94 20" fill="none" stroke="#FFFFFF" strokeWidth=".6" opacity=".65"/>
+                <path d={journeyMapPath} fill="none" stroke="#D6A75A" strokeWidth="1.25" strokeDasharray="2.2 1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                {journeyMapPoints.map((p:any,i:number)=><g key={p.label+"-map-"+i} transform={`translate(${p.x} ${Math.min(p.y,64)})`}>
+                  <circle r="3.3" fill="#FFFFFF" filter="url(#routeNodeShadow)"/>
+                  <circle r="2.25" fill="#0B2340" stroke="#D6A75A" strokeWidth=".8"/>
+                  <text x="0" y=".85" textAnchor="middle" fontSize="2.35" fontWeight="800" fill="#FFFFFF">{i+1}</text>
+                  <text x={p.x>72?-4:4} y={p.y<20?5:-4} textAnchor={p.x>72?"end":"start"} fontSize="3.05" fontWeight="800" fill="#0B2340">{p.label}</text>
                 </g>)}
               </svg>
             </div>
@@ -315,20 +328,6 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
             </div>
           </div>
         </div>
-
-        {journeyStops.length>1&&<div className={styles.conceptAOverviewJourney}>
-          <div className={styles.conceptAJourneyHead}>
-            <div><small>JOURNEY ROUTE</small><strong>行程路线</strong></div>
-            <span>{journeyStops.length} Stops</span>
-          </div>
-          <div className={styles.conceptAJourneyTrack}>
-            {journeyStops.map((stop:string,i:number)=><div className={styles.conceptAJourneyStop} key={stop+"-overview-"+i}>
-              <span className={styles.conceptAJourneyNode}>{String(i+1).padStart(2,"0")}</span>
-              <strong>{stop}</strong>
-              {i<journeyStops.length-1&&<i aria-hidden="true"/>}
-            </div>)}
-          </div>
-        </div>}
       </section>:flights.length>0&&<section data-preview-block="overview" className={styles.overviewPage}>
         <div className={styles.sectionTitle}>
           <span>01</span>
