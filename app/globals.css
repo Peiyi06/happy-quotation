@@ -22792,9 +22792,25 @@ td,
 .itinerary-preview-clone-block{
   max-width:100%;
 }
+
+.itinerary-preview-print-footer{
+  position:absolute;
+  left:12mm;
+  right:12mm;
+  bottom:5mm;
+  display:flex;
+  justify-content:space-between;
+  padding-top:2mm;
+  border-top:1px solid #d9c89d;
+  background:#fffdfa;
+  color:#8a93a0;
+  font-size:6.7pt;
+  z-index:5;
+  pointer-events:none;
+}
 .itinerary-preview-page-inner [data-preview-page="cover"]{
-  min-height:269mm!important;
-  height:269mm!important;
+  min-height:255mm!important;
+  height:255mm!important;
   margin:0!important;
 }
 #itinerary-print-source{
