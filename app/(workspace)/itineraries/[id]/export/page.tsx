@@ -224,7 +224,7 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
       </section>
 
       {hotels.length>0&&<section className={styles.hotelSection}>
-        <div data-preview-block="hotel-title" data-keep-next="true" className={styles.sectionTitle}>
+        <div data-preview-block="hotel-title" data-keep-next="true" data-preview-new-page="true" className={styles.sectionTitle}>
           <span>H</span>
           <div><h2>Hotel Introduction</h2><p>酒店介绍</p></div>
         </div>
