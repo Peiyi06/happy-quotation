@@ -51,8 +51,11 @@ const coverImageFromDays=(days:any[])=>{
   return ranked[0]?.images?.[0]?.url||"";
 };
 
-export default async function ItineraryCustomerExportPage({params}:{params:Promise<{id:string}>}){
+export default async function ItineraryCustomerExportPage({params,searchParams}:{params:Promise<{id:string}>;searchParams?:Promise<Record<string,string|string[]|undefined>>}){
   const {id}=await params;
+  const resolvedSearchParams=searchParams?await searchParams:{};
+  const requestedStyle=Array.isArray(resolvedSearchParams?.pdfStyle)?resolvedSearchParams.pdfStyle[0]:resolvedSearchParams?.pdfStyle;
+  const pdfStyle=(["basic","concept-a","concept-b","concept-c"] as const).includes(requestedStyle as any)?requestedStyle as "basic"|"concept-a"|"concept-b"|"concept-c":"basic";
   const token=await internalToken();
   if(!token) notFound();
   const db=internalDb();
@@ -109,6 +112,7 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
       basePayload={basePayload}
       initialCover={manualCover}
       autoCoverUrl={autoCoverUrl}
+      pdfStyle={pdfStyle}
     />
     <ItineraryPagedPreview sourceId="itinerary-print-source"/>
     <main id="itinerary-print-source" className={styles.document}>
