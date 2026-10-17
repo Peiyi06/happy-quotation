@@ -273,10 +273,6 @@ export default async function ItineraryCustomerExportPage({params}:{params:Promi
         </div>
       </section>}
 
-      <div data-preview-footer className={styles.printFooter} aria-hidden="true">
-        <span>Happy Express Travel</span>
-        <span>{data.itinerary_no||""}</span>
-      </div>
     </main>
   </div>;
 }
