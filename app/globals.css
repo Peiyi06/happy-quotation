@@ -22638,6 +22638,91 @@ td,
 
 
 /* =========================================================
+   ITINERARY PDF PREVIEW — STYLE SWITCHER
+   Basic is the locked production fallback. Concept slots are
+   intentionally available before their visual systems are designed.
+   ========================================================= */
+.itinerary-export-style-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  min-height:56px;
+  margin:0 0 10px;
+  padding:8px 10px 8px 12px;
+  border:1px solid #d9e0e7;
+  border-radius:14px;
+  background:rgba(255,255,255,.86);
+  box-shadow:0 8px 24px rgba(15,31,54,.05);
+}
+.itinerary-export-style-copy{
+  display:grid;
+  gap:2px;
+  min-width:0;
+}
+.itinerary-export-style-copy strong{
+  color:#0b1f3a;
+  font-size:13px;
+}
+.itinerary-export-style-copy span{
+  color:#7a8492;
+  font-size:11px;
+  line-height:1.35;
+}
+.itinerary-export-style-switch{
+  display:inline-grid;
+  grid-auto-flow:column;
+  grid-auto-columns:minmax(88px,1fr);
+  gap:3px;
+  padding:3px;
+  border:1px solid #d6dde5;
+  border-radius:12px;
+  background:#eef2f6;
+}
+.itinerary-export-style-option{
+  min-height:38px;
+  display:grid;
+  place-items:center;
+  align-content:center;
+  gap:1px;
+  padding:5px 10px;
+  border:0;
+  border-radius:9px;
+  background:transparent;
+  color:#435064;
+  cursor:pointer;
+  transition:background .16s ease,box-shadow .16s ease,color .16s ease;
+}
+.itinerary-export-style-option span{
+  font-size:11px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.itinerary-export-style-option small{
+  font-size:8px;
+  font-weight:700;
+  color:#8b95a3;
+  white-space:nowrap;
+}
+.itinerary-export-style-option.active{
+  background:#fff;
+  color:#173b5c;
+  box-shadow:0 1px 4px rgba(15,31,54,.14);
+}
+.itinerary-export-style-option.active small{
+  color:#b08b45;
+}
+@media(max-width:900px){
+  .itinerary-export-style-row{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .itinerary-export-style-switch{
+    width:100%;
+  }
+}
+
+/* =========================================================
    ITINERARY PDF PREVIEW — HERO COVER CONTROLS
    ========================================================= */
 .itinerary-export-toolbar-wrap{
