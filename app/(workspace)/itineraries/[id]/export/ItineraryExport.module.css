@@ -1030,3 +1030,156 @@
     height:27mm;
   }
 }
+
+
+/* =========================================================
+   CONCEPT A — JOURNEY ROUTE + DESTINATION MICRO GRAPHIC
+   Lightweight branded route context before Daily Itinerary.
+   Basic remains frozen.
+   ========================================================= */
+.conceptAJourneyShell{
+  position:relative;
+  overflow:hidden;
+  margin:-1mm 0 5mm;
+  padding:3.2mm 4mm 3.5mm;
+  border:1px solid #E6DED0;
+  border-radius:3.6mm;
+  background:
+    linear-gradient(135deg,rgba(255,253,248,.98),rgba(248,242,231,.94)),
+    #FFFDF8;
+  box-shadow:0 7px 20px rgba(11,35,64,.045);
+}
+.conceptAJourneyMicro{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.8;
+}
+.conceptAJourneyArc{
+  position:absolute;
+  right:-13mm;
+  top:-17mm;
+  width:48mm;
+  height:48mm;
+  border:1px solid rgba(214,167,90,.18);
+  border-radius:50%;
+}
+.conceptAJourneyArc:before,
+.conceptAJourneyArc:after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  border:1px solid rgba(23,59,92,.07);
+}
+.conceptAJourneyArc:before{
+  inset:7mm;
+}
+.conceptAJourneyArc:after{
+  inset:14mm;
+}
+.conceptAJourneyGlow{
+  position:absolute;
+  right:10mm;
+  top:2mm;
+  width:22mm;
+  height:22mm;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(214,167,90,.11),rgba(214,167,90,0) 68%);
+}
+.conceptAJourneyHead{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:6mm;
+  margin-bottom:2.6mm;
+}
+.conceptAJourneyHead>div{
+  display:grid;
+  gap:.3mm;
+}
+.conceptAJourneyHead small{
+  color:#B28746;
+  font-size:6.8pt;
+  font-weight:850;
+  letter-spacing:.13em;
+}
+.conceptAJourneyHead strong{
+  color:#0B2340;
+  font-size:10.2pt;
+  letter-spacing:.01em;
+}
+.conceptAJourneyHead>span{
+  padding:1mm 2mm;
+  border:1px solid #E7D7BA;
+  border-radius:99px;
+  background:#FFF9EF;
+  color:#8E7146;
+  font-size:6.9pt;
+  font-weight:800;
+  white-space:nowrap;
+}
+.conceptAJourneyTrack{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  gap:1.6mm;
+  min-width:0;
+}
+.conceptAJourneyStop{
+  display:flex;
+  align-items:center;
+  gap:1.4mm;
+  min-width:0;
+  flex:1 1 0;
+}
+.conceptAJourneyStop strong{
+  min-width:0;
+  overflow:hidden;
+  color:#27364A;
+  font-size:7.8pt;
+  font-weight:760;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.conceptAJourneyNode{
+  display:inline-grid;
+  place-items:center;
+  width:5.7mm;
+  height:5.7mm;
+  flex:0 0 auto;
+  border-radius:50%;
+  background:#0B2340;
+  color:#EACB91;
+  font-size:5.7pt;
+  font-weight:850;
+  box-shadow:0 0 0 1.1mm #F7EDDB;
+}
+.conceptAJourneyStop i{
+  height:1px;
+  flex:1 1 auto;
+  min-width:4mm;
+  background:linear-gradient(90deg,#D6A75A,#EAD9B9);
+  position:relative;
+}
+.conceptAJourneyStop i:after{
+  content:"";
+  position:absolute;
+  right:-.2mm;
+  top:-.65mm;
+  width:1.4mm;
+  height:1.4mm;
+  border-top:1px solid #C99B50;
+  border-right:1px solid #C99B50;
+  transform:rotate(45deg);
+}
+
+@media print{
+  .conceptAJourneyShell{
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+    margin-bottom:4.5mm!important;
+  }
+}
