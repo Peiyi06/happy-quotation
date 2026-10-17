@@ -170,7 +170,7 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
       </section>}
 
       <section className={styles.dailySection}>
-        <div data-preview-block="daily-title" data-keep-next="true" className={styles.sectionTitle}>
+        <div data-preview-block="daily-title" data-keep-next="true" className={styles.sectionTitle+(pdfStyle==="concept-a"?" "+styles.conceptASectionTitle:"")}>
           <span>{flights.length?"02":"01"}</span>
           <div><h2>Daily Itinerary</h2><p>每日行程</p></div>
         </div>
@@ -180,19 +180,19 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
             const images=representativeAttractions(day);
             const hotel=text(day?.hotel)&&text(day?.hotel)!=="-"?text(day.hotel):"";
             const date=dayDate(qd.travelStartDate||"",index);
-            return <article className={styles.day} key={day?.id||index}>
-              <div data-preview-block="day-core" className={styles.dayCore}>
-                <header className={styles.dayHeader}>
-                  <div className={styles.dayNumber}><small>DAY</small><b>{String(index+1).padStart(2,"0")}</b></div>
+            return <article className={styles.day+(pdfStyle==="concept-a"?" "+styles.conceptADay:"")} key={day?.id||index}>
+              <div data-preview-block="day-core" className={styles.dayCore+(pdfStyle==="concept-a"?" "+styles.conceptADayCore:"")}>
+                <header className={styles.dayHeader+(pdfStyle==="concept-a"?" "+styles.conceptADayHeader:"")}>
+                  <div className={styles.dayNumber+(pdfStyle==="concept-a"?" "+styles.conceptADayNumber:"")}><small>DAY</small><b>{String(index+1).padStart(2,"0")}</b></div>
                   <div>
                     <h3>{day?.title||`Day ${index+1}`}</h3>
                     {date&&<span>{date}</span>}
                   </div>
                 </header>
 
-                <div className={styles.dayBody}>
-                  {text(day?.content)&&<p className={styles.dayCopy}>{day.content}</p>}
-                  <div className={styles.dayMeta}>
+                <div className={styles.dayBody+(pdfStyle==="concept-a"?" "+styles.conceptADayBody:"")}>
+                  {text(day?.content)&&<p className={styles.dayCopy+(pdfStyle==="concept-a"?" "+styles.conceptADayCopy:"")}>{day.content}</p>}
+                  <div className={styles.dayMeta+(pdfStyle==="concept-a"?" "+styles.conceptADayMeta:"")}>
                     <div><span>Breakfast / 早餐</span><strong>{day?.meals?.breakfast||"—"}</strong></div>
                     <div><span>Lunch / 午餐</span><strong>{day?.meals?.lunch||"—"}</strong></div>
                     <div><span>Dinner / 晚餐</span><strong>{day?.meals?.dinner||"—"}</strong></div>
@@ -209,14 +209,14 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
                     data-day-number={String(index+1).padStart(2,"0")}
                     data-day-title={day?.title||`Day ${index+1}`}
                     data-gallery-row={String(rowIndex)}
-                    className={styles.attractionGrid}
+                    className={styles.attractionGrid+(pdfStyle==="concept-a"?" "+styles.conceptAAttractionGrid:"")}
                     key={"gallery-"+index+"-"+rowIndex}
                   >
                     <div className={styles.galleryContinuation}>
                       DAY {String(index+1).padStart(2,"0")} · Gallery
                     </div>
-                    {row.map((img,ii)=><figure className={styles.attractionFigure} key={img.url+ii}>
-                      <div className={styles.attractionImage}><img src={img.url} alt={img.name}/></div>
+                    {row.map((img,ii)=><figure className={styles.attractionFigure+(pdfStyle==="concept-a"?" "+styles.conceptAAttractionFigure:"")} key={img.url+ii}>
+                      <div className={styles.attractionImage+(pdfStyle==="concept-a"?" "+styles.conceptAAttractionImage:"")}><img src={img.url} alt={img.name}/></div>
                       <figcaption>{img.name}</figcaption>
                     </figure>)}
                   </div>;
