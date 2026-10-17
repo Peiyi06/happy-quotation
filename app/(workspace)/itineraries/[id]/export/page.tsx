@@ -56,6 +56,7 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
   const resolvedSearchParams=searchParams?await searchParams:{};
   const requestedStyle=Array.isArray(resolvedSearchParams?.pdfStyle)?resolvedSearchParams.pdfStyle[0]:resolvedSearchParams?.pdfStyle;
   const pdfStyle=(["basic","concept-a","concept-b","concept-c"] as const).includes(requestedStyle as any)?requestedStyle as "basic"|"concept-a"|"concept-b"|"concept-c":"basic";
+  const isBasicPdf=pdfStyle==="basic"; // Frozen production baseline: do not attach concept-only visual classes.
   const token=await internalToken();
   if(!token) notFound();
   const db=internalDb();
@@ -115,7 +116,7 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
       pdfStyle={pdfStyle}
     />
     <ItineraryPagedPreview sourceId="itinerary-print-source"/>
-    <main id="itinerary-print-source" className={styles.document}>
+    <main id="itinerary-print-source" data-pdf-foundation={isBasicPdf?"basic-locked":pdfStyle} className={styles.document}>
 
       <section id="itinerary-cover" data-preview-page="cover" data-overlay={coverOverlay} className={styles.cover+(coverImage?" "+styles.coverHasImage:"")}>
         <div id="itinerary-cover-media" className={styles.coverMedia} style={coverImage?{backgroundImage:`url("${coverImage}")`,backgroundPosition:coverPosition,filter:`brightness(${coverBrightness/100})`}:undefined} aria-hidden="true"/>
