@@ -2,9 +2,6 @@
 
 import {useEffect, useRef} from "react";
 
-const LOW_DENSITY=0.55;
-const TARGET_DENSITY=0.85;
-
 export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
   const hostRef=useRef<HTMLDivElement|null>(null);
 
@@ -32,10 +29,7 @@ export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
         const newPage=()=>{
           pageNo++;
           page=createPage(host,pageNo);
-          return page;
         };
-
-        const density=()=>page.inner.scrollHeight/Math.max(1,page.inner.clientHeight);
 
         const appendClone=(node:HTMLElement)=>{
           const clone=sanitizeClone(node);
@@ -44,55 +38,40 @@ export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
           return clone;
         };
 
-        const addContinuation=(block:HTMLElement)=>{
-          if(block.dataset.previewBlock!=="gallery-row") return null;
-          const row=Number(block.dataset.galleryRow||"0");
-          if(row===0) return null;
-          const el=document.createElement("div");
-          el.className="itinerary-preview-continuation";
-          el.textContent="DAY "+(block.dataset.dayNumber||"")+" · "+(block.dataset.dayTitle||"")+" · Gallery";
-          page.inner.appendChild(el);
-          return el;
-        };
-
         for(let i=0;i<blocks.length;i++){
           const block=blocks[i];
-          const type=block.dataset.previewBlock||"";
           const keepNext=block.dataset.keepNext==="true";
+          const forceNewPage=block.dataset.previewNewPage==="true";
 
-          // If the current page is already visually full, start the next logical block on a new page.
-          if(page.inner.children.length>0 && density()>=TARGET_DENSITY && (type==="day-core"||type==="hotel"||type==="final")){
+          if(forceNewPage&&page.inner.children.length>0){
             newPage();
           }
 
-          let continuation=addContinuation(block);
-          let clone=appendClone(block);
-
+          const clone=appendClone(block);
           let nextClone:HTMLElement|null=null;
+
           if(keepNext&&i+1<blocks.length){
             nextClone=appendClone(blocks[i+1]);
           }
 
-          if(page.inner.scrollHeight>page.inner.clientHeight){
-            clone.remove();
-            if(nextClone) nextClone.remove();
-            if(continuation) continuation.remove();
+          const overflow=page.inner.scrollHeight>page.inner.clientHeight;
+          const movableChildren=keepNext?2:1;
 
-            // Keep short pages productive, but never force an overflowing block.
+          if(overflow&&page.inner.children.length>movableChildren){
+            clone.remove();
+            nextClone?.remove();
             newPage();
-            continuation=addContinuation(block);
-            clone=appendClone(block);
-            if(keepNext&&i+1<blocks.length) nextClone=appendClone(blocks[i+1]);
+            page.inner.appendChild(clone);
+            if(nextClone) page.inner.appendChild(nextClone);
           }
 
           if(keepNext&&nextClone) i++;
-
-          // A short text-only day should invite the next block onto the same page.
-          // A gallery row may also share the page while density remains below the target.
-          if((type==="day-core"||type==="gallery-row") && density()<LOW_DENSITY){
-            continue;
-          }
         }
+
+        Array.from(host.querySelectorAll<HTMLElement>(".itinerary-preview-page")).forEach(p=>{
+          const inner=p.querySelector<HTMLElement>(".itinerary-preview-page-inner");
+          if(inner&&inner.children.length===0) p.remove();
+        });
 
         const pages=Array.from(host.querySelectorAll<HTMLElement>(".itinerary-preview-page"));
         pages.forEach((p,index)=>{
@@ -102,7 +81,7 @@ export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
       });
     };
 
-    const ro=typeof ResizeObserver!=="undefined"?new ResizeObserver(()=>build()):null;
+    const ro=typeof ResizeObserver!=="undefined"?new ResizeObserver(build):null;
     const source=document.getElementById(sourceId);
     if(source&&ro) ro.observe(source);
 
