@@ -845,7 +845,7 @@
    Do not add experimental visual overrides to [data-pdf-foundation="basic-locked"].
    All future visual exploration must be scoped to concept-a / concept-b / concept-c.
    ========================================================= */
-[data-pdf-foundation="basic-locked"]{
+.document[data-pdf-foundation="basic-locked"]{
   --itinerary-basic-foundation-locked:1;
 }
 
