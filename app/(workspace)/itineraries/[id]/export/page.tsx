@@ -36,6 +36,80 @@ const buildJourneyStops=(departure:any,destination:any,days:any[])=>{
   return unique;
 };
 
+const ROUTE_GEO_POINTS:Array<{aliases:string[];lat:number;lng:number}>=[
+  {aliases:["kuala lumpur","kul","klia","吉隆坡"],lat:3.139,lng:101.687},
+  {aliases:["osaka","大阪","kix","kansai","关西"],lat:34.694,lng:135.502},
+  {aliases:["kyoto","京都"],lat:35.0116,lng:135.7681},
+  {aliases:["nara","奈良"],lat:34.6851,lng:135.8048},
+  {aliases:["tokyo","东京","東京","hnd","nrt"],lat:35.6762,lng:139.6503},
+  {aliases:["nagoya","名古屋"],lat:35.1815,lng:136.9066},
+  {aliases:["fukuoka","福冈","福岡"],lat:33.5902,lng:130.4017},
+  {aliases:["sapporo","札幌"],lat:43.0618,lng:141.3545},
+  {aliases:["chongqing","重庆","重慶"],lat:29.563,lng:106.5516},
+  {aliases:["wulong","武隆"],lat:29.3254,lng:107.7599},
+  {aliases:["chengdu","成都"],lat:30.5728,lng:104.0668},
+  {aliases:["jiuzhaigou","九寨沟","九寨溝"],lat:33.252,lng:103.9186},
+  {aliases:["leshan","乐山","樂山"],lat:29.5521,lng:103.7656},
+  {aliases:["emei","峨眉山","mount emei","mt. e'mei"],lat:29.5177,lng:103.3328},
+  {aliases:["nanchang","南昌"],lat:28.6829,lng:115.8582},
+  {aliases:["lushan","庐山","廬山"],lat:29.5732,lng:115.9928},
+  {aliases:["wuyuan","婺源"],lat:29.2483,lng:117.8613},
+  {aliases:["jingdezhen","景德镇","景德鎮"],lat:29.2687,lng:117.1784},
+  {aliases:["sanqingshan","三清山"],lat:28.9156,lng:118.0644},
+  {aliases:["chiang mai","清迈","清邁","cnx"],lat:18.7883,lng:98.9853},
+  {aliases:["chiang rai","清莱","清萊"],lat:19.9105,lng:99.8406},
+  {aliases:["bangkok","曼谷","bkk","dmk"],lat:13.7563,lng:100.5018},
+  {aliases:["hanoi","河内","河內","han"],lat:21.0278,lng:105.8342},
+  {aliases:["ho chi minh","胡志明","sgn"],lat:10.8231,lng:106.6297}
+];
+
+const normalizeRouteLabel=(value:any)=>text(value).toLowerCase().replace(/[·•,，()（）]/g," ").replace(/\s+/g," ").trim();
+
+const routeGeoForStop=(label:string)=>{
+  const key=normalizeRouteLabel(label);
+  if(!key) return null;
+  for(const item of ROUTE_GEO_POINTS){
+    if(item.aliases.some(alias=>key===alias||key.includes(alias)||alias.includes(key))){
+      return {lat:item.lat,lng:item.lng};
+    }
+  }
+  return null;
+};
+
+const buildRouteMapPoints=(stops:string[])=>{
+  const resolved=stops.map((label,index)=>({label,index,geo:routeGeoForStop(label)}));
+  const geos=resolved.filter((x:any)=>x.geo);
+  if(geos.length>=2){
+    const minLat=Math.min(...geos.map((x:any)=>x.geo.lat));
+    const maxLat=Math.max(...geos.map((x:any)=>x.geo.lat));
+    const minLng=Math.min(...geos.map((x:any)=>x.geo.lng));
+    const maxLng=Math.max(...geos.map((x:any)=>x.geo.lng));
+    const latSpan=Math.max(maxLat-minLat,.8);
+    const lngSpan=Math.max(maxLng-minLng,.8);
+    const project=(lat:number,lng:number)=>({
+      x:12+((lng-(minLng-lngSpan*.16))/(lngSpan*1.32))*76,
+      y:12+(((maxLat+latSpan*.16)-lat)/(latSpan*1.32))*68
+    });
+    return resolved.map((item:any,i:number)=>{
+      if(item.geo) return {...item,...project(item.geo.lat,item.geo.lng),mode:"geo"};
+      const prev=[...resolved.slice(0,i)].reverse().find((x:any)=>x.geo);
+      const next=resolved.slice(i+1).find((x:any)=>x.geo);
+      if(prev&&next){
+        const a=project(prev.geo.lat,prev.geo.lng),b=project(next.geo.lat,next.geo.lng);
+        const ratio=(i-prev.index)/(next.index-prev.index);
+        return {...item,x:a.x+(b.x-a.x)*ratio,y:a.y+(b.y-a.y)*ratio,mode:"interpolated"};
+      }
+      return {...item,x:18+(i/Math.max(stops.length-1,1))*64,y:42+Math.sin(i*1.6)*12,mode:"fallback"};
+    });
+  }
+  return stops.map((label,index)=>({
+    label,index,
+    x:14+(index/Math.max(stops.length-1,1))*72,
+    y:44+Math.sin(index*1.55)*13,
+    mode:"fallback"
+  }));
+};
+
 const compactDestination=(value:any)=>{
   const raw=text(value);
   if(!raw) return "";
@@ -121,6 +195,8 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
   };
 
   const journeyStops=buildJourneyStops(qd.departureCity,data.destination,days);
+  const journeyMapPoints=buildRouteMapPoints(journeyStops);
+  const journeyMapPath=journeyMapPoints.map((p:any,i:number)=>`${i===0?"M":"L"} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(" ");
   const destinationLabel=compactDestination(data.destination);
   const durationLabel=data.days_count&&data.nights_count?`${data.days_count}D${data.nights_count}N`:"";
   const customerLabel=safeFilePart(data.customer_name);
@@ -174,12 +250,90 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
         </div>
       </section>
 
-      {flights.length>0&&<section data-preview-block="overview" className={styles.overviewPage}>
+      {pdfStyle==="concept-a"?<section data-preview-block="overview" data-preview-new-page="true" className={styles.conceptAOverviewPage}>
+        <div className={styles.conceptAOverviewTitle}>
+          <div className={styles.conceptAOverviewIndex}>01</div>
+          <div><h2>Journey Overview</h2><p>行程总览</p></div>
+          <span>HAPPY EXPRESS TRAVEL</span>
+        </div>
+
+        <div className={styles.conceptAOverviewGrid}>
+          <div className={styles.conceptAOverviewFlights}>
+            <div className={styles.conceptAOverviewBlockHead}>
+              <div><small>FLIGHT INFORMATION</small><strong>航班资料</strong></div>
+              <span>{flights.length} Flight{flights.length===1?"":"s"}</span>
+            </div>
+            <div className={styles.conceptACompactFlightList}>
+              {flights.length>0?flights.map((f:any,i:number)=><article className={styles.conceptACompactFlight} key={f.id||i}>
+                <div className={styles.conceptACompactFlightRoute}>
+                  <small>{i===0?"OUTBOUND":i===flights.length-1?"RETURN":"FLIGHT "+String(i+1).padStart(2,"0")}</small>
+                  <strong>{f.from||"—"} <em>→</em> {f.to||"—"}</strong>
+                </div>
+                <div className={styles.conceptACompactFlightFacts}>
+                  <div><span>Flight</span><b>{f.flightNo||"—"}</b></div>
+                  <div><span>Date</span><b>{f.date||"—"}</b></div>
+                  <div><span>Depart</span><b>{f.departureTime||"—"}</b></div>
+                  <div><span>Arrive</span><b>{f.arrivalTime||"—"}</b></div>
+                </div>
+              </article>):<div className={styles.conceptAOverviewEmpty}>Flight information will appear here once added.</div>}
+            </div>
+          </div>
+
+          <div className={styles.conceptAOverviewMapCard}>
+            <div className={styles.conceptAOverviewBlockHead}>
+              <div><small>ROUTE MAP</small><strong>路线地图</strong></div>
+              <span>{journeyMapPoints.some((p:any)=>p.mode==="geo")?"Geo-based":"Schematic"}</span>
+            </div>
+            <div className={styles.conceptARouteMap}>
+              <svg viewBox="0 0 100 86" role="img" aria-label="Journey route map">
+                <defs>
+                  <linearGradient id="routeMapBg" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#EEF5F2"/>
+                    <stop offset="100%" stopColor="#DDEDE7"/>
+                  </linearGradient>
+                  <filter id="routeNodeShadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="1" stdDeviation="1.2" floodColor="#0B2340" floodOpacity=".18"/>
+                  </filter>
+                </defs>
+                <rect x="1" y="1" width="98" height="84" rx="6" fill="url(#routeMapBg)"/>
+                <path d="M9 63 C18 40,29 23,43 19 C57 15,67 23,78 18 C89 14,94 28,91 42 C88 58,74 72,59 75 C42 79,24 75,9 63 Z" fill="#BBD8CF" opacity=".78"/>
+                <path d="M8 27 C25 31,38 25,53 31 C67 37,78 34,94 25" fill="none" stroke="#FFFFFF" strokeWidth=".6" opacity=".65"/>
+                <path d="M15 13 C31 19,42 16,56 19 C71 22,83 18,91 13" fill="none" stroke="#FFFFFF" strokeWidth=".45" opacity=".5"/>
+                <path d={journeyMapPath} fill="none" stroke="#D6A75A" strokeWidth="1.3" strokeDasharray="2.2 1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                {journeyMapPoints.map((p:any,i:number)=><g key={p.label+"-map-"+i} transform={`translate(${p.x} ${p.y})`}>
+                  <circle r="3.5" fill="#FFFFFF" filter="url(#routeNodeShadow)"/>
+                  <circle r="2.35" fill="#0B2340" stroke="#D6A75A" strokeWidth=".8"/>
+                  <text x="0" y=".9" textAnchor="middle" fontSize="2.45" fontWeight="800" fill="#FFFFFF">{i+1}</text>
+                  <text x={p.x>72?-4:4} y={p.y<20?5:-4} textAnchor={p.x>72?"end":"start"} fontSize="3.15" fontWeight="800" fill="#0B2340">{p.label}</text>
+                </g>)}
+              </svg>
+            </div>
+            <div className={styles.conceptAMapLegend}>
+              <span><i className={styles.conceptAMapLegendNode}/>Major stop</span>
+              <span><i className={styles.conceptAMapLegendLine}/>Route sequence</span>
+              <small>Map positions use geographic coordinates when recognised; otherwise the route falls back to schematic placement.</small>
+            </div>
+          </div>
+        </div>
+
+        {journeyStops.length>1&&<div className={styles.conceptAOverviewJourney}>
+          <div className={styles.conceptAJourneyHead}>
+            <div><small>JOURNEY ROUTE</small><strong>行程路线</strong></div>
+            <span>{journeyStops.length} Stops</span>
+          </div>
+          <div className={styles.conceptAJourneyTrack}>
+            {journeyStops.map((stop:string,i:number)=><div className={styles.conceptAJourneyStop} key={stop+"-overview-"+i}>
+              <span className={styles.conceptAJourneyNode}>{String(i+1).padStart(2,"0")}</span>
+              <strong>{stop}</strong>
+              {i<journeyStops.length-1&&<i aria-hidden="true"/>}
+            </div>)}
+          </div>
+        </div>}
+      </section>:flights.length>0&&<section data-preview-block="overview" className={styles.overviewPage}>
         <div className={styles.sectionTitle}>
           <span>01</span>
           <div><h2>Flight Information</h2><p>航班资料</p></div>
         </div>
-
         <div className={styles.flightList}>
           {flights.map((f:any,i:number)=><article className={styles.flightRow} key={f.id||i}>
             <div className={styles.flightRoute}>
@@ -202,26 +356,6 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
           <span>{flights.length?"02":"01"}</span>
           <div><h2>Daily Itinerary</h2><p>每日行程</p></div>
         </div>
-        {pdfStyle==="concept-a"&&journeyStops.length>1&&<div data-preview-block="journey-route" data-keep-next="true" className={styles.conceptAJourneyShell}>
-          <div className={styles.conceptAJourneyMicro} aria-hidden="true">
-            <span className={styles.conceptAJourneyArc}/>
-            <span className={styles.conceptAJourneyGlow}/>
-          </div>
-          <div className={styles.conceptAJourneyHead}>
-            <div>
-              <small>JOURNEY ROUTE</small>
-              <strong>行程路线</strong>
-            </div>
-            <span>{journeyStops.length} Stops</span>
-          </div>
-          <div className={styles.conceptAJourneyTrack}>
-            {journeyStops.map((stop:string,i:number)=><div className={styles.conceptAJourneyStop} key={stop+"-"+i}>
-              <span className={styles.conceptAJourneyNode}>{String(i+1).padStart(2,"0")}</span>
-              <strong>{stop}</strong>
-              {i<journeyStops.length-1&&<i aria-hidden="true"/>}
-            </div>)}
-          </div>
-        </div>}
 
         <div className={styles.dayList}>
           {days.map((day:any,index:number)=>{
