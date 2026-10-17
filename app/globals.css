@@ -22751,8 +22751,10 @@ td,
 
 
 /* =========================================================
-   ITINERARY PDF PREVIEW — PAGED A4 SCREEN MODE
-   Screen-only page shells for easier PDF QA.
+   ITINERARY PDF PREVIEW — PRINT-SYNC A4 MODE
+   Actual PDF is the source of truth. Screen preview keeps the same
+   A4 box, margins and content styles. JavaScript only moves content
+   when it physically overflows, or when print has an explicit page break.
    ========================================================= */
 .itinerary-paged-preview{
   width:min(210mm,calc(100vw - 48px));
@@ -22788,26 +22790,12 @@ td,
   background:#fffdfa;
 }
 .itinerary-preview-clone-block{
-  margin-bottom:7mm;
+  max-width:100%;
 }
 .itinerary-preview-page-inner [data-preview-page="cover"]{
   min-height:269mm!important;
   height:269mm!important;
   margin:0!important;
-}
-.itinerary-preview-page-inner [data-preview-block="overview"]{
-  margin-bottom:8mm!important;
-}
-.itinerary-preview-page-inner [data-preview-block="daily-title"],
-.itinerary-preview-page-inner [data-preview-block="hotel-title"]{
-  margin-bottom:5mm!important;
-}
-.itinerary-preview-page-inner [data-preview-block="day"],
-.itinerary-preview-page-inner [data-preview-block="hotel"]{
-  margin-bottom:6mm!important;
-}
-.itinerary-preview-page-inner [data-preview-block="final"]{
-  margin-top:0!important;
 }
 #itinerary-print-source{
   display:none;
@@ -22826,21 +22814,3 @@ td,
   }
 }
 
-
-/* Content-aware pagination cues in screen preview only */
-.itinerary-preview-continuation{
-  margin:0 0 4mm;
-  padding:2.3mm 3mm;
-  border-left:1.2mm solid #b8965d;
-  background:#fbfaf6;
-  color:#173b5c;
-  font-size:8pt;
-  font-weight:800;
-  letter-spacing:.025em;
-}
-.itinerary-preview-page-inner [data-preview-block="gallery-row"]{
-  margin-bottom:4.5mm!important;
-}
-.itinerary-preview-page-inner [data-preview-block="day-core"]{
-  margin-bottom:4mm!important;
-}
