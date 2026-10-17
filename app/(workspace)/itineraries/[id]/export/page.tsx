@@ -38,7 +38,14 @@ const buildJourneyStops=(departure:any,destination:any,days:any[])=>{
 
 const ROUTE_GEO_POINTS:Array<{aliases:string[];lat:number;lng:number}>=[
   {aliases:["kuala lumpur","kul","klia","吉隆坡"],lat:3.139,lng:101.687},
-  {aliases:["osaka","大阪","kix","kansai","关西"],lat:34.694,lng:135.502},
+  {aliases:["ckg","chongqing jiangbei","重庆江北","重慶江北"],lat:29.7192,lng:106.6417},
+  {aliases:["kix","kansai international airport","关西国际机场","關西國際機場"],lat:34.4347,lng:135.2440},
+  {aliases:["cnx","chiang mai international airport","清迈国际机场","清邁國際機場"],lat:18.7668,lng:98.9626},
+  {aliases:["bkk","suvarnabhumi","bangkok suvarnabhumi"],lat:13.6900,lng:100.7501},
+  {aliases:["dmk","don mueang"],lat:13.9126,lng:100.6068},
+  {aliases:["han","noi bai","hanoi airport"],lat:21.2187,lng:105.8042},
+  {aliases:["kuala lumpur","kul","klia","吉隆坡"],lat:3.139,lng:101.687},
+  {aliases:["osaka","大阪"],lat:34.694,lng:135.502},
   {aliases:["kyoto","京都"],lat:35.0116,lng:135.7681},
   {aliases:["nara","奈良"],lat:34.6851,lng:135.8048},
   {aliases:["tokyo","东京","東京","hnd","nrt"],lat:35.6762,lng:139.6503},
@@ -64,6 +71,63 @@ const ROUTE_GEO_POINTS:Array<{aliases:string[];lat:number;lng:number}>=[
 ];
 
 const normalizeRouteLabel=(value:any)=>text(value).toLowerCase().replace(/[·•,，()（）]/g," ").replace(/\s+/g," ").trim();
+
+const routeParts=(value:any)=>text(value)
+  .replace(/^day\s*\d+[:：-]?/i,"")
+  .replace(/\([^)]*\)/g,"")
+  .replace(/[｜|]/g,"→")
+  .split(/→|>|–|—| - /)
+  .map((x:string)=>x.trim())
+  .filter(Boolean);
+
+const canonicalRouteLabel=(value:any)=>{
+  const raw=text(value);
+  const key=normalizeRouteLabel(raw).replace(/^中国\s*/,"").replace(/^china\s*/,"");
+  if(!key) return "";
+  const geo=ROUTE_GEO_POINTS.find(item=>item.aliases.some(alias=>{
+    const a=normalizeRouteLabel(alias);
+    return key===a||key.includes(a)||a.includes(key);
+  }));
+  if(!geo) return raw.replace(/^中国\s*/,"").replace(/^China\s*/i,"").trim();
+  const preferred=geo.aliases.find(a=>/^[A-Z]{3}$/.test(a))||geo.aliases.find(a=>/[\u4e00-\u9fff]/.test(a))||geo.aliases[0];
+  return preferred.toUpperCase()===preferred?preferred:preferred;
+};
+
+const buildLocalJourneyStops=(flights:any[],days:any[],destination:any)=>{
+  const arrival=text(flights?.[0]?.to);
+  const departure=text(flights?.[flights.length-1]?.from);
+  const origin=text(flights?.[0]?.from);
+
+  const dayParts=days.flatMap((d:any)=>routeParts(d?.title));
+  const candidates=[arrival,...dayParts,text(destination),departure].filter(Boolean);
+  const originKey=normalizeRouteLabel(origin);
+  const seen:string[]=[];
+  const cleaned:string[]=[];
+
+  for(const candidate of candidates){
+    const canonical=canonicalRouteLabel(candidate);
+    const key=normalizeRouteLabel(canonical).replace(/^中国\s*/,"").replace(/^china\s*/,"");
+    if(!key) continue;
+    if(originKey && (key===originKey || key.includes(originKey) || originKey.includes(key))) continue;
+    if(seen.some(existing=>existing===key||existing.includes(key)||key.includes(existing))) continue;
+    seen.push(key);
+    cleaned.push(canonical);
+  }
+
+  const arrivalLabel=arrival?canonicalRouteLabel(arrival):"";
+  const departureLabel=departure?canonicalRouteLabel(departure):"";
+  const local=cleaned.filter(x=>{
+    const k=normalizeRouteLabel(x);
+    return k!==normalizeRouteLabel(arrivalLabel)&&k!==normalizeRouteLabel(departureLabel);
+  });
+
+  const result:Array<{label:string;geoLabel:string;kind:"arrival"|"stop"|"departure"}>=[];
+  if(arrivalLabel) result.push({label:`${arrivalLabel} Arrival`,geoLabel:arrivalLabel,kind:"arrival"});
+  for(const stop of local.slice(0,6)) result.push({label:stop,geoLabel:stop,kind:"stop"});
+  if(departureLabel) result.push({label:`${departureLabel} Departure`,geoLabel:departureLabel,kind:"departure"});
+  return result;
+};
+
 
 const routeGeoForStop=(label:string)=>{
   const key=normalizeRouteLabel(label);
@@ -195,7 +259,9 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
   };
 
   const journeyStops=buildJourneyStops(qd.departureCity,data.destination,days);
-  const journeyMapPoints=buildRouteMapPoints(journeyStops);
+  const localJourneyStops=buildLocalJourneyStops(flights,days,data.destination);
+  const localJourneyLabels=localJourneyStops.map((x:any)=>x.geoLabel);
+  const journeyMapPoints=buildRouteMapPoints(localJourneyLabels).map((p:any,i:number)=>({...p,label:localJourneyStops[i]?.label||p.label,kind:localJourneyStops[i]?.kind||"stop"}));
   const journeyMapPath=journeyMapPoints.map((p:any,i:number)=>`${i===0?"M":"L"} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(" ");
   const destinationLabel=compactDestination(data.destination);
   const durationLabel=data.days_count&&data.nights_count?`${data.days_count}D${data.nights_count}N`:"";
@@ -279,16 +345,16 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
             </div>
           </div>
 
-          {journeyStops.length>1&&<div className={styles.conceptAOverviewJourney}>
+          {localJourneyStops.length>1&&<div className={styles.conceptAOverviewJourney}>
             <div className={styles.conceptAJourneyHead}>
               <div><small>JOURNEY ROUTE</small><strong>行程路线</strong></div>
-              <span>{journeyStops.length} Stops</span>
+              <span>{localJourneyStops.length} Stops</span>
             </div>
             <div className={styles.conceptAJourneyTrack}>
-              {journeyStops.map((stop:string,i:number)=><div className={styles.conceptAJourneyStop} key={stop+"-overview-"+i}>
+              {localJourneyStops.map((item:any,i:number)=><div className={styles.conceptAJourneyStop} key={item.label+"-overview-"+i}>
                 <span className={styles.conceptAJourneyNode}>{String(i+1).padStart(2,"0")}</span>
-                <strong>{stop}</strong>
-                {i<journeyStops.length-1&&<i aria-hidden="true"/>}
+                <strong>{item.label}</strong>
+                {i<localJourneyStops.length-1&&<i aria-hidden="true"/>}
               </div>)}
             </div>
           </div>}
@@ -314,9 +380,9 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
                 <path d="M8 22 C25 26,38 21,53 26 C67 31,79 28,94 20" fill="none" stroke="#FFFFFF" strokeWidth=".6" opacity=".65"/>
                 <path d={journeyMapPath} fill="none" stroke="#D6A75A" strokeWidth="1.25" strokeDasharray="2.2 1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 {journeyMapPoints.map((p:any,i:number)=><g key={p.label+"-map-"+i} transform={`translate(${p.x} ${Math.min(p.y,64)})`}>
-                  <circle r="3.3" fill="#FFFFFF" filter="url(#routeNodeShadow)"/>
-                  <circle r="2.25" fill="#0B2340" stroke="#D6A75A" strokeWidth=".8"/>
-                  <text x="0" y=".85" textAnchor="middle" fontSize="2.35" fontWeight="800" fill="#FFFFFF">{i+1}</text>
+                  <circle r={p.kind==="stop"?3.3:3.8} fill="#FFFFFF" filter="url(#routeNodeShadow)"/>
+                  <circle r={p.kind==="stop"?2.25:2.65} fill={p.kind==="stop"?"#0B2340":"#D6A75A"} stroke="#0B2340" strokeWidth=".8"/>
+                  <text x="0" y=".85" textAnchor="middle" fontSize="2.35" fontWeight="800" fill={p.kind==="stop"?"#FFFFFF":"#0B2340"}>{i+1}</text>
                   <text x={p.x>72?-4:4} y={p.y<20?5:-4} textAnchor={p.x>72?"end":"start"} fontSize="3.05" fontWeight="800" fill="#0B2340">{p.label}</text>
                 </g>)}
               </svg>
