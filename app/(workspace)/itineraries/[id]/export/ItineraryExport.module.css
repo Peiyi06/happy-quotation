@@ -1532,3 +1532,131 @@
     page-break-inside:avoid!important;
   }
 }
+
+
+/* =========================================================
+   BASIC PDF — CUSTOMER PRICE + PACKAGE SUMMARY
+   Explicitly approved Basic upgrade. Other Basic visuals remain frozen.
+   ========================================================= */
+.packageFinalSection{
+  margin-top:0;
+  padding-bottom:8mm;
+  break-before:page;
+  page-break-before:always;
+}
+.customerPriceHero{
+  position:relative;
+  overflow:hidden;
+  margin-bottom:7mm;
+  padding:7mm 8mm;
+  border:1px solid #d9c89d;
+  border-radius:4mm;
+  background:linear-gradient(135deg,#173b5c 0%,#0f2e49 100%);
+  color:#fff;
+  break-inside:avoid-page;
+  page-break-inside:avoid;
+}
+.customerPriceHero:after{
+  content:"";
+  position:absolute;
+  right:-15mm;
+  top:-21mm;
+  width:56mm;
+  height:56mm;
+  border:1px solid rgba(215,189,128,.34);
+  border-radius:50%;
+  box-shadow:0 0 0 8mm rgba(215,189,128,.05);
+}
+.customerPriceHero>div{
+  position:relative;
+  z-index:1;
+}
+.customerPriceHero small{
+  display:block;
+  margin-bottom:2.2mm;
+  color:#d7bd80;
+  font-size:7pt;
+  font-weight:850;
+  letter-spacing:.09em;
+}
+.customerPriceHero strong{
+  display:block;
+  color:#fff;
+  font-size:26pt;
+  line-height:1;
+  letter-spacing:-.025em;
+}
+.customerPriceHero strong span{
+  margin-right:1.5mm;
+  color:#e5c988;
+  font-size:13pt;
+  letter-spacing:.02em;
+}
+.customerPriceHero p{
+  margin:2.5mm 0 0;
+  color:rgba(255,255,255,.82);
+  font-size:8pt;
+  font-weight:600;
+  line-height:1.4;
+}
+.packageFinalSection .finalGrid{
+  gap:5mm;
+}
+.packageListCard{
+  padding:5mm;
+  border:1px solid #e0e5e9;
+  border-radius:3.5mm;
+  background:#fff;
+  break-inside:avoid-page;
+  page-break-inside:avoid;
+}
+.packageListCard h3{
+  margin:0 0 3.5mm!important;
+  color:#173b5c!important;
+  font-size:10pt!important;
+}
+.packageListCard h3 span{
+  display:block;
+  margin-top:.8mm;
+  color:#b8965d;
+  font-size:7pt;
+  font-weight:750;
+}
+.packageListCard ul{
+  margin:0!important;
+  padding:0!important;
+  list-style:none;
+}
+.packageListCard li{
+  position:relative;
+  margin:0!important;
+  padding:2.1mm 0 2.1mm 5mm;
+  border-bottom:1px solid #edf0f3;
+  color:#3f4a59!important;
+  font-size:8.3pt!important;
+  line-height:1.4!important;
+}
+.packageListCard li:last-child{
+  border-bottom:0;
+}
+.packageListCard li:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:3.5mm;
+  width:2mm;
+  height:2mm;
+  border-radius:50%;
+  background:#b8965d;
+}
+@media print{
+  .packageFinalSection{
+    break-before:page!important;
+    page-break-before:always!important;
+  }
+  .customerPriceHero,
+  .packageListCard{
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+}
