@@ -156,6 +156,9 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   );
   const [includedItems,setIncludedItems]=useState<PackageItem[]>(normalizePackageItems(data.includedItems));
   const [notIncludedItems,setNotIncludedItems]=useState<PackageItem[]>(normalizePackageItems(data.notIncludedItems));
+  const [customerPriceCurrency,setCustomerPriceCurrency]=useState(data.customerPriceCurrency||"MYR");
+  const [customerPrice,setCustomerPrice]=useState(data.customerPrice||"");
+  const [customerPriceNote,setCustomerPriceNote]=useState(data.customerPriceNote||"");
   const [reminders,setReminders]=useState<ReminderItem[]>(normalizeReminders(data.reminders));
   const [saving,setSaving]=useState(false);
   const [message,setMessage]=useState("");
@@ -736,7 +739,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
 
   const currentSnapshot=JSON.stringify({
     title,destination,daysCount,nightsCount,customerName,status,
-    departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,journeyRoute,journeyRouteCompleted,journeyRouteCollapsed,days,hotels,includedItems,notIncludedItems,reminders
+    departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,journeyRoute,journeyRouteCompleted,journeyRouteCollapsed,days,hotels,includedItems,notIncludedItems,customerPriceCurrency,customerPrice,customerPriceNote,reminders
   });
 
   useEffect(()=>{
@@ -791,7 +794,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
         itinerary_data:{
           departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,
           journeyRoute:journeyRoute.map(x=>x.trim()).filter(Boolean),journeyRouteCompleted,journeyRouteCollapsed,
-          days,hotels,includedItems,notIncludedItems,reminders,op,opStaffId:initialItinerary?.owner_id||currentStaffId,
+          days,hotels,includedItems,notIncludedItems,customerPriceCurrency:customerPriceCurrency.trim(),customerPrice:customerPrice.trim(),customerPriceNote:customerPriceNote.trim(),reminders,op,opStaffId:initialItinerary?.owner_id||currentStaffId,
           sourceInquiryId:resolvedSourceInquiryId,sourceInquiryNo:resolvedSourceInquiryNo,sourceInquirySnapshot:resolvedSourceInquirySnapshot
         }
       };
@@ -1170,6 +1173,29 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
           </article>;
         })}
       </div> : <div className="itinerary-attraction-empty itinerary-editor-empty">{t("No hotel details yet. Add a hotel when needed.","尚未加入酒店资料。需要时可新增酒店。")}</div>}
+    </section>
+
+    <section className="panel itinerary-customer-price-panel">
+      <div className="panel-head">
+        <div>
+          <h2>{t("Customer Price","顾客价格")}</h2>
+          <p className="panel-subtext">{t("Manual display price for the customer itinerary PDF. This does not affect quotation costing or profit calculations.","手动填写顾客行程 PDF 的展示价格，不会影响 Quotation 的成本或利润计算。")}</p>
+        </div>
+      </div>
+      <div className="itinerary-customer-price-grid">
+        <label className="field">
+          <span>{t("Currency","币种")}</span>
+          <input value={customerPriceCurrency} onChange={e=>setCustomerPriceCurrency(e.target.value.toUpperCase())} placeholder="MYR"/>
+        </label>
+        <label className="field">
+          <span>{t("Price","价格")}</span>
+          <input inputMode="decimal" value={customerPrice} onChange={e=>setCustomerPrice(e.target.value)} placeholder="3999"/>
+        </label>
+        <label className="field itinerary-price-note-field">
+          <span>{t("Price Note","价格备注")}</span>
+          <input value={customerPriceNote} onChange={e=>setCustomerPriceNote(e.target.value)} placeholder={t("e.g. Based on twin sharing","例如：Based on twin sharing")}/>
+        </label>
+      </div>
     </section>
 
     <section className="panel">
