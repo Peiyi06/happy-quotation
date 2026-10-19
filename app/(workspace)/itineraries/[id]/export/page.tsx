@@ -296,6 +296,11 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
   const hotels=list(qd.hotels).filter((h:any)=>text(h?.name)||list(h?.images).some((img:any)=>text(img?.url)));
   const included=list(qd.includedItems).filter((x:any)=>text(typeof x==="string"?x:x?.name));
   const excluded=list(qd.notIncludedItems).filter((x:any)=>text(typeof x==="string"?x:x?.name));
+  const customerPriceCurrency=text(qd.customerPriceCurrency||"MYR");
+  const customerPrice=text(qd.customerPrice);
+  const customerPriceNote=text(qd.customerPriceNote);
+  const customerPricePrefix=/^(MYR|RM)$/i.test(customerPriceCurrency)?"RM":customerPriceCurrency;
+  const customerPriceDisplay=customerPrice?customerPrice.replace(/^\s*(RM|MYR)\s*/i,"").trim():"";
   const reminders=list(qd.reminders).filter((x:any)=>text(typeof x==="string"?x:x?.title)||text(x?.description));
   const manualCover=qd.coverImage&&text(qd.coverImage?.url)?{
     path:text(qd.coverImage?.path),
@@ -612,6 +617,32 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
             </article>;
           })}
         </div>
+      </section>}
+
+      {(customerPriceDisplay||included.length>0||excluded.length>0)&&<section data-preview-block="package-final" data-preview-new-page="true" className={styles.packageFinalSection}>
+        <div className={styles.sectionTitle}>
+          <span>P</span>
+          <div><h2>Package Summary</h2><p>配套摘要</p></div>
+        </div>
+
+        {customerPriceDisplay&&<div className={styles.customerPriceHero}>
+          <div>
+            <small>PACKAGE PRICE / 配套价格</small>
+            <strong><span>{customerPricePrefix}</span> {customerPriceDisplay}</strong>
+            {customerPriceNote&&<p>{customerPriceNote}</p>}
+          </div>
+        </div>}
+
+        {(included.length>0||excluded.length>0)&&<div className={styles.finalGrid}>
+          {included.length>0&&<div className={styles.packageListCard}>
+            <h3>Package Included <span>配套包含</span></h3>
+            <ul>{included.map((x:any,i:number)=><li key={x?.id||i}>{typeof x==="string"?x:x?.name}</li>)}</ul>
+          </div>}
+          {excluded.length>0&&<div className={styles.packageListCard}>
+            <h3>Package Not Included <span>配套不包含</span></h3>
+            <ul>{excluded.map((x:any,i:number)=><li key={x?.id||i}>{typeof x==="string"?x:x?.name}</li>)}</ul>
+          </div>}
+        </div>}
       </section>}
 
       {reminders.length>0&&<section data-preview-block="final" className={styles.finalSection}>
