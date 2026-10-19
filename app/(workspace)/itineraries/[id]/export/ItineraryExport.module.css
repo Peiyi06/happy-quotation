@@ -1660,3 +1660,30 @@
     page-break-inside:avoid!important;
   }
 }
+
+
+/* =========================================================
+   BASIC PDF — MULTIPLE CUSTOMER PRICES
+   ========================================================= */
+.customerPriceGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:4mm;
+  margin-bottom:7mm;
+}
+.customerPriceGrid .customerPriceHero{
+  margin-bottom:0;
+  min-height:34mm;
+}
+.customerPriceGrid .customerPriceHero:only-child{
+  grid-column:1/-1;
+}
+.customerPriceGrid .customerPriceHero strong{
+  font-size:22pt;
+}
+@media print{
+  .customerPriceGrid{
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+}
