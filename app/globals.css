@@ -23396,3 +23396,80 @@ td,
     grid-column:auto;
   }
 }
+
+
+/* =========================================================
+   ITINERARY EDITOR — MULTIPLE CUSTOMER PRICES
+   ========================================================= */
+.itinerary-customer-price-list{
+  display:grid;
+  gap:10px;
+}
+.itinerary-customer-price-row{
+  display:grid;
+  grid-template-columns:38px 120px 170px minmax(260px,1fr) auto;
+  gap:12px;
+  align-items:end;
+  padding:12px;
+  border:1px solid #e1e6eb;
+  border-radius:12px;
+  background:#fbfcfd;
+}
+.itinerary-customer-price-index{
+  display:grid;
+  place-items:center;
+  width:32px;
+  height:32px;
+  align-self:center;
+  border-radius:9px;
+  background:#173b5c;
+  color:#fff;
+  font-size:11px;
+  font-weight:850;
+}
+.itinerary-customer-price-row .field{
+  margin:0;
+  min-width:0;
+}
+.itinerary-customer-price-actions{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding-bottom:1px;
+}
+.itinerary-customer-price-actions button{
+  min-width:32px;
+  height:34px;
+  padding:0 8px;
+  border:1px solid #dce2e8;
+  border-radius:9px;
+  background:#fff;
+  color:#536171;
+  font-size:12px;
+}
+.itinerary-customer-price-actions button:disabled{
+  opacity:.3;
+}
+.itinerary-customer-price-actions .danger-link{
+  color:#c6493e;
+  border-color:#efd9d6;
+  background:#fffafa;
+}
+@media(max-width:1000px){
+  .itinerary-customer-price-row{
+    grid-template-columns:38px 110px 150px minmax(220px,1fr);
+  }
+  .itinerary-customer-price-actions{
+    grid-column:2/-1;
+    justify-content:flex-end;
+  }
+}
+@media(max-width:700px){
+  .itinerary-customer-price-row{
+    grid-template-columns:38px 1fr;
+  }
+  .itinerary-customer-price-row .field,
+  .itinerary-customer-price-actions{
+    grid-column:2;
+  }
+}
