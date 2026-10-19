@@ -296,11 +296,22 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
   const hotels=list(qd.hotels).filter((h:any)=>text(h?.name)||list(h?.images).some((img:any)=>text(img?.url)));
   const included=list(qd.includedItems).filter((x:any)=>text(typeof x==="string"?x:x?.name));
   const excluded=list(qd.notIncludedItems).filter((x:any)=>text(typeof x==="string"?x:x?.name));
-  const customerPriceCurrency=text(qd.customerPriceCurrency||"MYR");
-  const customerPrice=text(qd.customerPrice);
-  const customerPriceNote=text(qd.customerPriceNote);
-  const customerPricePrefix=/^(MYR|RM)$/i.test(customerPriceCurrency)?"RM":customerPriceCurrency;
-  const customerPriceDisplay=customerPrice?customerPrice.replace(/^\s*(RM|MYR)\s*/i,"").trim():"";
+  const customerPricesRaw=list(qd.customerPrices);
+  const customerPrices=(customerPricesRaw.length?customerPricesRaw:[{
+    id:"legacy-price",
+    currency:qd.customerPriceCurrency||"MYR",
+    price:qd.customerPrice||"",
+    note:qd.customerPriceNote||""
+  }]).map((item:any)=>({
+    id:text(item?.id)||String(Math.random()),
+    currency:text(item?.currency||"MYR"),
+    price:text(item?.price),
+    note:text(item?.note)
+  })).filter((item:any)=>item.price||item.note).map((item:any)=>({
+    ...item,
+    prefix:/^(MYR|RM)$/i.test(item.currency)?"RM":item.currency,
+    display:item.price?item.price.replace(/^\s*(RM|MYR)\s*/i,"").trim():""
+  }));
   const reminders=list(qd.reminders).filter((x:any)=>text(typeof x==="string"?x:x?.title)||text(x?.description));
   const manualCover=qd.coverImage&&text(qd.coverImage?.url)?{
     path:text(qd.coverImage?.path),
@@ -619,18 +630,20 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
         </div>
       </section>}
 
-      {(customerPriceDisplay||included.length>0||excluded.length>0)&&<section data-preview-block="package-final" data-preview-new-page="true" className={styles.packageFinalSection}>
+      {(customerPrices.length>0||included.length>0||excluded.length>0)&&<section data-preview-block="package-final" data-preview-new-page="true" className={styles.packageFinalSection}>
         <div className={styles.sectionTitle}>
           <span>P</span>
           <div><h2>Package Summary</h2><p>配套摘要</p></div>
         </div>
 
-        {customerPriceDisplay&&<div className={styles.customerPriceHero}>
-          <div>
-            <small>PACKAGE PRICE / 配套价格</small>
-            <strong><span>{customerPricePrefix}</span> {customerPriceDisplay}</strong>
-            {customerPriceNote&&<p>{customerPriceNote}</p>}
-          </div>
+        {customerPrices.length>0&&<div className={styles.customerPriceGrid}>
+          {customerPrices.map((item:any,index:number)=><div className={styles.customerPriceHero} key={item.id||index}>
+            <div>
+              <small>PACKAGE PRICE {customerPrices.length>1?String(index+1).padStart(2,"0"):""} / 配套价格</small>
+              {item.display&&<strong><span>{item.prefix}</span> {item.display}</strong>}
+              {item.note&&<p>{item.note}</p>}
+            </div>
+          </div>)}
         </div>}
 
         {(included.length>0||excluded.length>0)&&<div className={styles.finalGrid}>
