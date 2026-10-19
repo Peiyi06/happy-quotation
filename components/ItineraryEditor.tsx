@@ -10,6 +10,7 @@ type SuggestedFlight={id:string;from:string;to:string;flightNo:string;date:strin
 type HotelItem={id:string;name:string;cityArea:string;starRating:string;stayNights:string;roomSize:number|"";openingYear:string;renovationYear:string;nearbyNotes:string;images:AttractionImage[]};
 type AttractionItem={id:string;name:string;images:AttractionImage[]};
 type PackageItem={id:string;preset:string;name:string};
+type CustomerPriceItem={id:string;currency:string;price:string;note:string};
 type ReminderItem={id:string;preset:string;title:string;description:string};
 type DayItem={
   id:string;
@@ -156,9 +157,20 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
   );
   const [includedItems,setIncludedItems]=useState<PackageItem[]>(normalizePackageItems(data.includedItems));
   const [notIncludedItems,setNotIncludedItems]=useState<PackageItem[]>(normalizePackageItems(data.notIncludedItems));
-  const [customerPriceCurrency,setCustomerPriceCurrency]=useState(data.customerPriceCurrency||"MYR");
-  const [customerPrice,setCustomerPrice]=useState(data.customerPrice||"");
-  const [customerPriceNote,setCustomerPriceNote]=useState(data.customerPriceNote||"");
+  const [customerPrices,setCustomerPrices]=useState<CustomerPriceItem[]>(()=>{
+    if(Array.isArray(data.customerPrices)&&data.customerPrices.length){
+      return data.customerPrices.map((item:any)=>({
+        id:item?.id||uid(),
+        currency:String(item?.currency||"MYR"),
+        price:String(item?.price||""),
+        note:String(item?.note||"")
+      }));
+    }
+    if(data.customerPrice||data.customerPriceNote){
+      return [{id:uid(),currency:String(data.customerPriceCurrency||"MYR"),price:String(data.customerPrice||""),note:String(data.customerPriceNote||"")}];
+    }
+    return [{id:uid(),currency:"MYR",price:"",note:""}];
+  });
   const [reminders,setReminders]=useState<ReminderItem[]>(normalizeReminders(data.reminders));
   const [saving,setSaving]=useState(false);
   const [message,setMessage]=useState("");
@@ -451,6 +463,28 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
     return list.find(([value])=>value===preset)?.[1]||"";
   }
 
+  function addCustomerPrice(){
+    setCustomerPrices(items=>[...items,{id:uid(),currency:items[items.length-1]?.currency||"MYR",price:"",note:""}]);
+  }
+
+  function patchCustomerPrice(id:string,patch:Partial<CustomerPriceItem>){
+    setCustomerPrices(items=>items.map(item=>item.id===id?{...item,...patch}:item));
+  }
+
+  function removeCustomerPrice(id:string){
+    setCustomerPrices(items=>items.filter(item=>item.id!==id));
+  }
+
+  function moveCustomerPrice(index:number,dir:-1|1){
+    setCustomerPrices(items=>{
+      const target=index+dir;
+      if(target<0||target>=items.length) return items;
+      const next=[...items];
+      [next[index],next[target]]=[next[target],next[index]];
+      return next;
+    });
+  }
+
   function addPackageItem(kind:"included"|"excluded"){
     const setter=kind==="included"?setIncludedItems:setNotIncludedItems;
     const item=emptyPackageItem();
@@ -739,7 +773,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
 
   const currentSnapshot=JSON.stringify({
     title,destination,daysCount,nightsCount,customerName,status,
-    departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,journeyRoute,journeyRouteCompleted,journeyRouteCollapsed,days,hotels,includedItems,notIncludedItems,customerPriceCurrency,customerPrice,customerPriceNote,reminders
+    departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,journeyRoute,journeyRouteCompleted,journeyRouteCollapsed,days,hotels,includedItems,notIncludedItems,customerPrices,reminders
   });
 
   useEffect(()=>{
@@ -794,7 +828,12 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
         itinerary_data:{
           departureCity,travelStartDate,travelEndDate,pax,tourType,suggestedFlights,
           journeyRoute:journeyRoute.map(x=>x.trim()).filter(Boolean),journeyRouteCompleted,journeyRouteCollapsed,
-          days,hotels,includedItems,notIncludedItems,customerPriceCurrency:customerPriceCurrency.trim(),customerPrice:customerPrice.trim(),customerPriceNote:customerPriceNote.trim(),reminders,op,opStaffId:initialItinerary?.owner_id||currentStaffId,
+          days,hotels,includedItems,notIncludedItems,
+          customerPrices:customerPrices.map(item=>({id:item.id,currency:item.currency.trim(),price:item.price.trim(),note:item.note.trim()})).filter(item=>item.price||item.note),
+          customerPriceCurrency:(customerPrices[0]?.currency||"MYR").trim(),
+          customerPrice:(customerPrices[0]?.price||"").trim(),
+          customerPriceNote:(customerPrices[0]?.note||"").trim(),
+          reminders,op,opStaffId:initialItinerary?.owner_id||currentStaffId,
           sourceInquiryId:resolvedSourceInquiryId,sourceInquiryNo:resolvedSourceInquiryNo,sourceInquirySnapshot:resolvedSourceInquirySnapshot
         }
       };
@@ -1179,23 +1218,32 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
       <div className="panel-head">
         <div>
           <h2>{t("Customer Price","顾客价格")}</h2>
-          <p className="panel-subtext">{t("Manual display price for the customer itinerary PDF. This does not affect quotation costing or profit calculations.","手动填写顾客行程 PDF 的展示价格，不会影响 Quotation 的成本或利润计算。")}</p>
+          <p className="panel-subtext">{t("Manual display prices for the customer itinerary PDF. These do not affect quotation costing or profit calculations.","手动填写顾客行程 PDF 的展示价格，不会影响 Quotation 的成本或利润计算。")}</p>
         </div>
+        <button className="btn itinerary-add-action" type="button" onClick={addCustomerPrice}>{t("+ Add Price","+ 新价格")}</button>
       </div>
-      <div className="itinerary-customer-price-grid">
-        <label className="field">
-          <span>{t("Currency","币种")}</span>
-          <input value={customerPriceCurrency} onChange={e=>setCustomerPriceCurrency(e.target.value.toUpperCase())} placeholder="MYR"/>
-        </label>
-        <label className="field">
-          <span>{t("Price","价格")}</span>
-          <input inputMode="decimal" value={customerPrice} onChange={e=>setCustomerPrice(e.target.value)} placeholder="3999"/>
-        </label>
-        <label className="field itinerary-price-note-field">
-          <span>{t("Price Note","价格备注")}</span>
-          <input value={customerPriceNote} onChange={e=>setCustomerPriceNote(e.target.value)} placeholder={t("e.g. Based on twin sharing","例如：Based on twin sharing")}/>
-        </label>
-      </div>
+      {customerPrices.length>0?<div className="itinerary-customer-price-list">
+        {customerPrices.map((item,index)=><div className="itinerary-customer-price-row" key={item.id}>
+          <span className="itinerary-customer-price-index">{String(index+1).padStart(2,"0")}</span>
+          <label className="field">
+            <span>{t("Currency","币种")}</span>
+            <input value={item.currency} onChange={e=>patchCustomerPrice(item.id,{currency:e.target.value.toUpperCase()})} placeholder="MYR"/>
+          </label>
+          <label className="field">
+            <span>{t("Price","价格")}</span>
+            <input inputMode="decimal" value={item.price} onChange={e=>patchCustomerPrice(item.id,{price:e.target.value})} placeholder="3999"/>
+          </label>
+          <label className="field itinerary-price-note-field">
+            <span>{t("Price Note","价格备注")}</span>
+            <input value={item.note} onChange={e=>patchCustomerPrice(item.id,{note:e.target.value})} placeholder={t("e.g. Based on twin sharing","例如：Based on twin sharing")}/>
+          </label>
+          <div className="itinerary-customer-price-actions">
+            <button type="button" aria-label={t("Move price up","价格上移")} onClick={()=>moveCustomerPrice(index,-1)} disabled={index===0}>↑</button>
+            <button type="button" aria-label={t("Move price down","价格下移")} onClick={()=>moveCustomerPrice(index,1)} disabled={index===customerPrices.length-1}>↓</button>
+            <button type="button" className="danger-link" onClick={()=>removeCustomerPrice(item.id)}>{t("Delete","删除")}</button>
+          </div>
+        </div>)}
+      </div>:<div className="itinerary-attraction-empty itinerary-editor-empty">{t("No customer price yet.","尚未填写顾客价格。")} <button className="btn itinerary-add-action" type="button" onClick={addCustomerPrice}>{t("+ Add Price","+ 新价格")}</button></div>}
     </section>
 
     <section className="panel">
