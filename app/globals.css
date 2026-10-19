@@ -23357,3 +23357,42 @@ td,
     justify-content:flex-start;
   }
 }
+
+
+/* =========================================================
+   ITINERARY EDITOR — CUSTOMER PRICE
+   ========================================================= */
+.itinerary-customer-price-panel .panel-head{
+  padding-bottom:12px;
+}
+.itinerary-customer-price-grid{
+  display:grid;
+  grid-template-columns:140px 180px minmax(280px,1fr);
+  gap:14px;
+  align-items:end;
+}
+.itinerary-customer-price-grid .field{
+  margin:0;
+}
+.itinerary-customer-price-grid input{
+  min-height:40px;
+}
+.itinerary-price-note-field{
+  min-width:0;
+}
+@media(max-width:900px){
+  .itinerary-customer-price-grid{
+    grid-template-columns:1fr 1fr;
+  }
+  .itinerary-price-note-field{
+    grid-column:1/-1;
+  }
+}
+@media(max-width:560px){
+  .itinerary-customer-price-grid{
+    grid-template-columns:1fr;
+  }
+  .itinerary-price-note-field{
+    grid-column:auto;
+  }
+}
