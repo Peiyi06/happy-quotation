@@ -337,14 +337,12 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
     itinerary_data:qd
   };
 
-  const journeyStops=buildJourneyStops(qd.departureCity,data.destination,days);
   const manualJourneyRoute=list(qd.journeyRoute).map((x:any)=>text(x)).filter(Boolean);
   const journeyRouteSequence=manualJourneyRoute.length?manualJourneyRoute:buildJourneyRouteSequence(flights,days);
   const journeyRouteRows=balanceJourneyRouteRows(journeyRouteSequence);
-  const localJourneyStops=buildLocalJourneyStops(flights,days,data.destination);
-  const localJourneyLabels=localJourneyStops.map((x:any)=>x.geoLabel);
-  const journeyMapPoints=buildRouteMapPoints(localJourneyLabels).map((p:any,i:number)=>({...p,label:localJourneyStops[i]?.label||p.label,kind:localJourneyStops[i]?.kind||"stop"}));
-  const journeyMapPath=journeyMapPoints.map((p:any,i:number)=>`${i===0?"M":"L"} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(" ");
+  const tripHighlights=Array.from(new Set(
+    days.flatMap((day:any)=>list(day?.attractions).map((a:any)=>text(a?.name)).filter(Boolean))
+  )).slice(0,6);
   const destinationLabel=compactDestination(data.destination);
   const durationLabel=data.days_count&&data.nights_count?`${data.days_count}D${data.nights_count}N`:"";
   const customerLabel=safeFilePart(data.customer_name);
@@ -449,39 +447,18 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
             </div>
           </div>}
 
-          <div data-preview-block="overview-map" className={styles.conceptAOverviewMapCard}>
+          {tripHighlights.length>0&&<div data-preview-block="overview-highlights" className={styles.conceptATripHighlights}>
             <div className={styles.conceptAOverviewBlockHead}>
-              <div><small>ROUTE MAP</small><strong>路线地图</strong></div>
-              <span>{journeyMapPoints.some((p:any)=>p.mode==="geo")?"Geo-based":"Schematic"}</span>
+              <div><small>TRIP HIGHLIGHTS</small><strong>行程亮点</strong></div>
+              <span>{tripHighlights.length} Highlights</span>
             </div>
-            <div className={styles.conceptARouteMap}>
-              <svg viewBox="0 0 100 70" role="img" aria-label="Journey route map">
-                <defs>
-                  <linearGradient id="routeMapBg" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#EEF5F2"/>
-                    <stop offset="100%" stopColor="#DDEDE7"/>
-                  </linearGradient>
-                  <filter id="routeNodeShadow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feDropShadow dx="0" dy="1" stdDeviation="1.2" floodColor="#0B2340" floodOpacity=".18"/>
-                  </filter>
-                </defs>
-                <rect x="1" y="1" width="98" height="68" rx="6" fill="url(#routeMapBg)"/>
-                <path d="M7 53 C17 31,30 17,44 15 C59 13,70 19,82 16 C92 14,96 25,93 37 C89 51,76 60,59 62 C41 65,22 62,7 53 Z" fill="#BBD8CF" opacity=".78"/>
-                <path d="M8 22 C25 26,38 21,53 26 C67 31,79 28,94 20" fill="none" stroke="#FFFFFF" strokeWidth=".6" opacity=".65"/>
-                <path d={journeyMapPath} fill="none" stroke="#D6A75A" strokeWidth="1.25" strokeDasharray="2.2 1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                {journeyMapPoints.map((p:any,i:number)=><g key={p.label+"-map-"+i} transform={`translate(${p.x} ${Math.min(p.y,64)})`}>
-                  <circle r={p.kind==="stop"?3.3:3.8} fill="#FFFFFF" filter="url(#routeNodeShadow)"/>
-                  <circle r={p.kind==="stop"?2.25:2.65} fill={p.kind==="stop"?"#0B2340":"#D6A75A"} stroke="#0B2340" strokeWidth=".8"/>
-                  <text x="0" y=".85" textAnchor="middle" fontSize="2.35" fontWeight="800" fill={p.kind==="stop"?"#FFFFFF":"#0B2340"}>{i+1}</text>
-                  <text x={p.x>72?-4:4} y={p.y<20?5:-4} textAnchor={p.x>72?"end":"start"} fontSize="3.05" fontWeight="800" fill="#0B2340">{p.label}</text>
-                </g>)}
-              </svg>
+            <div className={styles.conceptATripHighlightsGrid}>
+              {tripHighlights.map((name:string,index:number)=><div className={styles.conceptATripHighlightCard} key={name+"-trip-highlight"}>
+                <span>{String(index+1).padStart(2,"0")}</span>
+                <strong>{name}</strong>
+              </div>)}
             </div>
-            <div className={styles.conceptAMapLegend}>
-              <span><i className={styles.conceptAMapLegendNode}/>Major stop</span>
-              <span><i className={styles.conceptAMapLegendLine}/>Route sequence</span>
-              <small>Map positions use geographic coordinates when recognised; otherwise the route falls back to schematic placement.</small>
-            </div>
+          </div>}
           </div>
         </div>
       </section>:flights.length>0&&<section data-preview-block="overview" className={styles.overviewPage}>
@@ -545,46 +522,21 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
               </div>
 
               {images.length>0&&<div className={styles.attractionGallery}>
-                {conceptAPilot?<>
-                  <div
-                    data-preview-block="gallery-row"
-                    data-day-number={String(index+1).padStart(2,"0")}
-                    data-day-title={day?.title||`Day ${index+1}`}
-                    data-gallery-row="hero"
-                    className={styles.conceptAHeroGallery}
-                  >
-                    <figure className={styles.conceptAHeroFigure}>
-                      <div className={styles.conceptAHeroImage}><img src={images[0].url} alt={images[0].name}/></div>
-                      <figcaption><span>Featured Stop</span><strong>{images[0].name}</strong></figcaption>
-                    </figure>
-                  </div>
-                  {images.length>1&&<div
-                    data-preview-block="gallery-row"
-                    data-day-number={String(index+1).padStart(2,"0")}
-                    data-day-title={day?.title||`Day ${index+1}`}
-                    data-gallery-row="support"
-                    className={styles.conceptASupportGallery}
-                  >
-                    {images.slice(1,3).map((img,ii)=><figure className={styles.conceptASupportFigure} key={img.url+ii}>
-                      <div className={styles.conceptASupportImage}><img src={img.url} alt={img.name}/></div>
-                      <figcaption>{img.name}</figcaption>
-                    </figure>)}
-                  </div>}
-                </>:Array.from({length:Math.ceil(images.length/2)},(_,rowIndex)=>{
+                {Array.from({length:Math.ceil(images.length/2)},(_,rowIndex)=>{
                   const row=images.slice(rowIndex*2,rowIndex*2+2);
                   return <div
                     data-preview-block="gallery-row"
                     data-day-number={String(index+1).padStart(2,"0")}
                     data-day-title={day?.title||`Day ${index+1}`}
                     data-gallery-row={String(rowIndex)}
-                    className={styles.attractionGrid+(pdfStyle==="concept-a"?" "+styles.conceptAAttractionGrid:"")}
+                    className={styles.attractionGrid}
                     key={"gallery-"+index+"-"+rowIndex}
                   >
                     <div className={styles.galleryContinuation}>
                       DAY {String(index+1).padStart(2,"0")} · Gallery
                     </div>
-                    {row.map((img,ii)=><figure className={styles.attractionFigure+(pdfStyle==="concept-a"?" "+styles.conceptAAttractionFigure:"")} key={img.url+ii}>
-                      <div className={styles.attractionImage+(pdfStyle==="concept-a"?" "+styles.conceptAAttractionImage:"")}><img src={img.url} alt={img.name}/></div>
+                    {row.map((img,ii)=><figure className={styles.attractionFigure} key={img.url+ii}>
+                      <div className={styles.attractionImage}><img src={img.url} alt={img.name}/></div>
                       <figcaption>{img.name}</figcaption>
                     </figure>)}
                   </div>;
