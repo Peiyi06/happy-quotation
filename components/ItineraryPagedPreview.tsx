@@ -54,7 +54,7 @@ export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
             nextClone=appendClone(blocks[i+1]);
           }
 
-          const overflow=page.inner.scrollHeight>page.inner.clientHeight;
+          const overflow=page.inner.scrollHeight>page.inner.clientHeight+2;
           const movableChildren=keepNext?2:1;
 
           if(overflow&&page.inner.children.length>movableChildren){
