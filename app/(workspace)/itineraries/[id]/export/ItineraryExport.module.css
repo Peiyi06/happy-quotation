@@ -1687,3 +1687,53 @@
     page-break-inside:avoid!important;
   }
 }
+
+
+/* =========================================================
+   CONCEPT A — DAILY VISUAL FOUNDATION V1
+   Day Header → Copy/Highlights → Images → Meal & Hotel.
+   A1: hero + 2 support images. A2: hero + optional single support.
+   Pilot scope remains Day 01 / Day 02.
+   ========================================================= */
+.conceptAPilotBottomMeta{
+  margin-top:3mm;
+  padding-left:17mm;
+}
+.conceptAPilotBottomMeta .conceptADayMeta{
+  margin-top:0!important;
+  background:#fffdfa;
+}
+.conceptASupportGallery:has(.conceptASupportFigure:only-child){
+  grid-template-columns:1fr;
+}
+.conceptASupportFigure:only-child .conceptASupportImage{
+  height:34mm;
+}
+.conceptAPilotDay .conceptAHeroGallery{
+  margin-top:3.2mm;
+}
+.conceptAPilotDay .conceptAHeroImage{
+  height:52mm;
+}
+.conceptAPilotDay .conceptASupportGallery{
+  gap:2.6mm;
+}
+.conceptAPilotDay .conceptASupportImage{
+  height:28mm;
+}
+@media print{
+  .conceptAPilotBottomMeta{
+    padding-left:17mm!important;
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+  .conceptAPilotDay .conceptAHeroImage{
+    height:50mm!important;
+  }
+  .conceptAPilotDay .conceptASupportImage{
+    height:27mm!important;
+  }
+  .conceptASupportFigure:only-child .conceptASupportImage{
+    height:32mm!important;
+  }
+}
