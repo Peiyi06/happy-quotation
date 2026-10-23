@@ -1737,3 +1737,86 @@
     height:32mm!important;
   }
 }
+
+
+/* =========================================================
+   PDF FOUNDATION — PREVIEW / PRINT PAGINATION SYNC
+   Pagination-only overrides. No visual redesign.
+   ========================================================= */
+
+/* Overview must be allowed to flow across pages. Individual cards stay intact. */
+.conceptAOverviewPage{
+  min-height:0!important;
+}
+.conceptAOverviewStack{
+  gap:0!important;
+}
+.conceptAOverviewFlights,
+.conceptAOverviewJourney{
+  margin-bottom:3.5mm!important;
+}
+
+/* Use the same physical dimensions on screen preview and print. */
+.conceptADay{
+  padding-bottom:4mm!important;
+}
+.conceptADayHeader{
+  margin-bottom:2.7mm!important;
+}
+.conceptADayMeta>div{
+  padding:2.1mm 2.6mm!important;
+}
+.conceptAAttractionImage{
+  height:40mm!important;
+}
+.conceptAOverviewStack{
+  gap:0!important;
+}
+.conceptAJourneyRows{
+  gap:2.6mm!important;
+}
+.conceptAPilotDay .conceptAHeroImage,
+.conceptAHeroImage{
+  height:50mm!important;
+}
+.conceptAPilotDay .conceptASupportImage,
+.conceptASupportImage{
+  height:27mm!important;
+}
+.conceptASupportFigure:only-child .conceptASupportImage{
+  height:32mm!important;
+}
+
+@media print{
+  .conceptAOverviewPage{
+    min-height:0!important;
+    break-before:page!important;
+    page-break-before:always!important;
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+  .conceptAOverviewStack{
+    display:block!important;
+  }
+  .conceptAOverviewFlights,
+  .conceptAOverviewJourney,
+  .conceptAOverviewMapCard{
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+
+  /* Daily itinerary is a flowing sequence. Only logical sub-blocks are protected. */
+  .conceptADay{
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+  .conceptADayCore,
+  .conceptAHeroGallery,
+  .conceptASupportGallery,
+  .conceptAAttractionGrid,
+  .conceptAPilotBottomMeta,
+  .conceptADayMeta{
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+  }
+}
