@@ -398,15 +398,15 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
         </div>
       </section>
 
-      {pdfStyle==="concept-a"?<section data-preview-block="overview" data-preview-new-page="true" className={styles.conceptAOverviewPage}>
-        <div className={styles.conceptAOverviewTitle}>
+      {pdfStyle==="concept-a"?<section className={styles.conceptAOverviewPage}>
+        <div data-preview-block="overview-title" data-preview-new-page="true" data-keep-next="true" className={styles.conceptAOverviewTitle}>
           <div className={styles.conceptAOverviewIndex}>01</div>
           <div><h2>Journey Overview</h2><p>行程总览</p></div>
           <span>HAPPY EXPRESS TRAVEL</span>
         </div>
 
         <div className={styles.conceptAOverviewStack}>
-          <div className={styles.conceptAOverviewFlights}>
+          <div data-preview-block="overview-flights" className={styles.conceptAOverviewFlights}>
             <div className={styles.conceptAOverviewBlockHead}>
               <div><small>FLIGHT INFORMATION</small><strong>航班资料</strong></div>
               <span>{flights.length} Flight{flights.length===1?"":"s"}</span>
@@ -427,7 +427,7 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
             </div>
           </div>
 
-          {journeyRouteSequence.length>1&&<div className={styles.conceptAOverviewJourney}>
+          {journeyRouteSequence.length>1&&<div data-preview-block="overview-journey" className={styles.conceptAOverviewJourney}>
             <div className={styles.conceptAJourneyHead}>
               <div><small>JOURNEY ROUTE</small><strong>行程路线</strong></div>
               <span>{journeyRouteSequence.length} Stops</span>
@@ -449,7 +449,7 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
             </div>
           </div>}
 
-          <div className={styles.conceptAOverviewMapCard}>
+          <div data-preview-block="overview-map" className={styles.conceptAOverviewMapCard}>
             <div className={styles.conceptAOverviewBlockHead}>
               <div><small>ROUTE MAP</small><strong>路线地图</strong></div>
               <span>{journeyMapPoints.some((p:any)=>p.mode==="geo")?"Geo-based":"Schematic"}</span>
