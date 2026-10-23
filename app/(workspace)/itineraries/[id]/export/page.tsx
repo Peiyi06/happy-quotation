@@ -535,12 +535,12 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
                     <span className={styles.conceptAHighlightsLabel}>Highlights</span>
                     <div>{highlightNames.map((name:string)=><span className={styles.conceptAHighlightChip} key={name}>{name}</span>)}</div>
                   </div>}
-                  <div className={styles.dayMeta+(pdfStyle==="concept-a"?" "+styles.conceptADayMeta:"")}>
+                  {!conceptAPilot&&<div className={styles.dayMeta+(pdfStyle==="concept-a"?" "+styles.conceptADayMeta:"")}>
                     <div><span>Breakfast / 早餐</span><strong>{day?.meals?.breakfast||"—"}</strong></div>
                     <div><span>Lunch / 午餐</span><strong>{day?.meals?.lunch||"—"}</strong></div>
                     <div><span>Dinner / 晚餐</span><strong>{day?.meals?.dinner||"—"}</strong></div>
                     {hotel&&<div className={styles.hotelMeta}><span>Hotel / 酒店</span><strong>{hotel}</strong></div>}
-                  </div>
+                  </div>}
                 </div>
               </div>
 
@@ -590,6 +590,16 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
                   </div>;
                 })}
               </div>}
+
+              {conceptAPilot&&<div data-preview-block="day-meta" className={styles.conceptAPilotBottomMeta}>
+                <div className={styles.dayMeta+" "+styles.conceptADayMeta}>
+                  <div><span>Breakfast / 早餐</span><strong>{day?.meals?.breakfast||"—"}</strong></div>
+                  <div><span>Lunch / 午餐</span><strong>{day?.meals?.lunch||"—"}</strong></div>
+                  <div><span>Dinner / 晚餐</span><strong>{day?.meals?.dinner||"—"}</strong></div>
+                  {hotel&&<div className={styles.hotelMeta}><span>Hotel / 酒店</span><strong>{hotel}</strong></div>}
+                </div>
+              </div>}
+
             </article>;
           })}
         </div>
