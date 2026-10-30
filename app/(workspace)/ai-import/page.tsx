@@ -5,7 +5,7 @@ import {UiText} from "@/components/WorkspaceLanguage";
 
 export default async function AiImportPage(){
   const user=await internalUser();
-  if(!user||!["jess","long"].includes(user.username.toLowerCase())) notFound();
+  if(!user||!["jess","long","shan"].includes(user.username.toLowerCase())) notFound();
 
   return <div>
     <div className="page-head workspace-flat-head ai-itinerary-page-head">
