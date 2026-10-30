@@ -79,8 +79,8 @@ const schema={
 export async function POST(request:Request){
   const user=await internalUser();
   if(!user) return NextResponse.json({error:"Unauthorized"},{status:401});
-  if(!["jess","long"].includes(user.username.toLowerCase())){
-    return NextResponse.json({error:"AI Itinerary Assistant is limited to Jess and Long."},{status:403});
+  if(!["jess","long","shan"].includes(user.username.toLowerCase())){
+    return NextResponse.json({error:"AI Itinerary Assistant access is restricted."},{status:403});
   }
 
   const key=process.env.OPENAI_API_KEY;
