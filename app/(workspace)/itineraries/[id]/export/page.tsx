@@ -459,7 +459,6 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
               </div>)}
             </div>
           </div>}
-          </div>
         </div>
       </section>:flights.length>0&&<section data-preview-block="overview" className={styles.overviewPage}>
         <div className={styles.sectionTitle}>
