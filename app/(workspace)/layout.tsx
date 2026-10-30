@@ -33,7 +33,7 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
             activePaths={["/itineraries","/ai-import","/travel-library"]}
             items={[
               {title:{en:"Itinerary Templates",zh:"行程模板"},href:"/itineraries",action:{en:"Open →",zh:"打开 →"}},
-              ...(["jess","long"].includes(user.username.toLowerCase())
+              ...(["jess","long","shan"].includes(user.username.toLowerCase())
                 ? [{title:{en:"AI Itinerary",zh:"AI 行程"},href:"/ai-import",action:{en:"Open →",zh:"打开 →"}}]
                 : []),
               {title:{en:"Travel Media Library",zh:"旅游媒体库"},href:"/travel-library",action:{en:"Open →",zh:"打开 →"}},
