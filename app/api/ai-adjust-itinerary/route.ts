@@ -79,7 +79,7 @@ const schema={
 export async function POST(request:Request){
   const user=await internalUser();
   if(!user) return NextResponse.json({error:"Unauthorized"},{status:401});
-  if(!["jess","long","shan","jaixin"].includes(user.username.toLowerCase())){
+  if(!["jess","long","shan","jiaxin"].includes(user.username.toLowerCase())){
     return NextResponse.json({error:"AI Itinerary Assistant access is restricted."},{status:403});
   }
 
