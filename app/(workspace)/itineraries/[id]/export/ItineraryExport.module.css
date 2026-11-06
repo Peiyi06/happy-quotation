@@ -1898,3 +1898,14 @@
   white-space:pre-wrap!important;
   overflow-wrap:anywhere;
 }
+
+
+/* =========================================================
+   ITINERARY DAY CONTENT — INLINE BOLD
+   Supports **text** syntax from the itinerary editor.
+   ========================================================= */
+.dayCopy strong,
+.conceptADayCopy strong{
+  font-weight:800;
+  color:inherit;
+}
