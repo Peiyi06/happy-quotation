@@ -23511,7 +23511,6 @@ td,
     border:0!important;
     box-shadow:none!important;
     overflow:hidden!important;
-    page:auto!important;
     break-after:page!important;
     page-break-after:always!important;
   }
@@ -23617,5 +23616,41 @@ td,
   body:has(.itinerary-paged-preview)
   .itinerary-preview-page:first-child .itinerary-preview-page-inner{
     overflow:hidden!important;
+  }
+}
+
+
+/* =========================================================
+   ITINERARY PDF — HARD PORTRAIT PAGE LOCK
+   Preview pages are the sole print pages. Lock them to A4 portrait
+   and prevent cloned itinerary content from switching named pages.
+   ========================================================= */
+@page itinerary-preview-portrait{
+  size:A4 portrait;
+  margin:0;
+}
+@media print{
+  body:has(.itinerary-paged-preview) .itinerary-preview-page{
+    page:itinerary-preview-portrait!important;
+    width:210mm!important;
+    min-width:210mm!important;
+    max-width:210mm!important;
+    height:297mm!important;
+    min-height:297mm!important;
+    max-height:297mm!important;
+  }
+
+  body:has(.itinerary-paged-preview) .itinerary-preview-page-inner{
+    width:210mm!important;
+    min-width:210mm!important;
+    max-width:210mm!important;
+    height:297mm!important;
+    min-height:297mm!important;
+    max-height:297mm!important;
+  }
+
+  body:has(.itinerary-paged-preview)
+  .itinerary-preview-page-inner [data-preview-page="cover"]{
+    page:auto!important;
   }
 }
