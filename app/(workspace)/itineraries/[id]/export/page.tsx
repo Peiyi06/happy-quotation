@@ -10,6 +10,16 @@ export const revalidate=0;
 const text=(value:any)=>String(value??"").trim();
 const list=(value:any)=>Array.isArray(value)?value:[];
 const safeFilePart=(value:any)=>text(value).replace(/[\\/:*?"<>|]+/g," ").replace(/\s+/g," ").trim();
+const renderInlineBold=(value:any)=>{
+  const raw=String(value??"");
+  const parts=raw.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part:string,index:number)=>{
+    if(part.startsWith("**")&&part.endsWith("**")&&part.length>4){
+      return <strong key={"bold-"+index}>{part.slice(2,-2)}</strong>;
+    }
+    return part;
+  });
+};
 const cleanRouteStop=(value:any)=>{
   const raw=text(value);
   if(!raw) return "";
@@ -506,7 +516,7 @@ export default async function ItineraryCustomerExportPage({params,searchParams}:
                 </header>
 
                 <div className={styles.dayBody+(pdfStyle==="concept-a"?" "+styles.conceptADayBody:"")}>
-                  {text(day?.content)&&<p className={styles.dayCopy+(pdfStyle==="concept-a"?" "+styles.conceptADayCopy:"")}>{day.content}</p>}
+                  {text(day?.content)&&<p className={styles.dayCopy+(pdfStyle==="concept-a"?" "+styles.conceptADayCopy:"")}>{renderInlineBold(day.content)}</p>}
                   {highlightNames.length>0&&<div className={styles.conceptAHighlights}>
                     <span className={styles.conceptAHighlightsLabel}>Highlights</span>
                     <div>{highlightNames.map((name:string)=><span className={styles.conceptAHighlightChip} key={name}>{name}</span>)}</div>
