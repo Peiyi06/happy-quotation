@@ -1054,6 +1054,7 @@ export default function ItineraryEditor({itineraryId,initialItinerary,currentSta
           <label className="field">
             <span>{t("Itinerary Content","行程内容")}</span>
             <textarea value={day.content} onChange={e=>patchDay(day.id,{content:e.target.value})} placeholder={t("Enter the day's itinerary, transport, attractions and check-in arrangements...","输入当天行程内容，例如集合、交通、景点、入住安排...")}/>
+            <small className="itinerary-content-format-hint">{t("Press Enter for a new line; press Enter twice to leave a blank line. Line breaks are preserved in the customer PDF.","按 Enter 换行；连续按两次 Enter 可留空行。顾客 PDF 会保留这些换行。")}</small>
           </label>
 
           <div className="itinerary-meal-section">
