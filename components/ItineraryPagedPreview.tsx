@@ -101,7 +101,7 @@ export default function ItineraryPagedPreview({sourceId}:{sourceId:string}){
     };
   },[sourceId]);
 
-  return <div ref={hostRef} className="itinerary-paged-preview no-print" aria-label="A4 PDF page preview"/>;
+  return <div ref={hostRef} className="itinerary-paged-preview" aria-label="A4 PDF page preview"/>;
 }
 
 function sanitizeClone(node:HTMLElement){
