@@ -1887,3 +1887,14 @@
 .document[data-pdf-foundation="concept-a"] .attractionFigure figcaption{
   font-size:10pt!important;
 }
+
+
+/* =========================================================
+   ITINERARY DAY CONTENT — PRESERVE MANUAL LINE BREAKS
+   Enter = new line; double Enter = blank line in Preview/PDF.
+   ========================================================= */
+.dayCopy,
+.conceptADayCopy{
+  white-space:pre-wrap!important;
+  overflow-wrap:anywhere;
+}
