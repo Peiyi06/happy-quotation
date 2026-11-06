@@ -23567,3 +23567,15 @@ td,
 .itinerary-editor .itinerary-hotel-card:has(.itinerary-more-menu[open]) .itinerary-more-menu-popover{
   z-index:123!important;
 }
+
+
+/* =========================================================
+   ITINERARY EDITOR — CONTENT LINE BREAK HINT
+   ========================================================= */
+.itinerary-editor .itinerary-content-format-hint{
+  display:block;
+  margin-top:6px;
+  color:var(--color-text-tertiary);
+  font-size:10px;
+  line-height:1.4;
+}
