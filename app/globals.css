@@ -23579,3 +23579,43 @@ td,
   font-size:10px;
   line-height:1.4;
 }
+
+
+/* =========================================================
+   ITINERARY PDF — COVER PAGE NESTED BREAK FIX
+   Preview pages are the only print pagination containers.
+   The cloned cover must never trigger its original page break.
+   ========================================================= */
+@media print{
+  body:has(.itinerary-paged-preview)
+  .itinerary-preview-page-inner [data-preview-page="cover"]{
+    display:block!important;
+    width:100%!important;
+    height:255mm!important;
+    min-height:255mm!important;
+    max-height:255mm!important;
+    margin:0!important;
+    overflow:hidden!important;
+    break-before:auto!important;
+    page-break-before:auto!important;
+    break-after:auto!important;
+    page-break-after:auto!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+
+  body:has(.itinerary-paged-preview)
+  .itinerary-preview-page-inner [data-preview-page="cover"] > div{
+    break-before:auto!important;
+    page-break-before:auto!important;
+    break-after:auto!important;
+    page-break-after:auto!important;
+  }
+
+  body:has(.itinerary-paged-preview)
+  .itinerary-preview-page:first-child,
+  body:has(.itinerary-paged-preview)
+  .itinerary-preview-page:first-child .itinerary-preview-page-inner{
+    overflow:hidden!important;
+  }
+}
