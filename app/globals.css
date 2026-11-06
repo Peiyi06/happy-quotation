@@ -23540,3 +23540,30 @@ td,
     display:none!important;
   }
 }
+
+
+/* =========================================================
+   ITINERARY HOTEL MORE MENU — OVERFLOW ESCAPE
+   Collapsed hotel cards normally clip their surface, but an open
+   utility menu must be allowed to float above following hotel rows.
+   ========================================================= */
+.itinerary-editor .itinerary-hotel-list{
+  overflow:visible!important;
+}
+.itinerary-editor .itinerary-hotel-card:has(.itinerary-more-menu[open]){
+  position:relative!important;
+  z-index:120!important;
+  overflow:visible!important;
+}
+.itinerary-editor .itinerary-hotel-card:has(.itinerary-more-menu[open]) .itinerary-hotel-head{
+  position:relative;
+  z-index:121;
+  overflow:visible!important;
+}
+.itinerary-editor .itinerary-hotel-card:has(.itinerary-more-menu[open]) .itinerary-more-menu{
+  position:relative;
+  z-index:122!important;
+}
+.itinerary-editor .itinerary-hotel-card:has(.itinerary-more-menu[open]) .itinerary-more-menu-popover{
+  z-index:123!important;
+}
