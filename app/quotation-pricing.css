@@ -163,3 +163,36 @@
   .quotation-editor-shell .scenario-extra-setups .cost-setup-content{padding:15px!important}
   .quotation-editor-shell .scenario-extra-setups .cost-setup-toggle{padding:0 16px!important}
 }
+
+/* Structural selectors avoid reliance on React's serialized inline style attribute */
+.quotation-editor-shell .scenario-extra-setups>section:first-child .cost-setup-content>div:nth-of-type(2){
+  gap:0!important;overflow:hidden;border:1px solid var(--color-border-default);border-radius:12px;background:#fff;
+}
+.quotation-editor-shell .scenario-extra-setups>section:first-child .cost-setup-content>div:nth-of-type(2)>div{
+  min-height:60px;padding:10px 12px;gap:8px!important;border-bottom:1px solid #edf1f4;
+}
+.quotation-editor-shell .scenario-extra-setups>section:first-child .cost-setup-content>div:nth-of-type(2)>div:last-child{border-bottom:0}
+.quotation-editor-shell .scenario-extra-setups>section:first-child .cost-setup-content>div:nth-of-type(2)>div:hover{background:#fbfcfd}
+.quotation-editor-shell .scenario-extra-setups>section:first-child .cost-setup-content>div:nth-of-type(3){
+  padding:12px 0 4px;margin-top:12px!important;align-items:center;border-top:1px solid var(--color-border-default);
+}
+.quotation-editor-shell .scenario-extra-setups>section:first-child .cost-setup-content>div:nth-of-type(3) strong{
+  color:var(--color-brand-primary);font-size:13px;font-weight:750;
+}
+.quotation-editor-shell .scenario-extra-setups>section:first-child .cost-setup-content>div:nth-of-type(4),
+.quotation-editor-shell .scenario-extra-setups>section:nth-child(2) .cost-setup-content>div:nth-of-type(2){
+  gap:12px!important;margin-top:14px!important;
+}
+.quotation-editor-shell .scenario-extra-setups>section:first-child .cost-setup-content>div:nth-of-type(4)>div,
+.quotation-editor-shell .scenario-extra-setups>section:nth-child(2) .cost-setup-content>div:nth-of-type(2)>div{
+  padding:16px!important;border:1px solid var(--color-border-default)!important;
+  border-radius:12px!important;background:#fff!important;gap:10px!important;
+}
+.quotation-editor-shell .scenario-extra-setups>section:first-child .cost-setup-content>div:nth-of-type(4)>div>strong,
+.quotation-editor-shell .scenario-extra-setups>section:nth-child(2) .cost-setup-content>div:nth-of-type(2)>div>strong{
+  color:var(--color-brand-primary);font-size:14px;font-weight:760;
+}
+@media(max-width:900px){
+  .quotation-editor-shell .scenario-extra-setups>section:first-child .cost-setup-content>div:nth-of-type(2){overflow-x:auto}
+  .quotation-editor-shell .scenario-extra-setups>section:first-child .cost-setup-content>div:nth-of-type(2)>div{min-width:620px}
+}
