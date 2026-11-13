@@ -183,6 +183,8 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const [pricingMode,setPricingMode]=useState<"single"|"scenario">("single");
   const [pricingScenarios,setPricingScenarios]=useState<PricingScenario[]>(()=>defaultPricingScenarios.map(s=>({...s})));
   const [scenarioRows,setScenarioRows]=useState<ScenarioCostRow[]>([]);
+  const [scenarioLeaderOpen,setScenarioLeaderOpen]=useState(false);
+  const [scenarioChildOpen,setScenarioChildOpen]=useState(false);
   const [leaderRows, setLeaderRows] = useState<LeaderCostRow[]>(defaultLeaderRows);
   const [leaderOpen, setLeaderOpen] = useState(false);
   const [childOpen, setChildOpen] = useState(false);
@@ -369,10 +371,10 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   const calculationResult = useMemo(()=>calculateQuotation(calculationInput),[calculationInput]);
   const scenarioPricingInput=useMemo(()=>({
     days:travelDuration.days,mainCurrency,mainRate,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
-    scenarios:pricingScenarios,rows:scenarioRows
+    scenarios:pricingScenarios,rows:scenarioRows,leaderRows,childBedSetup,childNoBedSetup
   }),[
     travelDuration.days,mainCurrency,mainRate,profitMode,profitRate,minProfit,maxProfit,fixedProfit,roundUnit,
-    pricingScenarios,scenarioRows
+    pricingScenarios,scenarioRows,leaderRows,childBedSetup,childNoBedSetup
   ]);
   const scenarioResults=useMemo(()=>calculateScenarioPricing(scenarioPricingInput),[scenarioPricingInput]);
   const primaryScenarioResult=scenarioResults[0]||null;
@@ -433,6 +435,10 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
   });
   const removeScenarioRow=(id:string)=>setScenarioRows(rows=>rows.length>1?rows.filter(r=>r.id!==id):rows);
   const setScenarioManual=(id:string,value:number|"")=>setPricingScenarios(items=>items.map(s=>s.id===id?{...s,manualFinalPrice:value}:s));
+  const updateScenarioSettings=(id:string,patch:Partial<PricingScenario>)=>
+    setPricingScenarios(items=>items.map(s=>s.id===id?{...s,...patch}:s));
+  const applyScenarioSettings=(key:keyof PricingScenario,value:PricingScenario[keyof PricingScenario])=>
+    setPricingScenarios(items=>items.map(s=>({...s,[key]:value})));
   const addPricingScenario=()=>{
     const raw=window.prompt(t("Enter pax for the new scenario","请输入新 Scenario 的人数"));
     if(!raw) return;
@@ -1170,6 +1176,65 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
           </div>)}
         </div>
       </div>
+      <div className="scenario-extra-setups" style={{display:"grid",gap:12,marginTop:16}}>
+        <section className={"section cost-setup-collapsible "+(scenarioLeaderOpen?"open":"collapsed")}>
+          <button type="button" className="cost-setup-toggle" onClick={()=>setScenarioLeaderOpen(v=>!v)} aria-expanded={scenarioLeaderOpen}>
+            <span>{t("Tour Leader Cost Setup","领队成本设置")}</span><span className="cost-setup-chevron" aria-hidden="true">⌄</span>
+          </button>
+          {scenarioLeaderOpen&&<div className="cost-setup-content">
+            <p style={{fontSize:12,opacity:.7}}>{t("Shared leader costs below apply to all enabled scenarios. Each scenario can override its own total cost.","以下领队成本共同适用于启用领队的方案，每个人数方案也可单独覆盖总成本。")}</p>
+            <div className="cost-setup-actions no-print"><button type="button" className="btn" onClick={addLeader}>{t("+ Add Cost Row","+ 新增成本项目")}</button></div>
+            <div style={{display:"grid",gap:8}}>
+              {leaderRows.map(row=><div key={row.id} style={{display:"grid",gridTemplateColumns:"minmax(125px,2fr) minmax(105px,1fr) 70px 90px auto",gap:8,alignItems:"center"}}>
+                <input aria-label={t("Leader cost item","领队成本项目")} value={costItemDisplay(row.item)} onChange={e=>setLeader(row.id,{item:e.target.value})}/>
+                <input type="number" min="0" aria-label={terms.unitPrice} value={row.unitPrice} onChange={e=>setLeader(row.id,{unitPrice:e.target.value===""?"":Math.max(0,Number(e.target.value))})} placeholder={t("Unit Price","单价")}/>
+                <input type="number" min="0" aria-label={t("Qty","数量")} value={row.qty} onChange={e=>setLeader(row.id,{qty:e.target.value===""?"":Math.max(0,Number(e.target.value))})}/>
+                <select aria-label={terms.currency} value={row.currency} onChange={e=>setLeader(row.id,{currency:e.target.value as Currency})}>{currencies.map(c=><option key={c} value={c}>{c}</option>)}</select>
+                <button type="button" className="btn" onClick={()=>removeLeader(row.id)} disabled={leaderRows.length<=1}>{t("Remove","删除")}</button>
+              </div>)}
+            </div>
+            <div style={{display:"flex",justifyContent:"space-between",marginTop:12,gap:8,flexWrap:"wrap"}}>
+              <strong>{t("Shared Leader Cost / Leader","每位领队的共用成本")}: {money(leaderRows.reduce((sum,row)=>sum+leaderRowTotal(row,mainCurrency,mainRate),0))}</strong>
+              <button type="button" className="btn" onClick={()=>applyScenarioSettings("leaderEnabled",true)}>{t("Enable for All Scenarios","全部方案启用领队")}</button>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(215px,1fr))",gap:10,marginTop:12}}>
+              {pricingScenarios.map(s=><div key={s.id} style={{border:"1px solid #e1e5ec",borderRadius:10,padding:12,display:"grid",gap:8}}>
+                <strong>{s.pax} Pax</strong>
+                <label style={{display:"flex",gap:7,alignItems:"center"}}><input type="checkbox" checked={!!s.leaderEnabled} onChange={e=>updateScenarioSettings(s.id,{leaderEnabled:e.target.checked})}/>{t("Include Tour Leader","包含领队")}</label>
+                <Field label={t("Leader Qty","领队人数")}><input type="number" min="1" step="1" disabled={!s.leaderEnabled} value={s.leaderCount??1} onChange={e=>updateScenarioSettings(s.id,{leaderCount:Math.max(1,Math.floor(Number(e.target.value)||1))})}/></Field>
+                <Field label={t("Custom Total (RM, optional)","自定义领队总成本（RM，可留空）")}><input type="number" min="0" disabled={!s.leaderEnabled} value={s.leaderCostOverride??""} onChange={e=>updateScenarioSettings(s.id,{leaderCostOverride:e.target.value===""?"":Math.max(0,Number(e.target.value))})} placeholder={t("Use shared rows","使用共用成本")}/></Field>
+                <small>{t("Allocated / Pax","每人分摊")}: {money(scenarioResults.find(r=>r.id===s.id)?.leaderAllocationPerPax||0)}</small>
+              </div>)}
+            </div>
+          </div>}
+        </section>
+        <section className={"section cost-setup-collapsible "+(scenarioChildOpen?"open":"collapsed")}>
+          <button type="button" className="cost-setup-toggle" onClick={()=>setScenarioChildOpen(v=>!v)} aria-expanded={scenarioChildOpen}>
+            <span>{t("Child Cost Setup","儿童成本设置")}</span><span className="cost-setup-chevron" aria-hidden="true">⌄</span>
+          </button>
+          {scenarioChildOpen&&<div className="cost-setup-content">
+            <p style={{fontSize:12,opacity:.7}}>{t("Configure shared child costs, then set the number of children for each scenario. Children replace adult per-person costs; group costs and leader allocation are shared.","先设置共用儿童成本，再填写各方案儿童人数。儿童取代相应成人每人成本，团体成本及领队成本仍按总旅客人数分摊。")}</p>
+            <div className="child-grid">
+              <ChildCostCard title={t("Child with Bed","小孩含床")} t={t} setup={childBedSetup} setSetup={setChildBedSetup} pax={1} mainCurrency={mainCurrency} mainRate={mainRate} displayItem={costItemDisplay} calcModeLabel={calcModeLabel}/>
+              <ChildCostCard title={t("Child without Bed","小孩不含床")} t={t} setup={childNoBedSetup} setSetup={setChildNoBedSetup} pax={1} mainCurrency={mainCurrency} mainRate={mainRate} displayItem={costItemDisplay} calcModeLabel={calcModeLabel}/>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:10,marginTop:12}}>
+              {pricingScenarios.map(s=>{
+                const result=scenarioResults.find(r=>r.id===s.id);
+                return <div key={s.id} style={{border:"1px solid #e1e5ec",borderRadius:10,padding:12,display:"grid",gap:8}}>
+                  <strong>{s.pax} Pax</strong>
+                  <Field label={t("Child With Bed Pax","儿童占床人数")}><input type="number" min="0" max={s.pax} step="1" value={s.childBedPax??0} onChange={e=>updateScenarioSettings(s.id,{childBedPax:Math.max(0,Math.floor(Number(e.target.value)||0))})}/></Field>
+                  <Field label={t("Child Without Bed Pax","儿童不占床人数")}><input type="number" min="0" max={s.pax} step="1" value={s.childNoBedPax??0} onChange={e=>updateScenarioSettings(s.id,{childNoBedPax:Math.max(0,Math.floor(Number(e.target.value)||0))})}/></Field>
+                  <small>{t("Adults","成人")}: {result?.adultPax??s.pax} · {t("Children","儿童")}: {(result?.childBedPax||0)+(result?.childNoBedPax||0)}</small>
+                  {result?.invalidPaxMix&&<small role="alert" style={{color:"#b42318"}}>{t("Children exceed total pax. Please correct this scenario.","儿童人数超过总人数，请修正。")}</small>}
+                  <Field label={t("With Bed Ratio Override (%)","占床比例单独设置（%）")}><input type="number" min="0" value={s.childBedRatioOverride??""} onChange={e=>updateScenarioSettings(s.id,{childBedRatioOverride:e.target.value===""?"":Math.max(0,Number(e.target.value))})} placeholder={String(childBedSetup.groundRatio)}/></Field>
+                  <Field label={t("No Bed Ratio Override (%)","不占床比例单独设置（%）")}><input type="number" min="0" value={s.childNoBedRatioOverride??""} onChange={e=>updateScenarioSettings(s.id,{childNoBedRatioOverride:e.target.value===""?"":Math.max(0,Number(e.target.value))})} placeholder={String(childNoBedSetup.groundRatio)}/></Field>
+                </div>;
+              })}
+            </div>
+          </div>}
+        </section>
+      </div>
       <div className="scenario-formula-note">
         <span>{t("Package Days","配套天数")}: <strong>{travelDuration.days||"—"}</strong></span>
         <span>{t("Per Person / Day and Per Group / Day automatically use Package Days.","每人每天及整团每天会自动使用配套天数。")}</span>
@@ -1191,6 +1256,15 @@ export default function QuotationCalculator({workspaceMode=false,quotationId,ini
             <Metric label={terms.costPerPax} value={money(result.costPerPax)} />
             <Metric label={terms.systemSuggested} value={money(result.suggestedPrice)} />
           </div>
+          <div style={{display:"grid",gap:3,fontSize:12,marginBottom:12,opacity:.85}}>
+            <span>{t("Mix","人数构成")}: {result.adultPax} {t("Adults","成人")} · {result.childBedPax} {t("With Bed","占床")} · {result.childNoBedPax} {t("Without Bed","不占床")}</span>
+            <span>{t("Adult Cost / Pax","成人成本 / 人")}: {money(result.adultCostPerPax)}</span>
+            {result.childBedPax>0&&<span>{t("Child With Bed / Pax","儿童占床 / 人")}: {money(result.childBedCostPerPax)}</span>}
+            {result.childNoBedPax>0&&<span>{t("Child Without Bed / Pax","儿童不占床 / 人")}: {money(result.childNoBedCostPerPax)}</span>}
+            <span>{t("Tour Leader Allocation / Pax","领队分摊 / 人")}: {money(result.leaderAllocationPerPax)}</span>
+            <span>{t("Total Group Cost","团队总成本")}: {money(result.totalGroupCost)}</span>
+          </div>
+          {result.invalidPaxMix&&<p role="alert" style={{color:"#b42318",fontSize:12}}>{t("Invalid pax mix: child count exceeds total pax.","人数不正确：儿童人数超过总人数。")}</p>}
           <Field label={t("Manual Final Price","手动最终报价")}>
             <input type="number" min="0" value={pricingScenarios.find(s=>s.id===result.id)?.manualFinalPrice??""}
               onChange={e=>setScenarioManual(result.id,e.target.value===""?"":Math.max(0,Number(e.target.value)))}
